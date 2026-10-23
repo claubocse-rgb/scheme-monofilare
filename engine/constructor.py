@@ -161,11 +161,39 @@ def _bransament(inp, rz, m):
                      "cablu": {"ref": "C1", "cond": "L + PEN" if mono else "3 + PEN", "text": "racord OD — conform ATR"}, "aparate": ap}]
     m["bara"] = {"afisare": False}
     m["plecari"] = [{"aparate": [], "cablu": _cablu(c2, "C2"),
-                     "sarcina": {"titlu": "TE consumator", "sub": f"Pa = {_f(rz.get('Pa_kW'))}{NB}kW cf. ATR {PUNCT} {_sub_ramura(c2)}"}}]
+                     "sarcina": {"titlu": "TE consumator", "sub": f"tablou generic {PUNCT} Pa = {_f(rz.get('Pa_kW'))}{NB}kW cf. ATR {PUNCT} {_sub_ramura(c2)}"},
+                     "copii": _te_generic(mono, (Q or {}).get("In_A"))}]
     m["lista_pe"] = ["Baretă de nul · piesă de separație · priză de pământ locală",
                      "electrozi OL-Zn 2½″ × 3 m + platbandă OL-Zn 40×4 mm · Rp ≤ 4 Ω"]
     m["cartus"]["denumire2"] = f"{bloc} — BLOC DE MĂSURĂ ȘI PROTECȚIE {'MONOFAZAT' if mono else 'TRIFAZAT'}"
     return f"branșament {bloc}"
+
+
+def _te_generic(mono, In_q):
+    """tabloul consumatorului, GENERIC (cerut de OD la documentația de branșament / prosumator): întreruptor general,
+    DDR 30 mA pe prize și câteva plecări tipice. Aparatele nu sunt dimensionate — se definitivează în proiectul de
+    instalații interioare; textele o spun explicit."""
+    P1 = "1P+N" if mono else "1P+N"
+    def mcb(ref, txt, rol, In, poli="1P+N", ddr=False):
+        tip = "rcbo" if ddr else "mcb"
+        spec = [f"{poli} {PUNCT} C{In}{NB}A" + (f" {PUNCT} 30{NB}mA" if ddr else "")]
+        den = (f"Întreruptor automat cu protecție diferențială {poli}, C{In} A, IΔn 30 mA tip A" if ddr
+               else f"Întreruptor automat modular {poli}, C{In} A")
+        return {"aparate": [{"tip": tip, "ref": ref, "spec": spec, "lista": [den + f" — {rol} (generic)",
+                                                                        "calibrul și numărul circuitelor conform proiectului de instalații interioare"]}],
+                "cablu": {"ref": "", "cond": "L + N + PE" if poli == "1P+N" else "3 + N + PE", "text": "conform proiect IU"},
+                "sarcina": {"titlu": txt, "sub": "generic"}}
+    circ = [mcb("Q1", "Iluminat", "circuite de iluminat", 10), mcb("Q2", "Prize", "circuite de prize", 16, ddr=True),
+            mcb("Q3", "Receptoare fixe", "aparate fixe (boiler, cuptor etc.)", 20, ddr=True)]
+    if not mono:
+        circ.append(mcb("Q4", "Forță 3F", "receptoare trifazate", 20, poli="4P"))
+    circ.append(mcb(f"Q{len(circ) + 1}", "Rezervă", "rezervă", 16))
+    In_g = next((x for x in (25, 32, 40, 63, 80, 100, 125, 160, 250) if x >= (In_q or 0)), In_q or 63)
+    poli_g = "2P" if mono else "4P"
+    qg = {"tip": "separator", "ref": "QG", "spec": [f"{poli_g} {PUNCT} {In_g}{NB}A", "întreruptor-separator"],
+          "lista": [f"Întreruptor-separator general TE {poli_g}, In {In_g} A (≥ In Q branșament) — generic",
+                    "SR EN 60947-3; tabloul consumatorului se definitivează în proiectul de instalații interioare"]}
+    return [{"grup": True, "aparate": [qg], "copii": circ}]
 
 
 def _ierarhie(plate):
@@ -418,6 +446,11 @@ def _prosumator(inp, rz, m):
     qb = inp.get("In_Q_bransament_A")
     m["plecari"] = [{"aparate": [], "cablu": {"ref": "", "cond": "L + N + PE" if mono else "3 + N + PE", "text": "existent"},
                      "sarcina": {"titlu": "Branșament existent", "sub": (f"Q {qb}{NB}A {PUNCT} " if qb else "") + "contor bidirecțional (OD)"}}]
+    # circuitele consumatorului (generic, cerut de OD): pe aceeași bară a TE
+    for k, cg in enumerate(_te_generic(mono, qb)[0]["copii"]):
+        cg["aparate"][0]["ref"] = f"Q{k + 2}"
+        cg["sarcina"]["sub"] = "existent / generic"
+        m["plecari"].append(cg)
     m["carcasa"] = {"titlu": "TE", "sub": "tablou electric consumator · prosumator"}
     m["cartus"]["denumire2"] = f"PROSUMATOR {_f(pn)} kW {'MONOFAZAT' if mono else 'TRIFAZAT'}"
     return "prosumator"

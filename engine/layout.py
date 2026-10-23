@@ -445,6 +445,10 @@ class Layout:
             yps = self.y_carcasa_jos + 8
             c.line((bx, by - 1.6), (bx, yps + 3.5), "PE"); self._place_lateral(bx, yps, {"tip": "piesa_separatie"})
             yg = min(self.y_carcasa_jos - 8, self.box_bottom - 2 if self.box_bottom < 1e8 else 1e9)
+            sec = [cy[1] for k_, cy in self._carcase_y.items() if k_ != "principala"]
+            if sec:        # un tablou secundar desenat sub carcasa principală: priza de pământ rămâne deasupra lui
+                yg = max(yg, max(sec) + 16)
+                yg = min(yg, self.y_carcasa_jos - 14)
             c.line((bx, yps - 3.5), (bx, yg), "PE"); self._place_lateral(bx, yg, {"tip": "pamant"})
             c.text(bx, yg - 7.5, "PPL", 2.6, True, align="middle"); c.text(bx, yg - 10.8, m.get("rp", "Rp ≤ 4 Ω"), 2.1, align="middle")
             self._poz_mark(bx + 8, yps, self._poz_add({"ref": m.get("ref_pe", "BN·PS·PPL"), "tip": "bareta_nul",

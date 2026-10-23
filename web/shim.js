@@ -10,7 +10,7 @@ window.SM_WEB = true;
   w.onmessage = e => {
     const d = e.data;
     if (d.tip === 'gata') { gata(); bootTxt.textContent = 'Gata.'; setTimeout(() => { boot.hidden = true; }, 600); }
-    else if (d.tip === 'progres') bootTxt.textContent = d.text;
+    else if (d.tip === 'progres') { if (boot.hidden && typeof toast === 'function') toast(d.text, { ms: 4000 }); else bootTxt.textContent = d.text; }
     else if (d.tip === 'eroare') { bootTxt.textContent = 'Motorul de calcul nu a pornit: ' + d.text + ' — reîncarcă pagina.'; boot.classList.add('err'); }
     else if (d.tip === 'date') { try { localStorage.setItem(LS, JSON.stringify(d.date)); } catch { } }
     else if (d.id && pend.has(d.id)) { pend.get(d.id)(d); pend.delete(d.id); }

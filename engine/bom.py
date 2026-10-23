@@ -1,11 +1,11 @@
 """Export listă de echipamente (BOM) în Excel, din pozițiile generate de layout."""
 import io
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
-from openpyxl.utils import get_column_letter
 
 
 def bom_xlsx(model, poz) -> bytes:
+    from openpyxl import Workbook          # import la cerere: versiunea web încarcă openpyxl doar la export
+    from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+    from openpyxl.utils import get_column_letter
     """poz = lista (nr, ref, lista_lines, buc, tip) din Layout.poz"""
     wb = Workbook(); ws = wb.active; ws.title = "Lista echipamente"
     k = model.get("cartus", {})

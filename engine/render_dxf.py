@@ -5,12 +5,21 @@ Numele blocului depinde de geometria efectivă a simbolului: două inserări cu 
 Prima variantă păstrează numele de bază (`SYM_MCCB`, `SYM_MCCB_BD` …), următoarele primesc un sufix
 scurt derivat din geometrie (`SYM_CUTIE_3F9A1C`)."""
 import hashlib
-import ezdxf
-from ezdxf import units
-from ezdxf.enums import TextEntityAlignment as TA
+# ezdxf se importă la prima randare DXF (în versiunea web se încarcă doar când e nevoie de export)
+ezdxf = units = TA = None
+ALIGN = {}
+
+
+def _ezdxf():
+    global ezdxf, units, TA, ALIGN
+    if ezdxf is None:
+        import ezdxf as _e
+        from ezdxf import units as _u
+        from ezdxf.enums import TextEntityAlignment as _ta
+        ezdxf, units, TA = _e, _u, _ta
+        ALIGN.update({"left": TA.LEFT, "middle": TA.CENTER, "right": TA.RIGHT})
 from .canvas import *
 
-ALIGN = {"left": TA.LEFT, "middle": TA.CENTER, "right": TA.RIGHT}
 
 
 def _emit(space, items, dx=0.0, dy=0.0, k=1.0, reg=None):
@@ -83,6 +92,7 @@ def _insert_block(space, br: BlockRef, dx, dy, k, reg):
 
 
 def render(c: Canvas, path: str, layout_name="A3"):
+    _ezdxf()
     doc = ezdxf.new("R2018", setup=True)
     doc.units = units.MM
     doc.header["$INSUNITS"] = 4
