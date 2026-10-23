@@ -1,0 +1,10 @@
+*.mp4
+*.pyc
+*.tgz
+*.xlsx
+.DS_Store
+.claude/
+__pycache__/
+date/
+out/
+web/vendor/
