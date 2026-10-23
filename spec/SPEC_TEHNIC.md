@@ -637,9 +637,9 @@ Reguli suplimentare:
 7. **Protecția de interfață:** prosumator → Ord. ANRE 228/2018; CEF care nu e prosumator → Ord. ANRE 208/2018 + ATR. Notele cu „Ord. 228” la CEF ne-prosumator → V75 AVERTISMENT (P2-10).
 8. **TC măsură:** B.19, cu Ib = ΣIac, cl. 0,5S.
 9. **C.c. (pe fiecare intrare MPPT):**
-   - `Uoc(Tmin) = N_module·Uoc_STC·[1 + (β_Uoc/100)·(Tmin − 25)]`, cu Tmin = −25 °C (DECIZIE) și β din fișa modulului (implicit −0,27 %/K [NEVERIFICAT]). Uoc(Tmin) > Umax invertor (implicit 1100 V) sau > tensiunea maximă de sistem a modulului → **V68 BLOCANT**.
+   - `Voc(Tmin) = N_module·Voc_STC·[1 + (β_Voc/100)·(Tmin − 25)]`, cu Tmin = −25 °C (DECIZIE) și β din fișa modulului (implicit −0,27 %/K [NEVERIFICAT]). Voc(Tmin) > Umax invertor (implicit 1100 V) sau > tensiunea maximă de sistem a modulului → **V68 BLOCANT**.
    - Siguranțe gPV pe fiecare string, obligatorii de la 3 stringuri în paralel pe aceeași intrare: 1,5·Isc_STC ≤ In ≤ min(2,4·Isc_STC ; I_MOD_REVERSE). Nu există calibru în interval → V69 BLOCANT.
-   - SPD c.c. tip 2: Ucpv = cea mai mică din {600, 1000, 1100, 1200, 1500} V ≥ Uoc(Tmin); Ucpv mai mic → V74 BLOCANT.
+   - SPD c.c. tip 2: Ucpv = cea mai mică din {600, 1000, 1100, 1200, 1500} V ≥ Voc(Tmin); Ucpv mai mic → V74 BLOCANT.
    - Separator c.c. sub sarcină pe fiecare intrare (sau integrat în invertor, declarat). Lipsa protecțiilor c.c. pe model → V88 BLOCANT.
    - Cablu string: H1Z2Z2-K, Iz ≥ 1,25·Isc_STC fără siguranțe, Iz ≥ In_gPV cu siguranțe.
 10. **Desen:** câmpurile PV, invertoarele și BESS se desenează **în afara** TGD-CF (V82, P1-10).
@@ -648,13 +648,20 @@ Reguli suplimentare:
    - **S_total = max(U·ΣIac/1000 ; ΣPn)** (U = √3·400 sau 230); se folosește la pragurile de racord (V66) și la verificarea trafo (V67). Rezultatul raportează și `S_din_Iac_kVA`.
    - **CEF monofazat** (`retea = "mono"`): Iac = 1,1·Pn/230, Ip,min = 1,25·Pn/230, protecții 1P+N, cabluri cu 3 conductoare, ΔU pe 230 V; ΣIac > 40 A → V53 BLOCANT (BMPM); ΣPn > 3,68 kW → V71 AVERTISMENT; măsură directă monofazată (fără TC); cu PT propriu → V12 BLOCANT. QG are `poli = "2P"`.
    - **Racord JT prin BMPT** (S ≤ 173 kVA, fără PT): Ip QG ≤ 250 A (In Q BMPTi-250; la mono 40 A, BMPM), altfel **V66 BLOCANT** (QG nu se coordonează cu Q din bloc). Câmpul `racord` descrie soluția („JT prin BMPT”, „JT direct din PT OD conform ATR”, „MT prin PT propriu”, „JT monofazat prin BMPM”).
-   - **β_Uoc ≥ 0** (sau < −1 %/K) → **V68 BLOCANT** „β neplauzibil”; nu se ia în modul. kWp ≤ 0 cu invertoare, n_module < 1 → V07.
+   - **β_Voc ≥ 0** (sau < −1 %/K) → **V68 BLOCANT** „β neplauzibil”; nu se ia în modul. kWp ≤ 0 cu invertoare, n_module < 1 → V07.
    - QG electronic: `Isd_A`, `Isd_multiplu`, `tsd_s`, `Ii_A` în rezultat (Isd după Ik1min la bara QG).
 12. **v1.3 (UX r3, P0-2) — punctul de racord, C0 și cablurile invertoarelor:**
    - `racord` ∈ {„tg_existent” (sinonim „tg”), „bmpt”, „pt”} (altfel V12; „pt” fără `pt_Sn_kVA` → V07). Punctul de racord (BMPT existent / PT) se verifică după puterea totală, ca în pct. 4–5 (V66/V67, M4).
    - **TG existent:** QG se leagă pe o plecare a TG-ului existent al consumatorului. Bara TG: `Ik3_TG_kA` (+ opțional `Zb_TG_ohm`; Zb implicit = 2·Z_Q, declarat) sau, lipsind, bara TG = punctul de racord (majorant pentru Icu, `ik3_implicit`, declarat — DECIZIE). Protecția existentă `racord_In_Q_A` (+ `racord_Q_tip`, implicit MCB ≤ 63 A / MCCB, `racord_Icu_kA`) → `Q_TG` {tip, In_A, Ir_A, curba, Icu_kA}: calibru în serie (V05), **Ip Q TG ≥ Σ Iac** (altfel **V44 BLOCANT**, declanșează la injecție), Icu ≥ Ik3 TG (V33 BLOCANT; nedeclarat → V33 AVERTISMENT), selectivitatea Q TG (amonte) → QG (aval) după B.18 (obiect „Q TG vs QG”, V40–V42), Ip Q TG ≤ Iz' C0 (altfel **V44 AVERTISMENT**: C0 e protejat la suprasarcină doar de QG) și deconectarea unui defect la capătul C0 prin Q TG în 5 s (V44 AVERTISMENT cu Ik/Zb implicite, altfel BLOCANT). Fără `racord_In_Q_A` → presupunere declarată.
    - **C0 (TGD-CF → punctul de racord)** se dimensionează ÎNTOTDEAUNA când `L_racord_m` e dat (cu sau fără TG existent): ramură B.21 completă, Ib = Σ Iac, protejată de QG (In, Ir, Icu impuse), contextul (Ik3, Zb) = punctul de racord (bara TG / BMPT / PT), cablu `cablu_C0` > `cablu` global > implicit D1 Al; obiect „C0”, rezultat `C0` (+ `descriere`) și `bara_TGD_CF` {Ik3max_kA, dU_pct}. Invertoarele se calculează apoi cu contextul capătului C0, iar ΔU invertor → punctul de racord se cumulează (ΔU_inv + ΔU_C0, limitele 1 % / 3 %). QG: Ip,min din protecțiile invertoarelor calculate întâi (doar Ip).
    - **Cablurile invertoarelor/PCS:** câmpurile cablului se iau, în ordinea priorității, din `invertoare[].cablu`, `cablu_inv` / `cablu_pcs`, `cablu` global (material, izolație, metodă, θ, ρ_sol, grupare); lungimea din `invertoare[].L_m`, `invertoare[].cablu.L`, `L_inv_m` / `L_pcs_m`, altfel 30 m (declarat). Fără material: Al în pământ, Cu în aer.
+
+13. **v1.8 — echipamente din fișe tehnice (modele pe planșă și în listă):**
+   - Intrare: `modul` (sau `string.modul`) {producator, model, Pmax_W, Voc_V, Isc_A, Vmpp_V, Impp_A, beta_Voc_pct_K, Umax_sistem_V, I_rev_A}; fiecare grup din `invertoare[]` și `invertor` (prosumator) {producator, model, Pn_kW, Iac_max_A, Umax_dc_V, MPPT_min_V, MPPT_max_V, Idc_max_A, Isc_max_A, nr_MPPT, separator_cc_integrat, hibrid}; `bess` / `baterie` {producator, model, P_kW, kWh, Iac_max_A, U_nom_V, chimie} (opțional `bess.pcs`, `bess.baterie`); `spd_cc` {producator, model, tip (T2 | T1+T2)}; `gpv` {producator, model}.
+   - Datele de fișă înlocuiesc presupunerile, cu sursa declarată în pașii de calcul: Voc / Isc / β(Voc) / Umax sistem / siguranța maximă în serie din fișa modulului; Umax c.c. = minimul Umax_dc_V al invertoarelor; Iac,max din fișa invertorului / PCS. Cheile vechi `string.Uoc_V`, `string.beta`, `string.Umax_inv_V` rămân alias (`string.Voc_V`, `string.beta_Voc_pct_K`); explicitul din `string` are prioritate față de fișă. În texte se scrie **Voc**.
+   - Stringuri: `string` {n_module, n_stringuri_paralel (pe MPPT), n_MPPT, gpv (siguranțe pe string cerute oricum)}; fiecare grup poate avea `string` / `modul` propriu (calculul c.c. se face pe grup: `cc_grupuri`). gPV: de la 3 stringuri în paralel pe MPPT sau cu `string.gpv`.
+   - **V89 AVERTISMENT** (din fișe): Vmpp string la 70 °C < MPPT min; Vmpp STC > MPPT max; n·Isc > Isc max/MPPT; n·Impp > Idc max/MPPT; puterea din stringuri (module × stringuri × MPPT × Pmax) ≠ kWp declarat cu peste 5 %. INFO când stringul e în fereastra MPPT.
+   - Desen: FIECARE invertor e o ramură proprie (fără „× n”): câmpul PV (stringuri × MPPT, modelul modulului), conductorul de echipotențializare a ramelor (PE), siguranțele gPV (dacă rezultă), cutia de joncțiune (SB), separatorul de c.c. (sau „integrat în invertor”), SPD c.c., invertorul cu modelul, protecția și DDR-ul de c.a., cablul până la TGD-CF.
 
 ### C.4 Prosumator (mono/tri)
 - Prosumator = P invertor ≤ 400 kW pe loc de consum (Ord. ANRE 95/2022, se verifică la data proiectului). Peste → V70 BLOCANT „schema CEF”.
@@ -877,13 +884,13 @@ Fiecare rezultat de verificare are forma `{cod, nivel, obiect, mesaj, remediere}
 | V65 | QG < ΣIac | Ip_QG < ΣIac (cu PCS) | BLOCANT | „QG {x} A < Σ Iac invertoare + PCS = {y} A” | |
 | V66 | Racord JT al CEF | C.3 pct. 4; v1.2: racord prin BMPT cu Ip QG > 250 A (C.3 pct. 11) | BLOCANT/AV | „S = {x} kVA > 400 kVA la 0,4 kV fără PT propriu și fără ATR pentru racord JT” / „racord JT prin BMPT: Ip QG {x} A > In Q BMPTi-250” | PT propriu / racord din PT OD |
 | V67 | Trafo CEF sub S | Sn < S_total | BLOCANT | „Sn trafo {x} kVA < S invertoare+PCS {y} kVA” | |
-| V68 | Uoc(Tmin) | > Umax; v1.2: β_Uoc ≥ 0 sau < −1 %/K | BLOCANT | „Uoc la Tmin {x} V > Umax invertor {y} V” / „β_Uoc = {x} %/K neplauzibil” | mai puține module pe string / fișa modulului |
+| V68 | Voc(Tmin) | > Umax; v1.2: β(Voc) ≥ 0 sau < −1 %/K | BLOCANT | „Voc la Tmin {x} V > Umax invertor {y} V” / „β(Voc) = {x} %/K neplauzibil” | mai puține module pe string / fișa modulului |
 | V69 | gPV | interval vid sau lipsă la ≥ 3 stringuri | BLOCANT | „nu există gPV în [{a}; {b}] A” | |
 | V70 | Categorie RfG / prosumator | C.3 pct. 6; C.4 (prosumator > 400 kW) | INFO/AV/BLOCANT | „modul generator categoria {X}” | |
 | V71 | Invertor mono > 3,68 kW | | AVERTISMENT | „invertor monofazat {P} kW > 3,68 kW — verificați cerința OD” | trifazat |
 | V72 | Injecție > Q branșament | Iac,max > Ip_Q | AVERTISMENT | „Iac,max {x} A > Q branșament {y} A” | limitare injecție |
 | V73 | Tip DDR invertor | tip nedeclarat / AC | AVERTISMENT | „DDR tip A (sau B) pentru invertor” | |
-| V74 | SPD c.c. | Ucpv < Uoc(Tmin) | BLOCANT | „SPD c.c. Ucpv {x} V < Uoc,max {y} V” | |
+| V74 | SPD c.c. | Ucpv < Voc(Tmin) | BLOCANT | „SPD c.c. Ucpv {x} V < Voc,max {y} V” | |
 | V75 | PI citat greșit | CEF ne-prosumator cu notă „Ord. 228” | AVERTISMENT | „PI: pentru CEF ne-prosumator se aplică Ord. ANRE 208/2018 + ATR” | |
 | V80 | Listă ≠ desen | text listă ≠ șablon E din parametri | BLOCANT | „{ref}: lista „…” ≠ parametri „…”” | regenerare listă |
 | V81 | Notă ≠ model | valoare numerică din notă ≠ model | BLOCANT | „nota {k}: „…” ≠ model „…”” | regenerare note |
@@ -892,6 +899,7 @@ Fiecare rezultat de verificare are forma `{cod, nivel, obiect, mesaj, remediere}
 | V85 | GE: deconectare în regim generator | Ik1_GE < Ia | AVERTISMENT | „în regim GE Ik ≈ {x} A < Ia(Q_G) {y} A …” | DDR, 51V |
 | V86 | GE subdimensionat | Ib > In_G; v1.2: Ib > Ir Q_G (Ir ≤ In_G) | BLOCANT | „sarcina {x} A > In_G {y} A — GE minim {Sn} kVA” | GE din `GE_SN_KVA` ≥ P/cosφ |
 | V87 | ATS neconform | < 4 poli în TN-S / fără interblocaj | BLOCANT | „ATS …” | |
+| V89 | Compatibilitate modul–invertor (fișe) | v1.8: MPPT, Isc/Idc pe MPPT, kWp din stringuri | AVERTISMENT | „string {n} module: Vmpp la 70 °C ≈ {x} V < MPPT min {y} V” … | alt număr de module / stringuri |
 | V88 | CEF fără protecții c.c. | lipsă separator/SPD c.c. pe intrare | BLOCANT | „INV-{i}: lipsește {element} c.c.” | |
 | V90 | Ipoteze de calcul | totdeauna | INFO | lista din G.2 | |
 
@@ -963,7 +971,8 @@ Fiecare rezultat de verificare are forma `{cod, nivel, obiect, mesaj, remediere}
 | Trafo | `Transformator de putere {Sn} kVA, 20 ± 2×2,5 % / 0,4 kV, {grupa}` | `uk {uk} %, Pk ≤ {Pk} W, P0 ≤ {P0} W (Reg. UE 548/2014 Tier 2), ulei` | `{Sn} kVA · 20/0,4 kV · {grupa}` |
 | Celulă trafo (siguranțe) | `Celulă MT de transformator cu separator de sarcină și siguranțe MT {In} A` | `24 kV, SR EN 62271-105, CLP` | `24 kV · SF {In} A` |
 | Celulă trafo (întreruptor) | `Celulă MT de transformator cu întreruptor în vid 24 kV, 630 A, 16 kA` | `releu 50/51, 50N/51N, TC MT {raport}` | `24 kV · Q · F>` |
-| Invertor | `Invertor trifazat {Pn} kW c.a., 3 × 400 V, 50 Hz` | `Iac,max {Iac} A, PI integrată, certificat conform {Ord. 228 \| RfG}` | `{Pn} kW · 3 × 400 V` |
+| Invertor | `Invertor trifazat {Pn} kW c.a., 3 × 400 V, 50 Hz{ — producător model}` | `Iac,max {Iac} A{, Umax c.c. …, MPPT …, n MPPT, Idc,max …}, PI integrată, certificat conform {Ord. 228 \| RfG}` | `{Pn} kW · 3 × 400 V` + rândul cu modelul |
+| Câmp PV (v1.8) | `Câmp fotovoltaic {kWp} kWp{, N module producător model Pmax Wp}` | `{n} module/string × {s} stringuri/MPPT × {m} MPPT, Voc …, Isc …, Vmpp …, Impp …, β(Voc) …` | `{kWp} kWp` + modelul |
 | PCS | `Convertor bidirecțional BESS {Pn} kW` | `Iac,max {Iac} A, grid-forming/following` | `{Pn} kW` |
 | Baterie | `Baterie LiFePO₄ {kWh} kWh cu BMS` | — | `{kWh} kWh` |
 | ATS | `Comutator automat de sursă (ATS) 4P, {In} A, AC-33B` | `interblocaj mecanic + electric, SR EN 60947-6-1` | `ATS 4P · {In} A` |
@@ -1127,7 +1136,7 @@ Lista se scrie integral. Orice ipoteză implicită apare cu sufixul „(presupus
   - „(Pa = {Pa} kW din ATR)” apare doar dacă Pa este cunoscut (intrare `P_kW`). Altfel, cu Ir prezent, apare „(Pa din ATR)”.
   - La MCB, porțiunea cu Ir lipsește.
 - PT: „Trafo {Sn} kVA, In_T = {In_T} A; Q JT {tip} {In} A, Ir = {Ir} A; Ik3max bara TGJT = {Ik3} kA; celula trafo {…}.”
-- CEF: „Σ Pn = {P} kW, S = {S} kVA, categoria {X} RfG; PI conform {Ord. ANRE 228/2018 | Ord. ANRE 208/2018 și ATR}; Uoc(−25 °C) = {U} V ≤ {Umax} V.”
+- CEF: „Σ Pn = {P} kW, S = {S} kVA, categoria {X} RfG; PI conform {Ord. ANRE 228/2018 | Ord. ANRE 208/2018 și ATR}; Voc(−25 °C) = {U} V ≤ {Umax} V.”
 
 ### G.4 Tabelul de calcul de pe planșă (sau anexă de calcul)
 Pentru fiecare ramură se scrie un rând:
@@ -1195,7 +1204,7 @@ Lista completă e în `norme.NEVERIFICAT`. Se afișează în memoriu. Pe scurt:
 8. Seria TC și consumul contorului (0,5 VA).
 9. Seriile comerciale MCB/MCCB/ACB/Icu, gabaritele NH, seria gPV; Im = 10·In la TM.
 10. Denumirile C2XABY și ACYY.
-11. β_Uoc implicit −0,27 %/K.
+11. β_Voc implicit −0,27 %/K (se ia din fișa modulului când e dată).
 12. Pragurile RfG B/C și C/D.
 13. Pragul de 3,68 kW pentru invertoare monofazate.
 14. x"d GE.

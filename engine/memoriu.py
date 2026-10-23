@@ -223,8 +223,18 @@ ETICHETE = {
     "distanta_m": ("distanța între electrozi", "m"), "latime_m": ("lățime", "m"), "grosime_m": ("grosime", "m"),
     "adancime_m": ("adâncime", "m"), "R_limita_ohm": ("limita Rp", "Ω"), "sezon": ("zona climatică", ""),
     "psi": ("ψ electrozi", ""), "psi_platbanda": ("ψ platbandă", ""), "IdN_mA": ("IΔn", "mA"), "selectiv": ("tip S", ""),
-    "dt_s": ("temporizare Δt", "s"), "tip": ("tip", ""), "n_module": ("module pe string", ""), "Uoc_V": ("Uoc modul", "V"),
-    "Isc_A": ("Isc modul", "A"), "beta": ("β Uoc", "%/K"), "Umax_inv_V": ("Umax invertor", "V"),
+    "dt_s": ("temporizare Δt", "s"), "tip": ("tip", ""), "n_module": ("module pe string", ""), "Uoc_V": ("Voc modul", "V"),
+    "Isc_A": ("Isc modul", "A"), "beta": ("β(Voc)", "%/K"), "Umax_inv_V": ("Umax c.c. invertor", "V"),
+    # fișe tehnice (v1.8)
+    "modul": ("Modul PV (fișa tehnică)", ""), "invertor": ("Invertor (fișa tehnică)", ""),
+    "baterie": ("Baterie (fișa tehnică)", ""), "spd_cc": ("SPD c.c. (fișa tehnică)", ""), "gpv": ("Siguranțe gPV (fișa tehnică)", ""),
+    "producator": ("producător", ""), "model": ("model", ""), "Pmax_W": ("Pmax", "W"), "Voc_V": ("Voc", "V"),
+    "Vmpp_V": ("Vmpp", "V"), "Impp_A": ("Impp", "A"), "beta_Voc_pct_K": ("β(Voc)", "%/K"),
+    "Umax_sistem_V": ("Umax sistem", "V"), "Umax_modul_V": ("Umax sistem modul", "V"), "Umax_dc_V": ("Umax c.c.", "V"),
+    "MPPT_min_V": ("MPPT min", "V"), "MPPT_max_V": ("MPPT max", "V"), "Idc_max_A": ("Idc max / MPPT", "A"),
+    "Isc_max_A": ("Isc max / MPPT", "A"), "nr_MPPT": ("număr MPPT", ""), "Ucpv_V": ("Ucpv", "V"),
+    "U_nom_V": ("U nominală c.c.", "V"), "kWh_util": ("capacitate utilă", "kWh"), "chimie": ("chimie", ""),
+    "Iac_max_A_fisa": ("Iac,max", "A"),
     "n_stringuri_paralel": ("stringuri în paralel", ""), "I_rev_A": ("curent invers admis modul", "A"),
     "L_racord_m_pl": ("racord la piesa de separație", "m"), "nume": ("nume", ""), "receptor": ("receptor", ""),
 }
@@ -290,10 +300,14 @@ def genereaza_html(model, r):
         o.append(f"<tr><th style='width:35%'>{_e(_et(kk))}</th><td>{_e(_val(v, kk))}</td></tr>")
     o.append("</table>")
     if calc.get("invertoare"):
-        o.append("<table><tr><th>Grup invertoare</th><th>Număr</th><th>Pn [kW]</th><th>Iac,max [A]</th><th>L [m]</th>"
+        o.append("<table><tr><th>Grup invertoare</th><th>Model (fișa tehnică)</th><th>Număr</th><th>Pn [kW]</th><th>Iac,max [A]</th><th>L [m]</th>"
                  "<th>Cablu</th></tr>")
+        from .calc.fise import model_text
         for i, g in enumerate(calc["invertoare"], 1):
-            o.append(f"<tr><td>{i}</td><td class='n'>{_n(g.get('n', 1), 0)}</td><td class='n'>{_n(g.get('Pn_kW'))}</td>"
+            fis = {k: v for k, v in g.items() if k in ("Umax_dc_V", "MPPT_min_V", "MPPT_max_V", "nr_MPPT", "Idc_max_A", "Isc_max_A")}
+            mt = model_text(g)
+            o.append(f"<tr><td>{i}</td><td>{_e(mt or '—')}{('<br><small>' + _e(_val(fis)) + '</small>') if fis else ''}</td>"
+                     f"<td class='n'>{_n(g.get('n', 1), 0)}</td><td class='n'>{_n(g.get('Pn_kW'))}</td>"
                      f"<td class='n'>{_n(g.get('Iac_max_A')) if g.get('Iac_max_A') else '—'}</td>"
                      f"<td class='n'>{_n(g.get('L_m'), 0) if g.get('L_m') else '—'}</td>"
                      f"<td>{_e(_val(g.get('cablu'))) if g.get('cablu') else '—'}</td></tr>")

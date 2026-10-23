@@ -306,6 +306,41 @@ def _pt(inp, rz, m):
     return "post de transformare"
 
 
+# datele de fișă care trec în parametrii aparatelor (textul de pe desen și din listă), SPEC §E.3 v1.8
+FISA_MODEL = ("producator", "model")
+FISA_INVERTOR = FISA_MODEL + ("Umax_dc_V", "MPPT_min_V", "MPPT_max_V", "nr_MPPT", "Idc_max_A", "hibrid")
+FISA_MODUL = FISA_MODEL + ("Pmax_W", "Voc_V", "Isc_A", "Vmpp_V", "Impp_A", "beta_Voc_pct_K", "Umax_sistem_V")
+FISA_BATERIE = FISA_MODEL + ("chimie", "U_nom_V", "kWh_util")
+FISA_SPD_CC = FISA_MODEL + ("In_kA", "Imax_kA", "Up_kV")
+
+
+def _fisa(d, chei):
+    """parametrii de fișă prezenți (nenuli) ai unui echipament"""
+    return {k: d[k] for k in chei if isinstance(d, dict) and d.get(k) not in (None, "")}
+
+
+def _modul(inp):
+    st = inp.get("string") if isinstance(inp.get("string"), dict) else {}
+    return st.get("modul") if isinstance(st.get("modul"), dict) else inp.get("modul") if isinstance(inp.get("modul"), dict) else {}
+
+
+def _param_camp(inp, kwp, n, st=None, modul=None, n_mppt=None):
+    """parametrii câmpului PV (șablonul „camp_pv”): puterea, modulul din fișă, stringul (v1.8: și pe MPPT)"""
+    if st is None:
+        st = inp.get("string") if isinstance(inp.get("string"), dict) else {}
+    par = dict(_fisa(modul if modul is not None else _modul(inp), FISA_MODUL), kWp=kwp, buc=n)
+    if n_mppt and n_mppt > 1 and st.get("n_stringuri_paralel"):
+        par["n_MPPT"] = n_mppt
+    for k_st, k in (("Voc_V", "Voc_V"), ("Uoc_V", "Voc_V"), ("Isc_A", "Isc_A"), ("beta_Voc_pct_K", "beta_Voc_pct_K"), ("beta", "beta_Voc_pct_K")):
+        if st.get(k_st) is not None and k not in par and (par.get("model") or par.get("Pmax_W")):
+            par[k] = st[k_st]
+    if par.get("model") or par.get("Pmax_W"):
+        for k in ("n_module", "n_stringuri_paralel"):
+            if st.get(k):
+                par[k] = st[k]
+    return par
+
+
 def _cef(inp, rz, m):
     inv_r = rz.get("invertoare") or []
     st = inp.get("string") or {}
@@ -313,59 +348,77 @@ def _cef(inp, rz, m):
     n_inv = max(1, len(inv_r))
     intrari = []
     k = 0
+    # v1.8: FIECARE invertor e o ramură proprie (fără „× n” / „…”): câmpul PV cu stringurile lui pe MPPT, partea de
+    # c.c. completă (gPV pe string în cutia de joncțiune, separator, SPD c.c.), echipotențializarea ramelor, invertorul
+    # cu modelul din fișă, protecția și DDR-ul lui de c.a. și cablul până la bara TGD-CF
     inv_in = []
-    for grp in inp.get("invertoare") or []:
+    for gi, grp in enumerate(inp.get("invertoare") or []):
         for _ in range(int(grp.get("n", 1))):
-            inv_in.append(grp)
-    # invertoarele identice (aceeași putere, protecție și cablu) se desenează o singură dată, cu „× n” (practica uzuală)
-    grupuri = []
+            inv_in.append((gi, grp))
+    ccg = rz.get("cc_grupuri") or []
+    spd_f = inp.get("spd_cc") if isinstance(inp.get("spd_cc"), dict) else {}
     for i, r in enumerate(inv_r):
-        g = inv_in[i] if i < len(inv_in) else {}
-        cheie = (g.get("Pn_kW"), (r.get("protectie") or {}).get("In_A"), r.get("cablu"))
-        if grupuri and grupuri[-1][0] == cheie:
-            grupuri[-1][2].append(i)
-        else:
-            grupuri.append((cheie, r, [i], g))
-    for gi, (_, r, idx, g) in enumerate(grupuri):
-        n = len(idx); i = idx[0]
+        gi, g = inv_in[i] if i < len(inv_in) else (0, {})
+        k = i + 1
+        cc = ccg[gi] if gi < len(ccg) else {x: rz.get(x) for x in ("SPD_cc_Ucpv_V", "gPV_In_A", "Voc_Tmin_V")}
+        st_g = dict(st)
+        st_g.update(g.get("string") or {})
+        mod_g = g.get("modul") if isinstance(g.get("modul"), dict) else _modul(inp)
+        n_mppt = int(cc.get("n_MPPT") or 1)
+        nsp, nm, pm = st_g.get("n_stringuri_paralel"), st_g.get("n_module"), (mod_g or {}).get("Pmax_W")
+        n_str = int(nsp) * n_mppt if nsp else None
+        kwp_i = (nm * n_str * pm / 1000.0) if (nm and n_str and pm) else ((kwp / n_inv) if kwp else None)
         pn = g.get("Pn_kW")
-        kwp_i = (kwp / n_inv) if kwp else None
-        sfx = (lambda pre: f"{pre}{idx[0] + 1}…{idx[-1] + 1}") if n > 1 else (lambda pre: f"{pre}{i + 1}")
-        ap = [{"tip": "string_pv", "ref": sfx("PV"), "in_carcasa": False, "eticheta": f"× {n}" if n > 1 else "", "buc": n,
-               "spec": [f"{_f(kwp_i)}{NB}kWp" + (f" × {n}" if n > 1 else "") if kwp_i else "câmp PV"],
-               "lista": [f"Câmp fotovoltaic {_f(kwp_i)} kWp (module și stringuri conform plan PV)" if kwp_i else "Câmp fotovoltaic"]}]
-        if rz.get("gPV_In_A"):
-            ap.append(_ap("gpv", sfx("F") + ".1", "gpv", {"In_A": rz["gPV_In_A"], "U_V": 1100, "n": 2 * int(st.get("n_stringuri_paralel", 1))},
-                          in_carcasa=False, buc=n))
-        sep = {"tip": "separator_cc", "ref": sfx("S"), "in_carcasa": False, "buc": n, "spec": ["c.c. sub sarcină"],
-               "lista": ["Separator de c.c. sub sarcină pe intrarea MPPT (sau integrat în invertor)"],
-               "laterale": [{"tip": "spd_cc", "ref": sfx("F") + ".2", "buc": n,
-                             "param": {"sablon": "spd_cc", "Ucpv_V": rz.get("SPD_cc_Ucpv_V") or 1100}}]}
+        echipot = {"tip": "cutie", "ref": f"PE{k}", "eticheta": "PE", "legatura": "pe", "spec": ["echipot. rame"],
+                   "lista": ["Conductor de echipotențializare a ramelor modulelor și a structurii, FY 6 mm² Cu, galben-verde",
+                             "legat la bara PE a cutiei de joncțiune / priza de pământ (16 mm² dacă există IPT)"]}
+        ap = [_ap("string_pv", f"PV{k}", "camp_pv", _param_camp(inp, kwp_i, 1, st=st_g, modul=mod_g, n_mppt=n_mppt),
+                  in_carcasa=False, laterale=[echipot], eticheta="")]
+        integrat = bool(g.get("separator_cc_integrat"))
+        voc = cc.get("Voc_Tmin_V") or rz.get("Voc_Tmin_V")
+        u_gpv = 1000 if voc and voc <= 1000 else 1500 if voc and voc > 1100 else 1100
+        sb = {"tip": "cutie", "ref": f"SB{k}", "eticheta": "SB", "legatura": "grup", "spec": ["cutie de joncțiune"],
+              "lista": [f"Cutie de joncțiune c.c. (string box), IP65, {u_gpv} V c.c., câte una pe invertor",
+                        ("siguranțe gPV pe fiecare string (+ și −), " if cc.get("gPV_In_A") else "") +
+                        ("SPD c.c." if integrat else "separator de c.c. sub sarcină și SPD c.c.") + ", bară PE"]}
+        if cc.get("gPV_In_A"):
+            ap.append(_ap("gpv", f"F{k}.1", "gpv", dict(_fisa(inp.get("gpv"), FISA_MODEL), In_A=cc["gPV_In_A"], U_V=u_gpv,
+                                                          n=2 * (n_str or 1)),
+                          in_carcasa=False))
+        lat_spd = {"tip": "spd_cc", "ref": f"F{k}.2",
+                   "param": dict(_fisa(spd_f, FISA_SPD_CC + ("tip",)), sablon="spd_cc", Ucpv_V=cc.get("SPD_cc_Ucpv_V") or rz.get("SPD_cc_Ucpv_V") or 1100)}
+        if integrat:
+            sep = {"tip": "separator_cc", "ref": f"S{k}", "in_carcasa": False, "spec": ["c.c. integrat", "în invertor"],
+                   "lista": ["Separator de c.c. sub sarcină integrat în invertor (conform fișei tehnice)"],
+                   "laterale": [sb, lat_spd]}
+        else:
+            sep = {"tip": "separator_cc", "ref": f"S{k}", "in_carcasa": False, "spec": ["c.c. sub sarcină"],
+                   "lista": ["Separator de c.c. sub sarcină pe intrările MPPT" + (f" ({n_mppt} MPPT)" if n_mppt > 1 else ""),
+                             f"{u_gpv} V c.c., DC-PV2, SR EN 60947-3"],
+                   "laterale": [sb, lat_spd]}
         ap.append(sep)
-        par_inv = {"Pn_kW": pn, "Iac_max_A": r.get("Ib_A"), "certificare": "Ord. ANRE 208/2018 (RfG) + ATR"}
+        par_inv = dict(_fisa(g, FISA_INVERTOR), Pn_kW=pn, Iac_max_A=r.get("Ib_A"), certificare="Ord. ANRE 208/2018 (RfG) + ATR")
         if rz.get("retea") == "mono":
             par_inv["retea"] = "mono"
-        ap.append(_ap("invertor", sfx("INV-"), "invertor", par_inv, in_carcasa=False, buc=n))
-        q = _prot(r.get("protectie"), sfx("Q"), retea=rz.get("retea") or "tri")
+        ap.append(_ap("invertor", f"INV-{k}", "invertor", par_inv, in_carcasa=False))
+        q = _prot(r.get("protectie"), f"Q{k}", retea=rz.get("retea") or "tri")
         if q:
-            q["buc"] = n
             ap.append(q)
-        d = _ddr(r.get("DDR"), sfx("DDR"))
+        d = _ddr(r.get("DDR"), f"DDR{k}")
         if d:
-            d["buc"] = n
             ap.append(d)
-        cab = _cablu(r)
-        if n > 1 and cab.get("param"):
-            cab["param"]["buc_circuite"] = n
-            cab["text"] = f"{n} × [{cab['text']}]"
-        intrari.append({"sursa": {"titlu": f"CÂMP PV {idx[0] + 1}…{idx[-1] + 1}" if n > 1 else f"CÂMP PV {i + 1}",
-                                  "sub": (f"{n} invertoare × " if n > 1 else "invertor ") + f"{_f(pn)} kW"},
-                        "cablu": {"ref": "", "cond": "c.c.", "text": "H1Z2Z2-K"}, "cablu_ca": cab, "aparate": ap})
+        sub = (f"{n_mppt} MPPT × " if n_mppt > 1 else "") + (f"{nsp} str. × {nm} mod." if nsp and nm else
+                                                               f"{_f(kwp_i)} kWp" if kwp_i else "invertor " + f"{_f(pn)} kW")
+        intrari.append({"sursa": {"titlu": f"CÂMP PV {k}", "sub": sub},
+                        "cablu": {"ref": "", "cond": "c.c.", "text": "H1Z2Z2-K"}, "cablu_ca": _cablu(r), "aparate": ap})
     pcs = rz.get("PCS")
     if pcs:
         b = inp.get("bess") or {}
-        ap = [_ap("baterie", "BAT", "baterie", {"kWh": b.get("kWh")}, in_carcasa=False),
-              _ap("convertor_bess", "PCS", "pcs", {"Pn_kW": b.get("P_kW"), "Iac_max_A": pcs.get("Ib_A")}, in_carcasa=False)]
+        fb = b.get("baterie") if isinstance(b.get("baterie"), dict) else b       # fișa bateriei (sau a sistemului BESS)
+        fp = b.get("pcs") if isinstance(b.get("pcs"), dict) else b               # fișa PCS (sau a sistemului BESS)
+        ap = [_ap("baterie", "BAT", "baterie", dict(_fisa(fb, FISA_BATERIE), kWh=b.get("kWh")), in_carcasa=False),
+              _ap("convertor_bess", "PCS", "pcs", dict(_fisa(fp, FISA_INVERTOR), Pn_kW=b.get("P_kW"), Iac_max_A=pcs.get("Ib_A")),
+                  in_carcasa=False)]
         q = _prot(pcs.get("protectie"), "QB")
         if q:
             ap.append(q)
@@ -454,6 +507,76 @@ def _prosumator(inp, rz, m):
     m["carcasa"] = {"titlu": "TE", "sub": "tablou electric consumator · prosumator"}
     m["cartus"]["denumire2"] = f"PROSUMATOR {_f(pn)} kW {'MONOFAZAT' if mono else 'TRIFAZAT'}"
     return "prosumator"
+
+
+def _din_fise(intrare):
+    """copie a intrării cu cheile de calcul completate din fișe (Pn invertor, hibrid) — pentru texte și titluri"""
+    if intrare.get("tip_schema") != "prosumator" or not isinstance(intrare.get("invertor"), dict):
+        return intrare
+    d = copy.deepcopy(intrare)
+    inv = d["invertor"]
+    if d.get("Pn_inv_kW") is None and inv.get("Pn_kW") is not None:
+        d["Pn_inv_kW"] = inv["Pn_kW"]
+    if inv.get("hibrid") or isinstance(d.get("baterie"), dict) or isinstance(d.get("bess"), dict):
+        d["hibrid"] = True
+    return d
+
+
+def _modele_prosumator(inp, rz, m):
+    """v1.8: modelele din fișele tehnice pe aparatele de intrare ale prosumatorului (câmp PV, SPD c.c., baterie,
+    invertor). Rulează DUPĂ `_prosumator` (care rămâne neschimbat): aparatele cu fișă trec pe șabloanele E.3."""
+    mono = inp.get("retea") == "mono"
+    inv = inp.get("invertor") if isinstance(inp.get("invertor"), dict) else {}
+    bat = inp.get("baterie") if isinstance(inp.get("baterie"), dict) else inp.get("bess") if isinstance(inp.get("bess"), dict) else {}
+    hibrid = bool(inp.get("hibrid") or inv.get("hibrid") or bat)
+    for b in m.get("intrari") or []:
+        apl = b.get("aparate") or []
+        if bat and not any(a.get("tip") == "baterie" for a in apl):
+            i = next((k for k, a in enumerate(apl) if a.get("tip") == "invertor"), len(apl))
+            apl.insert(i, {"tip": "baterie", "ref": "BAT", "in_carcasa": False, "spec": ["c.c."],
+                           "lista": ["Baterie cuplată în c.c. la invertorul hibrid, cu BMS"]})
+        # partea de c.c. completă (ca la CEF): echipotențializarea ramelor, gPV pe string (dacă rezultă din calcul),
+        # cutia de joncțiune, separatorul (sau „integrat în invertor”, după fișă)
+        st = inp.get("string") if isinstance(inp.get("string"), dict) else {}
+        for k_, a in enumerate(list(apl)):
+            if a.get("tip") == "string_pv":
+                a["eticheta"] = ""
+                a.setdefault("laterale", []).append(
+                    {"tip": "cutie", "ref": "PE", "eticheta": "PE", "legatura": "pe", "spec": ["echipot. rame"],
+                     "lista": ["Conductor de echipotențializare a ramelor modulelor și a structurii, FY 6 mm² Cu, galben-verde",
+                               "legat la bara PE a cutiei de joncțiune / priza de pământ (16 mm² dacă există IPT)"]})
+                if rz.get("gPV_In_A"):
+                    ns = int(st.get("n_stringuri_paralel") or 1) * int(st.get("n_MPPT") or 1)
+                    apl.insert(k_ + 1, _ap("gpv", "F1.1", "gpv", dict(_fisa(inp.get("gpv"), FISA_MODEL), In_A=rz["gPV_In_A"],
+                                                                       U_V=1000 if (rz.get("Voc_Tmin_V") or 0) <= 1000 else 1100, n=2 * ns),
+                                           in_carcasa=False))
+            elif a.get("tip") == "separator_cc":
+                if inv.get("separator_cc_integrat"):
+                    a["spec"] = ["c.c. integrat", "în invertor"]
+                    a["lista"] = ["Separator de c.c. sub sarcină integrat în invertor (conform fișei tehnice)"]
+                a.setdefault("laterale", []).insert(0, {
+                    "tip": "cutie", "ref": "SB", "eticheta": "SB", "legatura": "grup", "spec": ["cutie de joncțiune"],
+                    "lista": ["Cutie de joncțiune c.c. (string box), IP65, 1000 V c.c., câte una pe invertor",
+                              ("siguranțe gPV pe fiecare string (+ și −), " if rz.get("gPV_In_A") else "") + "separator de c.c. și SPD c.c., bară PE"]})
+        for a in apl:
+            t = a.get("tip")
+            if t == "string_pv":
+                par = _param_camp(inp, inp.get("kWp"), 1)
+                if par.get("model") or par.get("Pmax_W"):
+                    a["param"] = dict(par, sablon="camp_pv")
+            elif t == "invertor" and _fisa(inv, FISA_INVERTOR):
+                a["param"] = dict(_fisa(inv, FISA_INVERTOR), sablon="invertor", Pn_kW=inp.get("Pn_inv_kW") or inv.get("Pn_kW"),
+                                  Iac_max_A=rz.get("Iac_max_A"), certificare="Ord. ANRE 228/2018",
+                                  retea="mono" if mono else "tri", hibrid=hibrid or None)
+            elif t == "baterie" and _fisa(bat, FISA_BATERIE):
+                a["param"] = dict(_fisa(bat, FISA_BATERIE), sablon="baterie", kWh=bat.get("kWh") or inp.get("baterie_kWh"))
+            for l in a.get("laterale") or []:
+                if l.get("tip") == "spd_cc" and isinstance(l.get("param"), dict):
+                    if rz.get("SPD_cc_Ucpv_V") and not inp.get("Ucpv_V"):
+                        l["param"]["Ucpv_V"] = rz["SPD_cc_Ucpv_V"]
+                    l["param"].update(_fisa(inp.get("spd_cc"), FISA_SPD_CC))
+            if isinstance(a.get("param"), dict):
+                a["param"] = {k: v for k, v in a["param"].items() if v is not None}
 
 
 def _ge(inp, rz, m):
@@ -942,7 +1065,10 @@ def genereaza(intrare, cartus=None, format_="A3", pastreaza=None):
     rz = r.get("rezultat") or {}
     if tip in CONSTRUCTORI and rz and not (r.get("blocheaza_export") and not _are_structura(tip, rz)):
         try:
-            CONSTRUCTORI[tip](intrare, rz, m)
+            intr_c = _din_fise(intrare)
+            CONSTRUCTORI[tip](intr_c, rz, m)
+            if tip == "prosumator":
+                _modele_prosumator(intr_c, rz, m)
         except Exception as e:      # nu blocăm aplicația: schema rămâne goală, validatorul raportează
             m.update({"intrari": [], "plecari": [], "bara": {"afisare": False}})
             r.setdefault("verificari", []).append({"cod": "V00", "nivel": "BLOCANT", "obiect": "schema",

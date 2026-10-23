@@ -635,7 +635,8 @@ class Layout:
             t = l["tip"]
             w = LAT_W.get(t, 20); cx = lx + 8 + w / 2
             comanda = l.get("legatura") == "comanda"
-            lay = "COMANDA" if comanda else "MASURA"
+            # v1.8: „pe” = conductor de echipotențializare (verde, fără săgeată); „grup” = aparatul face parte din cutia laterală
+            lay = "COMANDA" if comanda else {"pe": "PE", "grup": "CARCASA"}.get(l.get("legatura"), "MASURA")
             xe = lx + 8 - 0.5 if t != "fuzibil" else cx - w / 2
             lb = self._lat_bbox(cx, yc, l)
             if comanda:
@@ -644,7 +645,8 @@ class Layout:
                 self.meta["legaturi"].append({"tip": "comanda", "de": l.get("ref") or l.get("eticheta", ""), "spre": a.get("ref", ""),
                                               "de_xy": (xe, src[1]), "spre_xy": src, "sageata": src, "de_bbox": lb, "spre_bbox": sym_bb})
             else:
-                c.line(pin, (xe, pin[1]), lay); c.arrow((xe, pin[1]), "right", 2.2, lay)
+                c.line(pin, (xe, pin[1]), lay)
+                if lay == "MASURA": c.arrow((xe, pin[1]), "right", 2.2, lay)
                 self.meta["legaturi"].append({"tip": "masura", "de": a.get("ref", ""), "spre": l.get("ref") or l.get("eticheta", ""),
                                               "lateral": t, "aparat_tip": tip, "de_xy": pin, "spre_xy": (xe, pin[1]), "sageata": (xe, pin[1])})
             self._place_lateral(cx, yc, l)

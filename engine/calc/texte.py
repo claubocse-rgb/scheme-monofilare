@@ -10,6 +10,7 @@ Modelul stochează doar parametri; textele se regenerează la fiecare randare (S
     verifica_aparat(ref, tip, parametri, text_lista, text_desen) → V80          (SPEC §E.1 pct. 3, §D)
     verifica_nota(k, text, text_model)  → V81                                    (SPEC §E.1 pct. 4, §D)
 """
+import math
 import re
 
 from . import norme
@@ -230,13 +231,38 @@ def _sabloane(tip, p):
                 f"SPD {tipd} {PUNCT} {poli}")
     if t == "spd_cc":
         u = _g(p, "Ucpv_V")
-        return (f"Descărcător SPD c.c. tip 2, Ucpv {_u(u, 'V')}", f"In 20{NB}kA (8/20), SR EN 61643-31",
-                f"SPD c.c. {PUNCT} {_u(u, 'V')}")
+        car = (f"In {_u(_g(p, 'In_kA', implicit=20), 'kA')} (8/20)"
+               + (f", Imax {_u(p['Imax_kA'], 'kA')}" if p.get("Imax_kA") is not None else "")
+               + (f", Up ≤ {_u(p['Up_kV'], 'kV')}" if p.get("Up_kV") is not None else "") + ", SR EN 61643-31")
+        tipd = "1+2" if "1" in str(p.get("tip") or "") else "2"
+        return (_cu_model(f"Descărcător SPD c.c. tip {tipd}, Ucpv {_u(u, 'V')}", p), car,
+                f"SPD c.c.{' T1+T2' if tipd == '1+2' else ''} {PUNCT} {_u(u, 'V')}")
     if t == "gpv":
         u = _g(p, "U_V", implicit=1100)
         n = _g(p, "n", "buc", implicit=2)
-        return (f"Siguranță fuzibilă gPV {_u(In, 'A')}, 10{X}38{NB}mm, {_u(u, 'V')} c.c.",
+        return (_cu_model(f"Siguranță fuzibilă gPV {_u(In, 'A')}, 10{X}38{NB}mm, {_u(u, 'V')} c.c.", p),
                 f"SR EN 60269-6 — {fmt_ro(n)} buc. (+ și −)", f"gPV {_u(In, 'A')}")
+    if t == "camp_pv":
+        kwp = _g(p, "kWp")
+        n = _g(p, "buc", implicit=1)
+        den = f"Câmp fotovoltaic {_u(kwp, 'kWp')}" if kwp is not None else "Câmp fotovoltaic"
+        desen = (f"{_u(kwp, 'kWp')}" + (f" {X} {fmt_ro(n)}" if n and n > 1 else "")) if kwp is not None else "câmp PV"
+        if not _model_text(p) and p.get("Pmax_W") is None:
+            return den + " (module și stringuri conform plan PV)", "—", desen
+        pm = p.get("Pmax_W")
+        nm = math.ceil(kwp * 1000.0 / pm - 1e-6) if kwp and pm else None
+        den += ", " + (f"{fmt_ro(nm)} module " if nm else "module ") + (_model_text(p) or "fotovoltaice") \
+            + (f" {_u(pm, 'Wp')}" if pm else "")
+        car = []
+        if p.get("n_module"):
+            car.append(f"{fmt_ro(p['n_module'])} module/string" + (f" {X} {fmt_ro(p['n_stringuri_paralel'])} stringuri"
+                                                                  if p.get("n_stringuri_paralel") else "")
+                       + (f"/MPPT {X} {fmt_ro(p['n_MPPT'])} MPPT" if p.get("n_MPPT") and p.get("n_stringuri_paralel") else ""))
+        for k, et, um in (("Voc_V", "Voc", "V"), ("Isc_A", "Isc", "A"), ("Vmpp_V", "Vmpp", "V"), ("Impp_A", "Impp", "A"),
+                          ("beta_Voc_pct_K", "β(Voc)", "%/K"), ("Umax_sistem_V", "Umax sistem", "V")):
+            if p.get(k) is not None:
+                car.append(f"{et} {_u(p[k], um, 3 if k.startswith('beta') else 2)}")
+        return den, ", ".join(car) or "module și stringuri conform plan PV", desen
     if t == "cablu":
         txt = text_cablu(_g(p, "material", implicit="Cu"), _g(p, "izolatie", implicit="PVC"),
                          _g(p, "metoda", implicit="C"), _g(p, "n_paralel", "n", implicit=1),
@@ -273,20 +299,25 @@ def _sabloane(tip, p):
     if t == "invertor":
         pn = _g(p, "Pn_kW")
         cert = _g(p, "certificare", implicit="RfG")
+        hib = "hibrid " if p.get("hibrid") else ""
+        car = f"Iac,max {_u(_g(p, 'Iac_max_A', 'Iac_A'), 'A')}" + _car_fisa_invertor(p) + f", PI integrată, certificat conform {cert}"
         if _g(p, "retea", implicit="tri") == "mono":
-            return (f"Invertor monofazat {_u(pn, 'kW')} c.a., 1 {X} 230{NB}V, 50{NB}Hz",
-                    f"Iac,max {_u(_g(p, 'Iac_max_A', 'Iac_A'), 'A')}, PI integrată, certificat conform {cert}",
+            return (_cu_model(f"Invertor monofazat {hib}{_u(pn, 'kW')} c.a., 1 {X} 230{NB}V, 50{NB}Hz", p), car,
                     f"{_u(pn, 'kW')} {PUNCT} 1 {X} 230{NB}V")
-        return (f"Invertor trifazat {_u(pn, 'kW')} c.a., 3 {X} 400{NB}V, 50{NB}Hz",
-                f"Iac,max {_u(_g(p, 'Iac_max_A', 'Iac_A'), 'A')}, PI integrată, certificat conform {cert}",
+        return (_cu_model(f"Invertor trifazat {hib}{_u(pn, 'kW')} c.a., 3 {X} 400{NB}V, 50{NB}Hz", p), car,
                 f"{_u(pn, 'kW')} {PUNCT} 3 {X} 400{NB}V")
     if t == "pcs":
         pn = _g(p, "Pn_kW", "P_kW")
-        return (f"Convertor bidirecțional BESS {_u(pn, 'kW')}",
-                f"Iac,max {_u(_g(p, 'Iac_max_A', 'Iac_A'), 'A')}, grid-forming/following", f"{_u(pn, 'kW')}")
+        return (_cu_model(f"Convertor bidirecțional BESS {_u(pn, 'kW')}", p),
+                f"Iac,max {_u(_g(p, 'Iac_max_A', 'Iac_A'), 'A')}" + _car_fisa_invertor(p) + ", grid-forming/following",
+                f"{_u(pn, 'kW')}")
     if t == "baterie":
         kwh = _g(p, "kWh")
-        return f"Baterie LiFePO₄ {_u(kwh, 'kWh')} cu BMS", "—", f"{_u(kwh, 'kWh')}"
+        chim = _g(p, "chimie", implicit="LiFePO₄")
+        car = ", ".join(x for x in (f"U nominală {_u(p['U_nom_V'], 'V')} c.c." if p.get("U_nom_V") is not None else "",
+                                    f"capacitate utilă {_u(p['kWh_util'], 'kWh')}" if p.get("kWh_util") is not None else "",
+                                    f"Pmax {_u(p['P_kW'], 'kW')}" if p.get("P_kW") is not None and _model_text(p) else "") if x)
+        return _cu_model(f"Baterie {chim} {_u(kwh, 'kWh')} cu BMS", p), car or "—", f"{_u(kwh, 'kWh')}"
     if t == "ats":
         return (f"Comutator automat de sursă (ATS) 4P, {_u(In, 'A')}, AC-33B",
                 "interblocaj mecanic + electric, SR EN 60947-6-1", f"ATS 4P {PUNCT} {_u(In, 'A')}")
@@ -300,6 +331,47 @@ def _sabloane(tip, p):
         return (f"Sistem de bare Cu {conf}, {_u(_g(p, 'In_bara_A', 'In_A'), 'A')}",
                 f"Icw ≥ {_u(_g(p, 'Ik3_kA'), 'kA')}/1{NB}s", f"{_u(_g(p, 'In_bara_A', 'In_A'), 'A')}")
     raise ValueError(f"tip de aparat necunoscut pentru șabloanele E.3: {tip!r}")
+
+
+def _model_text(p):
+    """„Producător Model” din parametri (fără dublarea producătorului dacă modelul îl conține deja)."""
+    pr = str((p or {}).get("producator") or "").strip()
+    mo = str((p or {}).get("model") or "").strip()
+    if pr and mo.lower().startswith(pr.lower()):
+        pr = ""
+    return " ".join(x for x in (pr, mo) if x)
+
+
+def _cu_model(den, p):
+    """Denumirea din listă + modelul echipamentului (fișa tehnică): „Invertor … — Huawei SUN2000-100KTL-M2”."""
+    mt = _model_text(p)
+    return f"{den} — {mt}" if mt else den
+
+
+def _car_fisa_invertor(p):
+    """Caracteristicile din fișa invertorului / PCS (doar cele date): Umax c.c., MPPT, nr. MPPT, Idc,max."""
+    out = []
+    if p.get("Umax_dc_V") is not None:
+        out.append(f"Umax c.c. {_u(p['Umax_dc_V'], 'V')}")
+    if p.get("MPPT_min_V") is not None and p.get("MPPT_max_V") is not None:
+        out.append(f"MPPT {fmt_ro(p['MPPT_min_V'])}…{_u(p['MPPT_max_V'], 'V')}")
+    if p.get("nr_MPPT") is not None:
+        out.append(f"{fmt_ro(p['nr_MPPT'])} MPPT")
+    if p.get("Idc_max_A") is not None:
+        out.append(f"Idc,max {_u(p['Idc_max_A'], 'A')}/MPPT")
+    return "".join(", " + x for x in out)
+
+
+# tipurile la care modelul (fișa) apare și pe desen, pe un rând separat sub caracteristici
+TIPURI_CU_MODEL = ("invertor", "pcs", "baterie", "camp_pv", "spd_cc", "gpv")
+
+
+def model_scurt(p, max_lat=30):
+    """modelul pentru textul de lângă simbol (scurt: fără producător dacă nu încape)"""
+    mt = _model_text(p)
+    if len(mt) > max_lat:
+        mt = str((p or {}).get("model") or mt).strip()
+    return mt if len(mt) <= max_lat else mt[:max_lat - 1] + "…"
 
 
 def gabarit_nh(In):
@@ -340,7 +412,11 @@ def text_desen(tip, parametri):
     Rândurile unite cu „ · ” reproduc exact șablonul E.3."""
     _, _, d = _sabloane(tip, parametri)
     # `lat_desen`: lățimea maximă a rândului (caractere) — coloane înguste la tablourile cu multe circuite (locuințe)
-    return _pe_randuri(d, max_lat=int((parametri or {}).get("lat_desen") or 30))
+    lat = int((parametri or {}).get("lat_desen") or 30)
+    if _normalizeaza_tip(tip) in TIPURI_CU_MODEL and _model_text(parametri):
+        # modelul din fișă: ultimul rând de lângă simbol (scurt); lista îl are complet
+        return _pe_randuri(d, max_lat=lat, max_randuri=2) + [model_scurt(parametri, lat)]
+    return _pe_randuri(d, max_lat=lat)
 
 
 def tip_cablu(material, izolatie, metoda):
@@ -473,7 +549,7 @@ def note_generate(rezultat):
         txt = (f"Σ Pn = {_u(s['Pn_total_kW'], 'kW')}, S = {_u(s['S_total_kVA'], 'kVA')}, categoria "
                f"{r.get('categorie_RfG', 'A')} RfG; PI conform {pi}")
         if r.get("Uoc_Tmin_V") is not None:
-            txt += (f"; Uoc(−25{NB}°C) = {_u(r['Uoc_Tmin_V'], 'V', 1)} ≤ "
+            txt += (f"; Voc(−25{NB}°C) = {_u(r['Uoc_Tmin_V'], 'V', 1)} ≤ "
                     f"{_u(r.get('Umax_inv_V', norme.PV_UMAX_INVERTOR_IMPLICIT_V), 'V')}")
         note.append(txt + ".")
     return note

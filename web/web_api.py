@@ -7,7 +7,7 @@ os.makedirs(os.environ["SM_DATE"], exist_ok=True)
 sys.path.insert(0, "/app")
 import app  # noqa: E402
 
-FISIERE_DATE = ("preturi.json", "profile.json")
+FISIERE_DATE = ("preturi.json", "profile.json", "echipamente.json")
 
 
 class WebH(app.H):

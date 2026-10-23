@@ -340,6 +340,18 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .pp-card.bad .st{background:var(--danger)}
 .pp-card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0 0;font-size:var(--fs-sm)}
 .pp-card dt{color:var(--ink-3)}.pp-card dd{margin:0}
+.ech{margin:6px 0 8px;padding:8px 10px;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface)}
+.ech-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.ech-row>label{font-weight:600;min-width:96px}
+.ech-row input[type=text]{flex:1 1 220px;min-width:0}
+.ech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2);margin-bottom:var(--s2)}
+.ech-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px}
+.ech-dlg{background:var(--surface);color:var(--ink);border-radius:var(--r-lg,12px);box-shadow:var(--shadow-pop);width:min(900px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column}
+.ech-dlg h3{margin:0;padding:14px 18px 6px}.ech-body{overflow:auto;padding:4px 18px}.ech-acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--rule)}
+.ech-tab{display:grid;grid-template-columns:minmax(140px,1.2fr) minmax(90px,.8fr) auto minmax(0,2.2fr);gap:4px 10px;align-items:center;margin:8px 0;font-size:var(--fs-sm)}
+.ech-tab .h,.ech-tab .r{display:contents}.ech-tab .h span{font-weight:600;color:var(--ink-3)}
+.ech-tab .r.gol label{color:var(--ink-3)}.ech-tab .src{color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:var(--fs-xs)}
+.ech-txt{max-height:220px;overflow:auto;font-size:11px;background:var(--sunk,#f6f6f4);padding:8px;white-space:pre-wrap}
+@media (max-width:640px){.ech-tab{grid-template-columns:1fr 1fr}.ech-tab .src{grid-column:1/-1}.ech-tab .h{display:none}}
 #exp-menu .mblock{margin:4px 6px 6px;padding:8px 10px;border-radius:var(--r-sm);background:var(--danger-soft);color:var(--danger);font-size:var(--fs-sm)}
 #exp-menu .mblock button{all:unset;cursor:pointer;text-decoration:underline;font-weight:600;margin-left:4px}
 #exp-menu [data-exp][aria-disabled="true"]{color:var(--ink-3)}
@@ -1221,22 +1233,41 @@ function tabCalc(root) {
       cf(c, 'racord_Icu_kA', 'Icu Q existent [kA]', { num: true, id: 'c-icutg' }), el('div')));
     c.invertoare = c.invertoare || [];
     const li = el('div', { class: 'stack' }, el('div', { class: 'label-line' }, 'Invertoare'));
-    c.invertoare.forEach((iv, i) => li.append(el('div', { class: 'g4' }, cf(iv, 'n', 'Bucăți', { num: true, id: `c-inv${i}n` }), cf(iv, 'Pn_kW', 'Pn [kW]', { num: true, id: `c-inv${i}p` }),
-      cf(iv, 'L_m', 'Cablu c.a. [m]', { num: true, ph: '30', id: `c-inv${i}l` }),
-      el('div', { class: 'fld', style: 'justify-content:flex-end' }, el('button', { class: 'btn ghost sm danger', type: 'button', onclick: () => { pushHistory(); c.invertoare.splice(i, 1); scheduleRegen(0); render(); } }, 'Șterge')))));
+    c.invertoare.forEach((iv, i) => {
+      li.append(el('div', { class: 'g4' }, cf(iv, 'n', 'Bucăți', { num: true, id: `c-inv${i}n` }), cf(iv, 'Pn_kW', 'Pn [kW]', { num: true, id: `c-inv${i}p` }),
+        cf(iv, 'L_m', 'Cablu c.a. [m]', { num: true, ph: '30', id: `c-inv${i}l` }),
+        el('div', { class: 'fld', style: 'justify-content:flex-end' }, el('button', { class: 'btn ghost sm danger', type: 'button', onclick: () => { pushHistory(); c.invertoare.splice(i, 1); scheduleRegen(0); render(); } }, 'Șterge'))));
+      li.append(echipUI(iv, 'invertor', `Invertor ${c.invertoare.length > 1 ? 'grup ' + (i + 1) : ''}`.trim(), `c-inv${i}e`));
+      // stringurile proprii ale grupului (dacă diferă de stringul comun de mai jos)
+      const tmp = Object.assign({}, iv.string || {});
+      const setS = () => { const cl = Object.fromEntries(Object.entries(tmp).filter(([, v]) => v != null && v !== '')); if (Object.keys(cl).length) iv.string = cl; else delete iv.string; scheduleRegen(); };
+      li.append(el('details', { class: 'adv', open: iv.string ? true : null }, el('summary', {}, 'Stringurile acestui grup (dacă diferă de cele comune)'),
+        el('div', { class: 'g3e' }, field(tmp, 'n_module', 'Module / string', { num: true, always: true, id: `c-inv${i}snm`, onChange: setS }),
+          field(tmp, 'n_stringuri_paralel', 'Stringuri / MPPT', { num: true, always: true, id: `c-inv${i}snp`, onChange: setS }),
+          field(tmp, 'n_MPPT', 'MPPT folosite', { num: true, always: true, ph: iv.nr_MPPT ? String(iv.nr_MPPT) : '1', id: `c-inv${i}smp`, onChange: setS }))));
+    });
     li.append(el('button', { class: 'btn-add', type: 'button', html: ICON.plus + 'Grup de invertoare', onclick: () => { pushHistory(); c.invertoare.push({ n: 1, Pn_kW: 50 }); render(); scheduleRegen(0); } }));
     g.append(li);
     const hasB = !!c.bess;
     g.append(field({ v: hasB }, 'v', 'Are stocare BESS', { always: true, bool: true, id: 'c-hasb', onChange: () => { pushHistory(); if (c.bess) delete c.bess; else c.bess = { P_kW: 50, kWh: 100 }; render(); scheduleRegen(0); } }));
-    if (hasB) g.append(g2(cf(c.bess, 'P_kW', 'PCS [kW]', { num: true, id: 'c-bp' }), cf(c.bess, 'kWh', 'Capacitate [kWh]', { num: true, id: 'c-bk' })));
-    c.string = c.string || {};
-    g.append(el('details', { class: 'adv' }, el('summary', {}, 'Stringuri (verificare Uoc, gPV, SPD c.c.)'),
-      g3e(cf(c.string, 'n_module', 'Module / string', { num: true, id: 'c-snm' }), cf(c.string, 'Uoc_V', 'Uoc modul [V]', { num: true, id: 'c-suoc' }), cf(c.string, 'beta', 'β Uoc [%/K]', { num: true, ph: '-0,27', id: 'c-sb' })),
-      g3e(cf(c.string, 'Umax_inv_V', 'Umax invertor [V]', { num: true, ph: '1100', id: 'c-sum' }), cf(c.string, 'n_stringuri_paralel', 'Stringuri în paralel', { num: true, id: 'c-snp' }), cf(c.string, 'Isc_A', 'Isc [A]', { num: true, id: 'c-sisc' })),
-      g2(cf(c.string, 'I_rev_A', 'Curent invers modul [A]', { num: true, id: 'c-sir' }), el('div'))));
+    if (hasB) { g.append(g2(cf(c.bess, 'P_kW', 'PCS [kW]', { num: true, id: 'c-bp' }), cf(c.bess, 'kWh', 'Capacitate [kWh]', { num: true, id: 'c-bk' })));
+      g.append(echipUI(c.bess, 'bess', 'BESS / PCS', 'c-bese')); }
+    c.modul = c.modul || {};
+    g.append(el('div', { class: 'label-line' }, 'Module PV și partea de c.c.'), echipUI(c.modul, 'modul_pv', 'Modul PV', 'c-mode'));
+    g.append(stringUI(c, true));
+    c.spd_cc = c.spd_cc || {};
+    g.append(el('details', { class: 'adv' }, el('summary', {}, 'Modelele protecțiilor de c.c. (SPD c.c., siguranțe gPV)'),
+      echipUI(c.spd_cc, 'spd_cc', 'SPD c.c.', 'c-spde'), echipUI(c.gpv = c.gpv || {}, 'gpv', 'Siguranțe gPV', 'c-gpve')));
   } else if (tip === 'prosumator') {
     g.append(g3e(cf(c, 'Pn_inv_kW', 'Invertor Pn [kW]', { num: true, id: 'c-pinv' }), cf(c, 'In_Q_bransament_A', 'Q branșament existent [A]', { num: true, id: 'c-qb' }),
       el('div', { class: 'fld', style: 'justify-content:flex-end' }, cf(c, 'hibrid', 'Invertor hibrid (baterie)', { bool: true, deleteFalse: true, id: 'c-hib' }))));
+    c.invertor = c.invertor || {};
+    g.append(el('div', { class: 'label-line' }, 'Echipamente (fișe tehnice)'),
+      echipUI(c.invertor, 'invertor', 'Invertor', 'c-pinve', e => { if (e.Pn_kW != null) c.Pn_inv_kW = e.Pn_kW; if (e.hibrid) c.hibrid = true; }));
+    c.modul = c.modul || {};
+    g.append(echipUI(c.modul, 'modul_pv', 'Modul PV', 'c-mode'));
+    if (c.hibrid) g.append(echipUI(c.baterie = c.baterie || {}, 'bess', 'Baterie', 'c-bate'));
+    g.append(stringUI(c, false));
   } else if (tip === 'ge_ats') {
     g.append(g2(cf(c, 'Sn_GE_kVA', 'Grup electrogen Sn [kVA]', { num: true, id: 'c-sge' }), cf(c, 'P_sarcina_kW', 'Sarcina [kW]', { num: true, id: 'c-psa' })));
   }
@@ -1276,6 +1307,147 @@ function tabCalc(root) {
     pp.append(el('div', { id: 'pp-res' })); setTimeout(ppRes, 0);
   }
   root.append(pp);
+}
+/* =========================================================================== echipamente: catalog, fișe tehnice (modele pe planșă) */
+let ECH = { echipamente: [], tipuri: {}, campuri: {}, claude: false };
+async function incarcaEchipamente() { try { const r = await (await fetch('/api/echipamente')).json(); if (r && r.echipamente) ECH = r; } catch { } }
+const ECH_TEXT = ['producator', 'model'];
+const ECH_EXTRA = { invertor: ['retea', 'hibrid', 'separator_cc_integrat'], bess: ['chimie'], spd_cc: ['tip'] };
+const echNume = e => [e.producator, e.model].filter(Boolean).join(' ').trim() || '';
+const echChei = tip => [...ECH_TEXT, ...Object.keys(ECH.campuri[tip] || {}), ...(ECH_EXTRA[tip] || [])];
+/** copiază datele de fișă în obiectul de intrare (șterge mai întâi datele de fișă vechi; păstrează n, L_m, cablu, string) */
+const ECH_DIMENSIONARE = ['Pn_kW', 'P_kW', 'kWh'];     // puterea / capacitatea alese de proiectant rămân dacă fișa nu le dă
+function aplicaFisa(obj, e, tip) {
+  for (const k of echChei(tip)) if (!(ECH_DIMENSIONARE.includes(k) && e[k] == null)) delete obj[k];
+  for (const k of echChei(tip)) if (e[k] !== undefined && e[k] !== null && e[k] !== '') obj[k] = e[k];
+}
+const ECH_NIV = { 'ridicată': 'ok', 'medie': 'a', 'scăzută': 'b' };
+/** rândul unui echipament: alegere din catalog (căutare), import din fișă PDF, completare manuală, salvare în catalog */
+function echipUI(obj, tip, eticheta, idp, dupaAplicare) {
+  const dlId = 'ech-dl-' + tip;
+  if (!document.getElementById(dlId)) document.body.append(el('datalist', { id: dlId }));
+  const dl = document.getElementById(dlId); dl.innerHTML = '';
+  ECH.echipamente.filter(e => e.tip === tip).forEach(e => dl.append(el('option', { value: echNume(e) }, Object.entries(ECH.campuri[tip] || {}).filter(([k]) => e[k] != null).slice(0, 3).map(([k, [l, u]]) => `${l} ${numRO(e[k])} ${u}`).join(' · '))));
+  const inp = el('input', { type: 'text', id: idp + '-cauta', list: dlId, autocomplete: 'off', placeholder: 'caută în catalog sau scrie modelul', value: echNume(obj), 'aria-label': `${eticheta}: model din catalog` });
+  const aplica = (e) => { pushHistory(); aplicaFisa(obj, e, tip); if (dupaAplicare) dupaAplicare(e); setTimeout(() => { render(); scheduleRegen(0); }, 0); };
+  inp.addEventListener('change', () => {
+    const v = inp.value.trim(); const e = ECH.echipamente.find(x => x.tip === tip && echNume(x).toLowerCase() === v.toLowerCase());
+    if (e) { aplica(e); toast(`${eticheta}: ${echNume(e)} — datele de fișă trec în calcul, pe planșă și în listă.`); }
+    else { pushHistory(); if (v) obj.model = v; else { for (const k of echChei(tip)) delete obj[k]; } setTimeout(() => { render(); scheduleRegen(0); }, 0); }
+  });
+  const fileIn = el('input', { type: 'file', accept: '.pdf,application/pdf,.txt', hidden: true, id: idp + '-pdf' });
+  fileIn.addEventListener('change', async () => { const f = fileIn.files[0]; fileIn.value = ''; if (f) importaFisa(await f.arrayBuffer(), tip, eticheta, aplica); });
+  const salv = async () => {
+    const e = {}; for (const k of echChei(tip)) if (obj[k] !== undefined) e[k] = obj[k];
+    if (!e.model) return toast('Scrie întâi modelul (și datele de fișă), apoi salvează-l în catalog.', { kind: 'warn' });
+    await salveazaEchipament(Object.assign(e, { tip }));
+  };
+  const nr = Object.keys(ECH.campuri[tip] || {}).filter(k => obj[k] != null).length;
+  const det = el('details', { class: 'adv ech-det' }, el('summary', {}, `Date de fișă ${nr ? `(${nr} completate)` : '(manual)'}`),
+    el('div', { class: 'g3e' }, cf(obj, 'producator', 'Producător', { id: idp + '-prod' }), cf(obj, 'model', 'Model', { id: idp + '-model' }), el('div')),
+    el('div', { class: 'ech-grid' }, ...Object.entries(ECH.campuri[tip] || {}).map(([k, [l, u]]) => cf(obj, k, `${l}${u ? ' [' + u + ']' : ''}`, { num: true, id: `${idp}-${k}` }))),
+    tip === 'invertor' ? el('div', { class: 'g3e' }, cf(obj, 'separator_cc_integrat', 'Separator c.c. integrat în invertor', { bool: true, deleteFalse: true, id: idp + '-sepint' }), cf(obj, 'hibrid', 'Invertor hibrid', { bool: true, deleteFalse: true, id: idp + '-hib' }), el('div')) : '',
+    tip === 'spd_cc' ? el('div', { class: 'g3e' }, cf(obj, 'tip', 'Tip SPD c.c.', { select: [['', 'tip 2'], ['T1+T2', 'tip 1+2']], id: idp + '-tipspd' }), el('div'), el('div')) : '');
+  return el('div', { class: 'ech', 'data-ech': tip },
+    el('div', { class: 'ech-row' }, el('label', { for: idp + '-cauta' }, eticheta), inp,
+      el('button', { class: 'btn sm', type: 'button', id: idp + '-imp', title: 'Citește valorile din fișa tehnică PDF; le confirmi înainte de folosire', onclick: () => fileIn.click() }, 'Importă fișă PDF'),
+      el('button', { class: 'btn ghost sm', type: 'button', title: 'Pentru fișele scanate sau copiate din browser: lipește textul fișei', onclick: () => lipesteTextFisa(tip, eticheta, aplica) }, 'Lipește text'),
+      el('button', { class: 'btn ghost sm', type: 'button', id: idp + '-salv', onclick: salv }, 'Salvează în catalog'), fileIn),
+    det);
+}
+async function salveazaEchipament(e) {
+  try {
+    const r = await (await fetch('/api/echipamente', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ echipament: e }) })).json();
+    if (r.eroare) throw new Error(r.eroare);
+    ECH = Object.assign(ECH, r); toast(`Am salvat ${echNume(e)} în catalogul de echipamente (${ECH.echipamente.length} în total).`);
+    return true;
+  } catch (err) { toast('Echipamentul nu a putut fi salvat: ' + err.message, { kind: 'err', ms: 10000 }); return false; }
+}
+async function importaFisa(corp, tip, eticheta, aplica) {
+  toast('Citesc fișa tehnică…', { ms: 2500 });
+  try {
+    const r = await (await fetch('/api/echipamente/import', { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: corp })).json();
+    if (r.eroare) throw new Error(r.eroare);
+    dialogFisa(r, tip, eticheta, aplica);
+  } catch (err) { toast('Fișa nu a putut fi citită: ' + err.message, { kind: 'err', ms: 12000 }); }
+}
+function lipesteTextFisa(tip, eticheta, aplica) {
+  const ta = el('textarea', { rows: 14, style: 'width:100%;font:13px/1.4 ui-monospace,monospace', placeholder: 'Lipește aici textul fișei tehnice (tabelul cu datele electrice)…', 'aria-label': 'Textul fișei tehnice' });
+  const ov = modalFisa(`${eticheta}: textul fișei tehnice`, [ta], [
+    el('button', { class: 'btn sm', type: 'button', onclick: () => ov.remove() }, 'Anulează'),
+    el('button', { class: 'btn pri sm', type: 'button', onclick: () => { const t = ta.value.trim(); if (!t) return ta.focus(); ov.remove(); importaFisa(new TextEncoder().encode(t), tip, eticheta, aplica); } }, 'Citește valorile')]);
+  ta.focus();
+}
+function modalFisa(titlu, corp, butoane) {
+  const ov = el('div', { class: 'ech-ov', role: 'dialog', 'aria-modal': 'true', 'aria-label': titlu },
+    el('div', { class: 'ech-dlg' }, el('h3', {}, titlu), el('div', { class: 'ech-body' }, ...corp), el('div', { class: 'ech-acts' }, ...butoane)));
+  ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
+  document.body.append(ov); return ov;
+}
+/** confirmarea valorilor extrase din fișă: varianta (coloana), câmpurile cu nivelul de încredere, corectură manuală */
+function dialogFisa(r, tip, eticheta, aplica) {
+  const st = { v: r.implicit || 0, producator: r.producator || '', vals: {} };
+  const tipR = r.tip;
+  const umple = () => { const v = r.variante[st.v] || { campuri: {} }; st.model = v.model || ''; st.vals = {}; for (const [k, c] of Object.entries(v.campuri)) st.vals[k] = c.valoare; };
+  umple();
+  const corp = el('div');
+  const deseneaza = () => {
+    corp.innerHTML = '';
+    const v = r.variante[st.v] || { campuri: {} };
+    corp.append(el('p', { class: 'desc' }, `Text extras cu ${r.motor === 'pypdf' ? 'pypdf' : r.motor === 'stdlib' ? 'extractorul intern' : r.motor === 'claude' ? 'Claude' : 'textul lipit'} (${r.caractere ?? '—'} caractere). Verifică fiecare valoare cu fișa — nimic nu intră în calcul până nu confirmi.`));
+    if (tipR && tipR !== tip) corp.append(el('p', { class: 'msg warn' }, `Fișa pare de tip „${ECH.tipuri[tipR] || tipR}”, dar o folosești pentru „${ECH.tipuri[tip] || tip}”. Verifică fișierul.`));
+    (r.avertismente || []).forEach(a => corp.append(el('p', { class: 'msg warn' }, a)));
+    const pr = el('input', { type: 'text', value: st.producator, id: 'ef-prod' }); pr.addEventListener('input', () => st.producator = pr.value);
+    const mo = el('input', { type: 'text', value: st.model, id: 'ef-model' }); mo.addEventListener('input', () => st.model = mo.value);
+    const row = [el('div', { class: 'fld' }, el('label', { for: 'ef-prod' }, 'Producător'), pr), el('div', { class: 'fld' }, el('label', { for: 'ef-model' }, 'Model'), mo)];
+    if (r.variante.length > 1) {
+      const sel = el('select', { id: 'ef-var' }); r.variante.forEach((x, i) => sel.append(el('option', { value: i }, x.eticheta)));
+      sel.value = st.v; sel.addEventListener('change', () => { st.v = +sel.value; umple(); deseneaza(); });
+      row.unshift(el('div', { class: 'fld' }, el('label', { for: 'ef-var' }, `Varianta (coloana din fișă, ${r.variante.length})`), sel));
+    }
+    corp.append(el('div', { class: 'g3e' }, ...row));
+    const tb = el('div', { class: 'ech-tab' }, el('div', { class: 'h' }, el('span', {}, 'Mărime'), el('span', {}, 'Valoare'), el('span', {}, 'Încredere'), el('span', {}, 'Rândul din fișă')));
+    for (const [k, [l, u]] of Object.entries(ECH.campuri[tip] || {})) {
+      const c = v.campuri[k];
+      const i = el('input', { type: 'text', inputmode: 'decimal', id: 'ef-' + k, value: st.vals[k] == null ? '' : numRO(st.vals[k]), 'aria-label': `${l} ${u}` });
+      i.addEventListener('input', () => { const x = parseRO(i.value); if (i.value.trim() === '') delete st.vals[k]; else if (x === null) { i.setAttribute('aria-invalid', 'true'); return; } else st.vals[k] = x; i.removeAttribute('aria-invalid'); });
+      tb.append(el('div', { class: 'r' + (c ? '' : ' gol') }, el('label', { for: 'ef-' + k }, `${l}${u ? ' [' + u + ']' : ''}`), i,
+        el('span', { class: 'vbadge ' + (c ? ECH_NIV[c.incredere] || 'm' : 'm') }, c ? c.incredere : 'negăsit'), el('span', { class: 'src', title: c ? c.sursa : '' }, c ? c.sursa : '')));
+    }
+    corp.append(tb);
+    for (const k of ['retea', 'hibrid', 'chimie']) if (v.campuri[k]) { st.vals[k] = v.campuri[k].valoare; corp.append(el('p', { class: 'hint' }, `${k === 'retea' ? 'Rețea' : k === 'hibrid' ? 'Hibrid' : 'Chimie'}: ${v.campuri[k].valoare === true ? 'da' : v.campuri[k].valoare} (${v.campuri[k].incredere})`)); }
+    if (r.text) corp.append(el('details', { class: 'adv' }, el('summary', {}, 'Textul extras din fișă'), el('pre', { class: 'ech-txt' }, r.text.slice(0, 6000))));
+  };
+  deseneaza();
+  const fisa = () => Object.assign({ tip, producator: st.producator.trim(), model: (st.model || '').trim() }, st.vals);
+  const folosi = async (salv) => {
+    const e = fisa();
+    if (!e.model) { document.getElementById('ef-model')?.focus(); return toast('Scrie modelul echipamentului.', { kind: 'warn' }); }
+    if (salv && !(await salveazaEchipament(e))) return;
+    ov.remove(); aplica(e); toast(`${eticheta}: ${echNume(e)} — apare pe planșă și în lista de echipamente.`);
+  };
+  const acts = [el('button', { class: 'btn sm', type: 'button', onclick: () => ov.remove() }, 'Anulează')];
+  if (ECH.claude && r.text) acts.push(el('button', { class: 'btn ghost sm', type: 'button', onclick: async (ev) => {
+    ev.target.disabled = true; ev.target.textContent = 'Claude citește fișa…';
+    try { const x = await (await fetch('/api/echipamente/rafineaza', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: r.text, tip }) })).json();
+      if (x.eroare) throw new Error(x.eroare); Object.assign(r, x, { text: r.text, caractere: r.caractere }); st.v = 0; st.producator = x.producator || st.producator; umple(); deseneaza(); }
+    catch (err) { toast(err.message, { kind: 'err' }); } ev.target.disabled = false; ev.target.textContent = 'Rafinează cu Claude'; } }, 'Rafinează cu Claude'));
+  acts.push(el('button', { class: 'btn sm', type: 'button', id: 'ef-folosi', onclick: () => folosi(false) }, 'Folosește în proiect'),
+    el('button', { class: 'btn pri sm', type: 'button', id: 'ef-salveaza', onclick: () => folosi(true) }, 'Folosește și salvează în catalog'));
+  const ov = modalFisa(`${eticheta}: confirmă datele din fișa tehnică`, [corp], acts);
+  ov.querySelector('select,input')?.focus();
+}
+/** stringul comun (Voc la Tmin, gPV, SPD c.c., fereastra MPPT): valorile goale se iau din fișa modulului / invertorului */
+function stringUI(c, cef) {
+  c.string = c.string || {};
+  const m = c.modul || {};
+  const ph = (k, d) => m[k] != null ? numRO(m[k]) + ' (fișă)' : d;
+  return el('details', { class: 'adv', open: (c.string.n_module || m.model) ? true : null }, el('summary', {}, 'Stringuri (verificare Voc la −25 °C, gPV, SPD c.c., MPPT)'),
+    g3e(cf(c.string, 'n_module', 'Module / string', { num: true, id: 'c-snm' }), cf(c.string, 'Uoc_V', 'Voc modul [V]', { num: true, ph: ph('Voc_V', ''), id: 'c-suoc' }), cf(c.string, 'beta', 'β(Voc) [%/K]', { num: true, ph: ph('beta_Voc_pct_K', '-0,27'), id: 'c-sb' })),
+    g3e(cf(c.string, 'Umax_inv_V', 'Umax c.c. invertor [V]', { num: true, ph: 'din fișă / 1100', id: 'c-sum' }), cf(c.string, 'n_stringuri_paralel', 'Stringuri / MPPT', { num: true, id: 'c-snp' }), cf(c.string, 'Isc_A', 'Isc modul [A]', { num: true, ph: ph('Isc_A', ''), id: 'c-sisc' })),
+    g3e(cf(c.string, 'I_rev_A', 'Siguranță max. în serie [A]', { num: true, ph: ph('I_rev_A', ''), id: 'c-sir' }), cf(c.string, 'n_MPPT', 'MPPT folosite / invertor', { num: true, ph: 'din fișă', id: 'c-smp' }),
+      el('div', { class: 'fld', style: 'justify-content:flex-end' }, cf(c.string, 'gpv', 'Siguranțe gPV pe fiecare string', { bool: true, deleteFalse: true, id: 'c-sgpv' }))),
+    el('p', { class: 'hint' }, 'Valorile goale se iau din fișa modulului și a invertorului. gPV se pun automat de la 3 stringuri în paralel pe MPPT.'));
 }
 const TRAFO_SN = [100, 160, 250, 400, 630, 800, 1000, 1250, 1600, 2000, 2500];
 function plecariUI(c) {
@@ -2333,6 +2505,7 @@ function initChrome() {
     const [sy, pr, inf, sb] = await Promise.all([fetch('/api/symbols').then(r => r.json()), fetch('/api/presets').then(r => r.json()), fetch('/api/info').then(r => r.json()).catch(() => ({})), fetch('/api/sabloane').then(r => r.json())]);
     sy.forEach(s => SYMBOLS[s.cheie] = s); PRESETS = pr; INFO = inf; SABLOANE = sb;
     await incarcaProfile();
+    await incarcaEchipamente();
     if (window.SM_WEB) {          // versiunea web: fără Chrome pe server → fără PDF; DXF vine arhivat (.zip)
       document.querySelector('#exp-menu [data-exp=pdf]')?.remove();
       document.querySelectorAll('#exp-menu [data-exp=memoriu] span').forEach(n => n.firstChild.textContent = 'Memoriu de calcul (.html)');

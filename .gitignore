@@ -1,10 +1,9 @@
-*.mp4
-*.pyc
-*.tgz
-*.xlsx
-.DS_Store
-.claude/
 __pycache__/
-/date/
+*.pyc
+.DS_Store
 out/
+.claude/
+*.xlsx
+date/
+*.mp4
 web/vendor/

@@ -17,6 +17,7 @@ from .ramura import calculeaza_ramura, valideaza
 from . import cabluri as cb
 from . import ddr as ddr_mod
 from . import pamant
+from . import fise
 from .texte import fmt_ro, NB, X, note_generate, verifica_aparat, verifica_nota, nota_bransament, nota_schema_pamant
 from .verificari import emite, BLOCANT, AVERTISMENT, INFO
 
@@ -124,6 +125,11 @@ CAMPURI_NUMERICE = {
     "dU_origine_pct": (">=0", "V07"), "IdN_amonte_mA": (">0", "V07"),
     "L_racord_m": (">0", "V09"), "racord_In_Q_A": (">0", "V07"), "Ik3_TG_kA": (">0", "V07"),
     "racord_Icu_kA": (">0", "V07"), "P_aprobata_kW": (">0", "V07"),
+    # fișe tehnice (modul PV, invertor, BESS, SPD c.c.) — v1.8
+    "Voc_V": (">0", "V07"), "Pmax_W": (">0", "V07"), "Vmpp_V": (">0", "V07"), "Impp_A": (">0", "V07"),
+    "beta_Voc_pct_K": ("num", "V07"), "Umax_sistem_V": (">0", "V07"), "Umax_dc_V": (">0", "V07"),
+    "MPPT_min_V": (">0", "V07"), "MPPT_max_V": (">0", "V07"), "Idc_max_A": (">0", "V07"), "Isc_max_A": (">0", "V07"),
+    "nr_MPPT": ("int>=1", "V07"), "n_MPPT": ("int>=1", "V07"), "Ucpv_V": (">0", "V07"),
 }
 TEXT_CONDITIE = {">0": "trebuie > 0", ">=0": "trebuie ≥ 0", "(0,1]": "trebuie în intervalul (0; 1]",
                  "[0,100]": "trebuie în intervalul [0; 100] %", "int>=1": "trebuie număr întreg ≥ 1",
@@ -365,13 +371,19 @@ def _valideaza_intrare(inp, j, tip):
             emite(j, "V07", BLOCANT, "schema", "param", camp="Zb_OD_ohm", x=repr(zb),
                   conditie="impedanța buclei OD trebuie > 0 (modul |Z| sau pereche (R, X) cu R, X ≥ 0)")
             return False
-    for k in ("cablu", "cablu_inv", "cablu_pcs", "cablu_C0", "string", "bess"):
+    for k in ("cablu", "cablu_inv", "cablu_pcs", "cablu_C0", "string", "bess", "modul", "invertor", "baterie", "spd_cc", "gpv"):
         d = inp.get(k)
         if d is not None:
             if not isinstance(d, dict) or not _valideaza_dict(d, j, "schema" if k != "string" else "string"):
                 if not isinstance(d, dict):
                     emite(j, "V07", BLOCANT, "schema", "param", camp=k, x=repr(d), conditie="se așteaptă un obiect")
                 return False
+            if k == "string" and d.get("modul") is not None:
+                if not isinstance(d["modul"], dict) or not _valideaza_dict(d["modul"], j, "string"):
+                    if not isinstance(d["modul"], dict):
+                        emite(j, "V07", BLOCANT, "string", "param", camp="string.modul", x=repr(d["modul"]),
+                              conditie="se așteaptă un obiect")
+                    return False
     for g in inp.get("invertoare") or []:
         if not isinstance(g, dict) or not _valideaza_dict(g, j, "schema"):
             if not isinstance(g, dict):
@@ -380,6 +392,12 @@ def _valideaza_intrare(inp, j, tip):
         if g.get("Pn_kW") is None:
             emite(j, "V07", BLOCANT, "schema", "lipsa")
             return False
+        for kk in ("string", "modul"):          # v1.8: stringul / modulul propriu al grupului
+            d = g.get(kk)
+            if d is not None and (not isinstance(d, dict) or not _valideaza_dict(d, j, "string")):
+                if not isinstance(d, dict):
+                    emite(j, "V07", BLOCANT, "schema", "param", camp=f"invertoare[].{kk}", x=repr(d), conditie="se așteaptă un obiect")
+                return False
         gc = g.get("cablu")
         if gc is not None and (not isinstance(gc, dict) or not _valideaza_dict(gc, j, "schema", sari=("L",))):
             if not isinstance(gc, dict):
@@ -1198,6 +1216,8 @@ def schema_cef(inp, j):
     partea de c.c. (Uoc la Tmin, gPV, SPD c.c.). v1.2: Iac,max din fișă verificat (V64), S_total = max(√3·U·ΣIac; ΣPn),
     CEF monofazat calculat la 230 V (C3), racord prin BMPT verificat față de Q BMPT (M4), β_Uoc > 0 → V68 (C9)."""
     rez = {}
+    st_original = copy.deepcopy(inp.get("string")) if isinstance(inp.get("string"), dict) else None
+    fise.aplica(inp, j, "cef")
     retea = inp.get("retea") or "tri"
     mono = retea == "mono"
     U = u_calcul(retea)
@@ -1465,20 +1485,65 @@ def schema_cef(inp, j):
             rez["TC"] = f"3 {X} {p}/5{NB}A, cl. 0,5S"
             rez["TC_primar_A"] = p
 
-    # c.c. (pct. 9)
+    # c.c. (pct. 9) — stringul comun (`string`) și, v1.8, stringurile / modulele proprii ale grupurilor de invertoare
+    grupuri = [g for g in inp.get("invertoare") or [] if isinstance(g, dict)]
+    proprii = [i for i, g in enumerate(grupuri) if isinstance(g.get("string"), dict) or isinstance(g.get("modul"), dict)]
+    ok = _parte_cc(dict(inp, invertoare=[g for i, g in enumerate(grupuri) if i not in proprii]), j, rez, "cef")
+    cc = []
+    for i, g in enumerate(grupuri):
+        if i in proprii:
+            st_g = dict(st_original or {})
+            st_g.update(g.get("string") or {})
+            tmp = {"string": st_g, "invertoare": [g], "modul": g.get("modul") if isinstance(g.get("modul"), dict) else inp.get("modul")}
+            fise.aplica(tmp, j, "cef")
+            sub = {}
+            ok = _parte_cc(tmp, j, sub, "cef", obiect=f"grup INV {i + 1}") and ok
+        else:
+            st_g, sub = inp.get("string") or {}, {k: rez[k] for k in ("Voc_Tmin_V", "Umax_inv_V", "SPD_cc_Ucpv_V", "gPV_In_A") if k in rez}
+        sub.pop("Uoc_Tmin_V", None)
+        n_mppt = st_g.get("n_MPPT") or (g.get("nr_MPPT") if st_g.get("n_stringuri_paralel") else None) or 1
+        sub.update({k: st_g[k] for k in ("n_module", "n_stringuri_paralel") if st_g.get(k) is not None}, n_MPPT=int(n_mppt))
+        cc.append(sub)
+    if cc:
+        rez["cc_grupuri"] = cc
+        # v1.8: puterea c.c. din stringuri (module × stringuri × MPPT × Pmax din fișă) față de kWp declarat
+        kwp_s, complet = 0.0, True
+        for g, c_ in zip(grupuri, cc):
+            md = g.get("modul") if isinstance(g.get("modul"), dict) else (fise.modul_din(inp) or {})
+            if c_.get("n_module") and c_.get("n_stringuri_paralel") and md.get("Pmax_W"):
+                kwp_s += int(g.get("n", 1)) * c_["n_module"] * c_["n_stringuri_paralel"] * c_["n_MPPT"] * md["Pmax_W"] / 1000.0
+            else:
+                complet = False
+        if complet and kwp_s > 0:
+            rez["kWp_stringuri"] = kwp_s
+            if inp.get("kWp") and abs(kwp_s - float(inp["kWp"])) > 0.05 * float(inp["kWp"]):
+                emite(j, "V89", AVERTISMENT, "schema", "kwp", x=round(kwp_s, 2), y=inp["kWp"])
+        if "Uoc_Tmin_V" not in rez and any(c.get("Voc_Tmin_V") for c in cc):
+            w = max((c for c in cc if c.get("Voc_Tmin_V")), key=lambda c: c["Voc_Tmin_V"])
+            rez["Uoc_Tmin_V"] = rez["Voc_Tmin_V"] = w["Voc_Tmin_V"]
+            rez["Umax_inv_V"] = w.get("Umax_inv_V")
+    if not ok:
+        return rez
+    _nota_spl(rez, inp, "cef")
+    return rez
+
+
+def _parte_cc(inp, j, rez, tip, obiect="schema"):
+    """SPEC §C.3 pct. 9: partea de c.c. a stringului — Voc la Tmin (V68), SPD c.c. (V74), gPV (V69) — și, din fișele
+    modulului și invertorului, fereastra MPPT și curentul pe intrare (V89). Întoarce False dacă schema se oprește."""
     st = inp.get("string")
     if st:
         beta = st.get("beta")
         if beta is None:
             beta = norme.PV_BETA_UOC_IMPLICIT_PCT_K
-            j.presupune("β_Uoc = −0,27 %/K (tipic c-Si)")
+            j.presupune("β(Voc) = −0,27 %/K (tipic c-Si)")
         elif not lt(float(beta), 0.0) or lt(float(beta), -1.0):
             # C9 (v1.2): β_Uoc ≥ 0 (sau < −1 %/K) e neplauzibil — nu se ia în modul, se cere fișa corectă
-            emite(j, "V68", BLOCANT, "schema", "beta", x=float(beta))
-            return rez
+            emite(j, "V68", BLOCANT, obiect, "beta", x=float(beta))
+            return False
         if st.get("n_module") is None or st.get("Uoc_V") is None:
-            emite(j, "V07", BLOCANT, "string", "param", camp="n_module / Uoc_V", x="—", conditie="lipsesc datele stringului")
-            return rez
+            emite(j, "V07", BLOCANT, "string" if obiect == "schema" else obiect, "param", camp="n_module / Voc_V", x="—", conditie="lipsesc datele stringului")
+            return False
         umax = st.get("Umax_inv_V")
         if umax is None:
             umax = norme.PV_UMAX_INVERTOR_IMPLICIT_V
@@ -1487,24 +1552,26 @@ def schema_cef(inp, j):
         uoc = st["n_module"] * st["Uoc_V"] * (1 + beta / 100.0 * (tmin - 25.0))
         rez["Uoc_Tmin_V"] = uoc
         rez["Umax_inv_V"] = umax
-        j.pas(f"Uoc(−25 °C) = {st['n_module']}·{fmt_ro(st['Uoc_V'])}·[1 + ({fmt_ro(beta)}/100)·(−25 − 25)] = "
+        rez["Voc_Tmin_V"] = uoc
+        j.pas(f"Voc(−25 °C) = {st['n_module']}·{fmt_ro(st['Uoc_V'])}·[1 + ({fmt_ro(beta)}/100)·(−25 − 25)] = "
               f"{fmt_ro(uoc, 1)} V")
         lim_u = min(umax, st.get("Umax_modul_V") or umax)
         if gt(uoc, lim_u):
-            emite(j, "V68", BLOCANT, "schema", "B", x=round(uoc, 1), y=lim_u)
+            emite(j, "V68", BLOCANT, obiect, "B", x=round(uoc, 1), y=lim_u)
         else:
-            emite(j, "V68", INFO, "schema", "INFO", x=round(uoc, 1), y=lim_u)
+            emite(j, "V68", INFO, obiect, "INFO", x=round(uoc, 1), y=lim_u)
         ucpv = prima_din_serie(norme.SPD_CC_UCPV_V, uoc)
         if ucpv is None:
-            emite(j, "V74", BLOCANT, "schema", x=max(norme.SPD_CC_UCPV_V), y=round(uoc, 1))
+            emite(j, "V74", BLOCANT, obiect, x=max(norme.SPD_CC_UCPV_V), y=round(uoc, 1))
         else:
             rez["SPD_cc_Ucpv_V"] = ucpv
         ns = st.get("n_stringuri_paralel", 1)
-        if ns >= norme.GPV_NECESAR_DE_LA_STRINGURI:
+        # gPV obligatorii de la 3 stringuri în paralel; `string.gpv: true` = siguranțe pe string cerute oricum (fișa invertorului)
+        if ns >= norme.GPV_NECESAR_DE_LA_STRINGURI or st.get("gpv"):
             isc = st.get("Isc_A")
             if isc is None:
-                emite(j, "V69", BLOCANT, "schema", a="—", b="— (lipsește Isc_STC)")
-                return rez
+                emite(j, "V69", BLOCANT, obiect, a="—", b="— (lipsește Isc_STC)")
+                return False
             a = norme.GPV_IN_MIN_FACTOR * isc
             b = norme.GPV_IN_MAX_FACTOR * isc
             if st.get("I_rev_A") is not None:
@@ -1513,11 +1580,11 @@ def schema_cef(inp, j):
             j.pas(f"gPV: 1,5·Isc = {fmt_ro(a)} ≤ In ≤ min(2,4·Isc; Irev) = {fmt_ro(b)} → "
                   f"{fmt_ro(cand[0]) + ' A' if cand else '—'}")
             if not cand:
-                emite(j, "V69", BLOCANT, "schema", a=a, b=b)
+                emite(j, "V69", BLOCANT, obiect, a=a, b=b)
             else:
                 rez["gPV_In_A"] = cand[0]
-    _nota_spl(rez, inp, "cef")
-    return rez
+        fise.verifica_mppt(inp, j, tip, beta)
+    return True
 
 
 # ============================================================================================================
@@ -1526,6 +1593,7 @@ def schema_cef(inp, j):
 def schema_prosumator(inp, j):
     """SPEC §C.4: prosumator mono/tri — limite (400 kW, 40 A mono, 3,68 kW), ramura invertorului, V72, V73."""
     rez = {}
+    fise.aplica(inp, j, "prosumator")
     retea = inp.get("retea") or "tri"
     U = u_calcul(retea)
     if inp.get("Pn_inv_kW") is None:
@@ -1534,7 +1602,8 @@ def schema_prosumator(inp, j):
     pn = float(inp["Pn_inv_kW"])
     iac = inp.get("Iac_max_A") or norme.FACTOR_SMAX_INVERTOR * pn * 1000.0 / U
     rez["Iac_max_A"] = iac
-    j.pas(f"Iac,max = 1,1·{fmt_ro(pn)}·1000/{'(√3·400)' if retea == 'tri' else '230'} = {fmt_ro(iac)} A")
+    if inp.get("Iac_max_A") is None:
+        j.pas(f"Iac,max = 1,1·{fmt_ro(pn)}·1000/{'(√3·400)' if retea == 'tri' else '230'} = {fmt_ro(iac)} A")
     if gt(pn, norme.PROSUMATOR_P_MAX_KW):
         emite(j, "V70", BLOCANT, "schema", "B")
         return rez
@@ -1584,6 +1653,9 @@ def schema_prosumator(inp, j):
         else:
             emite(j, "V72", INFO, "schema", "INFO", x=iac, y=inq)
     emite(j, "V73", AVERTISMENT, "schema")
+    # v1.8: partea de c.c. (Voc la Tmin, SPD c.c., MPPT) când stringul e descris
+    if not _parte_cc(inp, j, rez, "prosumator"):
+        return rez
     _nota_spl(rez, inp, "prosumator")
     return rez
 

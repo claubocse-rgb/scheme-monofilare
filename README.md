@@ -74,14 +74,35 @@ Schemele se generează din **calcul**, nu se desenează de mână:
   Pachetul este blocat, ca orice export, dacă schema are erori blocante.
 * **Profilele de firmă** (tab-ul Proiect) se salvează sub nume, în `date/profile.json`, deci poți avea mai multe firme. Profilul *implicit* se aplică automat pe fiecare schemă nouă.
 
+## Echipamente din fișe tehnice (module, invertoare, BESS, SPD c.c., gPV)
+
+* **Pe planșă și în listă:** la CEF și prosumator, fiecare echipament poate avea producătorul și modelul (tab-ul *Calcul*,
+  rândurile „Invertor”, „Modul PV”, „BESS / PCS”, „SPD c.c.”, „Siguranțe gPV”). Modelul apare scurt lângă simbol și complet
+  în lista de echipamente (denumire — model, caracteristici din fișă), în BOM și în deviz (prețul se leagă de model).
+* **Fiecare invertor e desenat separat** (fără „× n”), cu câmpul PV / stringurile lui pe MPPT, gPV pe string (când rezultă),
+  cutia de joncțiune, separatorul de c.c. (sau „integrat în invertor”), SPD c.c., echipotențializarea ramelor, protecția și
+  DDR-ul de c.a. și cablul până la TGD-CF.
+* **Datele de fișă intră în calcul** în locul presupunerilor: Voc / Isc / β(Voc) / siguranța maximă în serie (modul), Umax c.c.,
+  fereastra MPPT, Isc / Idc pe MPPT, Iac,max (invertor / PCS). Verificări noi: V89 (MPPT, curent pe MPPT, kWp din stringuri).
+  Cheile vechi `string.Uoc_V` / `beta` / `Umax_inv_V` rămân valabile; în interfață și în mesaje se scrie **Voc**.
+* **Catalog local:** `date/echipamente.json` (în versiunea web — în browser). `GET /api/echipamente`,
+  `POST /api/echipamente` cu `{echipament: {...}}` sau `{sterge: id}`.
+* **Import din fișa PDF:** „Importă fișă PDF” → `POST /api/echipamente/import` (corpul = PDF-ul sau textul fișei) → propunere
+  cu nivel de încredere pe fiecare valoare; fișele cu mai multe variante pe coloane (ex. 5 puteri de modul) se întorc toate,
+  alegi coloana. Confirmi / corectezi, apoi „Folosește în proiect” sau „Folosește și salvează în catalog”. Textul se extrage cu
+  `pypdf` dacă e instalat, altfel cu extractorul intern (`engine/pdftext.py`, doar biblioteca standard — merge și în web).
+  Cu Claude disponibil, „Rafinează cu Claude” (`POST /api/echipamente/rafineaza`) structurează textul; fluxul merge și fără.
+  Limite: fișele scanate (imagine) nu au text — completezi manual sau lipești textul; fonturile Type3 și codările CJK nu sunt
+  acoperite de extractorul intern.
+
 ## Tipuri de scheme (preset-uri)
 
 | Cheie  | Schemă                                   | Referință                                      |
 |--------|------------------------------------------|------------------------------------------------|
 | `bmpt` | Branșament BMPTi-250 (măsură semidirectă) | ST 4-JT Ed. U1 Rev. 3/2024 (DEER), Anexa 3     |
 | `bmptd`| Branșament BMPTd-100 (măsură directă)    | ST 4-JT Ed. U1 Rev. 3/2024 (DEER), Anexa 2     |
-| `tg`   | Tablou general JT cu plecări             | ex. TG 146 kW cu plecări în cascadă            |
-| `cef`  | CEF fotovoltaic + BESS                   | ex. CEF agricolă cu BESS                     |
+| `tg`   | Tablou general JT cu plecări             | ex. TG Universitatea Emanuel 146 kW            |
+| `cef`  | CEF fotovoltaic + BESS                   | ex. E05 M&D FARM Ciumeghiu                     |
 | `pt`   | Post de transformare 20/0,4 kV           | celule MT + trafo + TGJT                       |
 
 Un preset se încarcă în formular, se modifică (aparate, laterale, cabluri, cartuș, note) și se exportă.

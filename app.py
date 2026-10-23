@@ -6,7 +6,7 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 ROOT = pathlib.Path(__file__).parent
 sys.path.insert(0, str(ROOT))
-from engine import presets, layout, render_svg, render_dxf, symbols, bom, interpretor, constructor, validare, memoriu, deviz
+from engine import presets, layout, render_svg, render_dxf, symbols, bom, interpretor, constructor, validare, memoriu, deviz, echipamente
 from engine.calc import dimensioneaza_ramura_simpla
 
 def _find_chrome():
@@ -220,6 +220,8 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, json.dumps(deviz.citeste_catalog(), ensure_ascii=False))
         if p == "/api/profile":
             return self._send(200, json.dumps(citeste_profile(), ensure_ascii=False))
+        if p == "/api/echipamente":
+            return self._send(200, json.dumps(dict(echipamente.citeste_catalog(), claude=echipamente.claude_disponibil()), ensure_ascii=False))
         if p == "/api/symbols":
             return self._send(200, json.dumps([{"cheie": k, "nume": v[1], "categorie": v[2]} for k, v in symbols.SYMBOLS.items()], ensure_ascii=False))
         if p.startswith("/static/"):
@@ -247,6 +249,19 @@ class H(BaseHTTPRequestHandler):
             except Exception:
                 return self._send(400, json.dumps({"eroare": "Fișierul nu e un Excel .xlsx valid. Salvează lista de prețuri ca .xlsx "
                                                    "(nu .xls / .csv / .pdf) și încearcă din nou."}, ensure_ascii=False))
+        if p == "/api/echipamente/import":   # corp = fișa tehnică PDF (binar) sau textul fișei
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                data = self.rfile.read(n)
+                if not data:
+                    raise ValueError("fișierul e gol")
+                return self._send(200, json.dumps(echipamente.importa_fisa(data), ensure_ascii=False))
+            except ValueError as e:
+                return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
+            except Exception as e:
+                import traceback; traceback.print_exc()
+                return self._send(400, json.dumps({"eroare": "Fișa nu a putut fi citită (" + type(e).__name__ + "). "
+                                                   "Lipește textul fișei sau completează valorile manual."}, ensure_ascii=False))
         try:
             try:
                 model = self._json()
@@ -281,6 +296,19 @@ class H(BaseHTTPRequestHandler):
                     return self._send(400, json.dumps({"eroare": str(e)}, ensure_ascii=False))
             if p == "/api/profile":
                 return self._send(200, json.dumps(scrie_profile(model), ensure_ascii=False))
+            if p == "/api/echipamente":          # {echipament: {...}} → salvează în catalog; {sterge: id} → șterge
+                try:
+                    return self._send(200, json.dumps(echipamente.scrie(model), ensure_ascii=False))
+                except ValueError as e:
+                    return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
+            if p == "/api/echipamente/rafineaza":     # opțional: structurarea textului fișei cu Claude
+                try:
+                    r = echipamente.rafineaza_claude(str(model.get("text") or ""), model.get("tip"))
+                    return self._send(200, json.dumps(r, ensure_ascii=False))
+                except ValueError as e:
+                    return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
+                except Exception as e:
+                    return self._send(502, json.dumps({"eroare": "Claude nu a răspuns (" + type(e).__name__ + ") — folosește propunerea locală."}, ensure_ascii=False))
             if p == "/api/deviz":            # previzualizarea devizului (și pentru schemele blocate, marcat)
                 m, r = validare.pregateste(model)
                 try:

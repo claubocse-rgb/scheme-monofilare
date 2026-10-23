@@ -264,9 +264,9 @@ CATALOG = {
              "bmpt": "racord JT prin BMPT: Ip QG {x} A > In Q BMPTi-250 = {y} A — QG nu se coordonează cu Q din BMPT"},
             "PT propriu"),
     "V67": ("Trafo CEF sub S", {"": "Sn trafo {x} kVA < S invertoare+PCS {y} kVA"}, "trafo mai mare"),
-    "V68": ("Uoc(Tmin)", {"B": "Uoc la Tmin {x} V > Umax {y} V", "INFO": "Uoc la Tmin {x} V ≤ Umax {y} V",
-                          "beta": "β_Uoc = {x} %/K neplauzibil — coeficientul de temperatură al Uoc este negativ "
-                                  "(c-Si: −0,25…−0,35 %/K); Uoc(Tmin) nu se poate verifica"},
+    "V68": ("Voc(Tmin)", {"B": "Voc la Tmin {x} V > Umax {y} V", "INFO": "Voc la Tmin {x} V ≤ Umax {y} V",
+                          "beta": "β(Voc) = {x} %/K neplauzibil — coeficientul de temperatură al Voc este negativ "
+                                  "(c-Si: −0,25…−0,35 %/K); Voc(Tmin) nu se poate verifica"},
             "mai puține module pe string"),
     "V69": ("gPV", {"": "nu există gPV în [{a}; {b}] A"}, "alt modul / alt invertor"),
     "V70": ("Categorie RfG / prosumator",
@@ -281,7 +281,7 @@ CATALOG = {
     "V73": ("Tip DDR invertor",
             {"": "DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"},
             "confirmați tipul DDR din fișa invertorului"),
-    "V74": ("SPD c.c.", {"": "SPD c.c. Ucpv {x} V < Uoc,max {y} V"}, "SPD cu Ucpv mai mare"),
+    "V74": ("SPD c.c.", {"": "SPD c.c. Ucpv {x} V < Voc,max {y} V"}, "SPD cu Ucpv mai mare"),
     "V75": ("PI citat greșit", {"": "PI: pentru CEF ne-prosumator se aplică Ord. ANRE 208/2018 + ATR"}, ""),
     "V80": ("Listă ≠ desen", {"": "{ref}: lista „{a}” ≠ parametri „{b}”"}, "regenerarea listei"),
     "V81": ("Notă ≠ model", {"": "nota {k}: „{a}” ≠ model „{b}”"}, "regenerarea notelor"),
@@ -300,6 +300,14 @@ CATALOG = {
             "GE din seria GE_SN_KVA ≥ P/cosφ: minim {Sn} kVA"),
     "V87": ("ATS neconform", {"": "ATS {detaliu}"}, "ATS 4P cu interblocaj mecanic + electric"),
     "V88": ("CEF fără protecții c.c.", {"": "INV-{i}: lipsește {element} c.c."}, ""),
+    "V89": ("Compatibilitate modul–invertor (fișe tehnice)",
+            {"min": "string {n} module: Vmpp la 70 °C ≈ {x} V < MPPT min {y} V — invertorul iese din MPPT vara",
+             "max": "string {n} module: Vmpp (STC) {x} V > MPPT max {y} V — funcționare limitată în afara MPPT",
+             "ok": "Vmpp string {x} V (70 °C) … {z} V (STC) în fereastra MPPT {a}…{b} V",
+             "isc": "Isc pe intrarea MPPT = {np}·Isc = {x} A > Isc max invertor {y} A",
+             "kwp": "stringurile descrise (module × stringuri × MPPT × Pmax din fișă) dau {x} kWp ≠ puterea c.c. declarată {y} kWp",
+             "idc": "Impp pe intrarea MPPT = {np}·Impp = {x} A > Idc max invertor {y} A — limitare de curent (clipping)"},
+            "alt număr de module pe string / de stringuri pe MPPT, conform fișelor"),
     "V90": ("Ipoteze de calcul", {"": "{lista}"}, ""),
 }
 
