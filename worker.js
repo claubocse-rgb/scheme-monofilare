@@ -39,7 +39,7 @@ async function boot(date) {
   setTimeout(() => { asigura(LIB_XLSX, true).then(() => asigura(LIB_DXF, true)).catch(() => { }); }, 8000);
 }
 
-const SCRIU_DATE = new Set(['/api/preturi', '/api/preturi/import', '/api/profile']);
+const SCRIU_DATE = new Set(['/api/preturi', '/api/preturi/import', '/api/profile', '/api/echipamente']);
 onmessage = async e => {
   const d = e.data;
   if (d.tip === 'start') { bootP = boot(d.date).catch(err => postMessage({ tip: 'eroare', text: String(err && err.message || err) })); return; }
