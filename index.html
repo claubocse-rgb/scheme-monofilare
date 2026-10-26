@@ -140,6 +140,12 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .result{margin-top:var(--s2);padding:8px 10px;border-radius:var(--r);background:var(--sunk);font-size:var(--fs-sm)}
 .result ul{margin:4px 0 0;padding-left:18px}
 .result .warn{color:var(--warn)}
+.llm{margin-top:var(--s2);font-size:var(--fs-xs);color:var(--ink-3)}
+.llm>summary{cursor:pointer;width:max-content}
+.llm .llm-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
+.llm input[type=password]{flex:1 1 180px;min-width:0;height:28px;padding:0 8px;border:1px solid var(--rule-2);border-radius:var(--r);background:var(--surface);color:var(--ink);font:inherit}
+.llm p{margin:6px 0 0;line-height:1.4}
+.res-citire{margin-top:6px;font-size:var(--fs-xs);color:var(--ink-3)}
 
 /* ===================================================================== tab-uri */
 .tabs{flex:none;display:flex;gap:2px;margin:var(--s3) var(--s3) 0;border-bottom:1px solid var(--rule)}
@@ -518,9 +524,20 @@ details>summary{min-height:24px}
         <textarea id="chat-text" rows="2" placeholder="ex. BMPTi 150 kW, cablu 80 m, beneficiar SC Agro Vest SRL, Ciumeghiu, jud. Bihor"></textarea>
         <div class="row-act">
           <button class="btn sm" id="chat-go">Generează schema</button>
-          <label class="check hint" id="claude-wrap" hidden><input type="checkbox" id="chat-claude" checked> Rafinează cu Claude</label>
+          <label class="check hint" id="claude-wrap" hidden><input type="checkbox" id="chat-claude" checked> Citire avansată (Claude)</label>
           <span class="hint" id="chat-kbd">Ctrl + Enter</span>
         </div>
+        <details class="llm" id="llm-set">
+          <summary id="llm-stare">Citire avansată: indisponibilă (fără cheie API) — se folosesc regulile locale</summary>
+          <div class="llm-row">
+            <label for="llm-cheie" class="sr">Cheia API Anthropic</label>
+            <input type="password" id="llm-cheie" autocomplete="off" spellcheck="false" placeholder="cheia API Anthropic (sk-ant-…)">
+            <button class="btn ghost sm" type="button" id="llm-salv">Folosește cheia</button>
+            <button class="btn ghost sm" type="button" id="llm-sterge">Șterge</button>
+          </div>
+          <label class="check hint"><input type="checkbox" id="llm-tine"> Ține minte pe acest calculator</label>
+          <p id="llm-avert">Cu cheie, descrierea e citită de Claude, iar regulile locale o verifică: diferențele importante îți sunt puse ca întrebare. Cheia se ține în memoria aplicației locale; dacă bifezi „ține minte”, în ~/.config/scheme-monofilare (niciodată în proiect sau în exporturi).</p>
+        </details>
         <div class="chips" id="chips" aria-label="Exemple"></div>
         <div class="result" id="chat-res" role="status" aria-live="polite" hidden></div>
       </div>
@@ -592,10 +609,49 @@ window.SM_WEB = true;
   let salvat = {}; try { salvat = JSON.parse(localStorage.getItem(LS) || '{}') || {}; } catch { }
   w.postMessage({ tip: 'start', date: salvat });
   const orig = window.fetch.bind(window);
+  // F.9 citirea avansată: fără server, apelul către Claude îl face browserul, cu cheia utilizatorului ținută
+  // DOAR aici (memorie; localStorage numai la „ține minte”). Worker-ul Python face fuziunea cu regulile locale.
+  const LS_CHEIE = 'sm.web.cheie_anthropic';
+  let CHEIE = null; try { CHEIE = localStorage.getItem(LS_CHEIE) || null; } catch { }
+  const jsonRasp = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+  const laWorker = async (cale, metoda, obj) => {
+    const bytes = new TextEncoder().encode(obj == null ? '' : JSON.stringify(obj));
+    const id = ++seq;
+    const r = await new Promise(res => { pend.set(id, res); w.postMessage({ id, metoda, cale, corp: bytes }, [bytes.buffer]); });
+    return JSON.parse(new TextDecoder().decode(r.corp));
+  };
+  async function chatAvansat(corp) {
+    const c = await laWorker('/api/chat/cerere', 'POST', { text: corp.text });
+    try {
+      const r = await orig(c.url, { method: 'POST', body: JSON.stringify(c.corp), headers: {
+        'content-type': 'application/json', 'x-api-key': CHEIE, 'anthropic-version': c.versiune, 'anthropic-beta': c.beta,
+        'anthropic-dangerous-direct-browser-access': 'true' } });
+      const j = await r.json().catch(() => null);
+      if (!r.ok || !j) throw new Error('HTTP ' + r.status + (j && j.error && j.error.message ? ': ' + j.error.message : ''));
+      return laWorker('/api/chat', 'POST', Object.assign({}, corp, { raspuns_llm: j }));
+    } catch (e) {
+      return laWorker('/api/chat', 'POST', Object.assign({}, corp, { claude: false, eroare_llm: 'apel eșuat (' + (e && e.message || e) + ')' }));
+    }
+  }
   window.fetch = async (url, opts = {}) => {
     const u = typeof url === 'string' ? url : url.url;
     if (!u.startsWith('/api/')) return orig(url, opts);
     await ready;
+    const cale0 = u.split('?')[0];
+    if (cale0 === '/api/setari/cheie') {
+      let d = {}; try { d = JSON.parse(opts.body || '{}'); } catch { }
+      CHEIE = String(d.cheie || '').trim() || null;
+      try { if (CHEIE && d.pastreaza) localStorage.setItem(LS_CHEIE, CHEIE); else localStorage.removeItem(LS_CHEIE); } catch { }
+      return jsonRasp({ claude: !!CHEIE, claude_sursa: CHEIE ? 'browser' : null });
+    }
+    if (cale0 === '/api/info') {
+      const i = await laWorker('/api/info', 'GET');
+      return jsonRasp(Object.assign(i, { claude: !!CHEIE, claude_sursa: CHEIE ? 'browser' : null }));
+    }
+    if (cale0 === '/api/chat' && typeof opts.body === 'string') {
+      let d = null; try { d = JSON.parse(opts.body); } catch { }
+      if (d && CHEIE && d.claude !== false && d.raspuns_llm == null) return jsonRasp(await chatAvansat(d));
+    }
     const b = opts.body; let bytes;
     if (b == null) bytes = new Uint8Array(0);
     else if (typeof b === 'string') bytes = new TextEncoder().encode(b);
@@ -1282,23 +1338,45 @@ function tabCalc(root) {
   } else if (tip === 'tablou') {
     g.append(g3e(cf(c, 'P_kW', 'Pa declarată [kW]', { num: true, ph: 'din bilanț', id: 'c-p' }), cf(c, 'In_Q1_A', 'Q1 impus [A]', { num: true, ph: 'automat', id: 'c-q1' }),
       cf(c, 'L_alimentare_m', 'Alimentare C1 [m]', { num: true, ph: '50', id: 'c-l' })));
-    g.append(g3e(cf(c, 'ks', 'ks', { num: true, ph: 'IEC 61439-2', id: 'c-ks' }), cf(c, 'origine', 'Sursa', { select: [['', 'rețea publică (BMPT)'], ['pt_propriu', 'PT propriu']], id: 'c-orig' }),
-      c.origine === 'pt_propriu' ? cf(c, 'pt_Sn_kVA', 'Sn trafo [kVA]', { select: [['', '—'], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], numVal: true, id: 'c-ptsn' }) : el('div')));
+    g.append(g3e(cf(c, 'ks', 'ks', { num: true, ph: 'IEC 61439-2', id: 'c-ks' }), cf(c, 'origine', 'Sursa tabloului', { select: [['', 'nedeclarată (presupus BMPT)'], ['bmpt', 'rețea publică prin BMPT'], ['tg_existent', 'tablou existent (TGD)'], ['pt_propriu', 'PT propriu']], id: 'c-orig' }),
+      c.origine === 'pt_propriu' ? cf(c, 'pt_Sn_kVA', 'Sn trafo [kVA]', { select: [['', '—'], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], numVal: true, id: 'c-ptsn' })
+        : c.origine === 'tg_existent' ? cf(c, 'Ik3_sursa_kA', 'Ik3 la bara sursei [kA]', { num: true, ph: '25 (majorant)', id: 'c-ik3s' }) : el('div')));
+    g.append(g3e(cf(c, 'retea', 'Rețea', { select: [['', 'trifazată 3 × 400/230 V'], ['mono', 'monofazată 230 V']], id: 'c-retea' }),
+      ['tg_existent', ''].includes(c.origine || '') ? cf(c, 'IdN_amonte_mA', 'DDR în amonte IΔn [mA]', { select: [['', c.origine ? 'fără / nedeclarat' : 'RCCB 300 mA (presupus)'], ['30', '30 mA'], ['100', '100 mA'], ['300', '300 mA'], ['500', '500 mA']], numVal: true, id: 'c-idna' }) : el('div'), el('div')));
     g.append(cf(c, 'circuite_finale', 'Plecările sunt circuite finale (tablou de distribuție cu MCB)', { bool: true, deleteFalse: true, id: 'c-cf' }));
+    g.append(g2(cf(c, 'compensare_kvar', 'Compensare: baterie condensatoare [kvar]', { num: true, ph: 'fără', id: 'c-kvar' }), el('div')));
   } else if (tip === 'pt') {
     g.append(g3e(cf(c, 'Sn_kVA', 'Sn trafo [kVA]', { select: TRAFO_SN.map(x => [String(x), `${x} kVA`]), numVal: true, id: 'c-sn' }),
       cf(c, 'celula_trafo', 'Celula trafo', { select: [['', 'automat'], ['sigurante', 'separator + siguranțe MT'], ['intreruptor', 'întreruptor + releu']], id: 'c-cel' }),
       cf(c, 'In_Q_JT_A', 'Q JT impus [A]', { num: true, ph: 'automat', id: 'c-qjt' })));
-    g.append(g2(cf(c, 'SkQ_MVA', 'S"kQ rețea MT [MVA]', { num: true, ph: '500 (implicit)', id: 'c-skq' }), el('div')));
+    g.append(g3e(cf(c, 'SkQ_MVA', 'S"kQ rețea MT [MVA]', { num: true, ph: '500 (implicit)', id: 'c-skq' }),
+      cf(c, 'trafo_izolatie', 'Transformator', { select: [['', 'în ulei (implicit)'], ['ulei', 'în ulei'], ['uscat', 'uscat (rășină)']], id: 'c-tiz' }),
+      cf(c, 'masura', 'Punctul de măsură', { select: [['', 'JT (implicit)'], ['JT', 'JT — TC + contor'], ['MT', 'MT — celulă de măsură']], id: 'c-mas' })));
+    const cel = { v: (c.celule_mt && c.celule_mt.linie) || '' };
+    g.append(g2(field(cel, 'v', 'Celule MT de linie', { always: true, id: 'c-cml', select: [['', '1 (racord radial)'], ['1', '1'], ['2', '2 (intrare–ieșire, buclă)'], ['3', '3']],
+      onChange: () => { const v = document.getElementById('c-cml').value; if (v) c.celule_mt = { linie: +v, masura: c.masura === 'MT' }; else delete c.celule_mt; scheduleRegen(0); } }), el('div')));
+    g.append(g3e(cf(c, 'U_MT_kV', 'Tensiunea MT', { select: [['', '20 kV (implicit)'], ['20', '20 kV'], ['15', '15 kV'], ['10', '10 kV'], ['6', '6 kV']], numVal: true, id: 'c-umt' }),
+      cf(c, 'n_trafo', 'Transformatoare', { select: [['', '1 trafo'], ['1', '1 trafo'], ['2', '2 trafo (2 secții de bare + cuplă JT)']], numVal: true, id: 'c-ntr' }),
+      cf(c, 'compensare_kvar', 'Compensare [kvar]', { num: true, ph: 'fără', id: 'c-pkvar' })));
+    // r7: 2 trafo — cupla longitudinală (NO cu interblocaj 2 din 3 implicit) și plecările pe secții
+    if (+c.n_trafo === 2) g.append(g2(cf(c, 'cupla', 'Cupla JT', { select: [['', 'normal deschisă (implicit, interblocaj 2/3)'], ['deschisa', 'normal deschisă (NO)'], ['inchisa', 'normal închisă — trafo în paralel']], id: 'c-cupla' }),
+      cf(c, 'plecari_pe_sectie', 'Lista de plecări se repetă pe fiecare secție de bare', { bool: true, deleteFalse: true, id: 'c-pps' })));
   } else if (tip === 'cef') {
     g.append(g3e(cf(c, 'kWp', 'Putere c.c. [kWp]', { num: true, id: 'c-kwp' }), cf(c, 'pt_Sn_kVA', 'PT propriu [kVA]', { select: [['', 'fără (racord JT)'], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], numVal: true, id: 'c-pt' }),
       cf(c, 'In_QG_A', 'QG impus [A]', { num: true, ph: 'automat', id: 'c-qg' })));
     g.append(cf(c, 'atr_jt', 'ATR-ul permite racord JT peste 400 kVA', { bool: true, deleteFalse: true, id: 'c-atr' }));
+    if (c.pt_Sn_kVA) g.append(cf(c, 'pt_existent', 'PT existent (sursă, fără transformator nou pe planșă)', { bool: true, deleteFalse: true, id: 'c-ptex' }));
+    // r7: n trafo identice în PT (Σ Sn), măsura pe MT, tensiunea c.a. a invertoarelor (800 V → trafo 20/0,8 kV, fără N)
+    if (c.pt_Sn_kVA) g.append(g3e(cf(c, 'n_trafo', 'Transformatoare în PT', { select: [['', '1 trafo'], ['1', '1 trafo'], ['2', '2 trafo (cuplă JT)'], ['3', '3 trafo'], ['4', '4 trafo']], numVal: true, id: 'c-cntr' }),
+      cf(c, 'masura', 'Măsura de decontare', { select: [['', 'JT — TC + contor (implicit)'], ['JT', 'JT — TC + contor'], ['MT', 'MT — celulă de măsură']], id: 'c-cmas' }),
+      cf(c, 'U_ca_V', 'Tensiunea c.a. invertoare', { select: [['', 'automat (din model)'], ['400', '3 × 400 V'], ['800', '3 × 800 V (trafo 20/0,8 kV)']], numVal: true, id: 'c-cuca' })));
+    g.append(pvComunUI(c, 'c'));
     // unde se leagă TGD-CF: tablou existent al consumatorului sau direct la punctul de racord
     g.append(el('div', { class: 'label-line' }, 'Racordul TGD-CF'));
     g.append(g3e(cf(c, 'racord', 'Se leagă în', { select: [['', c.pt_Sn_kVA ? 'PT propriu' : 'punctul de racord (BMPT)'], ['tg_existent', 'tablou general existent']], id: 'c-rac' }),
       cf(c, 'L_racord_m', 'Cablul C0 [m]', { num: true, ph: 'fără', id: 'c-l0' }),
-      c.racord === 'tg_existent' ? cf(c, 'racord_In_Q_A', 'Q existent în TG [A]', { num: true, ph: 'automat', id: 'c-qtg' }) : el('div')));
+      c.racord === 'tg_existent' ? cf(c, 'racord_In_Q_A', 'Q existent în TG [A]', { num: true, ph: 'automat', id: 'c-qtg' })
+        : !c.pt_Sn_kVA ? cf(c, 'In_Q_bransament_A', 'Q BMPT existent [A]', { num: true, ph: 'nou', id: 'c-qbm' }) : el('div')));
     if (c.racord === 'tg_existent') g.append(g3e(cf(c, 'Ik3_TG_kA', 'Ik3 la bara TG [kA]', { num: true, ph: 'ca la racord', id: 'c-iktg' }),
       cf(c, 'racord_Icu_kA', 'Icu Q existent [kA]', { num: true, id: 'c-icutg' }), el('div')));
     c.invertoare = c.invertoare || [];
@@ -1320,7 +1398,11 @@ function tabCalc(root) {
     g.append(li);
     const hasB = !!c.bess;
     g.append(field({ v: hasB }, 'v', 'Are stocare BESS', { always: true, bool: true, id: 'c-hasb', onChange: () => { pushHistory(); if (c.bess) delete c.bess; else c.bess = { P_kW: 50, kWh: 100 }; render(); scheduleRegen(0); } }));
-    if (hasB) { g.append(g2(cf(c.bess, 'P_kW', 'PCS [kW]', { num: true, id: 'c-bp' }), cf(c.bess, 'kWh', 'Capacitate [kWh]', { num: true, id: 'c-bk' })));
+    if (hasB) { g.append(el('div', { class: 'g4' }, cf(c.bess, 'cuplaj', 'Cuplaj', { select: [['', 'automat (c.c. la invertor hibrid, altfel c.a.)'], ['cc', 'c.c. — port invertor hibrid (fără PCS)'], ['ca', 'c.a. — PCS propriu']], id: 'c-bc' }),
+        cf(c.bess, 'P_kW', c.bess.cuplaj === 'cc' ? 'P baterie [kW]' : 'PCS [kW]', { num: true, id: 'c-bp' }), cf(c.bess, 'kWh', 'Capacitate [kWh]', { num: true, id: 'c-bk' }),
+        cf(c.bess, 'U_nom_V', 'U baterie [V]', { num: true, id: 'c-bu' })));
+      if (c.bess.cuplaj === 'cc') g.append(g2(cf(c.bess, 'per_invertor', 'Capacitatea e pe fiecare invertor hibrid', { bool: true, deleteFalse: true, id: 'c-bpi' }),
+        cf(c.bess, 'la', 'Pe câte invertoare hibride', { num: true, ph: 'toate (împărțită)', id: 'c-bla' })));
       g.append(echipUI(c.bess, 'bess', 'BESS / PCS', 'c-bese')); }
     c.modul = c.modul || {};
     g.append(el('div', { class: 'label-line' }, 'Module PV și partea de c.c.'), echipUI(c.modul, 'modul_pv', 'Modul PV', 'c-mode'));
@@ -1329,17 +1411,56 @@ function tabCalc(root) {
     g.append(el('details', { class: 'adv' }, el('summary', {}, 'Modelele protecțiilor de c.c. (SPD c.c., siguranțe gPV)'),
       echipUI(c.spd_cc, 'spd_cc', 'SPD c.c.', 'c-spde'), echipUI(c.gpv = c.gpv || {}, 'gpv', 'Siguranțe gPV', 'c-gpve')));
   } else if (tip === 'prosumator') {
-    g.append(g3e(cf(c, 'Pn_inv_kW', 'Invertor Pn [kW]', { num: true, id: 'c-pinv' }), cf(c, 'In_Q_bransament_A', 'Q branșament existent [A]', { num: true, id: 'c-qb' }),
+    const multi = Array.isArray(c.invertoare) && c.invertoare.length;
+    g.append(g3e(multi ? el('div', { class: 'fld' }, el('span', { class: 'lbl' }, 'Invertoare: vezi lista')) : cf(c, 'Pn_inv_kW', 'Invertor Pn [kW]', { num: true, id: 'c-pinv' }),
+      cf(c, 'In_Q_bransament_A', 'Q branșament existent [A]', { num: true, id: 'c-qb' }),
       el('div', { class: 'fld', style: 'justify-content:flex-end' }, cf(c, 'hibrid', 'Invertor hibrid (baterie)', { bool: true, deleteFalse: true, id: 'c-hib' }))));
-    c.invertor = c.invertor || {};
-    g.append(el('div', { class: 'label-line' }, 'Echipamente (fișe tehnice)'),
-      echipUI(c.invertor, 'invertor', 'Invertor', 'c-pinve', e => { if (e.Pn_kW != null) c.Pn_inv_kW = e.Pn_kW; if (e.hibrid) c.hibrid = true; }));
+    // v1.9: racord, prosumator comercial / PI externă (prag 27 kW: tablou cu releu anti-insularizare, cerință OD; ATR-ul are prioritate)
+    g.append(g3e(cf(c, 'racord', 'Se leagă în', { select: [['', 'tabloul existent (branșament OD)'], ['tg_existent', 'TG existent'], ['bmpt', 'BMPT existent'], ['pt', 'PT existent']], id: 'c-prac' }),
+      cf(c, 'PI_externa', 'Protecție de interfață', { select: [['', 'automat (> 27 kW externă)'], ['true', 'externă (ATR)'], ['false', 'integrată în invertor']], id: 'c-ppi' }),
+      cf(c, 'L_racord_m', 'Cablul C0 [m] (comercial)', { num: true, ph: 'fără', id: 'c-pl0' })));
+    g.append(g3e(cf(c, 'P_aprobata_kW', 'P aprobată / evacuată ATR [kW]', { num: true, ph: 'nedeclarată', id: 'c-ppa' }),
+      el('div'), el('div')));
+    if (typeof c.PI_externa === 'string') c.PI_externa = c.PI_externa === 'true';
+    if (c.racord === 'pt') g.append(g2(cf(c, 'pt_Sn_kVA', 'PT existent [kVA]', { select: [['', '—'], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], numVal: true, id: 'c-ppt' }), el('div')));
+    g.append(pvComunUI(c, 'p'));
+    if (multi) {
+      const li = el('div', { class: 'stack' }, el('div', { class: 'label-line' }, 'Invertoare (fiecare desenat separat)'));
+      c.invertoare.forEach((iv, i) => {
+        li.append(el('div', { class: 'g4' }, cf(iv, 'n', 'Bucăți', { num: true, id: `c-pinv${i}n` }), cf(iv, 'Pn_kW', 'Pn [kW]', { num: true, id: `c-pinv${i}p` }),
+          cf(iv, 'L_m', 'Cablu c.a. [m]', { num: true, ph: '15', id: `c-pinv${i}l` }),
+          el('div', { class: 'fld', style: 'justify-content:flex-end' }, el('button', { class: 'btn ghost sm danger', type: 'button', onclick: () => { pushHistory(); c.invertoare.splice(i, 1); if (!c.invertoare.length) delete c.invertoare; scheduleRegen(0); render(); } }, 'Șterge'))));
+        li.append(echipUI(iv, 'invertor', `Invertor ${i + 1}`, `c-pinv${i}e`));
+      });
+      li.append(el('button', { class: 'btn-add', type: 'button', html: ICON.plus + 'Grup de invertoare', onclick: () => { pushHistory(); c.invertoare.push({ n: 1, Pn_kW: 10 }); render(); scheduleRegen(0); } }));
+      g.append(li);
+    } else {
+      c.invertor = c.invertor || {};
+      g.append(el('div', { class: 'label-line' }, 'Echipamente (fișe tehnice)'),
+        echipUI(c.invertor, 'invertor', 'Invertor', 'c-pinve', e => { if (e.Pn_kW != null) c.Pn_inv_kW = e.Pn_kW; if (e.hibrid) c.hibrid = true; }));
+      g.append(el('button', { class: 'btn-add', type: 'button', html: ICON.plus + 'Mai multe invertoare', onclick: () => { pushHistory(); c.invertoare = [Object.assign({ n: 1, Pn_kW: c.Pn_inv_kW || 10 }, c.invertor || {})]; delete c.Pn_inv_kW; delete c.invertor; render(); scheduleRegen(0); } }));
+    }
     c.modul = c.modul || {};
     g.append(echipUI(c.modul, 'modul_pv', 'Modul PV', 'c-mode'));
-    if (c.hibrid) g.append(echipUI(c.baterie = c.baterie || {}, 'bess', 'Baterie', 'c-bate'));
+    // stocare: pe portul invertorului hibrid (c.c.) sau BESS cu PCS separat (c.a.)
+    const hasB = !!c.bess;
+    g.append(field({ v: hasB }, 'v', 'Are stocare BESS / baterie', { always: true, bool: true, id: 'c-phasb', onChange: () => { pushHistory(); if (c.bess) delete c.bess; else { c.bess = { kWh: 10 }; delete c.baterie; } render(); scheduleRegen(0); } }));
+    if (hasB) {
+      g.append(el('div', { class: 'g4' }, cf(c.bess, 'cuplaj', 'Cuplaj', { select: [['', 'automat (c.c. — invertor hibrid; c.a. la PCS propriu / > 50 kW)'], ['cc', 'c.c. — port invertor hibrid'], ['ca', 'c.a. — PCS separat']], id: 'c-pbc' }),
+        cf(c.bess, 'kWh', 'Capacitate [kWh]', { num: true, id: 'c-pbk' }), cf(c.bess, 'P_kW', 'P [kW]', { num: true, ph: 'kWh/2', id: 'c-pbp' }),
+        cf(c.bess, 'U_nom_V', 'U baterie [V]', { num: true, id: 'c-pbu' })));
+      g.append(echipUI(c.bess, 'bess', 'Baterie / BESS', 'c-pbese'));
+    } else if (c.hibrid) g.append(echipUI(c.baterie = c.baterie || {}, 'bess', 'Baterie', 'c-bate'));
     g.append(stringUI(c, false));
   } else if (tip === 'ge_ats') {
     g.append(g2(cf(c, 'Sn_GE_kVA', 'Grup electrogen Sn [kVA]', { num: true, id: 'c-sge' }), cf(c, 'P_sarcina_kW', 'Sarcina [kW]', { num: true, id: 'c-psa' })));
+    g.append(g3e(cf(c, 'sursa_retea', 'Rețeaua (intrarea I) vine din', { select: [['', 'nedeclarat (presupus BMPT)'], ['bmpt', 'rețea publică prin BMPT'], ['pt', 'PT propriu'], ['tgd', 'TGD existent']], id: 'c-sr' }),
+      c.sursa_retea === 'pt' ? cf(c, 'pt_Sn_kVA', 'Sn PT [kVA]', { select: [['', '—'], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], numVal: true, id: 'c-gpt' })
+        : c.sursa_retea === 'tgd' ? cf(c, 'Ik3_sursa_kA', 'Ik3 la bara TGD [kA]', { num: true, ph: '25 (majorant)', id: 'c-gik' }) : el('div'),
+      cf(c, 'L_GE_ATS_m', 'Cablu GE → ATS [m]', { num: true, ph: '20', id: 'c-lga' })));
+    g.append(g2(cf(c, 'siguranta_tablou', 'Tablou de siguranță (pompe de incendiu): toți consumatorii fără DDR, cabluri E90; rezerva nu se adună', { bool: true, deleteFalse: true, id: 'c-sigt' }), el('div')));
+    g.append(g2(cf(c, 'siguranta', 'Sarcina = consumatori de siguranță (pompe de incendiu, hidranți): fără DDR, cablu E90', { bool: true, deleteFalse: true, id: 'c-sig' }),
+      cf(c, 'ge_paralel', 'GE în paralel cu rețeaua (sincronizare) — nesuportat, avertisment', { bool: true, deleteFalse: true, id: 'c-gpar' })));
   }
   root.append(g);
   if (['tablou', 'pt'].includes(tip)) root.append(plecariUI(c));
@@ -1382,6 +1503,12 @@ function tabCalc(root) {
 let ECH = { echipamente: [], tipuri: {}, campuri: {}, claude: false };
 async function incarcaEchipamente() { try { const r = await (await fetch('/api/echipamente')).json(); if (r && r.echipamente) ECH = r; } catch { } }
 const ECH_TEXT = ['producator', 'model'];
+// v1.9 (R5): limitarea injecției (0 = injecție zero → analizor + EMS la PCC) și puterea totală declarată (verificată: V91)
+function pvComunUI(c, p) {
+  return g3e(cf(c, 'limitare_injectie_kW', 'Limitare injecție [kW] (0 = zero)', { num: true, ph: 'fără', id: `${p}-linj` }),
+    cf(c, 'Pn_total_kW', 'Putere totală declarată [kW]', { num: true, ph: 'Σ invertoare', id: `${p}-ptot` }),
+    cf(c, 'P_evacuata_kW', 'P evacuată ATR [kW]', { num: true, ph: 'nedeclarată', id: `${p}-pev` }));
+}
 const ECH_EXTRA = { invertor: ['retea', 'hibrid', 'separator_cc_integrat'], bess: ['chimie'], spd_cc: ['tip'] };
 const echNume = e => [e.producator, e.model].filter(Boolean).join(' ').trim() || '';
 const echChei = tip => [...ECH_TEXT, ...Object.keys(ECH.campuri[tip] || {}), ...(ECH_EXTRA[tip] || [])];
@@ -1543,7 +1670,9 @@ function plecariUI(c) {
       g3e(cf(pl, 'receptor', 'Receptor', { select: RECEPTOR, id: key + 'r' }), cf(pl, 'prot_tip', 'Protecție', { select: PROT, id: key + 'pt' }),
         pl.prot_tip === 'MCB' ? cf(pl, 'curba', 'Curba', { select: [['', 'automat'], ['B', 'B'], ['C', 'C'], ['D', 'D']], id: key + 'cb' }) : cf(pl, 'Icu_fortat', 'Icu impus [kA]', { num: true, id: key + 'icu' })),
       g3e(cf(pl.cablu, 'material', 'Material', { select: MATERIAL, id: key + 'm' }), cf(pl.cablu, 'izolatie', 'Izolație', { select: IZOLATIE, id: key + 'iz' }), cf(pl.cablu, 'metoda', 'Pozare', { select: METODA, id: key + 'me' })),
-      g3e(cf(pl.cablu, 'n_alte', 'Alte circuite pe traseu', { num: true, ph: '0', id: key + 'na' }), cf(pl.cablu, 'S_fortat', 'Secțiune impusă [mm²]', { num: true, ph: 'automat', id: key + 's' }), cf(pl, 'cosfi', 'cos φ', { num: true, ph: '0,9', id: key + 'cos' }))));
+      g3e(cf(pl.cablu, 'n_alte', 'Alte circuite pe traseu', { num: true, ph: '0', id: key + 'na' }), cf(pl.cablu, 'S_fortat', 'Secțiune impusă [mm²]', { num: true, ph: 'automat', id: key + 's' }), cf(pl, 'cosfi', 'cos φ', { num: true, ph: '0,9', id: key + 'cos' })),
+      g3e(cf(pl, 'pornire', 'Pornire motor', { select: [['', pl.receptor === 'motor' ? 'directă (implicit)' : '— (nu e motor)'], ['directa', 'directă (contactor + releu termic)'], ['stea_triunghi', 'stea-triunghi'], ['convertizor', 'convertizor de frecvență'], ['soft', 'soft-starter']], id: key + 'po' }),
+        unit === 'casc' ? el('div') : cf(pl, 'n_circuite', 'Circuite identice', { num: true, ph: '1', id: key + 'nc' }), el('div'))));
     if (unit === 'casc' && !nivel) {
       const sub = el('div', { class: 'psub' });
       pl.copii.forEach((_, j) => sub.append(rand(pl.copii, j, `${obiect}.`, 1)));
@@ -1746,6 +1875,11 @@ function tabLocuinta(root) {
       onChange: () => { pushHistory(); if (c.retea === 'mono') c.circuite.forEach(x => delete x.faza); render(); scheduleRegen(0); } }),
     cf(c.alimentare, 'P_aprobata_kW', 'Putere aprobată (ATR) [kW]', { num: true, ph: 'din ATR — ex. ' + (mono ? '7' : '15'), id: 'lc-pa' }),
     cf(c.alimentare, 'In_Q_bransament_A', 'Q în branșament [A]', { num: true, ph: qpres ? `din ATR — presupus ${qpres} A` : 'din ATR / BMPT — ex. ' + (mono ? '32' : '25'), id: 'lc-qb' })));
+  // r7: grup electrogen de rezervă (sursă, nu consumator) — comutator de sursă manual / ATS după QG
+  const ger = { v: c.ge_rezerva ? (c.ge_rezerva.comutare || 'manual') : '' };
+  a.append(g2(field(ger, 'v', 'Grup electrogen de rezervă', { always: true, id: 'lc-ge', select: [['', 'fără'], ['manual', 'da — comutator manual I-0-II'], ['ATS', 'da — ATS automat']],
+      onChange: () => { pushHistory(); const v = document.getElementById('lc-ge').value; if (v) c.ge_rezerva = Object.assign(c.ge_rezerva || { Sn_kVA: 5 }, { comutare: v }); else delete c.ge_rezerva; render(); scheduleRegen(0); } }),
+    c.ge_rezerva ? cf(c.ge_rezerva, 'Sn_kVA', 'Sn GE [kVA]', { num: true, id: 'lc-gesn' }) : el('div')));
   // câmpurile de alimentare respinse de calcul: marcate pe câmp
   const alErr = new Map();
   ((VALID && VALID.verificari) || []).filter(v => v.nivel === 'BLOCANT').forEach(v => {
@@ -1770,7 +1904,7 @@ function tabLocuinta(root) {
     cf(c.alimentare, 'zona', 'Zona rețelei', { select: [['', 'nespecificat (Zb 0,2 Ω)'], ['urban', 'urban'], ['rural', 'rural (Zb 0,45 Ω)']], id: 'lc-zona' }),
     c.schema_pamant === 'TT' ? cf(c, 'RA_ohm', 'Rezistența prizei RA [Ω]', { num: true, ph: 'măsurată sau estimată', id: 'lc-ra' }) : el('div')));
   if (c.circuite.some(x => x.receptor === 'vehicul_electric') || c.alimentare.DDR_bransament_tip)
-    a.append(g3e(cf(c.alimentare, 'DDR_bransament_tip', 'DDR-ul din branșament (BMPM/BMPT) e de tip', { select: [['', 'nedeclarat (presupus AC)'], ['AC', 'AC'], ['A', 'A'], ['F', 'F'], ['B', 'B']], id: 'lc-ddrb' }),
+    a.append(g3e(cf(c.alimentare, 'DDR_bransament_tip', 'DDR-ul din branșament (BMPM/BMPT) e de tip', { select: [['', 'nedeclarat (presupus A)'], ['AC', 'AC'], ['A', 'A'], ['F', 'F'], ['B', 'B']], id: 'lc-ddrb' }),
       el('p', { class: 'hint', style: 'grid-column:span 2;align-self:end' }, 'Contează la încărcătorul de mașină: un defect în c.c. poate „orbi” un DDR AC din amonte. Ia tipul de pe aparatul din bloc sau din ATR.')));
   c.alimentare.cablu = c.alimentare.cablu || {};
   a.append(el('details', { class: 'adv' }, el('summary', {}, 'Coloana și rețeaua (opțional)'),
@@ -2446,6 +2580,23 @@ const EXAMPLES = [
   ['Post trafo 630 kVA', 'post trafo 630 kVA cu plecări de 250, 160 și 100 A'],
 ];
 const CARTUS_KEEP = ['beneficiar', 'titlu', 'adresa', 'nr_pr', 'data', 'faza', 'plansa', 'rev', 'proiectant', 'adresa_proiectant', 'reg', 'proiectat', 'desenat'];
+// F.9 citirea avansată: cheia API (server local: memoria procesului / ~/.config; versiunea web: doar browserul)
+function stareLLM() {
+  $('#claude-wrap').hidden = !INFO.claude;
+  $('#llm-stare').textContent = INFO.claude ? 'Citire avansată: activă (Claude, verificată cu regulile locale)'
+    : 'Citire avansată: indisponibilă (fără cheie API) — se folosesc regulile locale';
+  if (window.SM_WEB) $('#llm-avert').textContent = 'Versiunea web: cheia rămâne DOAR în acest browser (în memorie; în localStorage numai dacă bifezi „ține minte”) și descrierea se trimite direct de aici la API-ul Anthropic. Nu bifa pe un calculator folosit de alții; poți șterge cheia oricând.';
+}
+async function salvezCheia(cheie) {
+  try {
+    const r = await (await fetch('/api/setari/cheie', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cheie, pastreaza: $('#llm-tine').checked }) })).json();
+    if (r.eroare) throw new Error(r.eroare);
+    INFO.claude = !!r.claude; $('#llm-cheie').value = ''; stareLLM();
+    toast(cheie ? (r.claude ? 'Cheia e folosită pentru citirea avansată.' : 'Cheia nu a fost reținută.') : 'Cheia a fost ștearsă.' + (r.claude ? ' Rămâne cheia din mediu (ANTHROPIC_API_KEY).' : ''));
+  } catch (e) { toast('Cheia nu a fost salvată: ' + e.message, { kind: 'warn' }); }
+}
+$('#llm-salv').addEventListener('click', () => { const k = $('#llm-cheie').value.trim(); if (!k) { $('#llm-cheie').focus(); return; } salvezCheia(k); });
+$('#llm-sterge').addEventListener('click', () => salvezCheia(''));
 async function chatGo() {
   const text = $('#chat-text').value.trim();
   if (!text) { $('#chat-text').focus(); toast('Scrie mai întâi ce conține instalația, de exemplu „BMPTi 120 kW, cablu 60 m”.'); return; }
@@ -2459,6 +2610,7 @@ async function chatGo() {
     const it = r.interpretare || {};
     const fara = t => String(t || '').replace(/\s*\(I\d{2}\)/g, '');
     const kids = [el('div', { class: 'res-chat' }, fara(it.intelegere))];
+    if (r.citire && r.citire.mesaj) kids.push(el('div', { class: 'res-citire' }, r.citire.mesaj + '.'));
     if ((it.avertismente || []).length) kids.push(el('ul', { class: 'plist', style: 'margin-top:6px' }, it.avertismente.map(x => el('li', {}, fara(typeof x === 'string' ? x : (x.mesaj || JSON.stringify(x)))))));
     if (it.actiune === 'refuza') {
       kids.unshift(el('b', { class: 'warn' }, 'Nu am generat schema. '));
@@ -2582,7 +2734,7 @@ function initChrome() {
       document.querySelectorAll('#exp-menu [data-exp=dxf] span').forEach(n => n.firstChild.textContent = 'DXF (în arhivă .zip)');
     }
   } catch (e) { setStat('err', 'Serverul nu răspunde'); toast('Nu mă pot conecta la server. Pornește aplicația cu „python3 app.py” și reîncarcă pagina.', { kind: 'err', ms: 60000 }); return; }
-  $('#claude-wrap').hidden = !INFO.claude;
+  stareLLM();
   const fresh = () => { const m = normalize(clone(PRESETS.bmpt.model)); applyProfile(m); return m; };
   // migrare din versiunea anterioară (o singură schemă salvată în „sm.model”)
   const old = store.get('sm.model', null);
