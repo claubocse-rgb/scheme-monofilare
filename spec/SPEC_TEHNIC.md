@@ -1279,6 +1279,46 @@ Rescrierea are acum, în ordine: indentare → tabel → engleză → scurt → 
    pe tot r9, teste de clasă pe formulări noi), `teste/r9/reverificare.py` (r5…r9). r9 (208 fraze, verificări C/P/G):
    înainte 145/41/22 → după 208/0/0, P0/P1 69/69; r5–r8 fără regresii.
 
+### F.14 (r10) Clasele r10 — regulile locale + întrebările din verificarea motorului
+Rescrieri noi (`engine/interp_r10.py`, înaintea și după autocorecturile r9; fiecare lasă o notă în „Am presupus”):
+`rescrie_inainte` (engleză r10: „existing LV switchboard / MDB” = TG existent, „utility transformer” = PT al OD,
+„new 630kVA substation” = PT nou, car wash / blower / vacuum; autocorecturi: „(400 kW, nu 300)”, „nu 400, ci 630 kVA”,
+„VE nu e 11 kW, e 7,4 kW; restul rămâne”, „16 kW electric? nu, …”, „rectific”, „mai exact”, „scuze, sunt 3 x …”,
+„Corectez:” fără valoare veche) și `rescrie_dupa` (TD-ul anexei, „3x6mm” = secțiune, greșeli de tastare pe numele
+receptorilor urmate de valoare, VFD, „+” între plecări, „motoare: 2 x 11 kW și 4 x 2,2 kW”, „N stații VE 2x22 kW”,
+„pompă electrică X kW + pompă diesel”, „sursă dublă PT1/PT2”, „2 semibare cu câte N plecări”, „una X kW și una Y kW”,
+„N circ prize M ilum” = circuite, „(1+1 rezervă)” / „+ 1 de rezervă”, „interblocaj 2 din 3”, „pt uscat 630” = PT,
+„18/30 kV” = izolația cablului MT, „PTA” = PT aerian, „TG cu Q 3x32A” / „branșament 3x32” = Q branșament, „deci X kW”
+după corectură = total, „N invertoare (A … și B …)” = lista din paranteză, „(40 kW existenți)” = sumă de control,
+„avem deja 20 kW (model)” = existent, „ATR permite doar X kW evacuare”, „N baterii X kWh” = N × X).
+
+1. **Faze monofazate:** repartizarea L1→L2→L3 nu se mai suprascrie (regresia r9 #7); „pe L1, L2, L3” / „pe fazele R și T”
+   = ordinea scrisă; un invertor monofazat (sau un model mono: -L1, Primo, Sunny Boy, MIN …TL-X) pe casă trifazată →
+   `retea: "tri"` + `invertoare[].faza`; Iac verificat pe faza cea mai încărcată; BMPT declarat ≥ Iac > 100 A = notă.
+2. **Existent + nou:** grupul din propoziția cu „deja / existent / există / nu se modifică / montat” = `existent: true`,
+   cel din „adaug / nou / se montează” rămâne nou („TG / PT / BMPT existent” nu contează); propozițiile separă grupurile.
+3. **Topologii (cheile motorului):** PT: `n_trafo: 2`, `cupla` (în paralel = „inchisa”; ATS între trafo = „deschisa”),
+   `sursa_rezerva: "trafo"` + `comutare: "ATS"`, `uk_pct`, `In_Q_JT_A` din „TG 4000 A” / cutia BMPT a PTA, `cablu_MT`;
+   GE: `fara_retea: true`, `consumatori[].vital` din „Vitali: … Nevitali: …” (sarcina GE = vitalii), sursa BMPT; tablou:
+   `ks` / `cosfi` / `P_kW` (Pc) globale, plecarea unică din TG existent poartă cablul / L / `ddr: {tip}`, UPS cu bypass
+   (`ups`, `bypass`, PDU-urile în aval), `separare_PEN`, `cablu.existent`, TN-C cu secțiuni < 10 mm² → întrebare;
+   CEF: `bara`, `racord_In_Q_A` + `racord_Q_tip` (MPR = gG), `invertoare[].tgd` + `n_tgd_cf`, `pt_od`, limitarea
+   „X %” = X % × Σ invertoare, cablul impus fără L → L = 30 m presupus + întrebare, „cablu … de la invertor” = `cablu_inv`.
+4. **Locuință:** hibrid + baterie + tablou EPS = prosumator cu `backup.circuite` (și receptori necunoscuți: router);
+   EPS pe toată casa = `backup {toata_casa, comutare, N_comutat}`; GE casă (și monofazat, `ge_rezerva.retea: "mono"`);
+   AC multisplit = un circuit `multisplit` / `unitati_interioare`; TD piscină / TE pe niveluri cu camerele lor / corpuri
+   (TD Corp B cu circuit echivalent + întrebare); „15 kVA” = Pa 0,9 × S și Q din kVA; coloana „cablu 3x6 de 45 m”;
+   TN-C (rețea) → TN-C-S cu `separare_PEN: "BMPT"` + întrebare; RA > 4 Ω în TN-C-S → întrebare; Q < Ib(Pa) și Q fără Pa
+   cu receptoare mari → întrebare; „cuptor 72 kW”, spălătorie auto, magazin ≠ locuință.
+5. **Nimic blocat fără întrebare** (`interpretor.interpreteaza`, calea aplicației; `verifica_motor=True`): rezultatul
+   trece prin `constructor.genereaza` + `validare.valideaza`; fiecare BLOCANT fără întrebare devine o întrebare concretă
+   cu opțiunile de remediere (șabloane V04 / V46 / V28 / V53 / V96, altfel mesaj + `remediere` din verificare), acțiunea
+   devine „genereaza_cu_intrebare”; întrebările adăugate sunt și în `intrebari_motor`.
+6. **Teste / reverificare:** `tests/test_interpretor_r10.py` (P0/P1 r10 + P2 din clasele reparate, plasa și blocajul
+   întrebat pe toate frazele r10, 5–10 formulări noi pe clasă), `teste/r10/reverificare.py` (r5…r10). r10 (204 fraze,
+   verificări C/P/G): înainte 106/73/25 → după 204/0/0, P0/P1 94/94; r5–r9 fără regresii (r6 N55: invertorul monofazat
+   pe casă trifazată = trifazat, decizie r10).
+
 ### F.8 Răspunsul
 Totdeauna conține:
 1. „Am înțeles:” cu tipul schemei, puterile, numărul și lista plecărilor, lungimile și cartușul;

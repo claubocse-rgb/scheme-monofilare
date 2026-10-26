@@ -214,5 +214,7 @@ def valideaza(model):
         ver.append({"cod": "V00", "nivel": "BLOCANT", "obiect": "schema", "mesaj": f"desenul nu poate fi generat: {e}",
                     "remediere": "corectați datele"})
     blocheaza = any(v.get("nivel") == "BLOCANT" for v in ver)
+    from .calc.verificari import completeaza_remedieri
+    completeaza_remedieri(ver)            # r10: orice BLOCANT are remediere textuală
     return {"blocheaza": blocheaza, "verificari": ver, "info": info, "presupus": presupus, "ipoteze": ipoteze,
             "calculat": r is not None, "rezultat": (r or {}).get("rezultat")}

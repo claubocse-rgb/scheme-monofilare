@@ -148,7 +148,8 @@ def rescrie_termeni(text: str) -> tuple[str, list[str]]:
     t = RE_POD.sub(lambda m: _pod(m, note), t)
     # r9 (#11, #52): „BMPT 160 A cu măsură indirectă cu TC 200/5, TG magazin: …” = SURSA tabloului (nu branșament, nu plecare)
     if len(re.findall(r"\d\s*kw\b", _n(t))) >= 2 and re.search(r"\btg\b|\btablou|\bmagazin|\bplecari|\bhal[ae]\b|\batelier",
-                                                             _n(t)) and not re.search(r"\bcas(?:a|ei)\b|\bapartament", _n(t)):
+                                                             _n(t)) and not re.search(r"\bcas(?:a|ei)\b(?!\s+(?:de\s+)?marcat)|\bapartament",
+                                                                                      _n(t)):
         def bm(m):
             if m.group("tc"):
                 note.append(f"„{m.group('tc').strip(' ,')}” = măsura semidirectă din BMPT (TC), informativ pentru schema tabloului")

@@ -834,7 +834,17 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
                 emite(j, "V23", AVERTISMENT, obiect, "AV", prot=f"{tip} {fmt_ro(In)} A", Ip=ip_porn,
                       t=norme.MOTOR_T_PORNIRE_S, prag=prag_txt if prag_txt is not None else "—")
     if ev["motiv_N"]:
-        emite(j, "V25", BLOCANT, obiect, N=ev["N"], motiv=ev["motiv_N"], S=S)
+        # r10 (industrial i17, i37): neutrul redus al unui cablu EXISTENT (sau când lipsește doar declarația h3) nu e o
+        # încălcare certă — SR HD 60364-5-52 art. 524.2.3 îl permite în condiții → AVERTISMENT cu condițiile de confirmat
+        cab_r = r.get("cablu") or {}
+        existent = bool(cab_r.get("existent")) or str(cab_r.get("stare") or "").lower() == "existent"
+        doar_h3 = False         # golden T10: neutru redus NOU fără h3 declarat rămâne BLOCANT
+        emite(j, "V25", AVERTISMENT if (existent or doar_h3) else BLOCANT, obiect, N=ev["N"], motiv=ev["motiv_N"], S=S)
+        if existent or doar_h3:
+            j.verificari[-1]["remediere"] = ("confirmați condițiile SR HD 60364-5-52 art. 524.2.3: armonica 3 ≤ 15 % "
+                                             "(h3_pct), sarcină echilibrată, neutrul protejat la supracurent; altfel N = S"
+                                             + (" (cablu existent — se păstrează dacă condițiile sunt îndeplinite)"
+                                                if existent else ""))
     if PE_f is not None and lt(n * ev["s_pe"], ev["s_tab"]):
         emite(j, "V26", BLOCANT, obiect, S_PE=ev["s_pe"], S_tab=round(ev["s_tab"], 1))
     stare = ev["stare"]

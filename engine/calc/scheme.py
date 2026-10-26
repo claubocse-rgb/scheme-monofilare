@@ -312,6 +312,7 @@ def _valideaza_plecari(plecari, j, prefix=""):
         # P ≤ 0, L ≤ 0, cosφ, ks rămân în §B.2 (validarea ramurii, cu obiectul ramurii)
         if not _valideaza_dict(pl, j, ob, sari=("P_kW", "In_A", "S_kVA", "L_m", "cosfi", "ks")):
             return False
+        _normalizeaza_ddr_plecare(pl, j, ob)
         if isinstance(pl.get("DDR"), dict) and not _valideaza_ddr(pl["DDR"], j, ob, "DDR"):
             return False
         cab = pl.get("cablu")
@@ -320,6 +321,39 @@ def _valideaza_plecari(plecari, j, prefix=""):
         if pl.get("copii") and not _valideaza_plecari(pl["copii"], j, ob.replace("P", "P", 1) + "."):
             return False
     return True
+
+
+_VE_RE = re.compile(r"\b(ve|ev|evse|wallbox)\b|incarcare|charger|charging|statie de incarcare|stati[ea] ve")
+
+
+def e_plecare_ve(pl):
+    """r10 (industrial i45): plecare spre o stație de încărcare VE (după nume / receptor)."""
+    if not isinstance(pl, dict) or pl.get("copii"):
+        return False
+    t = " ".join(str(pl.get(k) or "") for k in ("nume", "receptor", "tip"))
+    return bool(_VE_RE.search(_fara_diacritice(t).lower().replace("-", " ").replace("_", " ")))
+
+
+def _normalizeaza_ddr_plecare(pl, j, ob):
+    """r10 (industrial i45): DDR declarat pe plecare cu cheia `ddr` (alias al `DDR`) — {tip: "B"} fără IΔn = 30 mA;
+    `ddr: true` = 30 mA tip A. Plecare VE fără DDR declarat → DDR 30 mA tip B (SR HD 60364-7-722 art. 722.531.2),
+    declarat în presupus. Nimic declarat nu se pierde."""
+    d = pl.get("DDR", pl.get("ddr"))
+    if d is True:
+        d = {}
+    if isinstance(d, dict):
+        d = dict(d)
+        if d.get("IdN_mA") is None:
+            d["IdN_mA"] = d.pop("IdN", None) or 30
+        if isinstance(d.get("tip"), str):
+            d["tip"] = d["tip"].strip().upper().replace("TIP ", "").replace("TYPE ", "")
+        pl["DDR"] = d
+        pl.pop("ddr", None)
+        return
+    if d is None and e_plecare_ve(pl) and not pl.get("_siguranta"):
+        pl["DDR"] = {"IdN_mA": 30, "tip": "B"}
+        j.presupune(f"{ob}: stație de încărcare VE — DDR 30 mA tip B pe plecare (SR HD 60364-7-722); tip A admis numai "
+                    f"cu RDC-DD 6 mA c.c. în stație (declarați ddr tip „A”)")
 
 
 def _valideaza_ddr(d, j, obiect, camp):
@@ -566,6 +600,20 @@ def _pi(pl, nivel):
         ks = pl.get("ks") or norme.ks_implicit(len(copii))
         return ks * sum(_pi(c, nivel + 1) for c in copii)
     return 0.0
+
+
+def cablu_impus_fara_L(cab, j, obiect, camp):
+    """r10 (fotovoltaic #51, industrial i18): cablu IMPUS (secțiune declarată) fără lungime → V07 BLOCANT cu întrebare
+    explicită (lungimea decide ΔU, deconectarea și Iz la grupare) — nu se ignoră, nu se presupune tăcut."""
+    if not isinstance(cab, dict) or cab.get("S_fortat") is None:
+        return False
+    emite(j, "V07", BLOCANT, obiect, "param", camp=camp, x="—",
+          conditie=f"cablu impus {fmt_ro(cab['S_fortat'])} mm² fără lungime — secțiunea nu se poate verifica (Iz, ΔU, "
+                   f"deconectare)")
+    j.verificari[-1]["remediere"] = f"lungimea cablului impus de {fmt_ro(cab['S_fortat'])} mm² (m) — câmpul {camp}"
+    j.verificari[-1]["intrebare"] = True
+    j.verificari[-1]["camp"] = camp
+    return True
 
 
 def _cablu_plecare(pl, nivel, j, obiect, implicit_metoda=None, final=False):
@@ -1527,20 +1575,33 @@ def schema_tablou(inp, j):
         emite(j, "V14", AVERTISMENT, "schema", P=p_decl, Pc=pc)
 
     final = bool(inp.get("circuite_finale"))
-    if inp.get("origine") == "pt_propriu":
+    if inp.get("_ctx_sursa") is not None:
+        # r10: sursa calculată de schema apelantă (GE izolat — bornele GE în regim generator)
+        ctx = dict(inp["_ctx_sursa"])
+        rez["sursa"] = inp.get("_sursa_eticheta") or "sursă proprie"
+    elif inp.get("origine") == "pt_propriu":
         # SPEC §B.1.1: TG din PT propriu — limite ΔU 6/8 %, fără DDR în amonte; sursa = trafo dacă Sn e dat
         sn = inp.get("pt_Sn_kVA")
         if sn is not None:
             if int(sn) not in norme.TRAFO or float(sn) != int(sn):
                 emite(j, "V05", BLOCANT, "schema", "trafo", Sn=sn, vecini=", ".join(str(x) for x in norme.TRAFO_SN_KVA))
                 return rez
-            t = sc.trafo(int(sn), inp.get("SkQ_MVA"))
+            nt = n_trafo_sursa(inp, j, f"PT propriu {int(sn)} kVA")
+            t = trafo_sursa(inp, j, int(sn), inp.get("trafo_izolatie"), *(nt or (1, False)))
+            if nt is None or t is None:
+                return rez
             if inp.get("SkQ_MVA") is None:
                 j.presupune("S\"kQ = 500 MVA, R/X = 0,1 (rețea MT, majorant)")
             j.ipoteza("skq", t["SkQ_MVA"], inp.get("SkQ_MVA") is None)
-            j.ipoteza("trafo", (t["uk_pct"], t["Pk_W"]), True)
+            j.ipoteza("trafo", (t["uk_pct"], t["Pk_W"]), not t.get("uk_declarat"))
             ctx = sc.context_pt(t)
-            j.presupune(f"sursa: bara JT a PT propriu {sn} kVA")
+            rez["PT_sursa"] = {"Sn_kVA": int(sn), "n_trafo": nt[0], "paralel": nt[1], "uk_pct": t["uk_pct"],
+                               "Ik3max_bara_kA": t["Ik3max_bara_kA"]}
+            if nt[0] > 1:
+                j.pas(f"Sursa: PT {nt[0]} × {int(sn)} kVA " + (f"în paralel pe bara JT → Ik3max bară = "
+                      f"{fmt_ro(t['Ik3max_bara_kA'])} kA (toate trafo în funcțiune)" if nt[1] else
+                      f"cu secții separate → Ik3max bară = {fmt_ro(t['Ik3max_bara_kA'])} kA (un trafo)"))
+            j.presupune(f"sursa: bara JT a PT propriu {(str(nt[0]) + ' × ') if nt[0] > 1 else ''}{sn} kVA")
         else:
             ctx = _context_od(inp, j, ddr_amonte=False)
             ctx["origine"] = "pt_propriu"
@@ -1556,7 +1617,9 @@ def schema_tablou(inp, j):
                 j.presupune("RCBO 300 mA din BMPM selectiv (S) — echiparea uzuală a blocurilor noi; branșamentul vechi "
                             "cu RCBO instantaneu se declară (DDR_amonte_selectiv: false)")
     if inp.get("origine") == "pt_propriu":
-        rez["sursa"] = f"PT propriu{(' ' + fmt_ro(inp['pt_Sn_kVA'], 0) + ' kVA') if inp.get('pt_Sn_kVA') else ''} — bara JT"
+        _ps = rez.get("PT_sursa") or {}
+        rez["sursa"] = (f"PT propriu{(' ' + (str(_ps['n_trafo']) + ' × ' if _ps.get('n_trafo', 1) > 1 else '') + fmt_ro(inp['pt_Sn_kVA'], 0) + ' kVA') if inp.get('pt_Sn_kVA') else ''} — bara JT"
+                        + (" (trafo în paralel)" if _ps.get("paralel") else ""))
     if inp.get("origine") == "pt_propriu" and inp.get("IdN_amonte_mA") is not None:
         ctx["ddr_sus"] = _ddr_amonte(inp)
 
@@ -1604,7 +1667,9 @@ def schema_tablou(inp, j):
         r["prot_tip"] = tip_q_declarat(inp, "Q_general_tip", "aparat")     # r9 (#20): ACB declarat respectat
     if inp.get("In_Q1_A") is not None:
         r["In_fortat"] = inp["In_Q1_A"]
-    if p_decl is not None:
+    if inp.get("_Ib_Q1_A") is not None:
+        r["Ib_A"] = float(inp["_Ib_Q1_A"])       # r10: GE izolat — C1 (GE → TG) poartă curentul GE (Ir Q_G)
+    elif p_decl is not None:
         r["P_kW"] = p_decl
     elif inp.get("In_Q1_A") is not None:
         r["In_A"] = inp["In_Q1_A"]
@@ -1713,6 +1778,87 @@ def schema_tablou(inp, j):
 # ============================================================================================================
 # C.5 Post de transformare 20/0,4 kV
 # ============================================================================================================
+_CUPLA_NI = ("inchisa", "ni", "nc", "normal_inchisa", "paralel", "in_paralel", "closed")
+_CUPLA_NO = ("deschisa", "no", "normal_deschisa", "open", "separat", "separate")
+
+
+def _uk_declarat(inp, j):
+    """r10 (industrial i65): uk declarat (`uk_pct`, alias `pt_uk_pct`) — None dacă lipsește, False dacă e invalid
+    (V12 BLOCANT cu remediere)."""
+    uk = inp.get("uk_pct", inp.get("pt_uk_pct"))
+    if uk is None:
+        return None
+    if not _numar(uk) or not 2.0 <= float(uk) <= 12.0:
+        emite(j, "V12", BLOCANT, "schema", "camp", camp="uk_pct", valoare=uk)
+        j.verificari[-1]["remediere"] = ("uk din plăcuța / fișa transformatorului, în % (uzual 4 % până la 630 kVA, "
+                                         "6 % peste)")
+        return False
+    return float(uk)
+
+
+def trafo_sursa(inp, j, sn, izolatie=None, n_t=1, paralel=False):
+    """r10: transformatorul sursă cu uk declarat (dacă există) și, la n trafo identice în PARALEL pe aceeași bară JT,
+    Zk = Z_Q + K_T·Z_T/n → Ik3max bară cu toate trafo în funcțiune (Ik1min rămâne cu un singur trafo, prudent).
+    Întoarce dict-ul `sc.trafo` sau None (uk invalid → BLOCANT emis)."""
+    uk = _uk_declarat(inp, j)
+    if uk is False:
+        return None
+    t = sc.trafo(int(sn), inp.get("SkQ_MVA"), izolatie or "ulei", uk_pct=uk)
+    if uk is not None:
+        t["uk_declarat"] = True
+        j.pas(f"uk = {fmt_ro(uk)} % declarat (plăcuța trafo) — folosit la Ik3 în locul valorii din tabel")
+    if n_t > 1 and paralel:
+        t = dict(t)
+        t["Zk"] = (t["Z_Q"][0] + t["K_T"] * t["Z_T"][0] / n_t, t["Z_Q"][1] + t["K_T"] * t["Z_T"][1] / n_t)
+        t["Ik3max_bara_kA"] = sc.ik3_din_z(t["Zk"])
+        t["n_paralel"] = n_t
+    return t
+
+
+def n_trafo_sursa(inp, j, ce="PT-ul sursă"):
+    """r10 (industrial i08 / i30, fotovoltaic #15): numărul de transformatoare ale PT-ului SURSĂ al unui tablou / al
+    ramurii de rețea și regimul barei: (n, paralel) sau None (BLOCANT emis). `n_trafo` / `pt_n_trafo` (1…4);
+    `cupla` „inchisa” → paralel (Ik cu toate trafo); „deschisa” sau `bara` „T1” / „T2” / „sectia 1” → un singur trafo
+    pe bara de racord; nedeclarat → paralel (majorant pentru Icu), declarat în presupus. Niciun trafo nu se pierde tăcut."""
+    n = inp.get("n_trafo", inp.get("pt_n_trafo"))
+    if n is None:
+        return 1, False
+    if isinstance(n, bool) or not _numar(n) or n != int(n) or not 1 <= int(n) <= 4:
+        emite(j, "V96", BLOCANT, "schema", ce=f"{ce} cu n_trafo = {n!r}",
+              detaliu="motorul acoperă 1…4 transformatoare identice", remediere="n_trafo întreg 1…4 (câte trafo are "
+                                                                              "postul), sau proiect de specialitate")
+        return None
+    n = int(n)
+    if n == 1:
+        return 1, False
+    bara = inp.get("bara", inp.get("bara_racord"))
+    cupla = _fd(inp.get("cupla")).lower() if isinstance(inp.get("cupla"), str) else None
+    if bara is not None:
+        b = _fd(str(bara)).lower().replace(" ", "").replace("_", "")
+        mt = re.match(r"^(?:t|trafo|sectia|sectiunea|semibara|bara)?(\d)$", b)
+        if not mt or not 1 <= int(mt.group(1)) <= n:
+            emite(j, "V12", BLOCANT, "schema", "camp", camp="bara", valoare=bara)
+            j.verificari[-1]["remediere"] = f"bara de racord „T1” … „T{n}” (secția de bare a trafo-ului) sau cupla „inchisa”"
+            return None
+        if cupla in _CUPLA_NI:
+            j.presupune(f"racord pe bara T{mt.group(1)}, dar cupla e declarată închisă — Ik3 cu toate cele {n} trafo în "
+                        f"paralel (majorant)")
+            return n, True
+        j.pas(f"{ce}: {n} trafo, racord pe bara JT a T{mt.group(1)} (cupla deschisă) — Ik3 doar din T{mt.group(1)}")
+        return n, False
+    if cupla in _CUPLA_NO:
+        j.pas(f"{ce}: {n} trafo cu cupla normal deschisă — fiecare secție de bare are un singur trafo (Ik3 dintr-un trafo)")
+        return n, False
+    if cupla is not None and cupla not in _CUPLA_NI:
+        emite(j, "V12", BLOCANT, "schema", "camp", camp="cupla", valoare=inp.get("cupla"))
+        j.verificari[-1]["remediere"] = "cupla „inchisa” (trafo în paralel) sau „deschisa” (secții separate)"
+        return None
+    if cupla is None:
+        j.presupune(f"{ce}: {n} trafo în paralel pe aceeași bară JT (cupla nedeclarată — majorant pentru Icu); cu cupla "
+                    f"normal deschisă declarați cupla „deschisa” sau bara de racord („T1”)")
+    return n, True
+
+
 def _celula_trafo(sn, fortat, j, u_kv=20):
     """SPEC §C.5 pct. 6: Sn ≤ 1000 kVA → separator de sarcină + siguranțe MT; > 1000 kVA → întreruptor + releu.
     Siguranțe impuse peste 1000 kVA → V61 BLOCANT."""
@@ -1841,7 +1987,9 @@ def schema_pt(inp, j):
               remediere="n_trafo 1 sau 2, sau proiect de specialitate")
         return rez
     izt = inp.get("trafo_izolatie") or "ulei"
-    t = sc.trafo(sn, inp.get("SkQ_MVA"), izt)
+    t = trafo_sursa(inp, j, sn, izt)
+    if t is None:
+        return rez
     cupla = None
     if n_t == 2:
         cupla = _fd(inp.get("cupla") or "deschisa")
@@ -1875,9 +2023,10 @@ def schema_pt(inp, j):
     if inp.get("SkQ_MVA") is None:
         j.presupune("S\"kQ = 500 MVA, R/X = 0,1 (rețea MT, majorant)")
     if inp.get("trafo_izolatie") is None:
-        j.presupune(f"trafo în ulei (izolația nedeclarată) — uk {fmt_ro(t['uk_pct'])} %, Pk {t['Pk_W']} W (Tier 2)")
+        j.presupune(f"trafo în ulei (izolația nedeclarată) — uk {fmt_ro(t['uk_pct'])} %"
+                    + (" (declarat)" if t.get("uk_declarat") else "") + f", Pk {t['Pk_W']} W (Tier 2)")
     j.ipoteza("skq", t["SkQ_MVA"], inp.get("SkQ_MVA") is None)
-    j.ipoteza("trafo", (t["uk_pct"], t["Pk_W"]), True)
+    j.ipoteza("trafo", (t["uk_pct"], t["Pk_W"]), not t.get("uk_declarat"))
     rez["trafo"] = {"Sn_kVA": sn, "In_T_A": t["In_T_A"], "uk_pct": t["uk_pct"], "Pk_W": t["Pk_W"], "P0_W": t["P0_W"],
                     "izolatie": izt, "Ik3max_bara_kA": t["Ik3max_bara_kA"], "Ik1min_bara_A": t["Ik1min_bara_A"]}
     # r5 (P1-12): celulele MT cerute explicit — celule de linie (intrare / intrare-ieșire în buclă) și celula de măsură
@@ -2552,7 +2701,9 @@ def _schema_cef(inp, j):
         if int(sn) not in norme.TRAFO or float(sn) != int(sn):
             emite(j, "V05", BLOCANT, "schema", "trafo", Sn=sn, vecini=", ".join(str(s) for s in norme.TRAFO_SN_KVA))
             return rez
-        t = sc.trafo(int(sn), inp.get("SkQ_MVA"))
+        t = trafo_sursa(inp, j, int(sn), inp.get("trafo_izolatie"))
+        if t is None:
+            return rez
         # v1.9 (R5 P0-4): PT existent = sursa (Ik din trafo), nu trafo nou desenat în serie între două tablouri JT.
         # Racord în TG existent + PT propriu → PT-ul e cel existent care alimentează TG-ul.
         existent = _bool(inp.get("pt_existent"))
@@ -2561,7 +2712,18 @@ def _schema_cef(inp, j):
             j.presupune(f"PT propriu {int(sn)} kVA = PT existent care alimentează TG-ul (racord în TG existent) — "
                         f"sursa pentru Ik, fără transformator nou")
         existent = bool(existent)
-        if n_t > 1 and existent:
+        bara_un_trafo = False
+        if n_t > 1 and existent and (inp.get("bara") is not None or inp.get("bara_racord") is not None
+                                     or inp.get("cupla") is not None):
+            # r10 (fotovoltaic #15): „racord pe bara JT a T1” / cupla deschisă → Ik3 doar din trafo-ul barei, nu T1 ∥ T2
+            nt = n_trafo_sursa(dict(inp, n_trafo=n_t), j, f"PT existent {n_t} × {int(sn)} kVA")
+            if nt is None:
+                return rez
+            bara_un_trafo = not nt[1]
+        if n_t > 1 and existent and bara_un_trafo:
+            j.presupune(f"injecția CEF pe bara unui singur trafo ({int(sn)} kVA, cupla deschisă) — Sn față de S CEF se "
+                        f"verifică pe acest trafo")
+        elif n_t > 1 and existent:
             # r7 (P0-2): n trafo identice în paralel pe barele JT ale PT-ului existent (cuplă normal închisă):
             # Zk = Z_Q + K_T·Z_T/n → Ik3max bară (Icu); Ik1min cu un singur trafo în funcțiune (prudent)
             t = dict(t)
@@ -2604,9 +2766,9 @@ def _schema_cef(inp, j):
             rez["PT"], q_pt = _pt_nou_cef(inp, j, int(sn), t, n_t, masura)
         if n_t > 1 and not existent:
             pass        # r8: Sn față de S se verifică pe fiecare secție (trafo cu grupul lui de invertoare), mai jos
-        elif lt(n_t * sn, s_tot):
+        elif lt((1 if bara_un_trafo else n_t) * sn, s_tot):
             # și la PT existent: trafo sub injecție; r7: Σ Sn la n trafo
-            if n_t > 1:
+            if n_t > 1 and not bara_un_trafo:
                 emite(j, "V67", BLOCANT, "schema", "n", n=n_t, sn=int(sn), x=n_t * sn, y=s_tot)
             else:
                 emite(j, "V67", BLOCANT, "schema", x=sn, y=s_tot)
@@ -2681,7 +2843,9 @@ def _schema_cef(inp, j):
     if tg:
         racord["tg_existent"] = True
         racord["tip"] = f"TG existent (consum propriu) — {racord['tip']}"
-    L0 = inp.get("L_racord_m")
+    L0 = inp.get("L_racord_m", (inp.get("cablu_C0") or {}).get("L"))
+    if L0 is None and cablu_impus_fara_L(inp.get("cablu_C0"), j, "C0", "L_racord_m"):
+        return rez
 
     def ramura_unitate(u):
         """Intrarea B.1 a cablului unui invertor / PCS (v1.3, P0-2): cablu pe grup > `cablu_inv`/`cablu_pcs` > `cablu`
@@ -3198,10 +3362,37 @@ def _protectie_port_baterie(j, obiect, p_kw, ub):
     return {"Idc_A": idc, "In_A": In_b, "U_V": float(ub)}
 
 
+def _baterie_cc_pe_invertor_nehibrid(inp, j, b):
+    """r10 (fotovoltaic #57): baterie pe c.c. (`bess.cuplaj: "cc"`, sau `baterie` / `baterie_kWh` la prosumator) la
+    invertoare pe care catalogul le știe NE-hibride (Sungrow SG…CX, Huawei …KTL-M2/M3, …) și niciunul declarat hibrid →
+    BLOCANT cu întrebare (PCS c.a. separat sau invertor hibrid), nu „hibrid + baterie c.c.” desenat fals."""
+    cc = (isinstance(inp.get("bess"), dict) and inp["bess"].get("cuplaj") == "cc") or (
+        inp.get("tip_schema") == "prosumator" and not isinstance(inp.get("bess"), dict)
+        and (isinstance(inp.get("baterie"), dict) or inp.get("baterie_kWh") is not None)
+        and (b or {}).get("cuplaj") != "ca")
+    if not cc or _bool(inp.get("hibrid")):
+        return False
+    grupuri = [g for g in list(inp.get("invertoare") or []) + [inp.get("invertor")] if isinstance(g, dict)]
+    if not grupuri or any(_e_hibrid(g) for g in grupuri):
+        return False
+    stiute = [g for g in grupuri if _bool(g.get("hibrid")) is False or cat_inv.cauta(g.get("producator"), g.get("model"))]
+    if len(stiute) != len(grupuri):
+        return False        # un invertor necunoscut în catalog: nu se poate afirma că e ne-hibrid
+    mt = ", ".join(" ".join(str(x) for x in (g.get("producator"), g.get("model")) if x) or f"{fmt_ro(g.get('Pn_kW'))} kW"
+                   for g in grupuri)
+    _contradictie(j, BLOCANT, "BESS", f"baterie pe c.c., dar invertorul {mt} nu este hibrid (fără port de baterie c.c.)",
+                  "baterie cu PCS / invertor de baterie separat cuplat în c.a. (bess.cuplaj „ca”) sau invertor hibrid "
+                  "(ex. Sungrow SH…RT / Huawei …KTL-M1) — confirmați")
+    j.verificari[-1]["intrebare"] = True
+    return True
+
+
 def _invertor_baterie_ca_cc(inp, j):
     """r7 (P1): baterie declarată „cuplaj c.c.” dar cu un invertor de baterie cuplat în c.a. (SMA Sunny Island, Sunny Boy
     Storage) — contradicție BLOCANT (nu se desenează tacit nici c.c., nici c.a.). Întoarce True dacă schema se oprește."""
     b = inp.get("bess") if isinstance(inp.get("bess"), dict) else inp.get("baterie") if isinstance(inp.get("baterie"), dict) else None
+    if _baterie_cc_pe_invertor_nehibrid(inp, j, b):
+        return True
     if b is None or b.get("cuplaj") != "cc":
         return False
     cand = [b, b.get("pcs"), b.get("baterie"), inp.get("invertor"), inp.get("invertor_baterie")] + list(inp.get("invertoare") or [])
@@ -3466,6 +3657,67 @@ def _ddr_prosumator(u, tt, ra):
     return (int(fisa) if fisa else 30), tip
 
 
+_EPS_MIC = ("ilumin", "lumin", "led", "central", "router", "internet", "alarm", "camer", "supraveghere", "poarta",
+            "automatizar", "senzor")
+
+
+def _tablou_eps(inp, j, rez, unitati, cuplaj, retea):
+    """r10 (locuințe #9, #66): tablou de rezervă (backup / EPS) alimentat din portul EPS al invertorului HIBRID — tablou
+    separat după invertor (nu bara TE): Q-EPS din puterea portului, DDR 30 mA tip A pe grupă, circuitele declarate.
+    Fără invertor hibrid → BLOCANT cu remediere; fără baterie → AVERTISMENT. Întoarce False dacă schema se oprește."""
+    bk = inp.get("backup")
+    if bk is True:
+        bk = {}
+    if not isinstance(bk, dict):
+        emite(j, "V07", BLOCANT, "schema", "param", camp="backup", x=repr(bk)[:40],
+              conditie="se așteaptă {circuite: [...], P_kW}")
+        j.verificari[-1]["remediere"] = "circuitele tabloului de rezervă (backup.circuite: frigider, centrală, iluminat …)"
+        return False
+    hib = [u for u in unitati if not u.get("pcs") and (_e_hibrid(u["grup"]) or _bool(inp.get("hibrid")))]
+    if not hib:
+        _contradictie(j, BLOCANT, "EPS", "tablou de rezervă (backup / EPS) cerut, dar niciun invertor nu e hibrid (fără port "
+                                         "EPS / backup)",
+                      "invertor hibrid cu port EPS (hibrid: true / model hibrid) sau renunțați la tabloul de rezervă")
+        j.verificari[-1]["intrebare"] = True
+        return False
+    u = hib[0]
+    mono = u["retea"] == "mono"
+    circ = [c if isinstance(c, dict) else {"nume": str(c)} for c in (bk.get("circuite") or [])]
+    if not circ:
+        circ = [{"nume": "Circuite rezervate"}]
+        j.presupune("tabloul de rezervă (EPS) fără circuite declarate — un circuit generic „Circuite rezervate”")
+    p_eps = bk.get("P_kW") or u["Pn_kW"]
+    if bk.get("P_kW") is None:
+        j.presupune(f"puterea portului EPS = Pn invertor {fmt_ro(u['Pn_kW'])} kW (din fișa invertorului hibrid)")
+    i_eps = float(p_eps) * 1000.0 / (norme.U_0_V if mono else SQRT3 * norme.U_N_V)
+    q_in = prima_din_serie(norme.MCB_IN_A, i_eps * 0.999) or round(i_eps)
+    sec = lambda In: 1.5 if In <= 10 else 2.5 if In <= 16 else 4.0 if In <= 25 else 6.0 if In <= 32 else 10.0 if In <= 40 else 16.0
+    out = []
+    for c in circ:
+        n = _fara_diacritice(str(c.get("nume") or c.get("receptor") or "")).lower()
+        if c.get("P_kW") is not None:
+            ib = float(c["P_kW"]) * 1000.0 / (norme.U_0_V * 0.95)
+            In = prima_din_serie(norme.MCB_IN_A, max(ib, 10.0) * 0.999) or 16
+        else:
+            In = 10 if any(k in n for k in _EPS_MIC) else 16
+        if In > q_in:
+            emite(j, "V40", AVERTISMENT, "EPS", a=q_in, b=In)
+        out.append({"nume": c.get("nume") or "Circuit", "In_A": In, "S_mm2": sec(In), "curba": "B" if In <= 10 else "C"})
+    rez["EPS"] = {"la": u["obiect"], "P_kW": float(p_eps), "Q_In_A": q_in, "S_mm2": sec(q_in), "mono": mono,
+                  "DDR": {"IdN_mA": 30, "tip": "A", "In_A": prima_din_serie(norme.RCCB_IN_A, max(q_in, 25 if not mono else 16))
+                          or q_in}, "circuite": out}
+    j.pas(f"Tablou de rezervă TD-EPS din portul EPS al {u['obiect']} (hibrid): P = {fmt_ro(p_eps)} kW → Ib = "
+          f"{fmt_ro(i_eps)} A, Q-EPS C{q_in} A, DDR 30 mA tip A; circuite: "
+          + ", ".join(f"{c['nume']} C{c['In_A']}" for c in out))
+    j.presupune("TD-EPS: în regim insular legătura N–PE se face în invertor (releu intern) conform fișei; circuitele EPS "
+                "sunt mutate din TE (nu dublate)")
+    if not (cuplaj == "cc" or rez.get("BESS")):
+        emite(j, "V96", AVERTISMENT, "EPS", ce="tablou EPS fără baterie",
+              detaliu="fără baterie, portul EPS funcționează doar cât produce câmpul PV",
+              remediere="declarați bateria (baterie_kWh) sau confirmați EPS fără stocare")
+    return True
+
+
 def schema_prosumator(inp, j):
     """SPEC §C.4: prosumator mono/tri — limite (400 kW, 40 A mono, 3,68 kW), ramurile invertoarelor, V72, V73.
     v1.9 (R5): mai multe invertoare (`invertoare[]`, `Pn_inv_kW` = alias pentru unul singur), fiecare cu ramura și
@@ -3564,10 +3816,15 @@ def schema_prosumator(inp, j):
             emite(j, "V07", BLOCANT, "schema", "param", camp="pt_Sn_kVA", x=sn if sn is not None else "—",
                   conditie="racord „pt” fără puterea PT existent (din seria standard)")
             return rez
-        t = sc.trafo(int(sn), inp.get("SkQ_MVA"))
+        nt = n_trafo_sursa(inp, j, f"PT existent {int(sn)} kVA")
+        t = trafo_sursa(inp, j, int(sn), inp.get("trafo_izolatie"), *(nt or (1, False)))
+        if nt is None or t is None:
+            return rez
         j.ipoteza("skq", t["SkQ_MVA"], inp.get("SkQ_MVA") is None)
         ctx = sc.context_pt(t)
         rez["trafo"] = {"Sn_kVA": int(sn), "existent": True, "Ik3max_bara_kA": t["Ik3max_bara_kA"]}
+        if nt[0] > 1:
+            rez["trafo"]["n_trafo"] = nt[0]
         rez["racord"] = f"PT existent {int(sn)} kVA (bara JT)"
     else:
         ctx = _context_od(inp, j, ddr_amonte=racord != "tg_existent")
@@ -3634,7 +3891,9 @@ def schema_prosumator(inp, j):
         q_tg = _q_tg_existent(inp, j, ctx, iac) if tg else None
         if q_tg is not None:
             rez["Q_TG"] = {k: q_tg.get(k) for k in ("tip", "In_A", "Ir_A", "curba", "Icu_kA") if q_tg.get(k) is not None}
-        L0 = inp.get("L_racord_m")
+        L0 = inp.get("L_racord_m", (inp.get("cablu_C0") or {}).get("L"))
+        if L0 is None and cablu_impus_fara_L(inp.get("cablu_C0"), j, "C0", "L_racord_m"):
+            return rez
         if L0 is not None:
             c0 = {k: v for k, v in (inp.get("cablu_C0") or {}).items() if v is not None}
             cb.metoda_implicita(c0, "C")
@@ -3731,6 +3990,8 @@ def schema_prosumator(inp, j):
             emite(j, "V76", INFO, "schema", "INFO", x=p_ev, y=float(pa))
     if are_ddr:
         emite(j, "V73", AVERTISMENT, "schema")
+    if inp.get("backup") is not None and not _tablou_eps(inp, j, rez, unitati, cuplaj, retea):
+        return rez
     # v1.8: partea de c.c. (Voc la Tmin, SPD c.c., MPPT) când stringul e descris
     if not _parte_cc(inp, j, rez, "prosumator"):
         return rez
@@ -3753,8 +4014,12 @@ def _context_ge(in_g, sn_kva, xd, ik1_ge):
 
 _SIGURANTA_RE = ("incendiu", "hidrant", "sprinkler", "sprinkl", "drencer", "desfumar", "stingere", "evacuare fum",
                  "presurizar", "pompieri", "jockey", "iluminat de siguranta", "iluminat siguranta", "iluminat de evacuare",
-                 "iluminat evacuare", "iluminat de securitate", "iluminatul de siguranta", "detectie incendiu")
-_SIGURANTA_CUV = re.compile(r"\b(tdsi|psi|cdi|ssi)\b")
+                 "iluminat evacuare", "iluminat de securitate", "iluminatul de siguranta", "detectie incendiu",
+                 # r10 (industrial i61, EN): denumirile în engleză ale consumatorilor de siguranță la incendiu
+                 "fire pump", "fire fighting", "firefighting", "firefighter", "fireman", "fire hydrant", "fire alarm",
+                 "fire protection", "fire water", "smoke extract", "smoke exhaust", "smoke control", "smoke vent",
+                 "pressurisation", "pressurization", "emergency lighting", "escape lighting", "deluge", "foam pump")
+_SIGURANTA_CUV = re.compile(r"\b(tdsi|psi|cdi|ssi|fire|hydrants?)\b")
 # r8: câmpurile text ale unui consumator / plecări / tablou citite de regula de siguranță
 _SIGURANTA_CAMPURI = ("nume", "receptor", "titlu", "denumire", "titlu_tablou", "nume_tablou", "tip")
 
@@ -3930,6 +4195,175 @@ def _separa_consumatori_retea(inp, j, rez):
     return p_n
 
 
+_CHEI_PLECARE_CONS = ("receptor", "pornire", "cosfi", "L_m", "cablu", "retea", "siguranta", "rezerva", "prot_tip",
+                      "In_A", "S_kVA", "DDR", "ddr", "ks", "faza", "h3_pct", "copii", "vital", "pe_ge")
+
+
+def _consumatori_plecari(inp, j):
+    """r10 (industrial i43 / i47): consumatorii schemei GE / ATS ca plecări reale ale tabloului (nu comasate într-un
+    „Consumatori”): n × P → n plecări numerotate. Acceptă și `plecari` declarate direct."""
+    if isinstance(inp.get("plecari"), list) and inp["plecari"]:
+        return [dict(p) for p in inp["plecari"] if isinstance(p, dict)]
+    out = []
+    for i, c in enumerate(inp.get("consumatori") or [], 1):
+        if not isinstance(c, dict):
+            continue
+        pl = {"nume": c.get("nume") or f"Consumator {i}"}
+        if c.get("P_kW") is not None:
+            pl["P_kW"] = c["P_kW"]
+        for k in _CHEI_PLECARE_CONS:
+            if k in c and k not in ("vital", "pe_ge"):
+                pl[k] = c[k]
+        n, nr = _n_rezerva(c)
+        if n > 1:
+            pl["n_circuite"] = n
+        out.append(pl)
+    return out
+
+
+def _schema_ge_izolat(inp, j):
+    """r10 (industrial i43): GE care alimentează singur tabloul (site izolat, `fara_retea: true`) — fără ramură de rețea,
+    fără ATS: GE → Q_G (Ir ≤ In_G, bloc diferențial 300 mA S) → C1 → bara TG → plecările reale (dimensionate în regim GE).
+    GE subdimensionat față de bilanț → V86 BLOCANT."""
+    rez = {"mod": "ge_izolat"}
+    U = SQRT3 * norme.U_N_V
+    inventat = [k for k in ("sursa_retea", "pt_Sn_kVA", "In_Q_retea_A") if inp.get(k) is not None]
+    if inventat:
+        emite(j, "V12", AVERTISMENT, "schema", "contradictie",
+              detaliu=f"GE fără rețea (site izolat), dar este declarată și o ramură de rețea ({', '.join(inventat)}) — "
+                      f"ramura de rețea NU se desenează")
+        j.verificari[-1]["remediere"] = "confirmați: GE izolat (fara_retea) sau GE de rezervă cu ATS (sursa_retea)"
+    if inp.get("retea") == "mono":
+        emite(j, "V96", BLOCANT, "schema", ce="GE monofazat izolat", detaliu="motorul calculează GE izolat trifazat",
+              remediere="GE trifazat 3P+N sau schemă de specialitate")
+        return rez
+    if inp.get("schema_pamant") == "TT":
+        emite(j, "V96", BLOCANT, "schema", ce="GE izolat în schemă TT",
+              detaliu="GE izolat se calculează TN-S (neutrul GE legat la priza de pământ locală)",
+              remediere="schema_pamant „TN-S” (neutrul GE la priza locală) sau proiect de specialitate")
+        return rez
+    if inp.get("Sn_GE_kVA") is None:
+        emite(j, "V07", BLOCANT, "schema", "param", camp="Sn_GE_kVA", x="—", conditie="lipsește puterea GE (kVA)")
+        return rez
+    plecari = _consumatori_plecari(inp, j)
+    if not plecari:
+        emite(j, "V07", BLOCANT, "schema", "plecari", tablou="TG alimentat din GE")
+        return rez
+    if not _valideaza_plecari(plecari, j):
+        return rez
+    sn = float(inp["Sn_GE_kVA"])
+    in_g = sn * 1000.0 / U
+    xd = inp.get("xd")
+    if xd is None:
+        xd = norme.GE_XD2_IMPLICIT
+        j.presupune("x\"d = 0,12 (lipsește din fișa GE)")
+    tip_g = "MCCB" if in_g <= 1600 + 1e-9 else "ACB"
+    In_G = inp.get("In_QG_A") or pr.alege_calibru(tip_g, in_g)
+    if In_G is None:
+        emite(j, "V06", BLOCANT, "Q_G", Ib=in_g, tip="ACB")
+        return rez
+    k_g, ir_g = pr.alege_reglaj_ir_max(tip_g, In_G, in_g)
+    if k_g is None:
+        emite(j, "V60", BLOCANT, "schema", "B", x=In_G, y=in_g)
+        return rez
+    ik3 = sc.ge_ik3(in_g, xd)
+    ik1_ge = norme.GE_IK_SUSTINUT_MULTIPLU * in_g if inp.get("excitatie_sustinuta") else in_g
+    ctx = _context_ge(in_g, sn, xd, ik1_ge)
+    rez.update({"In_G_A": in_g, "Ik3_GE_kA": ik3 / 1000.0, "Ik1_regim_GE_A": ik1_ge, "fara_retea": True})
+    j.pas(f"GE {fmt_ro(sn)} kVA, sursă unică (site izolat, fără rețea): In_G = {fmt_ro(in_g)} A; Ik3'' ≈ 1,1·In_G/x''d "
+          f"= {fmt_ro(ik3 / 1000.0)} kA; Q_G {tip_g} {In_G} A, Ir ≤ In_G = {fmt_ro(ir_g)} A")
+    sig = tablou_de_siguranta(inp) or any(e_consumator_siguranta(p) for p in plecari)
+    t_inp = {k: inp[k] for k in ("schema_pamant", "cablu", "ks", "circuite_finale", "titlu_tablou", "nume_tablou",
+                                 "siguranta_tablou", "cosfi", "P_kW") if inp.get(k) is not None}
+    L = inp.get("L_C2_m", inp.get("L_GE_ATS_m", inp.get("L_alimentare_m")))
+    if L is None:
+        L = 20.0
+        j.presupune("lungime C1 (GE → TG) 20 m")
+    t_inp.update({"tip_schema": "tablou", "plecari": plecari, "retea": "tri", "origine": "_ge", "_ctx_sursa": ctx,
+                  "_sursa_eticheta": f"GE {fmt_ro(sn, 0)} kVA — sursă unică (site izolat, fără rețea)",
+                  "In_Q1_A": In_G, "_Ib_Q1_A": ir_g, "Q1_tip": tip_g, "L_alimentare_m": float(L)})
+    t_inp["cablu"] = dict(t_inp.get("cablu") or {}, L=float(L))
+    if not sig and inp.get("DDR_GE", True) is not False:
+        # regim GE: Ik1 ≈ In_G nu atinge Ia al Q_G → bloc diferențial 300 mA S pe Q_G (SR HD 60364-4-41 art. 411.4.5)
+        t_inp["Q1_DDR"] = {"IdN_mA": 300, "selectiv": True, "tip": "A"}
+    rz = schema_tablou(t_inp, j)
+    rez.update(rz)
+    q1 = (rz.get("Q1_C1") or {}).get("protectie") or {}
+    rez["Q_G"] = {"tip": q1.get("tip", tip_g), "In_A": q1.get("In_A", In_G), "Ir_A": q1.get("Ir_A", ir_g),
+                  "Icu_kA": q1.get("Icu_kA"), "decl": q1.get("decl")}
+    if sig:
+        rez["Q_G"]["RCM"] = {"IdN_mA": 300, "functie": "monitorizare curent diferențial — doar semnalizare (SR EN 62020)"}
+    pc = (rz.get("bilant") or {}).get("Pc_kW")
+    cos = inp.get("cosfi", norme.COSFI_IMPLICIT["tablou"])
+    if pc is not None:
+        rez["Sn_GE_minim_kVA"] = norme.ge_sn_minim(float(pc), cos)
+        ib = float(pc) * 1000.0 / (U * cos)
+        j.pas(f"GE minim: Sn ≥ Pc/cosφ = {fmt_ro(pc)}/{fmt_ro(cos)} = {fmt_ro(pc / cos)} kVA → "
+              f"{rez['Sn_GE_minim_kVA']} kVA (fără pornirea motoarelor)")
+        if gt(ib, in_g):
+            emite(j, "V86", BLOCANT, "schema", x=ib, y=in_g, Sn=rez["Sn_GE_minim_kVA"])
+        elif gt(ib, ir_g):
+            emite(j, "V86", BLOCANT, "schema", "ir", x=ib, y=ir_g, Sn=rez["Sn_GE_minim_kVA"])
+    rez["nota_schema_pamant"] = ("Schemă de legare la pământ: TN-S, neutrul GE legat la priza de pământ locală (sursă "
+                                 f"unică, fără rețea). Rp ≤ 4{NB}Ω.")
+    return rez
+
+
+def _schema_ats_trafo(inp, j):
+    """r10 (industrial i47): ATS între DOUĂ transformatoare (rezervă 100 %, `sursa_rezerva: "trafo"`), fără GE —
+    intrarea I: T1 → QT1 → C1, intrarea II: T2 → QT2 → C2, ATS 4P cu interblocaj (trafo niciodată în paralel), bara TG
+    cu plecările reale. Fiecare trafo poartă singur toată sarcina (V62 pe un trafo). Trafo diferite → BLOCANT explicit."""
+    rez = {"mod": "ats_trafo"}
+    if inp.get("Sn_GE_kVA") is not None:
+        emite(j, "V12", BLOCANT, "schema", "contradictie",
+              detaliu=f"ATS între două transformatoare, dar este declarat și un GE {inp['Sn_GE_kVA']} kVA")
+        j.verificari[-1]["remediere"] = ("alegeți: rezervă din al doilea trafo (sursa_rezerva „trafo”, fără Sn_GE_kVA) "
+                                         "sau GE de rezervă (sursa_rezerva „ge”)")
+        return rez
+    sn = inp.get("pt_Sn_kVA", inp.get("Sn_kVA", inp.get("Sn_T_kVA")))
+    sn2 = inp.get("Sn_T2_kVA", sn)
+    if sn is None:
+        emite(j, "V07", BLOCANT, "schema", "param", camp="pt_Sn_kVA", x="—",
+              conditie="ATS între două transformatoare fără puterea trafo")
+        j.verificari[-1]["remediere"] = "puterea transformatoarelor (pt_Sn_kVA, ex. 630 kVA)"
+        return rez
+    if sn2 != sn:
+        emite(j, "V96", BLOCANT, "schema", ce=f"ATS între trafo diferite ({sn} kVA / {sn2} kVA)",
+              detaliu="motorul calculează ATS între două transformatoare identice (rezervă 100 %)",
+              remediere="transformatoare identice sau proiect de specialitate")
+        return rez
+    if inp.get("retea") == "mono" or inp.get("schema_pamant") == "TT":
+        emite(j, "V96", BLOCANT, "schema", ce="ATS între trafo în rețea monofazată / TT",
+              detaliu="ATS între două PT se calculează trifazat TN-S", remediere="TN-S / TN-C-S trifazat")
+        return rez
+    plecari = _consumatori_plecari(inp, j)
+    if not plecari:
+        emite(j, "V07", BLOCANT, "schema", "plecari", tablou="TG cu ATS între trafo")
+        return rez
+    if not _valideaza_plecari(plecari, j):
+        return rez
+    t_inp = {k: inp[k] for k in ("schema_pamant", "cablu", "ks", "circuite_finale", "titlu_tablou", "nume_tablou",
+                                 "siguranta_tablou", "cosfi", "P_kW", "SkQ_MVA", "uk_pct", "trafo_izolatie",
+                                 "L_alimentare_m", "Q1_tip", "Q_general_tip") if inp.get(k) is not None}
+    if inp.get("L_alimentare_m") is None and inp.get("L_C1_m") is not None:
+        t_inp["L_alimentare_m"] = inp["L_C1_m"]
+    t_inp.update({"tip_schema": "tablou", "plecari": plecari, "retea": "tri", "origine": "pt_propriu",
+                  "pt_Sn_kVA": int(sn)})
+    j.pas(f"ATS între T1 și T2 ({int(sn)} kVA fiecare, rezervă 100 %): trafo NICIODATĂ în paralel (interblocaj ATS) — "
+          f"Ik3 la bara TG dintr-un singur trafo; fiecare trafo poartă singur toată sarcina")
+    rz = schema_tablou(t_inp, j)
+    rez.update(rz)
+    q1 = (rz.get("Q1_C1") or {}).get("protectie") or {}
+    if q1.get("In_A"):
+        in_ats = prima_din_serie(sorted(set(pr.SERII["MCCB"]) | set(pr.SERII["ACB"])), q1["In_A"]) or q1["In_A"]
+        rez["ATS"] = {"poli": 4, "In_A": in_ats, "interblocaj": "mecanic + electric", "categorie": "AC-33B",
+                      "intrari": {"I": f"T1 {int(sn)} kVA (QT1, C1)", "II": f"T2 {int(sn)} kVA (QT2, C2)"},
+                      "iesire": "bara TG"}
+        j.pas(f"ATS 4P In ≥ In QT1 = In QT2 = {q1['In_A']} A → {in_ats} A; intrări I (T1) / II (T2)")
+    rez["Sn_T_kVA"] = int(sn)
+    return rez
+
+
 def schema_ge(inp, j):
     """SPEC §C.6: In_G, Q_G, Ik3" GE, Q rețea, ATS (4P, interblocaj, AC-33B), deconectarea în regim GE (V85), V86, V87.
     v1.2: Q_G MCCB/ACB cu Ir ≤ In_G (M3, protecție strictă la suprasarcină), Icu QR ≥ Ik3 rețea și QG ≥ Ik3 GE,
@@ -3938,12 +4372,22 @@ def schema_ge(inp, j):
     U = SQRT3 * norme.U_N_V
     if tensiune_jt_nesuportata(inp, j, inp.get("consumatori") if isinstance(inp.get("consumatori"), list) else None):
         return rez
+    rezerva = _fd(inp.get("sursa_rezerva") or "").lower()
+    if rezerva in ("trafo", "transformator", "pt", "t2", "trafo_2", "trafo2"):
+        return _schema_ats_trafo(inp, j)
+    if rezerva and rezerva not in ("ge", "grup_electrogen", "generator"):
+        emite(j, "V12", BLOCANT, "schema", "camp", camp="sursa_rezerva", valoare=inp.get("sursa_rezerva"))
+        j.verificari[-1]["remediere"] = "sursa de rezervă „ge” (grup electrogen) sau „trafo” (ATS între două transformatoare)"
+        return rez
+    if _bool(inp.get("fara_retea")):
+        return _schema_ge_izolat(inp, j)
     p_normali = _separa_consumatori_retea(inp, j, rez)
     if inp.get("retea") == "mono":
         # r6 (#33): GE monofazat — nesuportat (ATS 2P, In_G = S/230 V, Ik în regim GE monofazat) → nu se înlocuiește
         # tăcut cu un GE trifazat
         emite(j, "V96", BLOCANT, "schema", ce="GE monofazat", detaliu="motorul calculează doar GE trifazat 3P+N cu ATS 4P",
-              remediere="GE trifazat sau schemă de specialitate pentru GE monofazat (ATS 2P)")
+              remediere="la o casă: schema locuinței cu generator de rezervă (ge_rezerva: Sn_kVA, comutare „manual” / "
+                        "„ATS”) — monofazat suportat; altfel GE trifazat sau schemă de specialitate (ATS 2P)")
         return rez
     if inp.get("ge_paralel"):
         # r6 (#34): GE în paralel cu rețeaua ≠ ATS (comutare). Desenul rămâne de comutare, marcat explicit
@@ -4095,13 +4539,18 @@ def schema_ge(inp, j):
             if int(sn_pt) not in norme.TRAFO or float(sn_pt) != int(sn_pt):
                 emite(j, "V05", BLOCANT, "schema", "trafo", Sn=sn_pt, vecini=", ".join(str(x) for x in norme.TRAFO_SN_KVA))
                 return rez
-            t = sc.trafo(int(sn_pt), inp.get("SkQ_MVA"))
+            nt = n_trafo_sursa(inp, j, f"PT propriu {int(sn_pt)} kVA")
+            t = trafo_sursa(inp, j, int(sn_pt), inp.get("trafo_izolatie"), *(nt or (1, False)))
+            if nt is None or t is None:
+                return rez
             if inp.get("SkQ_MVA") is None:
                 j.presupune("S\"kQ = 500 MVA, R/X = 0,1 (rețea MT, majorant)")
             j.ipoteza("skq", t["SkQ_MVA"], inp.get("SkQ_MVA") is None)
-            j.ipoteza("trafo", (t["uk_pct"], t["Pk_W"]), True)
+            j.ipoteza("trafo", (t["uk_pct"], t["Pk_W"]), not t.get("uk_declarat"))
             ctx_r = sc.context_pt(t)
-            rez["PT_retea"] = {"Sn_kVA": int(sn_pt), "In_T_A": t["In_T_A"], "Ik3max_bara_kA": t["Ik3max_bara_kA"]}
+            rez["PT_retea"] = {"Sn_kVA": int(sn_pt), "In_T_A": t["In_T_A"], "Ik3max_bara_kA": t["Ik3max_bara_kA"],
+                               "n_trafo": nt[0]}
+            sn_pt = nt[0] * int(sn_pt) if nt[1] else sn_pt
             s_sarc = SQRT3 * norme.U_N_V * ib / 1000.0 + p_normali / cos     # r9: + consumatorii normali (doar rețea)
             if gt(s_sarc, float(sn_pt)):
                 emite(j, "V62", BLOCANT, "schema", "ge", x=s_sarc, y=sn_pt)
@@ -4534,6 +4983,30 @@ def _final(j, rez, tip):
             "presupus": j.presupus, "pasi": j.pasi, "ipoteze": ipoteze}
 
 
+def _trafo_neacoperit(inp, j, tip):
+    """r10 (industrial i08 / i30): mai multe transformatoare declarate (`n_trafo` / `pt_n_trafo` > 1) într-o schemă care
+    nu le poate folosi (branșament, locuință, tablou fără PT sursă, …) → BLOCANT explicit, nu un trafo pierdut tăcut."""
+    n = inp.get("n_trafo", inp.get("pt_n_trafo"))
+    if n is None or isinstance(n, bool) or not _numar(n) or n <= 1:
+        return False
+    if tip in ("pt", "cef"):
+        return False
+    pt_sn = inp.get("pt_Sn_kVA") is not None
+    if tip == "tablou" and pt_sn and inp.get("origine") == "pt_propriu":
+        return False
+    if tip == "ge_ats" and pt_sn and (inp.get("sursa_retea") == "pt" or inp.get("origine") == "pt_propriu"
+                                      or inp.get("sursa_rezerva") is not None):
+        return False
+    if tip == "prosumator" and pt_sn:
+        return False
+    emite(j, "V96", BLOCANT, "schema", ce=f"{int(n)} transformatoare declarate la schema „{tip}”",
+          detaliu="schema aleasă nu are un PT sursă în care să intre transformatoarele (lipsește pt_Sn_kVA / originea PT) "
+                  "— nu se desenează cu un singur trafo",
+          remediere="declarați PT-ul sursă (origine „pt_propriu”, pt_Sn_kVA, n_trafo, cupla „inchisa” / „deschisa”) sau "
+                    "schema PT (tip „pt”, Sn_kVA, n_trafo)")
+    return True
+
+
 def _ruleaza(inp):
     """Validarea și calculul schemei (fără nota de ipoteze); întoarce (jurnal, rezultat)."""
     j = Jurnal()
@@ -4552,6 +5025,8 @@ def _ruleaza(inp):
               acceptate=", ".join(k for k in SCHEME if k != "verificare_model"))
         rez = {}
     elif tip != "verificare_model" and not _valideaza_intrare(inp, j, tip):
+        rez = {}
+    elif _trafo_neacoperit(inp, j, tip):
         rez = {}
     else:
         try:

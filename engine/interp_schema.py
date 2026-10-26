@@ -76,7 +76,9 @@ CAI_MOTOR = {"bess.n_pcs": "number", "bess.pcs.n": "number", "bess.pcs.Pn_kW": "
              "bess.pcs.model": "string", "tablouri_secundare[].cablu.S_fortat": "number",
              "tablouri_secundare[].cablu.material": "string", "tablouri_secundare[].cablu.n_fortat": "number",
              "invertoare[].U_ca_V": "number", "bess.n_module": "number", "bess.kWh_modul": "number",
-             "invertoare[].faza": "string", "invertoare[].sectie": "number", "Ik3_bara_kA": "number"}
+             "invertoare[].faza": "string", "invertoare[].sectie": "number", "Ik3_bara_kA": "number",
+             # r10 (motorul le citește; corpusul le arată doar în unele scheme)
+             "invertoare[].existent": "boolean", "cablu.existent": "boolean", "consumatori[].vital": "boolean"}
 NUMERICE_EXTRA_INT = {"n_pcs"}
 TIP_EXPLICIT_PLECARE = {"siguranta": "boolean", "rezerva": "boolean"}
 EXCLUSE_PLECARE = {"DDR", "ddr", "blocat", "nivel", "copii"}
@@ -165,6 +167,20 @@ DESCRIERI = {
     "Ik3_bara_kA": "Ik3 declarat la bara de racord (kA)",
     "bess.pcs": "PCS-ul (invertorul bateriei) dacă e numit: n, Pn_kW pe bucată, producator, model",
     "tablouri_secundare[].cablu": "cablul impus al tabloului secundar („3x6” = S_fortat 6)",
+    # r10 — cheile noi pentru motor (topologii, existent, backup, DDR pe plecare)
+    "uk_pct": "tensiunea de scurtcircuit DECLARATĂ a trafo-ului (%) — se folosește la Ik3 în locul valorii din tabel",
+    "sursa_rezerva": "PT cu 2 trafo: „trafo” = ATS între cele două transformatoare (rezervă 100 %), fără GE",
+    "fara_retea": "GE + ATS: true = GE e singura sursă (site izolat), fără ramură de rețea / ATS",
+    "bara": "racord CEF într-un PT existent cu 2 trafo: secția de bare a trafo-ului („T1” / „T2”)",
+    "separare_PEN": "unde se separă PEN-ul în PE + N: „TG” (tabloul general) sau „BMPT” (firida de branșament)",
+    "racord_Q_tip": "tipul protecției existente pe care se racordează centrala: gG (siguranțe MPR / NH), MCCB, ACB",
+    "pt_od": "true = PT-ul din amonte e al operatorului de distribuție (informativ; nu PT propriu)",
+    "n_tgd_cf": "CEF: numărul de tablouri TGD-CF (grupurile de invertoare au invertoare[].tgd = 1, 2 …)",
+    "invertoare[].tgd": "CEF cu mai multe TGD-CF: tabloul (1, 2 …) în care e grupul de invertoare",
+    "invertoare[].existent": "true = invertor EXISTENT (se păstrează; nu intră în lista de echipamente noi)",
+    "backup.toata_casa": "prosumator hibrid: EPS / backup pe TOATĂ casa (ATS al întregului tablou, N comutat)",
+    "consumatori[].vital": "GE + ATS: true = pe bara vitală (din GE), false = doar din rețea (nevital)",
+    "cablu.existent": "true = cablul de alimentare e existent (se verifică, nu se înlocuiește)",
 }
 _CHEI_TEXT_INTERP: dict = {}      # completat la primul apel (interpretorul importă acest modul)
 _PREFIX_CUPLARE = ("plecari[]", "tablouri_secundare[].circuite[]")       # copii = aceeași formă ca plecarea
@@ -219,7 +235,8 @@ def genereaza_inventar(radacina=None) -> dict:
             d = json.loads(f.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue
-        for x in (d.get("fraze") if isinstance(d, dict) else d) or []:
+        lst = (d.get("fraze") or [v for v in d.values() if isinstance(v, dict)]) if isinstance(d, dict) else d
+        for x in lst or []:                                     # r10: fraze.json ca dicționar {id: {...}}
             t = x.get("text") or x.get("fraza") if isinstance(x, dict) else None
             if isinstance(t, str):
                 texte.append(t)

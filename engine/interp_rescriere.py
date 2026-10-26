@@ -15,10 +15,12 @@ try:
     from .interp_tabel import rescrie_tabel
     from .interp_cifre import rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire
     from .interp_cascade import rescrie_lant, rescrie_indentare, rescrie_din_tg
+    from .interp_r10 import rescrie_inainte as rescrie_r10_inainte, rescrie_dupa as rescrie_r10_dupa
 except ImportError:  # rulare ca script
     from engine.interp_tabel import rescrie_tabel  # type: ignore
     from engine.interp_cifre import rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire  # type: ignore
     from engine.interp_cascade import rescrie_lant, rescrie_indentare, rescrie_din_tg  # type: ignore
+    from engine.interp_r10 import rescrie_inainte as rescrie_r10_inainte, rescrie_dupa as rescrie_r10_dupa  # type: ignore
 
 _DIA = str.maketrans("șşțţăâîȘŞȚŢĂÂÎ", "ssttaaiSSTTAAI")
 NUM = r"\d+(?:[.,]\d+)?"
@@ -186,11 +188,18 @@ def _corectura(text: str, m) -> tuple[str, str] | None:
     # clauza veche: de la ultimul separator puternic (. ; sau început) — corectura nu sare peste propoziții
     s0 = max([x.end() for x in re.finditer(r"(?<!\d)\.(?!\d)(?!\.)\s|;|\n", inainte)] or [0])
     zona = inainte[s0:]
-    mc = re.match(r"\s*(?P<nou>[^,;\n]+?)(?=\s*(?:[,;\n]|\.\s|\.$|\.{2,}|$))", dupa)
+    if not zona.strip() and s0 > 0:
+        # r10: „CEF 60 kW cu 2 x SG30CX. Scuze, sunt 3 x SG30CX” — corectura începe propoziția: ținta e în cea dinainte
+        s0 = max([x.end() for x in re.finditer(r"(?<!\d)\.(?!\d)(?!\.)\s|;|\n", inainte[:s0 - 2])] or [0])
+        zona = inainte[s0:]
+    mc = re.match(r"\s*(?P<nou>(?:[^,;\n]|(?<=\d),(?=\d))+?)(?=\s*(?:(?<!\d)[,;\n]|[,;\n](?!\d)|\.\s|\.$|\.{2,}|$))", dupa)
     if not mc:
         return None
     nou = mc.group("nou").strip()
     rest = dupa[mc.end():]
+    mz = re.match(r"(?:sunt|e|este|erau|avem|am|vor\s+fi|se\s+monteaza)\s+(?=\d)", _norm(nou))
+    if mz:                                              # r10: „scuze, sunt 3 x SG30CX” → „3 x SG30CX”
+        nou = nou[mz.end():]
     nn = _norm(nou)
     slab = re.search(r"\badica\b|(?:^|\s)(?:e|este)\s*$", marcator.strip()) is not None and not re.search(
         r"scuze|pardon|sorry|gresit|greseala|de\s+fapt|corect", marcator)
@@ -204,6 +213,17 @@ def _corectura(text: str, m) -> tuple[str, str] | None:
             vechi = zona[v.start():].rstrip(" .…,;:!")
             out = inainte[:s0 + v.start()] + nou + rest
             return out, f"autocorectură: „{vechi.strip()}” → „{nou}” (ultima valoare scrisă câștigă)"
+    # (1b) r10: „3 x SG30CX” — cantitate × model: înlocuiește ultimul „N x <același model>” (sau ultimul „N x <model>”)
+    mm_ = re.match(r"(\d+)\s*[x×]\s*([a-z]{1,8}[\s-]?\d[\w.\-]*)", nn)
+    if mm_:
+        mod = re.escape(mm_.group(2))
+        cand = list(re.finditer(rf"(?<![\w.,])\d+\s*[x×]\s*{mod}\b", _norm(zona))) or \
+            list(re.finditer(r"(?<![\w.,])\d+\s*[x×]\s*[a-z]{1,8}[\s-]?\d[\w.\-]*", _norm(zona)))
+        if cand:
+            v = cand[-1]
+            vechi = zona[v.start():v.end()].rstrip(" .")
+            out = inainte[:s0 + v.start()] + nou + inainte[s0 + v.end():].rstrip(" .,;:!…") + rest
+            return out, f"autocorectură: „{vechi}” → „{nou}” (ultima valoare scrisă câștigă)"
     # (2) schema de legare la pământ / (3) rețeaua
     for rx in (_RE_SP_TOKEN, _RE_RETEA_TOKEN):
         mt = rx.match(nou)
@@ -351,11 +371,9 @@ def rescrie_scurt(text: str) -> tuple[str, list[str]]:
 def rescrie(text: str) -> tuple[str, list[str]]:
     """Toate rescrierile r8, în ordine; întoarce (text, note)."""
     note = []
-    for f in (rescrie_indentare, rescrie_tabel, rescrie_en, rescrie_scurt, rescrie_email, rescrie_autocorectura, rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire,
+    for f in (rescrie_indentare, rescrie_tabel, rescrie_r10_inainte, rescrie_en, rescrie_scurt, rescrie_email,
+              rescrie_autocorectura, rescrie_r10_dupa, rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire,
               rescrie_lant, rescrie_din_tg, rescrie_cascade, rescrie_corpuri):
-
-
-
         text, n = f(text)
         note += n
     return text, note

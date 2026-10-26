@@ -377,6 +377,15 @@ def _circuit(c, retea, j):
         j.presupune(f"{eticheta_receptor(c['receptor'])}: lungime circuit {fmt_ro(L, 0)} m", c["obiect"])
     S_min = (d["S_tri"] if tri and d["S_tri"] else d["S_mono"])
     In_min = (d["In_tri"] if tri and d["In_tri"] else d["In_mono"])
+    if c["receptor"] in ("plita", "cuptor") and c.get("P_kW") is not None and c.get("In_A") is None:
+        # r10 (locuințe #17): calibrul plitei / cuptorului din puterea DECLARATĂ (aragaz 3 kW → C16 / 2,5 mm²), nu C32 fix
+        ib_d = float(P) * 1000.0 / ((SQRT3 * norme.U_N_V) if tri else norme.U_0_V) / float(c.get("cosfi") or d["cosfi"])
+        in_d = prima_din_serie(norme.MCB_IN_A, max(ib_d, 16.0) * 0.999) or In_min
+        s_d = 2.5 if in_d <= 20 else 4.0 if in_d <= 25 else 6.0 if in_d <= 32 else 10.0
+        if in_d != In_min:
+            j.presupune(f"{eticheta_receptor(c['receptor'])} {fmt_ro(P)} kW: Ib = {fmt_ro(ib_d, 1)} A → C{in_d}, "
+                        f"{fmt_ro(s_d)} mm² Cu (calibrul din puterea declarată)", c["obiect"])
+        In_min, S_min = in_d, s_d
     if d["grupa"] == "VE":
         In_min = calibru_ve(float(P), tri)
         j.presupune(f"{eticheta_receptor(c['receptor'])}: calibrul din puterea stației — I încărcare = "
@@ -914,6 +923,39 @@ RECEPTORI_UNICI = ("sauna", "plita", "cuptor", "boiler", "pompa_caldura", "vehic
                    "masina_spalat_rufe", "masina_spalat_vase", "uscator")
 
 
+def _multisplit(circ, j):
+    """r10 (locuințe #30): AC multisplit = O unitate exterioară cu UN circuit (unitățile interioare se alimentează din
+    ea). `multisplit: true` / `unitati_interioare: N` pe circuitul unității exterioare; circuitele marcate
+    `unitate_interioara: true` nu se desenează ca circuite separate."""
+    ue = [c for c in circ if isinstance(c, dict) and (c.get("multisplit") or c.get("unitati_interioare"))]
+    ui = [c for c in circ if isinstance(c, dict) and c.get("unitate_interioara")]
+    if not ue and not ui:
+        return circ
+    out = []
+    for c in circ:
+        if not isinstance(c, dict):
+            out.append(c)
+            continue
+        if c.get("unitate_interioara"):
+            continue
+        if c.get("multisplit") or c.get("unitati_interioare"):
+            c = dict(c)
+            n = c.pop("unitati_interioare", None)
+            c.pop("multisplit", None)
+            n = n if isinstance(n, int) and not isinstance(n, bool) else (len(ui) or None)
+            c.setdefault("receptor", "aer_conditionat")
+            if not c.get("nume") or str(c.get("nume")).lower().startswith("aer"):
+                c["nume"] = "AC multisplit" + (f" (1 UE + {n} UI)" if n else " (unitate exterioară)")
+        out.append(c)
+    if ue:
+        j.presupune(f"AC multisplit: un singur circuit pentru unitatea exterioară"
+                    + (f"; {len(ui)} unități interioare alimentate din ea (fără circuite proprii)" if ui else ""))
+    elif ui:
+        j.presupune(f"{len(ui)} unități interioare de AC fără unitatea exterioară declarată — nu se desenează circuite "
+                    f"pentru ele; declarați unitatea exterioară (multisplit: true, P_kW)")
+    return out
+
+
 def _comaseaza_duplicate(inp, j):
     """r9 (locuințe #8): același receptor dedicat declarat de două ori cu același nume și date COMPLEMENTARE (ex.
     „Saună 9 kW 3F” + „Saună la 25 m”) = un singur circuit — nu se desenează de două ori. Date contradictorii (P / L
@@ -921,6 +963,7 @@ def _comaseaza_duplicate(inp, j):
     circ = inp.get("circuite")
     if not isinstance(circ, list):
         return
+    circ = _multisplit(circ, j)
     out = []
     for c in circ:
         if not isinstance(c, dict):
@@ -1693,7 +1736,20 @@ def _calculeaza(inp, j, cutie):
         rez["nota_schema_pamant"] = nota_schema_pamant("tablou", "TT", bloc, inp.get("RA_ohm") if inp.get("RA_ohm")
                                                        is not None else ra, idn_mA=300, ddr_txt=ddr_txt)
     else:
-        rez["nota_schema_pamant"] = (f"Schemă de legare la pământ: TN-C-S cu separarea PEN pe BN în {bloc}; TN-S în "
+        ra_d = inp.get("RA_ohm")
+        if ra_d is not None:
+            rez["RA_ohm"] = float(ra_d)
+            if gt(float(ra_d), 4.0):
+                # r10 (locuințe #51): priza locală (repetarea legării PEN) cu RA declarat peste 4 Ω — nu se ascunde
+                j.emite("V37", AVERTISMENT, "priză de pământ",
+                        f"RA = {fmt_ro(ra_d)} Ω declarat > 4 Ω cerut pentru priza locală de repetare a PEN în {spl} "
+                        f"(I7-2011) — protecția la defect rămâne asigurată de deconectarea automată TN și de DDR "
+                        f"30 mA, dar priza trebuie îmbunătățită",
+                        "electrozi suplimentari / priză de adâncime până la RA ≤ 4 Ω (măsurat), sau calculul prizei")
+        rez["nota_schema_pamant"] = (f"Schemă de legare la pământ: TN-C-S cu "
+                                     f"separarea PEN pe BN în {bloc}; TN-S în "
                                      f"tabloul locuinței, DDR 30{NB}mA pe {n_g} {'grupă' if n_g == 1 else 'grupe'} de "
-                                     f"circuite. Rp ≤ 4{NB}Ω.")
+                                     f"circuite. " + (f"RA = {fmt_ro(ra_d)}{NB}Ω declarat" + (f" > 4{NB}Ω cerut — "
+                                                                                        f"priza se îmbunătățește." if gt(float(ra_d), 4.0) else f" ≤ 4{NB}Ω.")
+                                                       if ra_d is not None else f"Rp ≤ 4{NB}Ω."))
     return rez

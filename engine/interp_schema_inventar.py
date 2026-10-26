@@ -142,6 +142,20 @@ INVENTAR = {
 "ge_ats"
 ]
 },
+"L_C1_m": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"L_C2_m": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
 "L_GE_ATS_m": {
 "t": [
 "number"
@@ -447,6 +461,7 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"CYABY",
 "CYY-F"
 ],
 "tipuri": [
@@ -474,6 +489,15 @@ INVENTAR = {
 "cef"
 ]
 },
+"backup.N_comutat": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"prosumator"
+]
+},
 "backup.circuite[].nume": {
 "t": [
 "string"
@@ -482,7 +506,8 @@ INVENTAR = {
 "Centrală termică",
 "Frigider",
 "Iluminat",
-"Pompă apă"
+"Pompă apă",
+"Router"
 ],
 "tipuri": [
 "prosumator"
@@ -500,6 +525,38 @@ INVENTAR = {
 ],
 "tipuri": [
 "prosumator"
+]
+},
+"backup.comutare": {
+"t": [
+"string"
+],
+"v": [
+"ATS"
+],
+"tipuri": [
+"prosumator"
+]
+},
+"backup.toata_casa": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"prosumator"
+]
+},
+"bara": {
+"t": [
+"string"
+],
+"v": [
+"T1",
+"T2"
+],
+"tipuri": [
+"cef"
 ]
 },
 "baterie.kWh": {
@@ -586,7 +643,9 @@ INVENTAR = {
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"cef"
+]
 },
 "bess.model": {
 "t": [
@@ -613,7 +672,9 @@ INVENTAR = {
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"cef"
+]
 },
 "bess.n_pcs": {
 "t": [
@@ -700,6 +761,15 @@ INVENTAR = {
 "tablou"
 ]
 },
+"cablu.existent": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"tablou"
+]
+},
 "cablu.izolatie": {
 "t": [
 "string"
@@ -763,6 +833,7 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"ACYABY",
 "CYABY",
 "CYY-F",
 "NA2XY"
@@ -842,6 +913,46 @@ INVENTAR = {
 ],
 "tipuri": [
 "cef"
+]
+},
+"cablu_MT.L_m": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"pt"
+]
+},
+"cablu_MT.S_mm2": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"pt"
+]
+},
+"cablu_MT.U0_U_kV": {
+"t": [
+"string"
+],
+"v": [
+"18/30"
+],
+"tipuri": [
+"pt"
+]
+},
+"cablu_MT.tip": {
+"t": [
+"string"
+],
+"v": [
+"A2XS"
+],
+"tipuri": [
+"pt"
 ]
 },
 "cablu_inv.S_fortat": {
@@ -973,27 +1084,36 @@ INVENTAR = {
 "locuinta"
 ]
 },
+"circuite[].multisplit": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"locuinta"
+]
+},
 "circuite[].nume": {
 "t": [
 "string"
 ],
 "v": [
-"Aer condiționat",
+"Aer condiționat 1",
+"Aer condiționat 2",
 "Boiler",
-"Centrală termică",
+"Cuptor",
+"Frigider",
 "Iluminat",
-"Iluminat exterior",
-"Iluminat interior",
 "Mașină de spălat rufe",
 "Plită",
 "Pompă de căldură",
 "Prize",
+"Prize 1",
+"Prize 2",
+"Prize 3",
 "Prize baie",
 "Prize bucătărie",
-"Prize camere",
-"Prize exterior",
-"Prize living",
-"Încărcare VE"
+"Rezistență electrică"
 ],
 "tipuri": [
 "locuinta"
@@ -1005,13 +1125,13 @@ INVENTAR = {
 ],
 "v": [
 "aer_conditionat",
+"alt_circuit",
 "boiler",
 "centrala_termica",
 "cuptor",
 "iluminat",
 "incalzire_electrica",
 "masina_spalat_rufe",
-"masina_spalat_vase",
 "plita",
 "pompa_caldura",
 "prize",
@@ -1021,6 +1141,15 @@ INVENTAR = {
 "sauna",
 "vehicul_electric"
 ],
+"tipuri": [
+"locuinta"
+]
+},
+"circuite[].unitati_interioare": {
+"t": [
+"number"
+],
+"v": [],
 "tipuri": [
 "locuinta"
 ]
@@ -1095,10 +1224,12 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"ATS",
 "manual"
 ],
 "tipuri": [
-"ge_ats"
+"ge_ats",
+"pt"
 ]
 },
 "consumatori[].P_kW": {
@@ -1127,22 +1258,22 @@ INVENTAR = {
 "string"
 ],
 "v": [
-"Centrala termica",
-"Clapete",
-"Electropompa",
-"Frig",
-"Hidrofor",
+"ATI",
+"Bloc operator",
+"Bucătărie",
+"Concasor",
+"HVAC",
+"Hrănire automată",
 "Iluminat",
-"Iluminat siguranta",
-"Pompa jockey",
-"Pompa pilot",
-"Pompa principala",
-"Pompa rezerva",
-"Pompe de incendiu",
-"Pompe incendiu",
-"Pompe x",
-"Server",
-"Ventilatoare desfumare"
+"Iluminat siguranță",
+"Lifturi",
+"Plus pompă jockey",
+"Pompă de incendiu",
+"Pompă jockey",
+"Pompă principală",
+"Spălătorie",
+"Ventilatoare de desfumare",
+"Ventilație"
 ],
 "tipuri": [
 "ge_ats"
@@ -1202,7 +1333,8 @@ INVENTAR = {
 "string"
 ],
 "v": [
-"deschisa"
+"deschisa",
+"inchisa"
 ],
 "tipuri": [
 "pt"
@@ -1222,6 +1354,15 @@ INVENTAR = {
 "v": [],
 "tipuri": []
 },
+"fara_retea": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"ge_ats"
+]
+},
 "ge_paralel": {
 "t": [
 "boolean"
@@ -1237,7 +1378,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "h3": {
@@ -1281,6 +1423,7 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
+"cef",
 "prosumator"
 ]
 },
@@ -1313,22 +1456,22 @@ INVENTAR = {
 "string"
 ],
 "v": [
-"MAX 30KTL3",
-"MAX 50KTL3",
-"S5-GC50K",
-"SG110CX",
-"SG125CX",
+"MOD 10KTL3-X",
+"Primo 6.0-1",
+"SG110CX-P2",
+"SG30CX",
+"SG350HX",
 "SG50CX",
-"SH25T",
-"STP",
-"SUN2000-100KTL",
+"SUN-15K-SG01HP3",
 "SUN2000-100KTL-M2",
-"SUN2000-115KTL",
-"SUN2000-50KTL",
+"SUN2000-10KTL-M1",
+"SUN2000-20KTL-M3",
+"SUN2000-25KTL-M5",
+"SUN2000-30KTL-M3",
+"SUN2000-330KTL-H1",
 "SUN2000-50KTL-M3",
-"Sunny Tripower Core2",
-"Symo",
-"Tauro"
+"Symo 20.0-3-M",
+"Tauro 50-3-D"
 ],
 "tipuri": [
 "cef",
@@ -1352,6 +1495,7 @@ INVENTAR = {
 "v": [
 "Deye",
 "Fronius",
+"GoodWe",
 "Growatt",
 "Huawei",
 "SMA",
@@ -1370,6 +1514,15 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": []
+},
+"invertoare[].tgd": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"cef"
+]
 },
 "invertor.Pn_kW": {
 "t": [
@@ -1396,17 +1549,17 @@ INVENTAR = {
 "v": [
 "8KTL",
 "MID 25KTL3-X",
-"Primo 5.0-1",
+"MIN 6000TL-X",
+"MOD 10KTL3-X",
+"Primo 6.0-1",
+"S5-GC60K",
 "S6-EH3P15K",
 "SG50CX",
-"SH10RT",
 "SH25T",
-"SUN-10K-SG04LP3-EU",
-"SUN2000 10KTL M1",
+"SUN-15K-SG01HP3",
 "SUN2000-10KTL",
 "SUN2000-10KTL-M1",
-"SUN2000-15KTL-M2",
-"SUN2000-20KTL-M2",
+"SUN2000-25KTL-M5",
 "SUN2000-30KTL-M3",
 "SUN2000-50KTL-M3",
 "SUN2000-6KTL-L1"
@@ -1449,7 +1602,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"locuinta"
+"locuinta",
+"tablou"
 ]
 },
 "limitare_injectie_kW": {
@@ -1542,6 +1696,15 @@ INVENTAR = {
 "prosumator"
 ]
 },
+"n_tgd_cf": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"cef"
+]
+},
 "n_trafo": {
 "t": [
 "number"
@@ -1610,7 +1773,15 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"pt",
+"tablou"
+]
+},
+"plecari[].bypass": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
 "tablou"
 ]
 },
@@ -1765,6 +1936,17 @@ INVENTAR = {
 "tablou"
 ]
 },
+"plecari[].ddr.tip": {
+"t": [
+"string"
+],
+"v": [
+"B"
+],
+"tipuri": [
+"tablou"
+]
+},
 "plecari[].h3": {
 "t": [
 "number"
@@ -1790,6 +1972,7 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
+"pt",
 "tablou"
 ]
 },
@@ -1855,7 +2038,8 @@ INVENTAR = {
 "v": [
 "iluminat",
 "motor",
-"prize"
+"prize",
+"tablou"
 ],
 "tipuri": [
 "pt",
@@ -1901,6 +2085,15 @@ INVENTAR = {
 "tablou"
 ]
 },
+"plecari[].ups": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"tablou"
+]
+},
 "plecari_pe_sectie": {
 "t": [
 "boolean"
@@ -1938,6 +2131,15 @@ INVENTAR = {
 ]
 },
 "pt_existent": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"cef"
+]
+},
+"pt_od": {
 "t": [
 "boolean"
 ],
@@ -2014,6 +2216,19 @@ INVENTAR = {
 "tablou"
 ]
 },
+"separare_PEN": {
+"t": [
+"string"
+],
+"v": [
+"BMPT",
+"TG"
+],
+"tipuri": [
+"locuinta",
+"tablou"
+]
+},
 "siguranta_tablou": {
 "t": [
 "boolean"
@@ -2075,7 +2290,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "string.gpv_In_A": {
@@ -2084,7 +2300,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "string.n_MPPT": {
@@ -2111,7 +2328,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "sursa_retea": {
@@ -2127,7 +2345,27 @@ INVENTAR = {
 "ge_ats"
 ]
 },
+"sursa_rezerva": {
+"t": [
+"string"
+],
+"v": [
+"trafo"
+],
+"tipuri": [
+"pt"
+]
+},
 "tablouri_secundare[].L_m": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"locuinta"
+]
+},
+"tablouri_secundare[].P_kW": {
 "t": [
 "number"
 ],
@@ -2181,27 +2419,38 @@ INVENTAR = {
 "locuinta"
 ]
 },
+"tablouri_secundare[].circuite[].faza": {
+"t": [
+"string"
+],
+"v": [
+"L1"
+],
+"tipuri": [
+"locuinta"
+]
+},
 "tablouri_secundare[].circuite[].nume": {
 "t": [
 "string"
 ],
 "v": [
-"Aer condiționat",
-"Aer condiționat 1",
-"Aer condiționat 2",
+"Bai cu incalzitor prosop 1",
+"Bai cu incalzitor prosop 2",
 "Compresor",
-"Iluminat",
+"Corp B (consum total)",
+"Electroliză sare",
 "Iluminat 1",
 "Iluminat 2",
-"Plita",
+"Iluminat bucătărie",
+"Iluminat living",
+"Pompă de căldură piscină",
+"Pompă piscină",
 "Prize",
-"Prize 1",
-"Prize 2",
-"Prize 3",
-"Prize 4",
+"Prize bucătărie",
+"Prize living",
 "Strung",
-"Ușă garaj",
-"prize 400V"
+"trifazat cu VE"
 ],
 "tipuri": [
 "locuinta"
@@ -2213,11 +2462,17 @@ INVENTAR = {
 ],
 "v": [
 "aer_conditionat",
+"alt_circuit",
 "iluminat",
+"incalzire_electrica",
 "motor",
 "plita",
 "poarta_automata",
-"prize"
+"pompa_apa",
+"pompa_caldura",
+"prize",
+"prize_bucatarie",
+"vehicul_electric"
 ],
 "tipuri": [
 "locuinta"
@@ -2252,9 +2507,12 @@ INVENTAR = {
 "v": [
 "TD Anexa",
 "TD Atelier",
+"TD Corp B",
 "TD Garaj",
 "TD Mansarda",
-"TE Etaj"
+"TD piscină",
+"TE Etaj",
+"TE Parter"
 ],
 "tipuri": [
 "locuinta"
@@ -2289,9 +2547,11 @@ INVENTAR = {
 ],
 "v": [
 "Statie hidranti",
+"Stație sprinklere",
 "TE desfumare",
 "TE hidranti",
 "TE lift pompieri",
+"Tablou TDSI",
 "Tablou desfumare",
 "Tablou iluminat de siguranta",
 "Tablou pompe incendiu",
@@ -2311,6 +2571,15 @@ INVENTAR = {
 "ulei",
 "uscat"
 ],
+"tipuri": [
+"pt"
+]
+},
+"uk_pct": {
+"t": [
+"number"
+],
+"v": [],
 "tipuri": [
 "pt"
 ]

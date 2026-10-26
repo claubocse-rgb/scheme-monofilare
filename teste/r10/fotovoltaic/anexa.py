@@ -1,0 +1,90 @@
+"""Runda 10 — verdicte; scrie fraze.json din brut.json. Rulare: python3 anexa.py"""
+import json
+from pathlib import Path
+D = Path(__file__).parent
+C, P, G = "corect", "parțial", "greșit"
+V = {
+ 1: (C, "P2", "ATR: evacuare 180 → EMS + AR, BMPT 315 recunoscut, întrebare Iac 349 > 315 legitimă; 2 întrebări duplicate; BMPT nedesenat la PCC (f01)"),
+ 2: (P, "P2", "3 × Tauro 50 corect, TG Ik3 12 kA / Q 250 A preluate; întrebare inutilă pe „Smart meter”; rândul modulelor (312 × 580 Wp) ignorat → kWp necalculat"),
+ 3: (G, "P1", "CSV cu antet „Pn kW”: ultima celulă „20” citită ca total → refuz I08 fals „Σ 80 sau total 20?”"),
+ 4: (P, "P1", "„2 baterii 5 kwh” → 5 kWh (nu 10) fără întrebare; restul corect (hibrid Deye, fără PI)"),
+ 5: (C, None, "30 kW > 27 → PI U/f pe QG, TG existent (f05 bună)"),
+ 6: (C, None, "model trifazat 25 kW pe mono → întrebare"),
+ 7: (P, "P2", "planșă corectă, dar întrebare inutilă pe „BMPT 1x40A”"),
+ 8: (P, "P2", "TT + DDR pe toate circuitele corect; „BMPT trifazat 32 A” neconsumat → întrebare inutilă"),
+ 9: (G, "P1", "existente + noi: „(40 kW existenți)” luat ca Pn/buc → refuz fals 20 vs 40; cele 2 × 50 noi dispar (sondă fără paranteză: doar 2 × 20 desenate, tăcut — clasa P0 de la #43)"),
+ 10: (C, None, "Σ 150 ≠ 120 → întrebare"),
+ 11: (C, None, "autocorectură „— greșit,” aplicată: 2 × 100, PT 400"),
+ 12: (G, "P1", "„Scuze, sunt 3 x SG30CX” ignorat: planșă 2 × 30 = 60 kW + întrebare pe fragmentul „deci 90 kW”"),
+ 13: (C, None, "4 × 330KTL-H1 = 4 × 300 kW, 800 V, măsură MT în QM, QJT Ir 1125 > QG 1000 (r9 P1 reparat) — f13 aș semna"),
+ 14: (C, None, "SG350HX 800 V pe trafo 0,4 → întrebare"),
+ 15: (P, "P1", "PT existent: plecarea QPT e desenată (r9 P1 reparat), dar 630 A cerut → QPT 800 A (= QG 800, fără treaptă); Ik3 48,9 kA = T1 ∥ T2 deși „bara JT a T1”; întrebare pe text neconsumat"),
+ 16: (C, "P2", "V67 pe secție corect (SG100CX Smax 110 kVA); „Ik MT 12,5 kA” neconsumat → întrebare inutilă"),
+ 17: (C, None, "BESS stand-alone 2 × PCS 100, 430 kWh, TG Q 400 A, Ik3 15 kA — corect"),
+ 18: (C, None, "Deye SUN-50K hibrid + 4 × 5,12 = 20,48 kWh c.c.; model păstrat (r9 P1 reparat)"),
+ 19: (C, "P2", "PV + BESS c.a. LUNA 215, injecție zero cu TCA/AR/EMS în TG, PT propriu 630 informativ — f19 bună; titlu „CEF 300 kW + BESS”"),
+ 20: (P, "P1", "„connection to existing LV switchboard” nerecunoscut → BMPT presupus (avertisment); TCA + EMS desenate în TGD-CF (măsoară doar producția, nu exportul) — f20"),
+ 21: (P, "P2", "800 V + MV metering corecte, dar „new 1250 kVA … substation” neconsumat + „confirmați PT” (identic r9 #19)"),
+ 22: (C, "P2", "V68 Voc la Tmin 1246 V > 1100 V blochează corect; kWp (121) necalculat din stringuri; SPD c.c. 1500 V la invertor 1100 V"),
+ 23: (C, "P2", "gPV 15 A desenate (16 buc.), BMPT 125 A; SPD c.c. 1100 V în loc de 1000 V declarat; QI = QG 125 A în serie (f23)"),
+ 24: (C, None, "cablu impus CYABY 5 × 70, 85 m pe C0; blocare V02 reală (D1: Iz' 143 A < 190 A)"),
+ 25: (C, "P2", "C0 2 × ACYABY 3 × 240 + 120 preluat; V02 real; V25 pe N redus blochează (din r8/r9)"),
+ 26: (P, "P2", "„putere instalată 80 kW” = sumă de control (r9 P0 reparat), EMS ≤ 50 kW + PI extern — f26; dar 2 întrebări (BMPTi-250 și 127 > 125 A) deși injecția e limitată la 50 kW; QG Ir 128 > BMPT 125"),
+ 27: (C, "P2", "kWp vs kW corect, fără fantomă; QG Ir 190 > BMPT 160 nesemnalat"),
+ 28: (C, None, "telefon / CUI ignorate"),
+ 29: (C, "P2", "dată / nr. ATR ignorate, PI la 30 kW; Q1 C63 = QG 63 = BMPT 63 (fără treaptă)"),
+ 30: (C, None, "„Fabricii 25”, „TG2” nu devin puteri"),
+ 31: (C, None, "27 kW exact → fără PI extern"),
+ 32: (C, None, "28 kW → PI; Primo pe L1 2P; întrebare 54 A pe L1 > 50 A legitimă"),
+ 33: (C, "P2", "PI extern desenat; QI = QG 100 A în serie"),
+ 34: (P, "P1", "„împărțite în 2 tablouri TGD-CF a câte 10” ignorat tăcut (un singur TGD-CF cu 20)"),
+ 35: (C, "P2", "V67 blochează 1018,6 > 1000 kVA folosind 1,1·ΣPn; cu Smax din fișe (SG110CX 110 kVA, SG50CX 55, SG33CX 36,3) Σ = 953 kVA < 1000"),
+ 36: (P, "P2", "racord nedeclarat: BMPT presupus + avertisment (nu întrebare, cum cerea r9)"),
+ 37: (C, None, "PCS 0,5C presupus + întrebare; racord presupus cu avertisment"),
+ 38: (C, None, "EN: zero export + existing main board 400 A — corect"),
+ 39: (P, "P1", "conflict zero vs 40 kW detectat, dar întrebarea e greșită („2 × 33 sau total 40 kW?”)"),
+ 40: (P, "P2", "„Ik3 MT 16 kA” neconsumat → întrebare inutilă; planșă bună"),
+ 41: (G, "P0", "REGRESIE r9: „câte unul pe fiecare fază” → L1, L1, L2; întrebare falsă „57 A pe L1 > BMPT 32 A” (cere ATR nou) — f41; aceeași frază r9 #7 dădea L1/L2/L3"),
+ 42: (P, "P1", "„BMPT trifazat 3x25 A” neconsumat → rețea mono (r9 P1 nereparat)"),
+ 43: (G, "P0", "existent 20 kW + „Adaug 1 x SUN2000-30KTL-M3” → doar Symo 20 desenat, nemarcat existent, titlu „CEF 20 kW”, fără întrebare — f43"),
+ 44: (C, None, "330KTL-H1 pe TG 400 V → întrebare"),
+ 45: (C, None, "cascadă: BMPT 250 A tratat ca Q din TG → V44/V40 blochează corect (eticheta „MCCB 250 A în TG”, P2 minor)"),
+ 46: (P, "P1", "model „SG50CX. Racordarea se” pe planșă și în listă; nota 2/3 „PT-ul propriu” deși PT e al Electrica — f46"),
+ 47: (G, "P1", "CSV cu virgulă „Item,Qty” nerecunoscut → I01 „tipul schemei”"),
+ 48: (P, "P2", "typo „hauwei sun 2000 50ktl m3” → întreabă invertoarele (nu greșește, dar nu ajută)"),
+ 49: (C, "P2", "49900 W → 49,9 kW; QG Ir 95 > BMPT 80 nesemnalat"),
+ 50: (P, "P1", "cablul 5 × 16 / 120 m pus pe C0 (ok), dar cablul invertorului auto-dimensionat 4 × (ACYABY 4 × 240) pentru 30 kW — f50; blocare V20 legitimă"),
+ 51: (G, "P1", "cablu impus CYABY 5 × 35 fără L → ignorat tăcut (C0 „conform ATR”, fără V02); cu L = 40 m blochează corect"),
+ 52: (C, "P2", "Iac 79 > BMPT 40 → întrebare (dublată)"),
+ 53: (P, "P1", "„cutie BMPT pe soclu 3x200 A” și „Ik3 la PCC = 8,5 kA” neconsumate → 2 întrebări; Iac 206 > 200 neverificat"),
+ 54: (C, "P2", "2 × 1600, 30 × SG100CX grupate idem 14/15, V67 pe secție legitim, banner NEVERIFICAT — f54; eticheta „CÂMP PV 1…30” pe prima coloană; QG = QJT 2500"),
+ 55: (C, "P2", "2 × 630, măsură JT pe fiecare secție (P1/P2), cuplă NO — f55 bună; eticheta „1…8”"),
+ 56: (P, "P1", "„invertoare existente … nu se modifică” nemarcate existente; titlu „CEF 199 kW + BESS”"),
+ 57: (G, "P1", "SG110CX (nu e hibrid) desenat „hibrid + baterie c.c.” fără întrebare — f57"),
+ 58: (G, "P0", "„injecție limitată la 70 % din putere” ignorat tăcut: fără EMS/AR, fără întrebare (forma „la 70 kW” merge)"),
+ 59: (C, None, "0 kW → injecție zero cu TCA/AR/EMS, fără PI"),
+ 60: (C, None, "rețea nedeclarată → întrebare, planșă blocată"),
+ 61: (G, "P0", "„câte 5 pe fiecare fază” → 10 pe L1, 5 pe L2, 0 pe L3; întrebări false (239 A, BMPTi-250)"),
+ 62: (G, "P0", "„2 invertoare (Huawei 100 kW și Sungrow 110 kW)” → 2 × 100 + 1 × 110 = 310 kW, planșă curată fără întrebare — f62"),
+ 63: (P, "P1", "„ATR permite doar 800 kW evacuare” neconsumat → întrebare, fără EMS"),
+ 64: (P, "P1", "întrebarea Sn PT OD e legitimă; „plecare … siguranțe MPR 250 A” neconsumat"),
+ 65: (G, "P1", "„(400 kW, nu 300)” → Pn 400 kW/buc → refuz fals 100 vs 400"),
+ 66: (P, "P1", "„Existing LV board” nerecunoscut → BMPT presupus la 330 kVA; dongle / senzor ignorate corect"),
+ 67: (C, "P2", "Σ 120 ≠ 110 → întrebare; „existing board” nerecunoscut"),
+ 68: (P, "P2", "hibrid mono + LUNA 10 kWh corect; „BMPT 1x32A” neconsumat → întrebare"),
+}
+PNG_JUDECATE = [1, 5, 13, 15, 19, 20, 23, 26, 41, 43, 46, 50, 54, 55, 57, 62]
+if __name__ == "__main__":
+    brut = json.loads((D / "brut.json").read_text(encoding="utf-8"))
+    out = []
+    for d in brut:
+        v, p, o = V[d["id"]]
+        out.append({"id": d["id"], "fraza": d["text"], "asteptat": d["asteptat"], "actiune": d.get("actiune"),
+                    "intrare": d.get("intrare_fizica"), "presupus": d.get("presupus"), "intrebari": d.get("intrebari"),
+                    "refuz": [d.get("refuz_cod"), d.get("refuz_motiv")] if d.get("refuz_cod") else None,
+                    "neconsumat": d.get("neconsumat"), "titlu": d.get("titlu"), "blocheaza": d.get("blocheaza"),
+                    "plansa": f"f{d['id']:02d}.png" if "plansa" in d else None, "plansa_judecata": d["id"] in PNG_JUDECATE,
+                    "verificari": d.get("verificari"), "verdict": v, "prioritate": p, "observatie": o})
+    (D / "fraze.json").write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    from collections import Counter
+    print(Counter(x["verdict"] for x in out), Counter(x["prioritate"] for x in out))

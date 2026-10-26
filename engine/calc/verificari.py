@@ -413,13 +413,44 @@ def mesaj(cod, varianta="", **param):
     return t.format(**{k: _fmt_param(v) for k, v in param.items()})
 
 
+REMEDIERE_IMPLICITA = {
+    "V00": "completați datele schemei (tip, sursă, plecări / circuite)",
+    "V45": "confirmați materialul / izolația cablului sau declarați-le explicit",
+    "V51": "măsură directă (BMPTd) sub 100 A sau Ib peste 100 A pentru BMPTi-250",
+    "V70": "schema CEF (peste 400 kW nu e prosumator)",
+    "V75": "Ord. ANRE 208/2018 + ATR pentru CEF ne-prosumator",
+    "V80": "regenerați lista de echipamente din parametri (Calcul)",
+    "V81": "regenerați notele din model (Calcul)",
+    "V82": "desenați tabloul secundar în carcasa proprie (regenerare din Calcul)",
+    "V83": "corectați sensul legăturii de comandă (regenerare din Calcul)",
+    "V88": "completați protecțiile c.c. (siguranțe gPV, separator, SPD c.c.) ale invertorului",
+}
+
+
 def remediere(cod, **param):
-    """Remedierea sugerată pentru `cod` (SPEC §D, ultima coloană)."""
+    """Remedierea sugerată pentru `cod` (SPEC §D, ultima coloană). r10: niciodată goală / cu șablon nerezolvat —
+    interpretorul o transformă în întrebare."""
     r = CATALOG[cod][2]
     try:
-        return r.format(**{k: _fmt_param(v) for k, v in param.items()})
+        r = r.format(**{k: _fmt_param(v) for k, v in param.items()})
     except (KeyError, IndexError):
-        return r
+        r = ""
+    return r or REMEDIERE_IMPLICITA.get(cod, "")
+
+
+def completeaza_remedieri(verificari):
+    """r10: orice BLOCANT primește o remediere textuală (câmpul `remediere`) — din catalog sau, în lipsă, una generică
+    după cod. Întoarce lista modificată pe loc."""
+    for v in verificari or []:
+        if v.get("nivel") != "BLOCANT":
+            continue
+        r = str(v.get("remediere") or "").strip()
+        if not r or "{" in r:
+            v["remediere"] = (REMEDIERE_IMPLICITA.get(v.get("cod")) or
+                              (CATALOG[v["cod"]][2] if v.get("cod") in CATALOG and "{" not in CATALOG[v["cod"]][2] else "")
+                              or f"corectați datele indicate de verificarea {v.get('cod')} ({v.get('obiect') or 'schema'}) "
+                                 f"sau răspundeți la întrebarea asociată")
+    return verificari
 
 
 def emite(jurnal, cod, nivel, obiect, varianta="", **param):

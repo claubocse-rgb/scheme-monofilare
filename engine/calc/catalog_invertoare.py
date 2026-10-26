@@ -191,3 +191,43 @@ def u_ca(producator=None, model=None):
     """r7: tensiunea c.a. de racord a invertorului din catalog (800 V pentru SG…HX / SUN2000-…KTL-H…), altfel None."""
     d = cauta(producator, model)
     return d.get("U_ca_V") if d else None
+
+
+_STOP_MODEL = {"se", "si", "și", "cu", "pe", "la", "in", "în", "din", "de", "pentru", "racordarea", "racordare", "care",
+               "iar", "montat", "montate", "montaj", "existent", "existente", "nou", "noi", "buc", "bucati", "bucăți",
+               "and", "with", "on", "the", "connected", "existing", "new"}
+
+
+def curata_model(model):
+    """r10 (fotovoltaic #46): eticheta de model tăiată la codul propriu-zis — „SG50CX. Racordarea se” → „SG50CX”:
+    se taie la punctuație urmată de spațiu (sfârșit de frază) și la primul cuvânt de legătură românesc / englezesc."""
+    if not isinstance(model, str):
+        return model
+    t = re.split(r"[.;,:!?]\s|[.;,:!?]$|\s[-–—]\s|\(", model.strip(), maxsplit=1)[0].strip()
+    cuv = t.split()
+    for i, w in enumerate(cuv):
+        if i > 0 and w.lower() in _STOP_MODEL:
+            cuv = cuv[:i]
+            break
+    return " ".join(cuv).strip() or model.strip()
+
+
+def curata_modele(d):
+    """Aplică `curata_model` pe toate câmpurile `model` dintr-o intrare (recursiv). Întoarce lista (vechi, nou)."""
+    sch = []
+
+    def rec(x):
+        if isinstance(x, dict):
+            for k, v in x.items():
+                if k == "model" and isinstance(v, str):
+                    n = curata_model(v)
+                    if n != v:
+                        sch.append((v, n))
+                        x[k] = n
+                else:
+                    rec(v)
+        elif isinstance(x, list):
+            for v in x:
+                rec(v)
+    rec(d)
+    return sch

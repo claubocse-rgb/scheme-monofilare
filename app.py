@@ -181,6 +181,25 @@ def pachet_zip(model_original, m, r, name):
     return bio.getvalue()
 
 
+def _cartus_chat(c):
+    """cartușul citit din descriere (beneficiar, adresă, planșă, fază) → câmpurile cartușului planșei"""
+    cart = {}
+    if c.get("beneficiar"): cart["beneficiar"] = c["beneficiar"]
+    adr = c.get("adresa")
+    if isinstance(adr, dict) and adr.get("localitate"):
+        cart["adresa"] = f"{adr['localitate']}" + (f", jud. {adr['judet']}" if adr.get("judet") else "")
+    elif isinstance(adr, str) and adr: cart["adresa"] = adr
+    for kk in ("plansa", "faza"):
+        if c.get(kk): cart[kk] = c[kk]
+    return {k: ("" if v is None else v if isinstance(v, str) else str(v)) for k, v in cart.items()}
+
+
+def _genereaza_chat(intrare, cart, pastreaza):
+    """aceeași generare după chat și după confirmarea intrării: intrare fizică + cartușul din text + setările modelului curent"""
+    m, r = constructor.genereaza(intrare, cartus=cart, pastreaza=pastreaza if isinstance(pastreaza, dict) else None)
+    return {"model": m, "validare": validare.valideaza(m)}
+
+
 def _fara_uid(o):
     """scoate cheile interne ale interfeței (_uid etc.) înainte de export"""
     if isinstance(o, dict): return {k: _fara_uid(v) for k, v in o.items() if not k.startswith("_")}
@@ -379,25 +398,23 @@ class H(BaseHTTPRequestHandler):
                                                          or x.startswith("(citirea Claude")), None)
                 out = {"interpretare": {k: it.get(k) for k in ("actiune", "tip_schema", "presupus", "intrebari", "refuz_cod", "refuz_motiv",
                                                                "intelegere", "avertismente", "motor", "intrare_fizica", "cartus",
-                                                               "verificare_incrucisata")},
+                                                               "verificare_incrucisata", "neconsumat")},
                        "citire": {"avansata": avansat,
                                   "mesaj": "citire avansată (Claude), verificată cu regulile locale" if avansat else
                                   ("citire avansată indisponibilă — " + (str(motiv).strip("()") if motiv else "fără cheie API")
                                    + "; s-au folosit regulile locale")}}
                 if it.get("actiune") != "refuza" and it.get("intrare_fizica"):
-                    cart = {}
-                    c = it.get("cartus") or {}
-                    if c.get("beneficiar"): cart["beneficiar"] = c["beneficiar"]
-                    adr = c.get("adresa")
-                    if isinstance(adr, dict) and adr.get("localitate"):
-                        cart["adresa"] = f"{adr['localitate']}" + (f", jud. {adr['judet']}" if adr.get("judet") else "")
-                    elif isinstance(adr, str) and adr: cart["adresa"] = adr
-                    for kk in ("plansa", "faza"):
-                        if c.get(kk): cart[kk] = c[kk]
-                    m, r = constructor.genereaza(it["intrare_fizica"], cartus=cart, pastreaza=model.get("model"))
-                    v = validare.valideaza(m)
-                    out.update({"model": m, "validare": v})
+                    cart = _cartus_chat(it.get("cartus") or {})
+                    out["cartus_chat"] = cart
+                    if not model.get("fara_model"):     # interfața: întâi panoul de confirmare, desenul după /api/chat/confirma
+                        out.update(_genereaza_chat(it["intrare_fizica"], cart, model.get("model")))
                 return self._send(200, json.dumps(out, ensure_ascii=False, default=str))
+            if p == "/api/chat/confirma":    # intrarea confirmată / corectată de proiectant în panoul de după chat
+                intr = model.get("intrare")
+                if not isinstance(intr, dict) or not intr.get("tip_schema"):
+                    return self._send(400, json.dumps({"eroare": "Lipsește intrarea confirmată (tip_schema)."}, ensure_ascii=False))
+                cart = model.get("cartus_chat") if isinstance(model.get("cartus_chat"), dict) else {}
+                return self._send(200, json.dumps(_genereaza_chat(intr, cart, model.get("model")), ensure_ascii=False, default=str))
         except (TypeError, AttributeError, KeyError, ValueError, IndexError) as e:
             import traceback; traceback.print_exc()          # formă neașteptată a datelor primite → 400, fără text Python
             return self._send(400, json.dumps({"eroare": "Datele trimise au un câmp de tip neașteptat (ex. text în loc de obiect / listă). "

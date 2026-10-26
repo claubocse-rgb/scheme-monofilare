@@ -224,7 +224,12 @@ def test_fraza(fraza):
     a = fraza["asteptat"]
     r = interpreteaza(fraza["text"])
     ex = r["extras"]
-    assert r["actiune"] == a["actiune"], (r["actiune"], r["refuz_motiv"], r["intrebari"])
+    # r10 (clasa 8): un BLOCANT al motorului devine întrebare — „genereaza” rămâne valid dacă singurele întrebări vin
+    # din verificarea motorului (intrebari_motor)
+    act = r["actiune"]
+    if a["actiune"] == "genereaza" and act == "genereaza_cu_intrebare" and set(r["intrebari"]) <= set(r.get("intrebari_motor") or []):
+        act = "genereaza"
+    assert act == a["actiune"], (r["actiune"], r["refuz_motiv"], r["intrebari"])
     if "tip_schema" in a:
         assert r["tip_schema"] == a["tip_schema"]
     for k in CAMPURI_EXACTE:

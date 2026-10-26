@@ -776,6 +776,8 @@ class Layout:
     def _poz_add(self, a):
         """poziție în lista de echipamente. Aparatele identice (același tip și același text de listă) primesc ACEEAȘI
         poziție, cu cantitatea însumată și notațiile reunite (SPEC §E.1 pct. 5)."""
+        if a.get("existent"):
+            return "E"          # r10: aparat existent — marcat „E”, nu intră în lista de echipamente noi
         lista = a.get("lista") or [S.SYMBOLS.get(a.get("tip", "nod"), (None, a.get("tip", ""), ""))[1] + (" · " + " · ".join(a.get("spec", [])) if a.get("spec") else "")]
         ref = a.get("ref") or a.get("eticheta", "")
         buc = a.get("buc", 1)

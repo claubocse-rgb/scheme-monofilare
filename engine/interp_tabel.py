@@ -45,6 +45,7 @@ ANTET = [
     ("faze", r"(?:faze|faza|nr\.?\s*faze|u|tensiune\w*|retea|phases?|voltage|alimentare)"),
     ("I", r"(?:in|i|ib|curent\w*|calibru\w*|a|current|protectie)"),
     ("um", r"(?:um|u\.m\.?|unit\w*|u/m)"),
+    ("cos", r"(?:cos\s*(?:fi|φ|phi)?|cosφ|pf|factor\s+de\s+putere|power\s+factor)"),    # r10 (industrial #21)
     ("obs", r"(?:obs\w*\.?|observati\w*|mentiun\w*|nota|note|remarks?|comentari\w*|pornire|demaror)"),
 ]
 ANTET = [(k, re.compile(rf"^{rx}$")) for k, rx in ANTET]
@@ -98,6 +99,10 @@ def _e_antet(celule: list[str]) -> list | None:
     # antet = cel puțin 2 coloane recunoscute, majoritatea celulelor fără cifre
     if len(rec) >= 2 and len(rec) * 2 >= len([c for c in celule if c]) and not any(
             re.search(r"\d", c) and not RE_UNIT_ANTET.search(_n(c)) for c in celule if c):
+        if not any(x and x[0] in ("nume", "model") for x in sem):
+            # r10 (fotovoltaic #47): „Item,Qty” — „Item” e denumirea (nu nr. de ordine) când nu există altă coloană de nume
+            sem = [("nume", None) if x and x[0] == "idx" and _n(c) in ("item", "articol", "pozitie") else x
+                   for x, c in zip(sem, celule)]
         return sem
     return None
 
@@ -157,7 +162,10 @@ def _rand(celule: list[str], sem: list) -> str | None:
     if n and um in ("m", "ml", "km") and _e_numar(n):
         n_pref, L_extra = "", f"{n} {um}"                         # „Cablu …⇥m⇥800” = 800 m, nu 800 bucăți
     else:
-        n_pref, L_extra = (f"{mn.group(1)} x " if mn and int(mn.group(1)) > 1 else ""), ""
+        inv_r = re.search(r"invert\w*|sun2000|\bsg\d|symo|tauro|\bstp\b|\bktl\b|\d+k?tl\b|primo|sunny|growatt|deye|solis",
+                          _n(" ".join(celule)))
+        # r10 (fotovoltaic #3): „SUN2000-20KTL-M3;1;20” — cantitatea 1 se scrie („1 x …”), altfel „20 kW” pare total
+        n_pref, L_extra = (f"{mn.group(1)} x " if mn and (int(mn.group(1)) > 1 or (inv_r and "P" in d)) else ""), ""
         if n and not mn:
             alte.append(n)
     parti.append(n_pref + " ".join(x for x in (d.get("nume", ("", 0))[0], d.get("prod", ("", 0))[0], d.get("model", ("", 0))[0])
@@ -183,6 +191,8 @@ def _rand(celule: list[str], sem: list) -> str | None:
         parti.append(L_extra)
     if "faze" in d:
         parti.append(_faza(d["faze"][0]))
+    if "cos" in d and _e_numar(d["cos"][0]):
+        parti.append(f"cos fi {d['cos'][0]}")
     parti += alte
     if "obs" in d:
         parti.append(d["obs"][0])

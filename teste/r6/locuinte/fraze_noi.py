@@ -109,5 +109,6 @@ N = [
  ("N54", "Casa parter 230 V, 6kw, pompa de caldura 4kW, AC 2,5 kW, cablu 18m pana la BMPM, schema TN-C-S",
   dict(tip="locuinta", retea="mono", P=6, L=18, rec={"pompa_caldura":4,"aer_conditionat":2.5})),
  ("N55", "prosumator 8kw, casa trifazata 12kw aprobat, invertor monofazat",
-  dict(tip="prosumator", retea="mono", inv=8, avert_mono=True, nota="inv mono 8 kW pe casă tri → avert dezechilibru / >3,68 kW")),
+  # r10 (decizie, locuințe #22/#43): invertorul monofazat pe casă trifazată — casa rămâne TRIFAZATĂ, invertorul pe o fază
+  dict(tip="prosumator", retea="tri", inv=8, avert_mono=True, nota="inv mono 8 kW pe casă tri → avert dezechilibru / >3,68 kW")),
 ]

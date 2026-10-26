@@ -29,11 +29,14 @@ def ik1_din_zb(zb):
     return C_MIN * norme.u_0() / modul(zb)
 
 
-def trafo(sn_kva, skq_mva=None, izolatie="ulei"):
+def trafo(sn_kva, skq_mva=None, izolatie="ulei", uk_pct=None):
     """SPEC §B.13, sursa „trafo propriu”, și §B.14 (bucla Dyn): impedanțele rețelei MT și ale trafo-ului, K_T,
-    Ik3max și Ik1min la bara JT. Returnează un dict cu toate mărimile."""
+    Ik3max și Ik1min la bara JT. Returnează un dict cu toate mărimile. r10: `uk_pct` declarat (plăcuța trafo) înlocuiește
+    valoarea din tabel (Ik3 cu uk real — uk 4 % dă Ik mai mare decât 6 % din tabel)."""
     skq = skq_mva or norme.MT_SKQ_IMPLICIT_MVA
-    uk, pk, p0 = norme.trafo_date(sn_kva, izolatie)
+    uk, pk, p0 = norme.trafo_date(sn_kva, izolatie or "ulei")
+    if uk_pct is not None:
+        uk = float(uk_pct)
     sn = sn_kva * 1000.0
     UN = norme.u_n()           # r7: 0,4 kV sau 0,8 kV (trafo 20/0,8 kV al CEF cu invertoare de 800 V)
     zq = C_MAX * UN ** 2 / (skq * 1e6)
