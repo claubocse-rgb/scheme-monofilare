@@ -1201,6 +1201,42 @@ ATR copiat, emailuri, engleză). Când există cheie API, citirea textului o fac
    ajustarea promptului, neorb). Rezultat: reguli locale 4 C / 16 P / 40 G (54/162 verificări) → Claude simulat + fuziune
    52 C / 8 P / 0 G (154/162), v2 57 C / 3 P / 0 G (159/162). Nu e o măsurătoare a modelului real.
 
+### F.12 (r8) Rescrierea textului, legarea pe clase, contextul tabloului — regulile locale
+Rulează mereu (cu sau fără cheie API; fără cheie e singura citire). Corecțiile sunt pe **clase de formulări**, nu pe fraze.
+
+1. **Rescrierea** (`engine/interp_rescriere.rescrie`, *schimbă* lungimea, rulează înaintea normalizării F.10; ce a
+   rescris intră în „Am presupus”): tabele copiate (`engine/interp_tabel.py`: tab / CSV `;` `,` `|`, cu / fără antet,
+   numerotate, bullet, ghilimele „”) cu semantica coloanelor (nr., denumire, model, producător, P[kW] — unitatea din
+   antet —, L, faze, I, UM, obs.) și cantitatea aplicată („N x …”, UM m → lungime, module → Wp, corpuri de iluminat →
+   un circuit cu P totală, rândurile fără consum — structură, cablu solar — scoase cu notă; virgula zecimală nu e
+   separator CSV); engleză (listă de termeni; poarta = ≥ 2 cuvinte englezești, termenii tehnici mereu); prescurtări /
+   greșeli de tastare („15k” = 15 kW, BTU); email (salut, cerere, semnătură, „X are N” → „X: N”); cascade („TG …
+   alimentează”, „din TD-A pleacă …” → paranteze sub TD-A); autocorecturi („scuze, de fapt”, „corectez:” — ultima
+   valoare câștigă); „N corpuri x P pe k circuite” → k circuite.
+2. **Legarea valorii de entitate:** puterea unui receptor nu e niciodată P aprobată; ATR: evacuată → `P_evacuata_kW`,
+   absorbită → `P_aprobata_kW`, evacuare < Σ invertoare → `limitare_injectie_kW`; Ik3 / Zs din ATR → `Ik3_OD_kA` /
+   `Zb_OD_ohm` (≠ Q, ≠ RA); „prize 4 circ” = 4 circuite; „P kW cu N invertoare” = total (variantă + întrebare);
+   „N invertoare: a×… + b×…” cu a+b ≠ N → I05; „fiecare cu câte un”; 3f / trif / 400 V = trifazat; ACB / MCCB /
+   întrerupător general → `In_Q_JT_A` / `In_Q1_A`; PT / ACB ca sursă, nu plecare; BESS „4 x PCS 250 kW” → `bess.n_pcs`,
+   „4 x 5,12 kWh” → `n_module` × `kWh_modul`.
+3. **Contextul tabloului:** consumatori de siguranță (TDSI, sprinklere, desfumare, hidranți, jockey, lift de pompieri) →
+   `siguranta` pe plecare; Y/Δ; GE „1+1”; cascade imbricate; secțiuni de bare (semibara A/B → `sectie`); lift / bloc ≠
+   locuință; compensare (baterie de condensatoare, kvar, cos φ → Qc, I14) ≠ CEF / BESS; PTA / PT aerian; cablu
+   rezistent la foc; circuite finale mono în tablou trifazat; contradicții (Q1 < Ib, ΣP plecări > Sn PT, două intrări).
+   TD-ul locuinței: circuitele fără putere („prize 4 circ, AC 2, iluminat”) se emit câte unul, fără calibru, iar puterea
+   implicită o pune motorul (declarată „PRESUPUS”).
+4. **Fotovoltaic fără cuvânt-cheie:** prosumator din casă + Pa / ATR loc de consum și producere; modele mono (Primo -1,
+   Sunny Boy, Growatt …TL-X) repartizate pe L1/L2/L3; LUNA2000-NNNKWH, BYD + SBS, PowerStack, Pylontech; zero export,
+   limitare, măsura pe MT.
+5. **Plasa:** ce nu e consumat → `neconsumat` → I15 („Nu am înțeles”); niciun fragment numeric pierdut tăcut. Fără
+   întrebări inutile (o valoare absentă la reguli nu întreabă; prize fără calibru → 16 A presumat + o singură întrebare).
+6. **Chei noi emise:** `tablouri_secundare[].circuite[].receptor` fără `In_A` / `P_kW` (puterea din `_p_implicit_td` al
+   motorului); inventarul regenerat.
+7. **Teste / reverificare:** `tests/test_interpretor_r8.py` (fiecare frază P0/P1 r8 + plasa pe tot r8 + teste de clasă
+   pe formulări noi), `teste/r8/reverificare.py` (r5 + r6 + r7 + r8; tabel înainte / după pe r8). r8 (207 fraze,
+   C/P/G): înainte 98/67/42 → după 206/1/0, P0/P1 90/91; r5–r7 fără regresii; `eval_llm` reguli locale 58 C / 2 P / 0 G
+   (160/162). Rămas: I25 — motorul dă V02/V03 BLOCANT la 2 × NA2XY 4x240 în paralel (problemă de motor, nu de citire).
+
 ### F.8 Răspunsul
 Totdeauna conține:
 1. „Am înțeles:” cu tipul schemei, puterile, numărul și lista plecărilor, lungimile și cartușul;

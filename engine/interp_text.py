@@ -28,6 +28,7 @@ RE_N_DE = re.compile(r"(?<![\w.,])(?P<n>\d+)\s+(?P<de>de)\s+(?=(?:circuit\w*|ple
                      r"|ventilat\w*|compresoar\w*|invertoar\w*|module|panouri|incarcatoar\w*|tablouri|iluminat\w*)\b)")
 RE_POLI = re.compile(r"\b(?P<p>[1-4]\s*p)\s*\+\s*n(?:\s*\+\s*pe)?\b")
 RE_DIN_CARE = re.compile(r"\bdin\s+care\b")
+RE_BUC_X = re.compile(r"(?<![\w.,])(\d+)(\s*(?:buc\w*\.?|bucati|pcs|unitati|unit\.?|aparate|bucăți)\s*)[x×](?=\s*\d)")
 RE_SAGEATA = re.compile(r"->|→|=>")
 TYPO = [  # (regex, înlocuire de aceeași lungime)
     (r"\bhuawey\b", "huawei"), (r"\bhuwaei\b", "huawei"), (r"\bexsitent\b", "existent"), (r"\bexistnet\b", "existent"),
@@ -53,6 +54,14 @@ def normalizeaza_format(t: str) -> tuple[str, list[str]]:
             continue
         _subst(lst, m.start(), m.end(), ";")
     t2 = "".join(lst)
+    # r8 (industrial #30): bullet-ul de la începutul textului („• chiller 180 kW …”)
+    mb = re.match(r"\s*(?:[-*•·–—]|\d{1,2}[.)])\s+(?=[a-z])", t2)
+    if mb:
+        t2 = " " * mb.end() + t2[mb.end():]
+    # r8 (industrial #32): „pompa 5,5kW / vent 3kW / iluminat 2kW” — „ / ” între itemi = separator de listă
+    t2 = re.sub(r"(?<=[a-z0-9.)])(\s+)/(\s+)(?=[a-z])", lambda m: m.group(1) + ";" + m.group(2), t2)
+    # r8 (industrial #1): „4 buc x 1,1 kW” = 4 × 1,1 kW
+    t2 = RE_BUC_X.sub(lambda m: m.group(1) + " " * len(m.group(2)) + "×", t2)
     if "\n" in t or "\t" in t:
         note.append("rândurile / tab-urile / liniuțele din text = separatori de listă")
     t2 = RE_TAB.sub(lambda m: ";" + " " * (len(m.group(0)) - 1), t2)
@@ -95,10 +104,15 @@ MODELE_SUPL = [
     (r"\bSUN\s*2000\s*-?\s*(\d+)\s*KTL\s*-?\s*H[0-3]\b", "Huawei", lambda m: m.group(1), False, "tri", 800),
     (r"\bSG\s*(\d+)\s*HX\b", "Sungrow", lambda m: m.group(1), False, "tri", 800),
     (r"\bMIN\s*(\d{4,5})\s*TL", "Growatt", lambda m: float(m.group(1)) / 1000, False, "mono", 230),
+    # r8 (locuințe #57): Growatt „5000TL-X” = 5 kW monofazat; „…TL3-X” = trifazat
+    (r"\bGROWATT\s+(\d{4,5})\s*TL\s*-?\s*X", "Growatt", lambda m: float(m.group(1)) / 1000, False, "mono", 230),
+    (r"\bGROWATT\s+(\d{4,5})\s*TL3\s*-?\s*X", "Growatt", lambda m: float(m.group(1)) / 1000, False, "tri", 400),
     (r"\bMIC\s*(\d{4,5})\s*TL", "Growatt", lambda m: float(m.group(1)) / 1000, False, "mono", 230),
     (r"\bGW\s*(\d+(?:[.,]\d+)?)\s*K\s*-?\s*(?:N\s*-?\s*)?MT\b", "GoodWe", lambda m: m.group(1), False, "tri", 400),
     (r"\bGW\s*(\d+(?:[.,]\d+)?)\s*K\s*-?\s*ET\b", "GoodWe", lambda m: m.group(1), True, "tri", 400),
     (r"\bPRIMO\s*GEN24\s*(\d+(?:[.,]\d+)?)", "Fronius", lambda m: m.group(1), True, "mono", 230),
+    # r8: SMA Sunny Boy X.Y = invertor monofazat (Sunny Boy Storage = PCS, tratat la INV_BATERIE)
+    (r"\bSUNNY\s+BOY\s*(\d+(?:[.,]\d+)?)\b", "SMA", lambda m: m.group(1), False, "mono", 230),
     (r"\bSTP\s*(\d+(?:[.,]\d)?)\s*(?:SE)?\s*$", "SMA", lambda m: m.group(1), None, "tri", 400),
     (r"\b(?:SUNNY\s+)?HIGHPOWER\s+PEAK3\s*(\d{2,3})\b", "SMA", lambda m: m.group(1), False, "tri", 400),
     (r"\bSHP\s*(\d{2,3})\s*-\s*\d{2}\b", "SMA", lambda m: m.group(1), False, "tri", 400),
@@ -114,6 +128,10 @@ INV_BATERIE = [
 # capacitatea bateriei din codul modelului (kWh per modul / pachet)
 KWH_MODEL = [
     (re.compile(r"\bLUNA\s*2000\s*-?\s*(5|7|10|15|20|30)\s*-?\s*[SE]\d"), lambda m: float(m.group(1))),
+    # r8: Huawei LUNA2000-200KWH-2H1 (BESS C&I) — kWh în cod
+    (re.compile(r"\bLUNA\s*2000\s*-?\s*(\d+)\s*KWH\b"), lambda m: float(m.group(1))),
+    # r8: BYD Battery-Box Premium HVS/HVM, BOS-G (BYD / Deye) — kWh pe modul / pachet
+    (re.compile(r"\bBOS\s*-?\s*G\b(?:\s*(\d+(?:[.,]\d+)?))?"), lambda m: float((m.group(1) or "5.12").replace(",", "."))),
     (re.compile(r"\bHV[SM]\s*(\d+(?:[.,]\d+)?)"), lambda m: float(m.group(1).replace(",", "."))),
     (re.compile(r"\bUS\s*5000"), lambda m: 4.8), (re.compile(r"\bUS\s*3000\w*"), lambda m: 3.55),
     (re.compile(r"\bUS\s*2000\w*"), lambda m: 2.4),
@@ -147,6 +165,16 @@ def invertor_baterie(producator=None, model=None):
         m = rx.search(t)
         if m:
             return {"producator": prod, "P_kW": float(m.group(1).replace(",", ".")), "retea": retea}
+    return None
+
+
+def p_bess_din_model(producator=None, model=None):
+    """r8: puterea unui BESS din codul modelului — „…-2H1” = 2 ore (P = kWh / 2), „…-1H1” = 1 oră."""
+    t = _up(producator, model)
+    k = kwh_din_model(producator, model)
+    m = re.search(r"-\s*(\d)\s*H\d?\b", t)
+    if k and m and int(m.group(1)) > 0:
+        return round(k / int(m.group(1)), 2)
     return None
 
 

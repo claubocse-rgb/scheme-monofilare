@@ -278,7 +278,10 @@ PV = {
 PT = _tip("pt")
 GE = _tip("ge_ats")
 IND = {
-    1: [T, _eq("origine", "pt_propriu"), _eq("pt_Sn_kVA", 630), _eq("schema_pamant", "TN-S"), _np(7), Q("prize")],
+    # r8: prizele fără calibru se desenează cu 16 A PRESUPUS + întrebare (raportul r7: „TG + întrebare la prize”)
+    1: [T, _eq("origine", "pt_propriu"), _eq("pt_Sn_kVA", 630), _eq("schema_pamant", "TN-S"),
+        ("7 plecări (+ 6 prize 16 A presupuse)", lambda r: sum(int(p.get("n_circuite") or 1) for p in r["in"].get("plecari") or [])
+         in (7, 13)), Q("prize")],
     2: [T, _eq("origine", "tg_existent"), _eq("cablu.S_fortat", 95), _eq("schema_pamant", "TN-C-S"), _np(5)],
     3: [T, _eq("origine", "bmpt"), _eq("schema_pamant", "TN-S"), _np(12), _ne("P_kW", 9), _ne("In_Q1_A", 16),
         PLEC_ANY("uși 1,1 kW", lambda p: p.get("P_kW") == 1.1)],

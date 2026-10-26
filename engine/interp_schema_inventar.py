@@ -50,7 +50,11 @@ INVENTAR = {
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"bransament",
+"locuinta",
+"prosumator"
+]
 },
 "Ik3_TG_kA": {
 "t": [
@@ -205,6 +209,7 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
+"cef",
 "prosumator"
 ]
 },
@@ -214,6 +219,7 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
+"cef",
 "prosumator"
 ]
 },
@@ -258,8 +264,12 @@ INVENTAR = {
 "t": [
 "string"
 ],
-"v": [],
-"tipuri": []
+"v": [
+"ACB"
+],
+"tipuri": [
+"pt"
+]
 },
 "RA_ohm": {
 "t": [
@@ -360,7 +370,9 @@ INVENTAR = {
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"locuinta"
+]
 },
 "Zb_TG_ohm": {
 "t": [
@@ -455,7 +467,8 @@ INVENTAR = {
 ],
 "v": [
 "Centrală termică",
-"Frigider"
+"Frigider",
+"Iluminat"
 ],
 "tipuri": [
 "prosumator"
@@ -467,7 +480,8 @@ INVENTAR = {
 ],
 "v": [
 "alt_circuit",
-"centrala_termica"
+"centrala_termica",
+"iluminat"
 ],
 "tipuri": [
 "prosumator"
@@ -566,6 +580,7 @@ INVENTAR = {
 "Battery-Box",
 "Battery-Box Premium HVM",
 "LUNA2000",
+"LUNA2000-200KWH-2H1",
 "LUNA2000-215-2S10",
 "PowerStack",
 "PowerStack 200CS",
@@ -588,14 +603,18 @@ INVENTAR = {
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"cef"
+]
 },
 "bess.pcs.Pn_kW": {
 "t": [
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"cef"
+]
 },
 "bess.pcs.model": {
 "t": [
@@ -609,7 +628,9 @@ INVENTAR = {
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"cef"
+]
 },
 "bess.pcs.producator": {
 "t": [
@@ -859,7 +880,9 @@ INVENTAR = {
 ],
 "v": [
 "3F",
-"L1"
+"L1",
+"L2",
+"L3"
 ],
 "tipuri": [
 "locuinta"
@@ -954,7 +977,6 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"pt",
 "tablou"
 ]
 },
@@ -1004,9 +1026,12 @@ INVENTAR = {
 },
 "consumatori[].n": {
 "t": [
-"number"
+"number",
+"string"
 ],
-"v": [],
+"v": [
+"1+1"
+],
 "tipuri": [
 "ge_ats"
 ]
@@ -1018,7 +1043,6 @@ INVENTAR = {
 "v": [
 "Centrala termica",
 "Clapete",
-"De",
 "Electropompa",
 "Frig",
 "Hidrofor",
@@ -1028,6 +1052,7 @@ INVENTAR = {
 "Pompa pilot",
 "Pompa principala",
 "Pompa rezerva",
+"Pompe de incendiu",
 "Pompe incendiu",
 "Pompe x",
 "Server",
@@ -1073,7 +1098,6 @@ INVENTAR = {
 "v": [],
 "tipuri": [
 "bransament",
-"pt",
 "tablou"
 ]
 },
@@ -1082,10 +1106,11 @@ INVENTAR = {
 "string"
 ],
 "v": [
-"deschisa",
-"inchisa"
+"deschisa"
 ],
-"tipuri": []
+"tipuri": [
+"pt"
+]
 },
 "ddr_amonte": {
 "t": [
@@ -1158,8 +1183,14 @@ INVENTAR = {
 "t": [
 "string"
 ],
-"v": [],
-"tipuri": []
+"v": [
+"L1",
+"L2",
+"L3"
+],
+"tipuri": [
+"prosumator"
+]
 },
 "invertoare[].hibrid": {
 "t": [
@@ -1257,14 +1288,14 @@ INVENTAR = {
 "string"
 ],
 "v": [
-"20K",
 "8KTL",
 "MID 25KTL3-X",
 "Primo 5.0-1",
 "S6-EH3P15K",
 "SG50CX",
+"SH10RT",
 "SH25T",
-"SUN-10K-SG04LP3-EU",
+"SUN-10 kW-SG04LP3-EU",
 "SUN2000 10KTL M1",
 "SUN2000-10KTL",
 "SUN2000-10KTL-M1",
@@ -1381,6 +1412,7 @@ INVENTAR = {
 "Hi-MO 6",
 "JAM72D40",
 "JAM72D40-575",
+"TSM-NEG21C.20",
 "Tiger Neo",
 "Vertex",
 "vertex S"
@@ -1579,7 +1611,6 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"pt",
 "tablou"
 ]
 },
@@ -1651,9 +1682,9 @@ INVENTAR = {
 "Iluminat hală",
 "Iluminat parcare",
 "Moară",
-"Motor",
-"Pompa",
-"Pompe"
+"Motoare 1",
+"Motoare 2",
+"Motoare 3"
 ],
 "tipuri": [
 "pt",
@@ -1671,7 +1702,6 @@ INVENTAR = {
 "stea_triunghi"
 ],
 "tipuri": [
-"pt",
 "tablou"
 ]
 },
@@ -1680,6 +1710,7 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"GG",
 "MCB",
 "MCCB"
 ],
@@ -1738,7 +1769,6 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"pt",
 "tablou"
 ]
 },
@@ -1861,7 +1891,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"ge_ats"
+"ge_ats",
+"tablou"
 ]
 },
 "string.I_rev_A": {
@@ -1981,7 +2012,9 @@ INVENTAR = {
 "number"
 ],
 "v": [],
-"tipuri": []
+"tipuri": [
+"locuinta"
+]
 },
 "tablouri_secundare[].cablu.material": {
 "t": [
@@ -2020,9 +2053,18 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"Aer condiționat 1",
+"Aer condiționat 2",
 "Compresor",
+"Iluminat",
+"Iluminat 1",
+"Iluminat 2",
 "Plita",
 "Prize",
+"Prize 1",
+"Prize 2",
+"Prize 3",
+"Prize 4",
 "Strung"
 ],
 "tipuri": [
@@ -2034,6 +2076,8 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"aer_conditionat",
+"iluminat",
 "motor",
 "prize"
 ],
@@ -2070,7 +2114,8 @@ INVENTAR = {
 "v": [
 "TD Anexa",
 "TD Atelier",
-"TD Garaj"
+"TD Garaj",
+"TE Etaj"
 ],
 "tipuri": [
 "locuinta"
@@ -2104,11 +2149,15 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"Statie hidranti",
+"TE desfumare",
 "Tablou desfumare",
-"Tablou pompe incendiu"
+"Tablou pompe incendiu",
+"tablou TDSI"
 ],
 "tipuri": [
-"ge_ats"
+"ge_ats",
+"tablou"
 ]
 },
 "trafo_izolatie": {
