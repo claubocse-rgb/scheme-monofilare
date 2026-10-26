@@ -240,7 +240,9 @@ TD = {"nume": "TD atelier", "L_m": 40, "circuite": [
 
 @pytest.mark.parametrize("retea", ["tri", "mono"])
 def test_locuinta_cu_tablou_secundar(retea):
-    inp = dict(_loc(retea, C, P_aprobata_kW=15 if retea == "tri" else 9), tablouri_secundare=[TD])
+    # r8b: „Prize atelier” × 2 (n_circuite) intră de două ori în bilanțul TD (5 circuite, ks 0,8: 0,8·11,5 = 9,2 kW) —
+    # mono: P aprobată 10 kW (la 9 kW TD-ul depășește corect, V46)
+    inp = dict(_loc(retea, C, P_aprobata_kW=15 if retea == "tri" else 10), tablouri_secundare=[TD])
     r = calculeaza(inp)
     circ = [c for g in r["rezultat"]["grupe_DDR"] for c in g["circuite"]]
     f = next(c for c in circ if c["nume"] == "TD atelier")

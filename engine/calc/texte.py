@@ -474,11 +474,13 @@ def tip_cablu(material, izolatie, metoda):
 
 
 def text_cablu(material, izolatie, metoda, n_paralel, S_faza, S_N=None, S_PE=None, PE="cablu", retea="tri",
-               monopolar=False, fara_N=False):
+               monopolar=False, fara_N=False, tip=None):
     """Textul cablului pentru listă (SPEC §B.9, §B.10, §B.11, §E.3), de ex.
-    „CYABY 5×6 mm²”, „ACYABY 3×185+95 mm² + FY 1×50 mm² (PE)”, „2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE))”."""
+    „CYABY 5×6 mm²”, „ACYABY 3×185+95 mm² + FY 1×50 mm² (PE)”, „2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE))”.
+    `tip`: denumirea impusă de proiectant (r8b, „NA2XY”), păstrată în locul celei implicite."""
     monopolar = monopolar or str(metoda).startswith("F")
-    tip = norme.TIP_CABLU[(material, izolatie, False)] if monopolar else tip_cablu(material, izolatie, metoda)
+    if not tip:
+        tip = norme.TIP_CABLU[(material, izolatie, False)] if monopolar else tip_cablu(material, izolatie, metoda)
     S_N = S_faza if S_N is None else S_N
     s, sn = fmt_ro(S_faza), fmt_ro(S_N)
     if fara_N and retea != "mono" and PE != "PEN":

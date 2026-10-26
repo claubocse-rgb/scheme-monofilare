@@ -187,7 +187,7 @@ def _bransament(inp, rz, m):
     cab2 = _cablu(c2, "C2")      # TT: PE-ul din coloană vine de la bara PE a blocului (priza proprie), nu din PEN
     m["plecari"] = [{"aparate": [], "cablu": cab2,
                      "sarcina": {"titlu": "TE consumator", "sub": f"tablou generic {PUNCT} Pa = {_f(rz.get('Pa_kW'))}{NB}kW cf. ATR {PUNCT} {_sub_ramura(c2)}"},
-                     "copii": _te_generic(mono, (Q or {}).get("In_A"))}]
+                     "copii": _te_generic(mono, (Q or {}).get("In_A"), tt)}]
     m["lista_pe"] = ["Baretă de nul · piesă de separație · priză de pământ locală",
                      "electrozi OL-Zn 2½″ × 3 m + platbandă OL-Zn 40×4 mm · Rp ≤ 4 Ω"]
     if tt:
@@ -209,7 +209,7 @@ def _backup_sf(icn, ik3, sf):
     return {}
 
 
-def _te_generic(mono, In_q):
+def _te_generic(mono, In_q, tt=False):
     """tabloul consumatorului, GENERIC (cerut de OD la documentația de branșament / prosumator): întreruptor general,
     DDR 30 mA pe prize și câteva plecări tipice. Aparatele nu sunt dimensionate — se definitivează în proiectul de
     instalații interioare; textele o spun explicit."""
@@ -223,11 +223,12 @@ def _te_generic(mono, In_q):
                                                                         "calibrul și numărul circuitelor conform proiectului de instalații interioare"]}],
                 "cablu": {"ref": "", "cond": "L + N + PE" if poli == "1P+N" else "3 + N + PE", "text": "conform proiect IU"},
                 "sarcina": {"titlu": txt, "sub": "generic"}}
-    circ = [mcb("Q1", "Iluminat", "circuite de iluminat", 10), mcb("Q2", "Prize", "circuite de prize", 16, ddr=True),
+    # r9 (locuințe #31): în TT fiecare circuit are DDR (RA·IΔn ≤ 50 V) — nota „DDR pe fiecare circuit” e adevărată
+    circ = [mcb("Q1", "Iluminat", "circuite de iluminat", 10, ddr=tt), mcb("Q2", "Prize", "circuite de prize", 16, ddr=True),
             mcb("Q3", "Receptoare fixe", "aparate fixe (boiler, cuptor etc.)", 20, ddr=True)]
     if not mono:
-        circ.append(mcb("Q4", "Forță 3F", "receptoare trifazate", 20, poli="4P"))
-    circ.append(mcb(f"Q{len(circ) + 1}", "Rezervă", "rezervă", 16))
+        circ.append(mcb("Q4", "Forță 3F", "receptoare trifazate", 20, poli="4P", ddr=tt))
+    circ.append(mcb(f"Q{len(circ) + 1}", "Rezervă", "rezervă", 16, ddr=tt))
     In_g = next((x for x in (25, 32, 40, 63, 80, 100, 125, 160, 250) if x >= (In_q or 0)), In_q or 63)
     poli_g = "2P" if mono else "4P"
     qg = {"tip": "separator", "ref": "QG", "spec": [f"{poli_g} {PUNCT} {In_g}{NB}A", "întreruptor-separator"],
@@ -1030,6 +1031,15 @@ def _cef(inp, rz, m):
         # v1.9 (R5 P0-4): PT existent = sursa (Ik din trafo); nu se desenează un transformator nou
         dest = {"titlu": f"PT EXISTENT {tr.get('Sn_kVA')} kVA", "sub": f"bara JT a PT-ului existent {PUNCT} Ik3 {_f(tr.get('Ik3max_bara_kA'), 1)} kA"
                 + (f" {PUNCT} măsură MT în celula existentă" if masura_mt else "")}
+        qpt = _prot(rz.get("Q_PT"), "QPT") if rz.get("Q_PT") else None
+        if qpt and not rac.get("tg_existent"):
+            # r9 (fotovoltaic #41, #42): plecarea NOUĂ din tabloul JT al PT-ului existent — QPT la capătul sursă al C0
+            qpt["spec"] = list(qpt.get("spec") or []) + ["plecare NOUĂ în TGJT existent"]
+            n_tr = int(tr.get("n_trafo") or 1)
+            pt_copii = [{"aparate": [qpt], "cablu": {"ref": "", "cond": "", "text": "bara JT existentă"},
+                         "sarcina": {"titlu": "TGJT EXISTENT", "sub": f"bara JT · {'T existent' if n_tr == 1 else f'{n_tr} trafo existente'} "
+                                                                     f"{tr.get('Sn_kVA')} kVA · celule MT existente"}}]
+            dest = dict(dest, titlu=f"PT EXISTENT {tr.get('Sn_kVA')} kVA — PLECARE NOUĂ")
     else:
         dest = {"titlu": "PCC — RED 0,4 kV", "sub": "punct comun de cuplare conform ATR"}
     if rac.get("tg_existent"):
@@ -1045,6 +1055,8 @@ def _cef(inp, rz, m):
     m["plecari"] = [{"aparate": apq, "cablu": cab0, "sarcina": dest}]
     if pt_copii:
         m["plecari"][0].update(copii=pt_copii, pt=True)
+        if tr and tr.get("existent"):
+            m["plecari"][0].update(pt=False, tablou_existent=True)     # r9: PT existent — fără anvelopă / bare noi
     elif tg_copii:
         m["plecari"][0].update(copii=tg_copii, tablou_existent=True)
     m["carcasa"] = {"titlu": "TGD-CF", "sub": f"tablou general c.a. fotovoltaic · Σ Pn = {_f(s.get('Pn_total_kW'))} kW · categoria {rz.get('categorie_RfG', '—')} RfG"
@@ -1392,7 +1404,7 @@ def _prosumator(inp, rz, m):
                          "sarcina": {"titlu": tit, "sub": (f"Q {qb}{NB}A {PUNCT} " if qb else "") + "contor bidirecțional (OD)"}}]
         if not rz.get("comercial"):
             # circuitele consumatorului (generic, cerut de OD): pe aceeași bară a TE
-            for k, cg in enumerate(_te_generic(mono, qb)[0]["copii"]):
+            for k, cg in enumerate(_te_generic(mono, qb, str(inp.get("schema_pamant") or "").upper() == "TT")[0]["copii"]):
                 cg["aparate"][0]["ref"] = f"Q{k + 2}"
                 cg["sarcina"]["sub"] = "existent / generic"
                 m["plecari"].append(cg)
@@ -1448,6 +1460,18 @@ def _ge(inp, rz, m):
     if p:
         p["in_carcasa"] = False
         ap_r.append(p)
+    if rz.get("plecare_retea"):
+        # r9 (#24): consumatorii normali — plecare QN din bara rețelei, ÎNAINTEA ATS (nu sunt alimentați din GE)
+        pn = rz["plecare_retea"]
+        qn = pn.get("protectie") or {}
+        nume_n = ", ".join(f"{c['nume']} {_f(c['P_kW'])} kW" for c in rz.get("consumatori_retea") or [])
+        txt_q = f"{qn.get('tip', '')} {qn.get('In_A', '')}{NB}A".strip()
+        nod = {"tip": "nod", "ref": "", "spec": [], "in_carcasa": False, "laterale": [
+            {"tip": "cutie", "ref": "QN", "eticheta": "NORMALI", "legatura": "forta", "w": 34,
+             "spec": [f"doar rețea · {_f(rz.get('P_retea_normali_kW'))} kW", txt_q],
+             "lista": [f"Plecare consumatori normali din bara rețelei (înaintea ATS, nu se alimentează din GE): {nume_n}",
+                       f"protecție {txt_q}, cablu {_cablu(pn).get('text', '')}; DDR conform tabloului consumatorilor"]}]}
+        ap_r.insert(0, nod)
     ap_r.append(pol("I", 1))
     ap_g = [_ap("generator", "G", "ge", {"Sn_kVA": sn, "In_G_A": rz.get("In_G_A")}, in_carcasa=False, neutru_pamant=True)]
     p = _prot((c2.get("protectie") or dict(qg, tip=qg.get("tip", "MCCB"))), "QG")
@@ -1480,7 +1504,14 @@ def _ge(inp, rz, m):
     m["plecari"] = []
     if c3.get("QC3"):
         # r6: cu circuite de siguranță, consumatorii normali au plecare proprie cu DDR 300 mA S
-        pl = _plecare(dict(c3, nume="Consumatori normali"), "QC3", None)
+        # r9: pe bara ATS sunt doar consumatorii vitali (cei normali sunt pe ramura rețea, înaintea ATS)
+        from .calc.scheme import e_consumator_siguranta
+        n_ret = {c.get("nume") for c in rz.get("consumatori_retea") or []}
+        vit = [c.get("nume") for c in (inp.get("consumatori") or []) if isinstance(c, dict)
+               and not e_consumator_siguranta(c) and c.get("nume") and c.get("nume") not in n_ret]
+        et3 = ("Consumatori vitali" + (f" ({', '.join(vit[:3])}{'…' if len(vit) > 3 else ''})" if vit else "")
+               if rz.get("consumatori_retea") else "Consumatori normali")
+        pl = _plecare(dict(c3, nume=et3), "QC3", None)
         pl["cablu"] = _cablu(c3, "C3")
         pl["sarcina"]["sub"] = _sub_ramura(c3) + f" {PUNCT} DDR 300{NB}mA S"
         m["plecari"].append(pl)

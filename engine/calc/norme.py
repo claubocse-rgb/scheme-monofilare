@@ -140,7 +140,28 @@ TIP_CABLU = {
     ("Al", "XLPE", True): "AC2XABY",
     ("Al", "XLPE", False): "NA2XY",
 }
-TIP_CONDUCTOR_PE_SEPARAT = "FY"        # conductor Cu izolat PVC, galben-verde (ST 4-JT folosește FY pentru legături interne)
+# r8b (industrial #25): denumirea impusă a cablului („2 × NA2XY 4x240”) → (material, izolație). Prefixul N/A al
+# denumirilor DIN (NYY, NAYY, N2XY, NA2XY) și denumirile RO (CYY, ACYY, CYABY, C2XABY…); „2X” = XLPE, altfel PVC.
+# Ordinea contează: denumirile mai lungi întâi (NA2XY înaintea N2XY).
+DENUMIRE_CABLU = (
+    ("NA2XSY", ("Al", "XLPE")), ("NA2XY", ("Al", "XLPE")), ("NA2XBY", ("Al", "XLPE")), ("N2XSY", ("Cu", "XLPE")),
+    ("N2XBY", ("Cu", "XLPE")), ("N2XH", ("Cu", "XLPE")), ("N2XY", ("Cu", "XLPE")), ("NAYY", ("Al", "PVC")),
+    ("NYY", ("Cu", "PVC")), ("AC2XABY", ("Al", "XLPE")), ("C2XABY", ("Cu", "XLPE")), ("AC2XY", ("Al", "XLPE")),
+    ("C2XY", ("Cu", "XLPE")), ("ACYABY", ("Al", "PVC")), ("CYABY", ("Cu", "PVC")), ("ACYY", ("Al", "PVC")),
+    ("CYY", ("Cu", "PVC")),
+)
+
+
+def material_izolatie_din_denumire(tip):
+    """(material, izolatie) din denumirea comercială a cablului, sau None dacă denumirea nu e cunoscută."""
+    t = str(tip or "").upper().replace(" ", "").replace("-F", "")
+    for den, mi in DENUMIRE_CABLU:
+        if t.startswith(den):
+            return mi
+    return None
+
+
+TIP_CONDUCTOR_PE_SEPARAT = "FY"       # conductor Cu izolat PVC, galben-verde (ST 4-JT folosește FY pentru legături interne)
 
 # Temperaturi conductor (SR HD 60364-5-52 tab. 52.1; SR HD 60364-4-43 tab. 43A)
 THETA_MAX_C = {"PVC": 70.0, "XLPE": 90.0}       # regim permanent
@@ -932,6 +953,10 @@ NEVERIFICAT = {
                            "în 1.RE-Ip 30-2004 / Ingeorge; n = 30 extrapolat",
     "PRIZA_ETA_PLATBANDA": "coeficienți de utilizare platbandă (a/L = 1, 2, 3); n = 2, 3, 15 interpolate/estimate",
     "BMPM_RCBO_SELECTIV": "ST 3-JT nu precizează tipul S al RCBO 300 mA din BMPM — presupus instantaneu",
+    "LOCUINTA_TD_P_CALIBRU": "r8b DECIZIE: circuit casnic al unui tablou secundar dat doar prin calibru → în bilanțul TD "
+                             "intră puterea implicită a receptorului (LOCUINTA_RECEPTORI), plafonată la U·In·cosφ; TD "
+                             "numai cu receptoare casnice → ks LOCUINTA_KS_GENERAL (ca la TE), altfel ks IEC 61439-2",
+    "DENUMIRE_CABLU": "r8b: material / izolație din denumirea comercială (DIN N…/NA…, RO C…/AC…) — de confirmat pe fișă",
 }
 
 

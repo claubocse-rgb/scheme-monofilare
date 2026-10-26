@@ -234,6 +234,16 @@ class Ctx:
                                   f"Ce putere (aprobată / cerută): {m.group('a')} {UNIT_AFIS.get(u, u)} sau {m.group('b')} "
                                   f"{UNIT_AFIS.get(u, u)}? (din ATR / cererea de racordare)"))
 
+        for m in re.finditer(rf"(?<![\w.,])(?P<a>{NUM})\s+(?:sau|ori)\s+(?P<b>{NUM})(?![\w.,]|\s*(?:kwp|kwh|kva|kw|a|m|v)\b)",
+                             self.t):
+            # r9 (locuințe #60): „casa 15 kw (nu știu dacă e 15 sau 25)” — alternativa fără unitate, la o valoare scrisă
+            mu = re.search(rf"(?<![\w.,]){re.escape(m.group('a'))}\s*(kwp|kwh|kva|kw|a)\b", self.t)
+            if mu and numar(m.group("a")) != numar(m.group("b")):
+                u = mu.group(1)
+                self.citit.append((m.start(), m.end()))
+                self.probleme.append(("I08", f"Valoare ambiguă: „{self.o(m.start(), m.end()).strip()}” (I08).",
+                                      f"Care este valoarea: {m.group('a')} {UNIT_AFIS.get(u, u)} sau {m.group('b')} "
+                                      f"{UNIT_AFIS.get(u, u)}?"))
         for m in RE_ALTERNATIVA.finditer(self.t):
             ua, ub = m.group("ua") or m.group("ub"), m.group("ub")
             if ua == ub and numar(m.group("a")) != numar(m.group("b")):
@@ -291,6 +301,8 @@ RE_COMERCIAL = re.compile(r"\bsupermarket\w*|\bmagazin\w*|\bhal(?:a|e|ei)\b|\bbi
                           r"|\bdepozit\w*|\bscoal\w*|\bspital\w*|\bhotel\w*|\brestaurant\w*|\bpensiun\w*|\batelier\w*"
                           r"|\bindustrial\w*|\bstatie\w*(?!\s+(?:de\s+)?(?:incarcare|ve\b|ev\b))|\bmall\b|\bparcare\b"
                           r"|\bspalatori\w*|\bbrutari\w*|\bcomercial\w*"
+                          r"|\bfarmaci\w*|\bcabinet\w*|\bclinic\w*|\bsalon\w*|\bcafenea\w*|\bcofetari\w*|\bfrizeri\w*"
+                          r"|\bservice\s+auto|\bshowroom\w*|\bchiosc\w*|\bbanc[aă]\b|\bsediu\w*"   # r9 (#11)
                           # r8: TG-ul clădirii (lift, scări, spații comune) ≠ locuință
                           r"|\blift\w*|\bascensor\w*|\bspatii\s+comune|\basociati\w*\s+de\s+proprietari|\bbloc\s+de\s+locuint\w*"
                           r"|\bimobil\w*|\bcladir\w*\s+(?:de\s+)?(?:birouri|locuint\w*|rezidential\w*)"
@@ -308,7 +320,7 @@ RE_COMPENSARE = re.compile(r"\bbateri\w*\s+(?:de\s+)?(?:condensato\w*|compensare
 RE_FACTOR_PUTERE = re.compile(r"\bfactor\w*\s+de\s+putere|\bcos\s*(?:fi|φ|phi)\b|\bcompensare\w*|\bkvar\b|\benergie\s+reactiv\w*")
 # r6 (industrial #10, #15, #45, #47, #53): „TG … din BMPT” = sursa tabloului (origine bmpt), nu un branșament
 RE_BMPT_SURSA = re.compile(r"\b(?:din|prin|de\s+la|alimentat\w*\s+din|sursa(?:\s+retea\w*)?\s+din|sursa)\s+"
-                           r"(?:bmpt\w*|bransament\w*|retea\w*(?:\s+publica)?)")
+                           r"(?:bmp[tm]\w*|bransament\w*|retea\w*(?:\s+publica)?)")
 RE_CASA_SLAB = re.compile(r"(?<![\w+])p\s*\+\s*[1-3m]\b|\bparter\b|\bmansard\w*")
 RE_PV = re.compile(r"\bcef\b|fotovoltaic\w*|\bpv\b|\d\s*[km]?wp\b|invertor\w*|invertoare\w*|\binv\b|\bpanou\w*"
                    r"|\bsun2000|\bsg\d+cx|\bsh\d+(?:\.\d+)?(?:t|rt|rs)\b|\bstp\s*\d|\bsunny\s+tripower|\btauro\b|\bsymo\b")
@@ -343,7 +355,10 @@ def _ge(c: Ctx) -> bool:
 def _pv(c: Ctx) -> bool:
     """r7: fotovoltaic și fără „CEF / prosumator”: „pv N kW”, „solar”, „panouri”, o marcă / un model de invertor sau de
     baterie recunoscut (Fronius Primo GEN24, Growatt MIN 6000TL-X, GoodWe GW10K-ET, Deye SUN-12K …)."""
-    if RE_PV.search(c.t) or RE_PV_R7.search(c.t):
+    t_pv = _masca(c.t, re.compile(r"\bfara\s+(?:panouri|pv|fotovoltaic\w*|invertor\w*|solar\w*)\b"))  # r9 (#53)
+    if not re.search(r"\bpanou\w*|\bpv\b|invert|solar|fotovolt|\bcef\b|kwp", t_pv) and re.search(r"\bfara\s+panouri", c.t):
+        return False
+    if RE_PV.search(t_pv) or RE_PV_R7.search(t_pv):
         return True
     for m in RE_MARCA.finditer(c.t):
         if MARCI[m.group(1)][1] in ("inv", "bess") and m.group(1) != "ja":
@@ -398,6 +413,9 @@ def detecteaza_tip(c: Ctx) -> str | None:
             and all(v["val"] <= 100 for v in valori(t) if v["marime"] in ("kW", "kWp")):
         return "prosumator"            # r8 (locuințe #22): ATR „loc de consum / loc de producere” ≤ 100 kW = prosumator
 
+    if pv and not pt and re.search(r"\bhibrid\w*|\bbackup\b|\beps\b", t) and re.search(r"\bpa\b|aprobat\w*", t) \
+            and all(v["val"] <= 30 for v in valori(t) if v["marime"] in ("kW", "kWp", "kVA")):
+        return "prosumator"            # r9 (locuințe #51): hibrid + EPS / backup + Pa (fără „casă”) = prosumator casnic
     if pv or (bess and not ge):
         if RE_CASA_TARE.search(_masca(t, RE_NU_CASA)):
             return "prosumator"        # casă + fotovoltaic = prosumator (circuitele casei nu se desenează aici)
@@ -409,7 +427,9 @@ def detecteaza_tip(c: Ctx) -> str | None:
         if pt and re.search(r"\bge\b|grup", t):
             c.combo.append("pt")
         return _cef_sau_prosumator(c)
-    if ge and RE_CASA_TARE.search(_masca(t, RE_NU_CASA)) and not pt and not tablou and (
+    tablou_ge = tablou and _tablou_numit_t(c, _masca(t, re.compile(
+        r"\b(?:pe\s+)?(?:tot|intreg)\w*\s+tablou\w*|\btablou\w*\s+(?:casei|general\s+al\s+casei)\b")))   # r9 (#50)
+    if ge and RE_CASA_TARE.search(_masca(t, RE_NU_CASA)) and not pt and not tablou_ge and (
             not re.search(r"\bats\b|\baar\b|\bautomat\w*", t)
             or (not re.search(r"\bvital\w*|\bconsumator\w*|\bincendiu|\bsiguranta", t)
                 and all(v["val"] <= 40 for v in valori(t) if v["marime"] in ("kVA", "kW")))):
@@ -420,6 +440,9 @@ def detecteaza_tip(c: Ctx) -> str | None:
         return "ge_ats"
     if _e_locuinta(c):
         return "locuinta"
+    if (tablou or RE_COMERCIAL.search(t)) and re.search(r"\bbmpt\w*\s+\d+\s*a\b", t) and len(re.findall(r"\d\s*kw\b", t)) >= 2 \
+            and not RE_CASA_TARE.search(_masca(t, RE_NU_CASA)):
+        return "tablou"                # r9 (industrial #11, #52): „magazin, BMPT 63 A: vitrine …”, „BMPT 160 A …, TG magazin: …”
     if not tablou and RE_BMPT_SURSA.search(t) and len(re.findall(r"\d\s*kw\b", t)) >= 2 and (
             RE_ATOM_REC.search(t) or re.search(RE_MOTOR_NUME, t) or RE_COMERCIAL.search(t)):
         return "tablou"                # r8 (industrial #65): receptoare cu puteri „din BMPT 80A” = tabloul lor, nu branșament
@@ -525,7 +548,7 @@ def detecteaza_retea(c: Ctx) -> str:
 # F.4 Lista de plecări
 # =====================================================================================================
 RECEPTORI = r"iluminat|prize|priza|forta|motor|motoare|pompa|pompe|compresor|ventilatie"
-_TIP_CABLU = r"(?:cyaby|acyaby|cyy-?f|cyy|nyy|n2xy|na2xy|n2xh|c2xaby|ac2xaby|cyabyf)"
+_TIP_CABLU = r"(?:cyaby|acyaby|cyy-?f|cyy|nyy(?:-j)?|n2xy|na2xy|n2xh(?:-j)?|nhxh(?:-j)?|c2xaby|ac2xaby|cyabyf)"
 _ADJ_FAZA = r"(?:\s+(?:monofazat\w*|monofazic\w*|trifazat\w*|trifazic\w*|mono|tri))?"
 RE_TRIGGER = re.compile(rf"(?:\b(?P<n>\d+)\s+)?(?<!sub-)(?<!sub)\b(?P<w>plecari|plecare|circuite|plec(?=\s*:)){_ADJ_FAZA}\b")
 # r6 (industrial #22): „TG -> TD-P …” = lista plecărilor TG-ului
@@ -543,9 +566,13 @@ RE_PREFIX_N = re.compile(r"^(?P<n>\d+)\s*(?:(?P<x>×|x)\s*|(?P<circ>circuite|cir
                          r"(?:de\s+)?)?(?=[a-z])")
 # r6 (industrial #7, #22): item fără putere / calibru — „iluminat grajd 3 circuite”, „prize 4 circ”
 RE_FARA_VAL = re.compile(r"^(?P<nume>[a-z][^\d,;]*?)\s+(?P<n>\d+)\s*(?:circuite|circuit|circ\.?|buc\w*\.?|bucati)$"
-                         r"|^(?P<n2>\d+)\s*(?:circuite|circuit|circ\.?)\s+(?P<nume2>[a-z][^\d,;]*)$")
+                         r"|^(?P<n2>\d+)\s*(?:circuite|circuit|circ\.?)\s+(?P<nume2>[a-z][^\d,;]*)$"
+                         # r9 (locuințe #36): „iluminat”, „priză exterioară” singure într-o listă cu valori
+                         r"|^(?P<nume3>(?:iluminat\w*|priz[ae]\w*)(?:\s+[a-z]+){0,2})$")
 RE_RECEPTOR_ITEM = re.compile(r"\b(?:ilumin\w*|priz\w*|motor\w*|motoar\w*|pomp\w*|compresor\w*|ventil\w*|boiler\w*|ac\b|clim\w*"
-                              r"|incalz\w*|sudur\w*|polizor\w*|strung\w*|circuit\w*|td\b|te\b)")
+                              r"|incalz\w*|sudur\w*|polizor\w*|strung\w*|circuit\w*|td\b|te\b"
+                              r"|stati\w*\s+(?:de\s+)?incarcare|stati\w*\s+(?:dc|ac|ve|ev)\b|wallbox\w*|incarcator\w*"
+                              r"|chiller\w*|extruder\w*|vitrin\w*|lift\w*|ascensor\w*|cta\b|hvac\b|ups\b)")   # r9
 # coada unui item (r5 #15, #16, #20, #44, #51): lungime, cosφ, pornire, material, izolație, pozare, receptor
 _COADA_ITEM = [
     ("L", re.compile(rf"(?:(?:pe|de|la|lungime|l\s*=)\s+)?(?P<v>\d{{1,3}}(?: \d{{3}})+|{NUM})\s*(?P<u>km|metri|ml|m)\b")),
@@ -555,9 +582,10 @@ _COADA_ITEM = [
     ("In2", re.compile(rf"(?P<v>{NUM})\s*a\b")),
     ("cos", re.compile(rf"cos\s*(?:fi|φ|phi)\s*(?:=|de)?\s*(?P<v>{NUM})")),
     ("pornire", re.compile(r"(?:cu\s+)?(?:pornire\s+)?(?:in\s+)?(?P<v>stea[\s-]*triunghi|y\s*[-/]\s*d\b|convertizor\w*"
-                           r"|variator\w*(?:\s+de\s+frecventa)?|\bvfd\b|soft[\s-]*start\w*|directa\b|direct\b|dol\b)")),
+                           r"|variator\w*(?:\s+de\s+frecventa)?|\bvfd\b|soft[\s-]*start\w*|soft\b|directa\b|direct\b|dol\b)")),
     # r6 (industrial #39, #40): cablul plecării — „cablu CYABY 5x10”, „CYY-F 5x6”, „cu cablu 4x16 Cu”
     ("cab", re.compile(rf"(?:alimentat\w*\s+)?(?:cu\s+)?(?:cablu\w*\s+(?:tip\s+)?(?P<tip1>{_TIP_CABLU})?|(?P<tip2>{_TIP_CABLU}))\s*"
+                       rf"(?P<foc>(?:fe\s*180\s*(?:/\s*)?|e\s*90\s*|ph\s*90\s*)*)"
                        rf"(?:(?P<c>[1-5])\s*×\s*(?P<s>{NUM})(?:\s*\+\s*(?P<n>{NUM}))?(?:\s*(?:mm2?|mm²|mmp)\b)?)?")),
     # r6 (industrial #23): „server 16A cu UPS 10 kVA”
     ("ups", re.compile(rf"cu\s+(?P<v>ups)(?:\s+(?:de\s+)?{NUM}\s*kva\b)?")),
@@ -579,6 +607,9 @@ _COADA_ITEM = [
     ("foc", re.compile(r"(?:cu\s+)?(?:cablu\w*\s+)?(?P<v>(?:rezistent\w*|ignifug\w*)\s+(?:la\s+)?foc\w*|fe\s*180\w*|nhxh\w*|e\s*90)\b")),
     # r8 (industrial #34): descrierea receptorului după putere („250 kW rezistiv”, „noi”, „de rezervă”) — informativă
     ("desc", re.compile(r"(?P<v>rezistiv\w*|inductiv\w*|electric\w*|nou[aă]?\b|noi\b|existent\w*|activ\w*)")),
+    # r9 (industrial #50): locul receptorului („în parcarea magazinului”, „în hală”) — informativ
+    ("loc", re.compile(r"(?P<v>(?:in|la|pe)\s+(?:parcar\w*|hal(?:a|ei|e)\b|curte|exterior\w*|subsol\w*|zona\w*|depozit\w*"
+                       r"|acoperis\w*|terasa\w*|teren\w*|curtea)(?:\s+(?:magazin\w*|subteran\w*|exterioar\w*|[a-z]+ului|[a-z]+ei))?)\b")),
     ("eta", re.compile(rf"(?:cu\s+)?(?:randament\w*|η|eta)\s*(?:=|de|:)?\s*(?P<v>{NUM})\s*%?")),   # r7: randamentul motorului
     ("sp", re.compile(r"(?P<v>tn-?c-?s|tn-?s|tn-?c|tt)\b(?![\w-])")),       # schema de pământ scrisă după item
     # r6: rețeaua / polii plecării („iluminat 2 kw monofazat”, „TD-1 63A 3P”, „pompa 4 kW trifazata”)
@@ -730,8 +761,8 @@ def _item(c: Ctx, s: int, text: str, prefix_ok=False, fara_valoare_ok=True):
         tf = (text[:mvf.start()] + " " * (mvf.end() - mvf.start()) + text[mvf.end():]) if mvf else text
         mf = RE_FARA_VAL.match(re.sub(r"\s+", " ", tf.strip())) if fara_valoare_ok else None
         if mf:
-            nume_t = (mf.group("nume") or mf.group("nume2")).strip()
-            n = int(mf.group("n") or mf.group("n2"))
+            nume_t = (mf.group("nume") or mf.group("nume2") or mf.group("nume3")).strip()
+            n = int(mf.group("n") or mf.group("n2") or 1)
             ws = len(text) - len(text.lstrip())
             i0 = text.index(nume_t, ws)
             it = {"nume": nume_normalizat(c.o(s + i0, s + i0 + len(nume_t))), "val": None, "unit": None, "mult": n,
@@ -739,6 +770,8 @@ def _item(c: Ctx, s: int, text: str, prefix_ok=False, fara_valoare_ok=True):
                   "txt": c.o(s, s + len(text.rstrip())), "n_circuite": n > 1, "fara_valoare": True}
             if mvf:
                 it["retea"] = "mono" if mvf.group("v") == "230" else "tri"
+            if mf.group("nume3"):
+                it["_simplu"] = True
             return it, s + len(text.rstrip())
         return None
     nume = None
@@ -836,8 +869,12 @@ def _item(c: Ctx, s: int, text: str, prefix_ok=False, fara_valoare_ok=True):
         tip = mc.group("tip1") or mc.group("tip2")
         if tip:
             cab["material"] = "Al" if tip.startswith("a") or tip.startswith("na") else "Cu"
-            if re.search(r"2x", tip):
+            if re.search(r"2x|hx", tip):
                 cab["izolatie"] = "XLPE"
+            cab["tip_cablu"] = tip.upper()                       # r9: tipul impus (motorul deduce materialul / izolația)
+        if (tip and tip.startswith("nhx")) or (mc.group("foc") or "").strip():
+            it["siguranta"] = True if e_siguranta(it.get("nume") or "") else it.get("siguranta")
+            cab["rezistent_foc"] = True                          # r9 (#35): „NHXH FE180 E90” = cablu rezistent la foc
         if mc.group("s") and numar(mc.group("s")) in SECTIUNI_CABLU:
             cab["S_fortat"] = _nr(numar(mc.group("s")))
             if mc.group("n") and numar(mc.group("n")) != numar(mc.group("s")):
@@ -1177,7 +1214,7 @@ def expandeaza(c: Ctx, itemi: list, nivel: int, tip: str, circuite_finale: bool)
             if it["L"] is not None:
                 p["L_m"] = _nr(it["L"])
             for kk in ("cosfi", "pornire", "cablu", "retea", "curba", "ddr_mA", "ups", "fara_valoare", "randament", "rezerva",
-                       "sectie", "prot_tip", "siguranta"):
+                       "sectie", "prot_tip", "siguranta", "_simplu"):
                 if it.get(kk) is not None:
                     p[kk] = copy.deepcopy(it[kk])
             if p.get("pornire") and p["receptor"] != "motor":
@@ -1521,6 +1558,13 @@ def cablu_impus(c: Ctx):
         d = {"S_fortat": _nr(sec)}
         mpar = re.search(r"\b(?P<n>\d|doua|doi|trei|patru)\s+cabluri\s+(?:\w+\s+){0,2}?(?:in\s+)?paralel\w*", c.t[max(0, m.start() - 40):m.start()]) \
             or re.match(r"[^,;]{0,20}?\b(?P<n>\d|doua|doi|trei|patru)\s+(?:cabluri\s+)?(?:in\s+)?paralel\w*", c.t[m.end():])
+        if not mpar and re.match(r"\s*(?:mm2?|mm²|mmp)?\s*(?:al|cu|aluminiu|cupru)?\s*(?:in\s+)?paralel\w*", c.t[m.end():]):
+            # r9 (industrial #34): „2 cabluri CYABY 3x185+95 în paralel” — numărul înainte, „în paralel” după
+            mpar = re.search(rf"\b(?P<n>\d|doua|doi|trei|patru)\s+cabluri\s+(?:{_TIP_CABLU}\s*)?$",
+                             c.t[max(0, m.start() - 40):m.start()])
+            if mpar:
+                mp2 = re.match(r"\s*(?:mm2?|mm²|mmp)?\s*(?:al|cu|aluminiu|cupru)?\s*(?:in\s+)?paralel\w*", c.t[m.end():])
+                c.consumat.append((m.end(), m.end() + mp2.end()))
         if mpar:                                           # r7 (#7): „2 cabluri în paralel 3x240+120 Al”
             d["n_fortat"] = _NUMERAL.get(mpar.group("n")) or int(mpar.group("n"))
         n = m.group("n1") or m.group("n2") or m.group("n5")
@@ -1541,6 +1585,10 @@ def cablu_impus(c: Ctx):
             re.search(_TIP_CABLU, m.group(0)) if (m.group("par") or m.group("par5")) else None)
         if mt and "material" not in d:
             d["material"] = "Al" if mt.group(0).strip().startswith(("a", "na")) else "Cu"
+        if mt:          # r9: tipul cablului impus (motorul deduce materialul și izolația: N2XY / NA2XY = XLPE)
+            d["tip_cablu"] = re.sub(r"\s+", "", mt.group(0)).upper().replace("CYY-F", "CYY-F")
+            if re.match(r"n2x|na2x|n2xh|c2x|ac2x", mt.group(0).strip()):
+                d["izolatie"] = "XLPE"
         mpre = re.search(r"\b(al|aluminiu|cu|cupru)\s+$", c.t[max(0, m.start() - 10):m.start()])
         if mpre and "material" not in d and (m.group("s3") or re.search(r"\b(?:Al|Cu)\b", c.o(m.start() - 10, m.start()))):
             d["material"] = "Al" if mpre.group(1).startswith("al") else "Cu"
@@ -1720,6 +1768,14 @@ def extrage_tablou(c: Ctx, vals, intr, ex, tip):
             ex["celula_trafo"] = intr["celula_trafo"] = "sigurante"
         elif re.search(r"(?:celul\w*|protectie)\s+(?:a\s+)?(?:trafo\s+)?cu\s+intrerup(?:a)?tor", c.t):
             ex["celula_trafo"] = intr["celula_trafo"] = "intreruptor"
+        elif re.search(r"\bcelul\w*\s+(?:de\s+)?intrerup\w*|\bintrerup\w*\s+(?:in\s+)?(?:vid|sf6)\b"
+                       r"|\bprotecti\w*\s+(?:de\s+tip\s+)?50\s*/\s*51\b", c.t):
+            # r9 (industrial #20): „celula întreruptor vid cu protecții 50/51” = celula trafo cu întreruptor (nu SF)
+            ex["celula_trafo"] = intr["celula_trafo"] = "intreruptor"
+            for mm in re.finditer(r"\bcelul\w*\s+(?:de\s+)?intrerup\w*(?:\s+(?:in\s+)?(?:vid|sf6))?|\bintrerup\w*\s+(?:in\s+)?(?:vid|sf6)\b"
+                                  r"|(?:cu\s+)?protecti\w*\s+(?:de\s+tip\s+)?50\s*/\s*51\b", c.t):
+                c.foloseste(mm.start(), mm.end())
+            c.nota("celula trafo cu întreruptor (vid / SF6) și relee 50/51 — nu separator cu siguranțe MT")
         if re.search(r"\bpta\b|\baerian\w*|pe\s+stalp|\bstalp\w*", c.t):   # r6 (industrial #26): PTA pe stâlp
             ex["pt_aerian"] = intr["pt_aerian"] = True
             for mm in re.finditer(r"\bpta\b|\baerian\w*|pe\s+stalp|\bstalp\w*", c.t):
@@ -1898,6 +1954,9 @@ def extrage_tablou(c: Ctx, vals, intr, ex, tip):
     imp = ex.pop("_cablu_impus", None)
     if (cablu or imp) and tip != "pt":
         intr["cablu"] = dict(cablu, **(imp or {}))
+        if intr["cablu"].get("S_fortat") and intr["cablu"]["S_fortat"] < 16 and not intr["cablu"].get("material"):
+            intr["cablu"]["material"] = "Cu"          # r9 (locuințe #36): sub 16 mm² doar Cu (Al nepermis)
+            c.nota(f"cablul {fmt(intr['cablu']['S_fortat'])} mm² fără material = Cu (Al sub 16 mm² nu se folosește)")
         if imp and imp.get("material"):
             ex["material"] = imp["material"]
     n = len(plecari)
@@ -1951,7 +2010,46 @@ def extrage_tablou(c: Ctx, vals, intr, ex, tip):
             c.foloseste(ms.start(), ms.end())
             c.nota(f"„{c.o(ms.start(), ms.end()).strip()}” = tablou de siguranță (P118/3, I7): fără DDR, cabluri rezistente la "
                    "foc, protecția termică a pompelor doar la semnalizare")
+        _siguranta_mixta(c, intr)
+        mt = re.match(rf"\s*(?:te|td|ts|tablou\w*(?:\s+de)?)\s+(?P<n>[a-z][a-z ]{{2,40}}?)\s+(?P<v>{NUM})\s*kw\b", c.t)
+        if not intr.get("plecari") and intr.get("P_kW") and mt and (RE_RECEPTOR_ITEM.search(mt.group("n"))
+                                                                    or e_siguranta(mt.group("n"))):
+            # r9 (industrial #63): „TE lift pompieri 18 kW din TG” = tabloul unui singur receptor → plecarea lui
+            nume = nume_normalizat(c.o(mt.start("n"), mt.end("n")))
+            d = {"nume": nume, "P_kW": intr["P_kW"]}
+            if intr.get("siguranta_tablou") or e_siguranta(nume):
+                d["siguranta"] = True
+            if re.search(r"pomp|ventil|compresor", mt.group("n")):     # liftul are tabloul lui de comandă
+                d["pornire"] = "directa"
+            intr["plecari"] = [d]
+            c.foloseste(mt.start(), mt.end())
+            c.nota(f"„{c.o(mt.start(), mt.end()).strip()}” = tabloul unui singur receptor: plecarea {nume} {fmt(intr['P_kW'])} kW")
     return puteri
+
+
+def _siguranta_mixta(c: Ctx, intr: dict):
+    """r9 (industrial #25, #26): tablou MIXT — doar consumatorii de siguranță la incendiu se marchează; ceilalți (rampe,
+    iluminat normal, CTA — care se OPRESC la alarmă) primesc explicit `siguranta: false`, ca motorul să nu treacă tot
+    tabloul pe regimul de siguranță (regula „≥ 50 % din putere”)."""
+    if intr.get("siguranta_tablou"):
+        return
+    toate = []
+
+    def w(L):
+        for p in L or []:
+            toate.append(p)
+            w(p.get("copii"))
+    w(intr.get("plecari"))
+    if not any(p.get("siguranta") for p in toate):
+        return
+    normali = [p for p in toate if not p.get("copii") and p.get("siguranta") is None and not p.get("_compensare")
+               and not re.search(r"pilot|jockey|mentinere", _fara_diacritice(p.get("nume", "")).lower())]
+    for p in normali:
+        p["siguranta"] = False
+    if normali:
+        c.nota("tablou mixt: consumatori de siguranță la incendiu (" + ", ".join(p["nume"] for p in toate if p.get("siguranta"))
+               + ") + consumatori normali (" + ", ".join(p["nume"] for p in normali) + ") — doar primii fără DDR / cu cablu "
+               "rezistent la foc; ceilalți rămân normali (se deconectează la incendiu)")
 
 
 def _p_plecari(pl) -> float:
@@ -1970,6 +2068,9 @@ def _p_plecari(pl) -> float:
     return tot
 
 
+P_SURSA_INTREBATA_KW = 100      # r9: peste (≥) atât, sursa nedeclarată a unui tablou se întreabă; sub — „Am presupus”
+
+
 def _contradictii_tablou(c: Ctx, intr: dict):
     """r8 (industrial #7, #24, #55): contradicții numerice la tablou — Q1 sub curentul puterii declarate, Σ plecări peste
     trafo-ul PT-ului sursă, tablou mare fără sursă declarată (nu se presupune BMPT peste 250 A) → întrebare."""
@@ -1981,6 +2082,17 @@ def _contradictii_tablou(c: Ctx, intr: dict):
     if q and ib > 1.05 * q and intr.get("P_kW"):
         c.intrebari.append(("I08", f"Întrerupătorul general {fmt(q)} A e sub curentul puterii declarate ({fmt(P)} kW ≈ "
                                    f"{fmt(ib, 0)} A): Q1 se mărește (≥ {fmt(ib, 0)} A), sau puterea cerută e mai mică (ks)?"))
+    elif q and not intr.get("P_kW") and intr.get("plecari") and intr.get("retea") != "mono" \
+            and all(p.get("P_kW") for p in intr["plecari"]):          # calibrele plecărilor (A) nu sunt Ib
+        # r9 (industrial #37): „întrerupător general 40 A, plecări: 3 motoare 11 kW” — Q1 impus sub Ib din bilanț
+        pl1 = [p for p in intr["plecari"] if not p.get("rezerva")]
+        ks = 1.0 if sum(int(p.get("n_circuite") or 1) for p in pl1) <= 3 else 0.8
+        ib_pl = _p_plecari(intr["plecari"]) * ks * 1000 / (U_TRI * 0.85)
+        if ib_pl > 1.1 * q:
+            c.probleme.append(("I08", f"Contradicție: întrerupătorul general impus {fmt(q)} A < Ib ≈ {fmt(ib_pl, 0)} A din "
+                                      f"plecări (Σ {fmt(_p_plecari(intr['plecari']))} kW, ks {fmt(ks)}) (I08).",
+                               f"Q1 de {fmt(q)} A nu duce plecările (Ib ≈ {fmt(ib_pl, 0)} A): se mărește Q1 (≥ "
+                               f"{fmt(ib_pl, 0)} A), sau plecările nu funcționează simultan (ce ks)?"))
     sn = intr.get("pt_Sn_kVA")
     p_pl = _p_plecari(intr.get("plecari"))
     if sn and p_pl > sn * 1.0:
@@ -1990,6 +2102,10 @@ def _contradictii_tablou(c: Ctx, intr: dict):
         c.intrebari.append(("I07", f"Sursa tabloului nu e scrisă, iar {fmt(P)} kW (≈ {fmt(ib, 0)} A) depășesc un BMPT "
                                    f"(max. {fmt(norme.BMPT_I_MAX_A, 0)} A): tabloul se alimentează din PT propriu (ce kVA?) "
                                    "sau dintr-un TG existent?"))
+    elif not intr.get("origine") and P >= P_SURSA_INTREBATA_KW and c._tip == "tablou" and not intr.get("P_kW") and not q:
+        # r9 (industrial #8): sursă nedeclarată la o putere mare → întrebare scurtă (BMPT doar presupus, nu tăcut)
+        c.intrebari.append(("I07", f"Din ce sursă se alimentează tabloul ({fmt(P)} kW): BMPT (branșament), PT propriu (ce kVA?) "
+                                   "sau un TG existent? Până la răspuns e desenat din BMPT (presupus)."))
 
 
 RE_TABLOU_CASNIC = re.compile(
@@ -2042,10 +2158,14 @@ def _scoate_fara_valoare(c: Ctx, plecari: list) -> list:
     (sub-circuitele se întreabă)."""
     out = []
     for p in plecari:
-        if p.get("fara_valoare") and p.get("copii") is None and re.match(r"priz", _fara_diacritice(p["nume"] or "")):
+        if p.get("fara_valoare") and p.get("copii") is None and (re.match(r"priz", _fara_diacritice(p["nume"] or "").lower())
+                                                                  or p.get("_simplu") or (
+                re.match(r"ilumin", _fara_diacritice(p["nume"] or "").lower()) and not re.search(r"\d", p.get("txt") or ""))):
             # r8 (industrial #15, #53, #68): circuitele de prize fără calibru → 16 A presupus (desenate) + întrebare
+            # r9 (locuințe #36): iluminatul fără calibru → 10 A presupus
             p.pop("fara_valoare")
-            p["valoare"], p["unitate"], p["receptor"] = 16, "A", "prize"
+            il = bool(re.match(r"ilumin", _fara_diacritice(p["nume"] or "").lower()))
+            p["valoare"], p["unitate"], p["receptor"] = (10, "A", "iluminat") if il else (16, "A", "prize")
             c._prize_presupuse = getattr(c, "_prize_presupuse", []) + [p["txt"]]
             out.append(p)
             continue
@@ -2110,6 +2230,17 @@ def _retea_tablou(c: Ctx, intr, ex, plecari):
         return
     if intr.get("origine") == "bmpt" and RE_MONO_DECLARAT.search(t_afara):
         t_afara = _masca(t_afara, re.compile(r"\bbmpt\w*"))  # r7 (#12): „din BMPT 6 kW mono” — BMPT = sursa, nu rețeaua
+    mrep = re.search(r"\b(?:monofaz\w*|mono)\s*,?\s*(?:repartizat\w*|distribuit\w*|impartit\w*|echilibrat\w*)\s+pe\s+"
+                     r"(?:cele\s+)?(?:3\s+|trei\s+)?faze\b", c.t)
+    if mrep:                     # r9 (industrial #44): „circuite monofazate, repartizate pe faze” = tablou TRIFAZAT
+        c.foloseste(mrep.start(), mrep.end())
+        for p in _toate(plecari):
+            if not p.get("copii") and p.get("retea") in (None, "mono"):
+                p["retea"] = "mono"
+        intr["retea"] = ex["retea"] = "tri"
+        c.nota(f"„{c.o(mrep.start(), mrep.end()).strip()}” = circuite monofazate (L + N) repartizate pe L1 / L2 / L3 → "
+               "tablou trifazat 3 × 400/230 V")
+        return
     ret = retele_declarate(t_afara)
     pl_tri = [p for p in _toate(plecari) if p.get("retea") == "tri"]
     pl_mono = [p for p in _toate(plecari) if p.get("retea") == "mono"]
@@ -2117,6 +2248,11 @@ def _retea_tablou(c: Ctx, intr, ex, plecari):
                          r"|\b[34]\s*p\b|\b[13]f\b", t_afara):
         c.foloseste(m.start(), m.end())
     if len(ret) > 1:
+        if re.search(r"\bbmpm", t_afara):                     # r9 (industrial #70): „TG trifazat din BMPM 40A”
+            c.probleme.append(("I08", "Contradicție: tablou trifazat alimentat dintr-un BMPM (branșament MONOFAZAT) (I08).",
+                               "BMPM e monofazat (230 V, max. 40 A): tabloul e monofazat (din BMPM), sau trifazat — "
+                               "atunci alimentat dintr-un BMPT (3 × 400 V)?"))
+            return
         c.probleme.append(("I08", "Contradicție: tabloul e descris și monofazat, și trifazat (I08).",
                            "Tabloul este monofazat (230 V, aparate 2P) sau trifazat (3 × 400/230 V)?"))
         return
@@ -2352,7 +2488,7 @@ def _fisa(d) -> dict:
 
 
 RE_BESS_TRIG = re.compile(r"\bbess\b|\bsistem\w*\s+de\s+stocare|\bstocare\b|\bbateri\w*|\bacumulator\w*")
-RE_SEP_CLAUZA_PV = re.compile(r"(?<!\d),|,(?!\d)|;|:|\bsi\b|\+(?!\s*\d+\s*kwh)|\blanga\b")
+RE_SEP_CLAUZA_PV = re.compile(r"(?<!\d),|,(?!\d)|;|:|\bsi\b|\+(?!\s*\d+\s*kwh)|\blanga\b|\bpe\s+(?=(?:un\s+|o\s+)?(?:invertor|hibrid))")
 
 
 RE_CUPLAJ_CA = re.compile(r"\bac[\s-]*coupled\b|\bcupl\w*\s+(?:in\s+|pe\s+)?(?:c\.?\s*a\b\.?|ac\b|curent\s+alternativ)"
@@ -2537,6 +2673,18 @@ def extrage_limitare(c: Ctx):
             continue
         if fel == 2:
             continue                                   # P evacuată: tratată la prosumator (ATR)
+        pre = c.t[max(0, m.start() - 45):m.start()]
+        if fel == 1 and re.match(r"limitate\b|limitat\w*\s+(?:fiecare|individual)", c.t[m.start():]) and (
+                re.search(r"\d\s*[x×]\s*[a-z]{2,}[\w-]*\d\w*\s*$|\binvert\w*[^,;]*$", pre)
+                or re.search(r"\bfiecare\b", c.t[m.start():m.end() + 12])):
+            # r9 (fotovoltaic #68): „4 x SG110CX limitate la 100 kW” = Pmax setat pe FIECARE invertor (4 × 100 = 400 kWac),
+            # nu limitarea injecției totale la punctul de racord
+            v = numar(m.group("v")) * UNITATI[m.group("u")][1]
+            c.consumat.append((m.start(), m.end()))
+            c.nota(f"„{c.o(m.start(), m.end()).strip()}” = puterea activă maximă setată pe FIECARE invertor ({fmt(v)} kW / "
+                   "invertor), nu limitarea injecției la punctul de racord")
+            c._pmax_per_inv = v
+            continue
         c.consumat.append((m.start(), m.end()))
         v = 0 if fel is None else numar(m.group("v")) * UNITATI[m.group("u")][1]
         c.nota(f"„{c.o(m.start(), m.end()).strip()}” = limitarea injecției la {fmt(v)} kW"
@@ -2570,12 +2718,22 @@ def grupuri_invertoare(c: Ctx, modele: list) -> list[dict]:
     for s, e in _segmente(c.t):
         seg = t[s:e]
         mods = [x for x in modele if s <= x["s"] < e and x["fel"] == "inv"]
+        if any(x.get("model") for x in mods):        # r9 (#35): „invertoare Sungrow 1 x SG125CX-P2” — marca singură nu e grup
+            mods = [x for x in mods if x.get("model")]
         noun = RE_INV_NOUN.search(seg)
         mx = re.search(rf"(?<![\w.,])(?P<n>\d+)\s*[x×]\s*(?P<p>{NUM})\s*(?P<u>kw|kva|mw)\b", seg)
         if not (noun or mods or mx):
             # r7 (locuințe #39): „două invertoare 13,5 kW și 13,5 kW” — valorile următoare continuă lista grupului
             prev = grupuri[-1] if grupuri else None
             mv = re.match(rf"\s*({NUM})\s*(kw|kva)\b", seg)
+            if prev and mv and prev["Pn_kW"] is None and prev["n"] and prev["n"] > 1 and prev["e"] >= s - 4 \
+                    and c.t[prev["e"]:prev["e"] + 2].strip().startswith(":"):
+                # r9 (locuințe #21): „2 invertoare: 12 și 12 kW” — antetul cu număr, apoi puterea fiecăruia
+                prev["Pn_kW"], prev["explicit"], prev["_lista"] = numar(mv.group(1)), True, []
+                prev["_kva"] = mv.group(2) == "kva"
+                prev["e_cons"] = s + mv.end()
+                prev["e"] = e
+                continue
             if prev and mv and prev.get("explicit") and prev["n"] and prev["n"] > 1 + len(prev.get("_lista", [])) \
                     and prev["e"] >= s - 4:
                 prev.setdefault("_lista", []).append(numar(mv.group(1)))
@@ -2629,7 +2787,8 @@ def grupuri_invertoare(c: Ctx, modele: list) -> list[dict]:
         elif mods and re.search(r"(?<![\w.,])(\d{1,2})\s+$", c.t[s:mods[0]["s"]]):     # r6 (f15): „2 SMA STP 50-41”
 
             g["n"] = int(re.search(r"(\d{1,2})\s+$", c.t[s:mods[0]["s"]]).group(1))
-        elif noun and re.match(r"invertor(?:ul)?\b|inv\b", noun.group(0)):
+        elif noun and re.match(r"invertor(?:ul)?\b|inv\b", noun.group(0)) and not (
+                noun.group(0) == "inv" and c.t[e:e + 2].strip().startswith(":")):   # r9 (#61): „Inv: 1 x A + 1 x B” = antet
             g["n"] = 1
         else:
             g["plural"] = bool(noun)
@@ -2648,8 +2807,8 @@ def grupuri_invertoare(c: Ctx, modele: list) -> list[dict]:
             v = dupa[0] if dupa else None
             if v is None and mods and mods[0]["P_model"]:
                 g["Pn_kW"], g["_din_model"] = mods[0]["P_model"], True
-            elif v is None and inainte and noun and (g["n"] in (None, 1) or not re.search(
-                    r"\bcu\b", c.t[s + inainte[-1]["e"]:s + noun.start()])):
+            elif v is None and inainte and noun and not re.search(r"\.\s", c.t[s + inainte[-1]["e"]:s + noun.start()]) and (
+                    g["n"] in (None, 1) or not re.search(r"\bcu\b", c.t[s + inainte[-1]["e"]:s + noun.start()])):
                 # r8 (P0 fotovoltaic #28, #58): „CEF 300 kW cu 3 invertoare” — kW-ul dinaintea lui „cu N invertoare” e
                 # puterea TOTALĂ a centralei, nu a fiecărui invertor
                 v = inainte[-1]
@@ -2725,6 +2884,19 @@ def grupuri_invertoare(c: Ctx, modele: list) -> list[dict]:
         else:
             lista.append(g)
     out = lista
+    # r9 (fotovoltaic P0 #14): „5 invertoare de 30 kW, Sungrow SG30CX” — modelul fără număr, cu aceeași putere ca un
+    # grup numărat fără model, e modelul ACELUI grup (nu încă un invertor)
+    for g in list(out):
+        if g["n"] is None and g.get("model") and g["Pn_kW"] is not None:
+            tinta = next((k for k in out if k is not g and not k.get("model") and k["n"] and k["Pn_kW"] is not None
+                          and abs(k["Pn_kW"] - g["Pn_kW"]) < 0.01), None)
+            if tinta:
+                for kk in ("producator", "model", "hibrid", "U_ca_V", "retea_model"):
+                    if g.get(kk) and not tinta.get(kk):
+                        tinta[kk] = g[kk]
+                c.consumat.append((g.get("s_cons", g["s"]), g.get("e_cons", g["e"])))
+                c.nota(f"„{g['txt']}” = modelul celor {tinta['n']} invertoare de {fmt(tinta['Pn_kW'])} kW (nu un invertor în plus)")
+                out.remove(g)
     for g in out:
         if g["n"] is None:
             g["n"] = 1
@@ -2985,7 +3157,8 @@ RE_Q_RACORD = re.compile(rf"\b(?:q(?:[a-z]\w*)?|intrerupator\w*|disjunctor\w*)\s
 
 
 RE_RACORD_TG = re.compile(r"\b(?:tg\d*|tgd\d*|tg-\w+|tablou(?:l)?(?:\s+general)?)\s+existent\w*|\b(?:in|la)\s+(?:tg\d*|tablou\w*)\b"
-                          r"|racord\w*\s+(?:in|la)\s+(?:tg|tgd|tablou)")
+                          r"|racord\w*\s+(?:in|la)\s+(?:tg|tgd|tablou)"
+                          r"|\b(?:are|cu)\s+(?:un\s+)?(?:tg\d*|tgd\d*)\s+alimentat\w*\s+din\b")   # r9 (#35): „hala are TG alimentat din PT”
 RE_RACORD_BMPT = re.compile(r"\bbmpt\w*|\bbransament\w*")
 
 
@@ -3209,6 +3382,18 @@ def extrage_pv(c: Ctx, intr: dict, ex: dict, tip: str) -> dict:
             break
     if re.search(r"racord\s+jt\s+(?:conform|cf\.?)\s+atr|\bjt\s+(?:conform|cf\.?)\s+atr", c.t):
         ex["atr_jt"] = intr["atr_jt"] = True
+    if tip == "cef" and not intr.get("racord") and not intr.get("pt_Sn_kVA") and "pt_existent" not in intr \
+            and not re.search(r"\bpt\b|\bpost\w*|\btrafo\w*|\btransformator\w*|\bmt\b|\bmedie\b|\bcelul\w*|\bracord\w*"
+                              r"|\batr\b", c.t):
+        # r9 (fotovoltaic #59, #60): racordul (TG / BMPT / PT) schimbă radical schema — nu se presupune tăcut: peste
+        # 100 kW se întreabă; până la 100 kW se generează prin BMPT cu avertisment vizibil („Am presupus”)
+        sig_ = sum((g.get("n") or 1) * (g.get("Pn_kW") or 0) for g in intr.get("invertoare") or [])
+        txt_r = ("Unde se racordează centrala: în TG-ul existent, printr-un BMPT nou (branșament) sau într-un PT (nou / "
+                 "existent)? Până la răspuns e desenată prin BMPT (presupus).")
+        if sig_ > P_SURSA_INTREBATA_KW:
+            c.intrebari.append(("I07", txt_r))
+        else:
+            c.avert.append("Am presupus racordul prin BMPT (nedeclarat): " + txt_r)
     extrage_module_string(c, modele, intr)
     kwp = _prima(valori(c.mascat()), "kWp")
     if not kwp:                    # r8 (#27): „120 kw panouri” = puterea de vârf a modulelor (kWp), nu puterea c.a.
@@ -3446,11 +3631,21 @@ def extrage_cef(c: Ctx, vals, intr, ex):
         puteri["P_ca_kW"] = _nr(total)
     imp = getattr(c, "_cablu_impus", None)
     cab0 = {k: v for k, v in (("material", ex["material"]), ("izolatie", ex["izolatie"])) if v}
+    m_inv = re.search(r"\bcablu\w*\s+(?:de\s+|al\s+|pe\s+|pentru\s+)?(?:circuit\w*\s+)?invertor\w*", c.t)
+    if imp and m_inv:
+        # r9 (fotovoltaic #25): „cablu invertor NYY-J 5x25 Cu, 45 m” = cablul circuitului invertorului, nu C0
+        intr["cablu_inv"] = dict(intr.get("cablu_inv") or {}, **imp)
+        c.foloseste(m_inv.start(), m_inv.end())
+        c.nota(f"„{c.o(m_inv.start(), m_inv.end()).strip()}” = cablul impus al circuitului invertorului (cablu_inv), nu C0")
+        imp, cab0 = None, {}
     if imp:
         cab0.update(imp)
     if cab0:
         intr["cablu_C0"] = cab0
     _lungimi_pv(c, intr, "cef")
+    if m_inv and intr.get("cablu_inv", {}).get("S_fortat") and intr.get("L_racord_m") and not intr.get("L_inv_m") \
+            and re.search(rf"invertor\w*[^;]{{0,50}}?{NUM}\s*m\b", c.t):
+        intr["L_inv_m"] = intr.pop("L_racord_m")
     if not kwp and intr.get("invertoare"):
         c.nota("kWp nedeclarat (raport c.c./c.a. necalculat)")
     _retea_pv(c, intr, ex, sigma, "cef")
@@ -3541,6 +3736,7 @@ def extrage_prosumator(c: Ctx, vals, intr, ex):
 # r8 (P0 industrial #12, #14, #64): titlul tabloului / al stației numește siguranța la incendiu — „tablou TDSI sprinklere”,
 # „TE desfumare”, „tablou pompe incendiu”, „stație hidranți” → toți consumatorii lui sunt de siguranță (P118/3, I7)
 _CUV_SIGURANTA = (r"pomp\w*\s+(?:de\s+)?incendiu|desfumar\w*|hidrant\w*|sprinkler\w*|stingere\w*|presurizar\w*|\bpsi\b"
+                  r"|lift\w*\s+(?:de\s+|pentru\s+)?pompieri|ascensor\w*\s+(?:de\s+|pentru\s+)?pompieri"
                   r"|\btdsi\b|drencer\w*|evacuare\s+fum\w*|ilumin\w*\s+(?:de\s+)?(?:siguranta|securitate|evacuare)")
 RE_CTX_SIGURANTA = re.compile(rf"\b(?:tablou\w*|t[dge]|tdsi|t[dge]-[a-z0-9]+)\s+(?:de\s+|pentru\s+)?(?:[a-z]+\s+){{0,2}}?"
                               rf"(?:{_CUV_SIGURANTA})|\btdsi\b"
@@ -3554,6 +3750,13 @@ def e_siguranta(nume: str) -> bool:
     """r8: numele unui consumator de siguranță la incendiu (pompă incendiu, jockey, desfumare, hidranți, sprinklere,
     presurizare, lift pompieri, iluminat de siguranță, centrala de detecție incendiu)."""
     return bool(RE_CONS_SIGURANTA.search(_fara_diacritice(nume or "")))
+
+
+# r9 (industrial P0 #27): „stație (de) pompare PSI / incendiu”, „grup de pompare PSI” pe GE + ATS = sarcina e de siguranță
+RE_CTX_SIG_GE = re.compile(r"\bstati\w*\s+(?:de\s+)?pompare\s+(?:a\s+)?(?:psi|incendiu|stingere|hidranti|sprinkler\w*)\b"
+                           r"|\bgrup\w*\s+(?:de\s+)?pompare\s+(?:psi|incendiu)\b|\binstalati\w*\s+(?:de\s+)?stingere\b"
+                           r"|\bpompe\s+(?:psi|incendiu)\s*:")
+RE_1A1R = re.compile(r"\(?\b(\d)\s*a?\s*\+\s*(\d)\s*r?\b\)?")
 
 
 def extrage_ge(c: Ctx, vals, intr, ex):
@@ -3609,7 +3812,7 @@ def extrage_ge(c: Ctx, vals, intr, ex):
     elif re.search(r"\bbmpt|retea\w*\s+publica|bransament", c.t):
         intr["sursa_retea"] = ex["sursa_retea"] = "bmpt"
     # r7 (P0 #31): „tablou pompe incendiu: …” — contextul din titlu face TOȚI consumatorii de siguranță
-    ctx_sig = RE_CTX_SIGURANTA.search(c.t)
+    ctx_sig = RE_CTX_SIGURANTA.search(c.t) or RE_CTX_SIG_GE.search(c.t)
     if ctx_sig:
         intr["siguranta_tablou"] = True
         intr["titlu_tablou"] = nume_normalizat(c.o(ctx_sig.start(), ctx_sig.end()))
@@ -3619,6 +3822,11 @@ def extrage_ge(c: Ctx, vals, intr, ex):
     ms2 = re.search(r"\balimentare\w*\s+din\s+(?:doua|2)\s+surse(?:\s+(?:retea|ge|si|grup\w*))*", c.t)
     if ms2:
         c.foloseste(ms2.start(), ms2.end())
+    # r9 (#67): „TG din PT 630 kVA cu 2 intrări: rețea și GE, ATS, toți consumatorii pe GE” = ATS general (toată sarcina)
+    for m2i in re.finditer(r"\b(?:tg\w*|tablou\w*)\b[^,;:]{0,40}?\bcu\s+(?:2|doua)\s+intrari\b"
+                           r"|\btoti\s+consumatorii\s+(?:sunt\s+)?pe\s+ge\b", c.t):
+        c.foloseste(m2i.start(), m2i.end())
+        c.nota(f"„{c.o(m2i.start(), m2i.end()).strip()}” = ATS general rețea / GE: toată sarcina tabloului e pe GE")
     mman = re.search(r"\b(?:inversor|comutator|comutare|inversare)\w*\s+(?:de\s+surs\w*\s+)?manual\w*(?:\s+de\s+surs\w*)?", c.t)
     if mman:                                       # r7 (#63): inversor manual ≠ ATS
         intr["comutare"] = "manual"
@@ -3636,6 +3844,12 @@ def extrage_ge(c: Ctx, vals, intr, ex):
             c.nota(f"„{c.o(mnorm.start(), mnorm.end()).strip()}” = consumatori normali (doar din rețea, nu din GE) — nu intră "
                    "în sarcina GE")
     t = c.mascat()
+    # r9 (#24): „Consumatori vitali pe GE …: … Normali: HVAC 150 kW, prize 40 kW” — normalii rămân în listă cu
+    # `vital: false` (motorul îi pune pe ramura de rețea, înaintea ATS) și nu intră în sarcina GE
+    zone_norm = [(m.start(), m.end()) for m in re.finditer(r"(?:^|(?<=[.;]\s))normali\w*\s*:[^.;]*?(?=\.\s|;|\bvital|$)", t)]
+    for a_, b_ in zone_norm:
+        c.nota(f"„{c.o(a_, b_).strip()}” = consumatori normali (vital: false) — pe ramura de rețea, nu din GE")
+        c.foloseste(a_, a_ + len(re.match(r"normali\w*\s*:", t[a_:b_]).group(0)))
     cons, lista, n_rez = [], [], []
     for v in valori(t):
         if v["marime"] != "kW":
@@ -3647,12 +3861,15 @@ def extrage_ge(c: Ctx, vals, intr, ex):
         a = max([x.end() for x in re.compile(r"[,;:]|\bsi\b|\bpentru\b|\bpe\b|\bsarcin\w*|\bconsumator\w*(?:\s+vital\w*)?")
                  .finditer(t, 0, v["s"])] or [0])
         seg = t[a:v["s"]]
-        m11 = re.search(r"\(?\b(\d)\s*\+\s*(\d)\b\)?", seg + t[v["e"]:v["e"] + 10])
+        m11 = RE_1A1R.search(seg + t[v["e"]:v["e"] + 10])          # r9 (#27): și „(1A+1R)”
         mnum = re.match(r"\s*(doua|doi|trei|patru)\s+", seg)
         if mnum and n == 1:
             n = _NUMERAL[mnum.group(1)]
-        seg_n = re.sub(r"\(?\b\d\s*\+\s*\d\b\)?", lambda x: " " * len(x.group(0)), seg)       # r8 (#11): „1+1” ≠ nume
-        seg_n = re.sub(r"^\s*(?:doua|doi|trei|patru)\s+", lambda x: " " * len(x.group(0)), seg_n)
+        mnum2 = re.match(r"\s*(\d{1,2})\s+(?=[a-z])", seg)           # r9 (#27): „2 electropompe 30 kW”, „3 extrudere 90 kW”
+        if mnum2 and n == 1 and int(mnum2.group(1)) > 1:
+            n = int(mnum2.group(1))
+        seg_n = RE_1A1R.sub(lambda x: " " * len(x.group(0)), seg)       # r8 (#11): „1+1” ≠ nume
+        seg_n = re.sub(r"^\s*(?:doua|doi|trei|patru|\d{1,2})\s+", lambda x: " " * len(x.group(0)), seg_n)
         cons.append((n, v))
         mn = re.search(r"([a-z][a-z \-]*?)\s*(?:\d+\s*[x×]\s*)?(?:de\s+)?$", seg_n.rstrip() + " ")
         if mn and mn.group(1).strip() in ("de", "a", "cu"):
@@ -3679,9 +3896,14 @@ def extrage_ge(c: Ctx, vals, intr, ex):
 
             d["rezerva"] = True                         # r7 (P0 #31): pompa de rezervă nu se adună la sarcină
             n_rez.append((n, v))
+        if any(a_ <= v["s"] < b_ for a_, b_ in zone_norm):
+            d["vital"] = False
+            n_rez.append((n, v))                       # nu intră în sarcina GE
+        if m11 and m11.start() >= len(seg):
+            e = max(e, v["e"] + m11.end() - len(seg))
         if nume:
             lista.append(d)
-            c.foloseste(a + (mn.start(1) if mn else 0), e)
+            c.foloseste(a, e)
         else:
             c.foloseste(v["s"], e)
     if cons:
@@ -3789,7 +4011,7 @@ RE_STOP_LOC = re.compile(r"(?<!\d),|,(?!\d)|;|:|\.(?:\s|$)|\s(?:si|plus|cu|iar|c
                          r"|in(?!\s+(?:\d+|doua|trei|patru|cinci)\s+(?:camere|dormitoare|incaperi|spatii)"
                          r"|\s+(?:bai|baie|bucatarie|living|dormitor\w*|hol|birou|camer\w*)\b)|din|la|jud\w*"
                          r"|pe\s+(?=cas|apartament|locuint|bransament|retea|bmp)"
-                         r"|pentru|retea|schema)\b")
+                         r"|pentru|retea|schema|dar|insa|am\s+doar|avem|casa|apartament\w*|ap)\b")   # r9 (#14)
 RE_PRE_MULT = re.compile(r"(?:(?<![\d+.,×])(?P<n>\d+)|\b(?P<w>doua|doi|trei|patru|cinci))\s*[x×]?\s*"
                          r"(?:(?:aparate|aparat|circuite|circuit|bucati|buc\.?|unitati)\s+(?:de\s+)?"
                          r"|(?:bai|camere|dormitoare|nivele|etaje)\s+(?:cu\s+)?)?$")
@@ -3887,7 +4109,8 @@ def _gaseste_receptori(t: str) -> list[dict]:
 
 
 def _tip_locuinta(t: str) -> str:
-    if re.search(r"\bapartament\w*|\bgarsonier\w*|\bapt\b|\bap\.?\s+(?=\d|cam|bloc|et|mono|tri)", t):
+    if re.search(r"\bapartament\w*|\bgarsonier\w*|\bapt\b|\bap\.?\s+(?=\d|cam|bloc|et|mono|tri|la\s+bloc)"
+                 r"|\b(?:la|in|de)\s+bloc\b", t):                  # r9 (#44): „ap. la bloc”
 
         return "apartament"
     if re.search(r"(?<![\w+])p\s*\+\s*[1-3m]\b|\betaj\w*|\bmansard\w*|\bduplex\b", t):
@@ -3914,6 +4137,8 @@ def _e_locuinta(c: Ctx) -> bool:
                 for gname in ("td", "loc"):
                     lst[m.start(gname):m.end(gname)] = " " * (m.end(gname) - m.start(gname))
         t = "".join(lst)
+        # r9 (#35): „TG la parter” (TG-ul casei) lângă TD-urile casei nu face din text un tablou industrial
+        t = _masca(t, re.compile(r"\btg\b(?=\s+(?:la|de\s+la|in|din|al)\s+(?:parter\w*|cas\w*|locuint\w*))"))
         if not _tablou_numit_t(c, t):
             if any(rx.search(c.t) for rx in RE_TD_LOC):
                 return True
@@ -3931,6 +4156,8 @@ def _e_locuinta(c: Ctx) -> bool:
                     and not re.search(r"\bmotor\w*|\bcompresor\w*|\bstrung\w*|\bfreza\w*", t))
     if tablou and RE_COMERCIAL.search(t):
         return False                                 # r6 (industrial #6): „TG supermarket … prize casa marcat”
+    if not tare and RE_COMERCIAL.search(t):
+        return False                                 # r9 (industrial #11): „magazin alimentar parter, … TT” ≠ locuință
     if not tare and (RE_TABLOU_CUV.search(t) and not re.search(r"tablou\w*\s+(?:de\s+)?(?:casa|locuint|apartament)", t)
                      or re.search(r"\bTE\b", c.orig) or re.search(r"\bhala\b|\bbirou\w*|\bindustrial", t)):
         return False
@@ -3950,7 +4177,8 @@ _CUV_ALIMENTARE = re.compile(
     r"|vech\w*|existent\w*|parter|etaj\w*|mansard\w*|p|m|de|cu|la|si|pe|in|al|o|un|una|doua|doi|am|doar|fara|pamant|nu"
     r"|stiu|sau|subteran|aerian|marire|majorare|putere|aprob\w*|max\w*|absorbit\w*|consum\w*|v|\d+|\d+v|\d+[a-z]?|[a-z]"
     r"|tg|tablou\w*|general|mare|mic[aă]?|normala|individual\w*"
-    r"|aprox\w*|cca|circa|cam|aproximativ|et|etajul|palier\w*|nr|tip|instalat\w*|contractat\w*|ok|vreau|are|e|este)")
+    r"|aprox\w*|cca|circa|cam|aproximativ|et|etajul|palier\w*|nr|tip|instalat\w*|contractat\w*|ok|vreau|are|e|este"
+    r"|avem|contract\w*|abonament\w*|clientul|clientului|beneficiarul|proprietarul|actual\w*|curent\w*)")   # r9 (#2, #8)
 
 
 def _contradictii_locuinta(c: Ctx, intr: dict, al: dict, retea):
@@ -3988,7 +4216,8 @@ def _contradictii_locuinta(c: Ctx, intr: dict, al: dict, retea):
 
 def _kw_alimentare(c: Ctx, tm: str, v) -> bool:
     """r7: valoarea kW e a alimentării dacă în clauza ei, înaintea ei, sunt doar cuvinte despre casă / rețea / branșament."""
-    a = max([x.end() for x in re.compile(r"(?<!\d),|,(?!\d)|;|:|\+|\(|\)|[.?!](?=\s|$)").finditer(tm, 0, v["s"])] or [0])
+    a = max([x.end() for x in re.compile(r"(?<!\d),|,(?!\d)|;|:|\+|\(|\)|[.?!](?=\s|$)|\bdar\b|\biar\b").finditer(tm, 0, v["s"])]
+            or [0])                                         # r9 (#14): „vreau VE 22 kW dar am doar 11 kW tri”
     if re.search(r"(?<![\w.,])\d+\s*[×x]\s*$", tm[max(a, v["s"] - 8):v["s"]]):
         return False                                       # r8 (P0 #7): „2 x 1,5 kW” = receptoare, nu alimentarea
     cuv = re.findall(r"[a-z0-9+]+", tm[a:v["s"]].replace("+", " "))
@@ -4059,6 +4288,21 @@ def _generator_locuinta(c: Ctx, intr: dict):
         c.nota(f"GE {fmt(v)} kW → Sn = {fmt(v)}/0,8 = {fmt(v / 0.8, 2)} kVA (cosφ GE 0,8, presupus)")
     com = m.group("com") or ""
     g["comutare"] = "ATS" if re.search(r"automat|\bats\b", com) else "manual"
+    mc = re.search(r"\bpe\s+(?:circuitele|consumatorii)\s*(?:de\s+baza|vital\w*|esential\w*|prioritar\w*|importan\w*)?\s*"
+                   r"(?:\((?P<l1>[^)]*)\)|:\s*(?P<l2>[^.;]*))", c.t)
+    if mc:      # r9 (locuințe #23): „GE cu ATS pe circuitele de bază (centrală, frigider, iluminat)” → doar acele circuite
+        lst = mc.group("l1") or mc.group("l2") or ""
+        cir = []
+        for b in re.split(r",|\bsi\b", lst):
+            gr = _gaseste_receptori(b.strip())
+            if b.strip():
+                cir.append({"nume": gr[0]["nume"] if gr and gr[0]["nume"] else nume_normalizat(b.strip()),
+                            "receptor": gr[0]["receptor"] if gr else "alt_circuit"})
+        if cir:
+            g["circuite"] = cir
+            c.foloseste(mc.start(), mc.end())
+            c.nota("GE: alimentează doar circuitele " + ", ".join(x["nume"] for x in cir) + " (ge_rezerva.circuite — "
+                   "tablou rezervat după comutator); restul casei doar din rețea")
     intr["ge_rezerva"] = g
     c.consumat.append((max(0, m.start() - 2), m.end()))
     c.nota(f"„{c.o(m.start(), m.end()).strip()}” = grup electrogen de {fmt(v)} {'kVA' if m.group('u') == 'kva' else 'kW'} ca "
@@ -4071,7 +4315,7 @@ _LOC_TD = (r"etaj\w*|mansard\w*|garaj\w*|atelier\w*|anex\w*|corp(?:ul)?\s*(?:\d|
            r"|subsol\w*|pod\b|foisor\w*|sopron\w*|parter\w*")
 RE_TD_LOC = [
     # „TE la etaj”, „tablou secundar la mansardă”, „TD în garaj”
-    re.compile(rf"\b(?P<td>te|td|tablou\w*(?:\s+secundar\w*)?)\s+(?:(?:la|de\s+la|din|pe|in|al|pentru)\s+)?(?P<loc>{_LOC_TD})"),
+    re.compile(rf"\b(?P<td>te|td|tablou\w*(?:\s+secundar\w*)?)(?:\s+|-)(?:(?:la|de\s+la|din|pe|in|al|pentru)\s+)?(?P<loc>{_LOC_TD})"),
     # „al doilea (corp) cu TD”, „garaj … cu TD”, „corpul 2 cu tablou secundar”
     re.compile(rf"\b(?P<loc>{_LOC_TD}|al\s+doilea)\b[^,;:]{{0,40}}?\b(?:cu|are|si)\s+(?P<td>td|te|tablou\w*(?:\s+secundar\w*)?)\b"),
     # „garaj cu atelier separat la 30 m de casa, tablou secundar, …”
@@ -4111,23 +4355,39 @@ def _tablouri_locuinta(c: Ctx):
     putere); itemii care descriu casa („casa tri 20 kW tns”) închid lista. Cu circuite → `tablouri_secundare`; fără
     circuite → întrebare (nu se pierde, nu se desenează gol). Cablul / lungimea TD-ului NU sunt ale coloanei."""
     t = c.mascat()
-    m = None
+    gas = []
     for rx in RE_TD_LOC:
-        m = rx.search(t)
-        if m:
-            break
-    if not m:
+        for m in rx.finditer(t):
+            if not any(a <= m.start() < b or m.start() <= a < m.end() for a, b, _ in gas):
+                gas.append((m.start(), m.end(), m))
+    if not gas:
         return None
+    gas.sort(key=lambda x: x[0])
+    out = []
+    for i, (a0, _, m) in enumerate(gas):
+        lim = gas[i + 1][0] if i + 1 < len(gas) else len(t)
+        if i + 1 < len(gas):                    # zona se oprește la clauza următorului TD
+            lim = max([x.end() for x in re.compile(r"[,;:.]").finditer(t, 0, lim)] or [lim])
+            lim = max(lim, m.end())
+        td = _un_td_locuinta(c, t, m, lim)
+        if td:
+            out.append(td)
+    return out or None
+
+
+def _un_td_locuinta(c: Ctx, t: str, m, lim: int):
     loc = re.sub(r"\s+", " ", m.group("loc")).strip()
     loc_n = ("Corp 2" if re.search(r"doilea|doi|2", loc) else nume_normalizat(c.o(m.start("loc"), m.start("loc") + len(
         re.match(r"\w+", loc).group(0)))))
     pref = "TE" if m.group("td").strip() == "te" else "TD"
     td = {"nume": f"{pref} {loc_n}", "circuite": []}
     # zona TD-ului: de la începutul clauzei locului până la primul item care descrie casa
-    a = max([x.end() for x in re.compile(r"[,;:]").finditer(t, 0, min(m.start("loc"), m.start("td")))] or [0])
+    a = max([x.end() for x in re.compile(r"[,;:]|\.(?:\s|$)").finditer(t, 0, min(m.start("loc"), m.start("td")))] or [0])
     zona_e, poz = m.end(), m.end()
     fara = []
-    for it in re.finditer(r"(?:[^,;]|(?<=\d),(?=\d))+", t[m.end():]):
+    mse = re.search(r"\.(?:\s|$)", t[m.end():lim])               # r9: TD-ul ține până la sfârșitul propoziției
+    lim = m.end() + mse.start() if mse else lim
+    for it in re.finditer(r"(?:[^,;]|(?<=\d),(?=\d))+", t[m.end():lim]):
         txt = it.group(0)
         s_it = m.end() + it.start()
         if not txt.strip():
@@ -4141,7 +4401,8 @@ def _tablouri_locuinta(c: Ctx):
     if mL:
         td["L_m"] = _nr(numar(mL.group("v")))
     cab = {}
-    mc = re.search(rf"(?:\bcablu\w*\s+(?:tip\s+)?(?P<tip>{_TIP_CABLU})?|\b(?P<tip2>{_TIP_CABLU})|\bcu\s+(?=[2-5]\s*[×x]))\s*(?P<c>[2-5])\s*[×x]\s*(?P<s>{NUM})"
+    mc = re.search(rf"(?:\bcablu\w*\s+(?:tip\s+)?(?P<tip>{_TIP_CABLU})?|\b(?P<tip2>{_TIP_CABLU})|\bcu\s+(?=[2-5]\s*[×x])"
+                   rf"|\balimentat\w*\s+(?:cu\s+)?(?=[2-5]\s*[×x]))\s*(?P<c>[2-5])\s*[×x]\s*(?P<s>{NUM})"
                    rf"(?:\s*(?:mm2?|mm²|mmp))?(?:\s+(?P<mat>al|cu|aluminiu|cupru)\b)?", zona)
     if mc and numar(mc.group("s")) in SECTIUNI_CABLU:
         cab["S_fortat"] = _nr(numar(mc.group("s")))
@@ -4155,6 +4416,9 @@ def _tablouri_locuinta(c: Ctx):
     for it in _bucati_simple(t[m.end():zona_e]):
         txt = it.group(0).strip()
         s_it = m.end() + it.start() + (len(it.group(0)) - len(it.group(0).lstrip()))
+        mpar = re.match(r"(?:[(\s]|separat\w*|dedicat\w*|propriu\b)+(?=\(|[a-z0-9])\(?", txt)  # r9 (#17): „separat (prize”
+        if mpar and mpar.end():
+            txt, s_it = txt[mpar.end():], s_it + mpar.end()
         mpar = re.match(r"[(\s]+", txt)                          # r8 (#45): „(iluminat 2 circ, …, AC 2)”
         if mpar:
             txt, s_it = txt[mpar.end():], s_it + mpar.end()
@@ -4171,12 +4435,15 @@ def _tablouri_locuinta(c: Ctx):
                 or re.match(rf"(?:la\s+)?{NUM}\s*m\b", txt) or (mc and not taiat and it.start() + m.end() <= mc.start() + a < it.end() + m.end()):
 
             continue
-        if not (RE_ATOM_REC.search(txt) or _gaseste_receptori(txt) or re.search(r"\bsudur\w*|\baparat\w*|\bunelt\w*", txt)):
+        if not (RE_ATOM_REC.search(txt) or _gaseste_receptori(txt) or re.search(r"\bsudur\w*|\baparat\w*|\bunelt\w*", txt)
+                or re.search(rf"^[a-z][a-z ]{{1,30}}\s+{NUM}\s*(?:kw|a)\b", txt)):     # r9 (#35): „flex 2,2 kW”
             continue
         mv = re.search(rf"(?<![\w.,])(?:(?P<n>\d+)\s*[×x]\s*)?(?P<v>{NUM})\s*(?P<u>kw|a|cp)\b", txt)
         nume_t = txt[:mv.start()].strip() if mv else txt
         nume = nume_normalizat(c.o(s_it, s_it + len(nume_t)))
         mcnt = re.match(r"(?P<nume>[a-z][a-z ]*?)(?:\s+(?P<n>\d{1,2})\s*(?:circ\w*\.?|buc\w*\.?|circuite)?)?$", txt) if not mv else None
+        if not mv and not mcnt:                                  # r9 (#3, #35): „4 circuite prize”, „2 iluminat”, „1 AC”
+            mcnt = re.match(r"(?P<n>\d{1,2})\s*(?:circ\w*\.?\s+|buc\w*\.?\s+|circuite\s+)?(?:de\s+)?(?P<nume>[a-z][a-z ]*?)$", txt)
         if mcnt:
 
             # r8 (locuințe #45, #46): „prize 4 circ”, „iluminat 2”, „AC 2” = numărul de circuite; calibrul uzual (presupus)
@@ -4186,7 +4453,7 @@ def _tablouri_locuinta(c: Ctx):
                 # circuitele casnice fără putere ale TD-ului: receptorul + numărul de circuite; puterea implicită o pune
                 # motorul (declarată: iluminat 1 kW, prize 2 kW, AC din tabelul receptoarelor) — nu un calibru ca sarcină
                 n_c = int(mcnt.group("n") or 1)
-                nume_c = gr[0]["nume"] if gr and gr[0]["nume"] else nume_normalizat(c.o(s_it, s_it + len(mcnt.group("nume"))))
+                nume_c = gr[0]["nume"] if gr and gr[0]["nume"] else nume_normalizat(c.o(s_it + mcnt.start("nume"), s_it + mcnt.end("nume")))
                 for kk in range(1, n_c + 1):
                     td["circuite"].append({"nume": nume_c if n_c == 1 else f"{nume_c} {kk}", "receptor": rec_l})
                 td.setdefault("_presupus", []).append(f"{nume_c} × {n_c}")
@@ -4204,12 +4471,17 @@ def _tablouri_locuinta(c: Ctx):
         if mn and int(mn.group(1)) > 1:
             k["n_circuite"] = int(mn.group(1))
         rec = receptor_dupa_nume(nume, 1, True)
-        if rec in ("motor", "prize", "iluminat"):
+        gr = _gaseste_receptori(nume_t)
+        if gr and gr[0]["receptor"] not in ("alt_circuit",):     # r9 (#3): „2 AC 3,5 kW” = aer condiționat
+            k["receptor"] = gr[0]["receptor"]
+            if gr[0]["nume"] and len(nume) <= 3:
+                k["nume"] = gr[0]["nume"]
+        elif rec in ("motor", "prize", "iluminat"):
             k["receptor"] = rec
         coada = txt[mv.end():]
-        if re.search(r"monofaz\w*|\bmono\b", coada):
+        if re.search(r"monofaz\w*|\bmono\b|\b230\s*v\b", coada + " " + nume_t):
             k["retea"] = "mono"
-        elif re.search(r"trifaz\w*|\btri\b|\b3f\b", coada):
+        elif re.search(r"trifaz\w*|\btri\b|\b3f\b|\b400\s*v\b", coada + " " + nume_t):
             k["retea"] = "tri"
         td["circuite"].append(k)
     c.consumat.append((a, zona_e))
@@ -4270,7 +4542,22 @@ def extrage_locuinta(c: Ctx, intr, ex):
     tipl = ex["locuinta"] = _tip_locuinta(t)
     if re.search(r"\batr\b|\baviz\w*\s+tehnic", t):
         ex["_din_atr"] = True
-    atelier = getattr(c, "_td_loc", None) or _atelier_locuinta(c)
+    mups = re.search(r"\b(?:ups|eps)(?:\s*/\s*(?:ups|eps))?\b[^,;.]*", t)
+    if mups and not re.search(r"\binvert\w*|\bpanou\w*\b(?<!fara panouri)", _masca(t, re.compile(r"fara\s+panouri"))):
+        # r9 (locuințe #53): „UPS/EPS pt pompa centralei și router, fără panouri” = sursă neîntreruptibilă, nu prosumator
+        c.foloseste(mups.start(), mups.end())
+        mdupa = re.search(r"\b(?:pt|pentru)\s+(?P<l>[^,;.]+)", t[mups.start():mups.end()])
+        c._ups_loc = "UPS" + (f" ({nume_normalizat(mdupa.group('l')).lower()})" if mdupa else "")
+        mfp = re.search(r"\bfara\s+panouri\b", t)
+        if mfp:
+            c.foloseste(mfp.start(), mfp.end())
+        c.intrebari.append(("I02", f"„{c.o(mups.start(), mups.end()).strip()}”: UPS-ul (fără panouri) se desenează ca un circuit "
+                                   "dedicat din TG spre UPS, cu consumatorii lui după UPS. Ce putere are UPS-ul (VA / kW)? "
+                                   "(până atunci: circuit UPS 16 A, presupus)"))
+    tds = getattr(c, "_td_loc", None) or None
+    if not tds:
+        a1 = _atelier_locuinta(c)
+        tds = [a1] if a1 else []
     _generator_locuinta(c, intr)
     # circuitele (înainte de puterea generală: kW/A/m de lângă un receptor îi aparțin acestuia)
     gasiti = _gaseste_receptori(c.mascat())
@@ -4328,50 +4615,51 @@ def extrage_locuinta(c: Ctx, intr, ex):
         if g["tri"] and retea == "mono":
             c.probleme.append(("I08", f"Contradicție: „{c.o(g['s'], g['coada_e']).strip()}” trifazat la o locuință "
                                       "monofazată (I08).", "Branșamentul locuinței este trifazat (3 × 400 V)?"))
-    if atelier:
-        txt, fara, n_cond = atelier.pop("_txt", None), atelier.pop("_fara", []), atelier.pop("_n_cond", None)
-        pres_td = atelier.pop("_presupus", [])
-        if pres_td:
-            c.nota(f"{atelier['nume']}: circuite fără putere ({', '.join(pres_td)}) → puterea implicită a receptorului "
-                   "(PRESUPUS, în Calcul)")
-        cc_ = []
-        for x in atelier.get("circuite") or []:                 # r8: „prize 3 x 2 kW” = 3 circuite (fiecare cu sarcina lui)
-            if "In_A" in x:                                      # calibru dat: rămâne o linie cu n_circuite (r7)
-                cc_.append(x)
-                continue
-            n_ = int(x.pop("n_circuite", 1) or 1)
-            cc_ += [x] if n_ == 1 else [dict(x, nume=f"{x['nume']} {kk}") for kk in range(1, n_ + 1)]
-        atelier["circuite"] = cc_
+    for atelier in tds:
+            txt, fara, n_cond = atelier.pop("_txt", None), atelier.pop("_fara", []), atelier.pop("_n_cond", None)
+            pres_td = atelier.pop("_presupus", [])
+            if pres_td:
+                c.nota(f"{atelier['nume']}: circuite fără putere ({', '.join(pres_td)}) → puterea implicită a receptorului "
+                       "(PRESUPUS, în Calcul)")
+            cc_ = []
+            for x in atelier.get("circuite") or []:                 # r8: „prize 3 x 2 kW” = 3 circuite (fiecare cu sarcina lui)
+                if "In_A" in x:                                      # calibru dat: rămâne o linie cu n_circuite (r7)
+                    cc_.append(x)
+                    continue
+                n_ = int(x.pop("n_circuite", 1) or 1)
+                cc_ += [x] if n_ == 1 else [dict(x, nume=f"{x['nume']} {kk}") for kk in range(1, n_ + 1)]
+            atelier["circuite"] = cc_
 
-        if fara:
-            c.fara_valoare += fara
-        if n_cond == 4 and retea == "mono" or n_cond == 5 and retea == "mono":
-            c.intrebari.append(("I08", f"{atelier['nume']}: cablul are {n_cond} conductoare, dar locuința e monofazată — TD-ul e "
-                                       "trifazat (3F+N+PE) sau monofazat (cablu 3 conductoare)?"))
-        if retea == "tri" and atelier["circuite"]:
-            atelier["faza"] = "3F"
-        if atelier["circuite"]:
-            intr["tablouri_secundare"] = ex["tablouri_secundare"] = [atelier]
-            if txt:
-                c.nota(f"„{txt}” = tablou secundar {atelier['nume']} alimentat din TG-ul casei"
-                       + (f" (L = {fmt(atelier['L_m'])} m)" if atelier.get("L_m") else "") + ": "
-                       + ", ".join(x["nume"] for x in atelier["circuite"]))
-        else:
-            desc = ", ".join(x for x in (f"L = {fmt(atelier['L_m'])} m" if atelier.get("L_m") else None,
-                                         f"cablu {fmt(atelier['cablu']['S_fortat'])} mm²"
-                                         + (f" {atelier['cablu'].get('material')}" if atelier.get('cablu', {}).get('material')
-                                            else "") if atelier.get("cablu") else None) if x)
-            alte = []                                           # r8 (#47): „TD etaj, TD garaj” — toate tablourile numite
-            for rx in RE_TD_LOC:
-                for mm in rx.finditer(t):
-                    nm = f"{'TE' if mm.group('td').strip() == 'te' else 'TD'} " + nume_normalizat(re.match(r"\w+", mm.group("loc")).group(0))
-                    if nm.lower() != atelier["nume"].lower() and nm not in alte:
-                        alte.append(nm)
-                        c.foloseste(mm.start(), mm.end())
-            numele = " și ".join([atelier["nume"]] + alte)
-            c.intrebari.append(("I02", f"Ce circuite alimentează {numele}" + (f" ({desc})" if desc else "")
-                                       + "? Până la răspuns toate circuitele sunt desenate în TG-ul casei, iar "
-                                       f"{numele} nu apar pe planșă."))
+            if fara:
+                c.fara_valoare += fara
+            if n_cond == 4 and retea == "mono" or n_cond == 5 and retea == "mono":
+                c.intrebari.append(("I08", f"{atelier['nume']}: cablul are {n_cond} conductoare, dar locuința e monofazată — TD-ul e "
+                                           "trifazat (3F+N+PE) sau monofazat (cablu 3 conductoare)?"))
+            if retea == "tri" and atelier["circuite"]:
+                atelier["faza"] = "3F"
+            if atelier["circuite"]:
+                intr.setdefault("tablouri_secundare", []).append(atelier)
+                ex["tablouri_secundare"] = intr["tablouri_secundare"]
+                if txt:
+                    c.nota(f"„{txt}” = tablou secundar {atelier['nume']} alimentat din TG-ul casei"
+                           + (f" (L = {fmt(atelier['L_m'])} m)" if atelier.get("L_m") else "") + ": "
+                           + ", ".join(x["nume"] for x in atelier["circuite"]))
+            else:
+                desc = ", ".join(x for x in (f"L = {fmt(atelier['L_m'])} m" if atelier.get("L_m") else None,
+                                             f"cablu {fmt(atelier['cablu']['S_fortat'])} mm²"
+                                             + (f" {atelier['cablu'].get('material')}" if atelier.get('cablu', {}).get('material')
+                                                else "") if atelier.get("cablu") else None) if x)
+                alte = []                                           # r8 (#47): „TD etaj, TD garaj” — toate tablourile numite
+                for rx in (RE_TD_LOC if len(tds) == 1 else []):
+                    for mm in rx.finditer(t):
+                        nm = f"{'TE' if mm.group('td').strip() == 'te' else 'TD'} " + nume_normalizat(re.match(r"\w+", mm.group("loc")).group(0))
+                        if nm.lower() != atelier["nume"].lower() and nm not in alte:
+                            alte.append(nm)
+                            c.foloseste(mm.start(), mm.end())
+                numele = " și ".join([atelier["nume"]] + alte)
+                c.intrebari.append(("I02", f"Ce circuite alimentează {numele}" + (f" ({desc})" if desc else "")
+                                           + "? Până la răspuns toate circuitele sunt desenate în TG-ul casei, iar "
+                                           f"{numele} nu apar pe planșă."))
 
     neg = [g for g in _gaseste_receptori(c.t) if g["exclus"] and g["receptor"] in ("iluminat", "prize")]
     if neg:                                       # r8 (#69): „0 circuite de prize, fără iluminat” — locuință fără circuite de bază
@@ -4381,7 +4669,15 @@ def extrage_locuinta(c: Ctx, intr, ex):
     plus = bool(re.search(r"tablou\w*\s+tipic|\bplus\b|\bin\s+plus\b|\bpe\s+langa\b|\bsi\s+restul\b", t))
 
     descr = DESCR_LOCUINTA[tipl]
-    tipic = [_circuit_loc(n, r) for n, r in SET_TIPIC[tipl] if r not in exclusi]
+    if tipl == "casa_p1" and any(re.search(r"etaj|mansard", _fara_diacritice(x["nume"]).lower())
+                                 for x in intr.get("tablouri_secundare") or []):
+        tipl_set = "casa_parter"           # r9 (#3, #35): circuitele etajului / mansardei sunt în TE / TD, nu dublate în TG
+        c.nota("etajul / mansarda are tablou propriu → TG-ul casei cu circuitele parterului (fără dublare)")
+    else:
+        tipl_set = tipl
+    for mm in re.finditer(r"\btg\b\s+(?:la|de\s+la|in|din|al)\s+(?:parter\w*|cas\w*|locuint\w*)", t):
+        c.foloseste(mm.start(), mm.end())
+    tipic = [_circuit_loc(n, r) for n, r in SET_TIPIC[tipl_set] if r not in exclusi]
     if not listati:
         circuite = tipic
         c.nota(f"circuitele nu sunt listate → set tipic pentru {descr}: " + ", ".join(x["nume"] for x in circuite)
@@ -4421,6 +4717,8 @@ def extrage_locuinta(c: Ctx, intr, ex):
         c.avert.append(f"„{c.o(mlb.start(), mlb.end()).strip()}”: gestiunea dinamică a sarcinii (load balancing) a stațiilor VE "
                        "— limitează curentul total la puterea aprobată; se precizează în memoriu (contorul / TC de la "
                        "intrare și comunicația cu stațiile), pe schemă stațiile au circuitele lor")
+    if getattr(c, "_ups_loc", None):
+        circuite.append(_circuit_loc(c._ups_loc, "alt_circuit"))
     intr["circuite"] = ex["circuite"] = circuite
     # alimentarea: P aprobată, Q branșament, coloana (din textul rămas după receptori)
     tm = c.mascat()
@@ -5358,6 +5656,9 @@ def _compensare(c: Ctx, tip, intr: dict):
     zone = []
     for m in gas:
         a, b = _clauza(c, m.start(), m.end())
+        mpt = re.search(r"\s(?:in|din|la)\s+(?:pt|post\w*|tg\w*|tablou\w*)\b", c.t[m.end():b])
+        if mpt:                                          # r9 (#33): „… 120 kvar în PT 630 kVA” — PT-ul nu e compensarea
+            b = m.end() + mpt.start()
         mcu = re.search(r"(?:\bcu\s+|\bsi\s+|\bplus\s+)?$", c.t[a:m.start()])
         if re.search(r"\b(?:din|de\s+la)\s+(?:pt|post\w*|tg|tablou|bmpt)", c.t[a:m.start()]):
             a = a + mcu.start()                          # r7 (#36): „TG din PT 1000 kVA cu compensare” — sursa rămâne
@@ -5370,6 +5671,18 @@ def _compensare(c: Ctx, tip, intr: dict):
     txt = "; ".join(f"„{c.o(a, b).strip(' ,;:')}”" for a, b in zone)
     zt = " ".join(c.t[a:b] for a, b in zone)
     mq = re.search(rf"({NUM})\s*kvar\b", zt)
+    toate_q = list(re.finditer(rf"({NUM})\s*kvar\b", c.t))
+    if len(toate_q) > 1:                                 # r9 (#33): „compensare fixă trafo 20 kvar + baterie automată 120 kvar”
+        pre_q = {}
+        for x in toate_q:
+            a_ = max([y.end() for y in re.compile(r"(?<!\d),|,(?!\d)|;|\+").finditer(c.t, 0, x.start())] or [0])
+            c.consumat.append((a_, x.end()))
+            pre_q[x.start()] = c.t[a_:x.start()]
+        mq = next((x for x in toate_q if re.search(r"automat\w*", pre_q[x.start()])),
+                  max(toate_q, key=lambda x: numar(x.group(1))))
+        alte = [x.group(0) for x in toate_q if x is not mq]
+        c.nota("compensare fixă a trafo-ului (" + ", ".join(alte) + ") = condensator fix la bornele JT ale trafo-ului "
+               "(informativ); plecarea spre bateria automată = " + mq.group(0))
     if tip in ("tablou", "pt") and mq:
         intr["compensare_kvar"] = _nr(numar(mq.group(1)))
         mL = re.search(rf"({NUM})\s*(?:m|metri)\b", zt)
@@ -5470,6 +5783,15 @@ def interpreteaza_local(text: str) -> dict:
                                   "„Deviz estimativ” din lista de echipamente.",
                            "Descrieți tabloul (sursa, plecările cu puteri / calibre) ca să generez schema și devizul?"))
 
+    mit = re.search(r"\b(?:tablou\w*|retea\w*|schema|sistem\w*)\s+it\s+medical\w*|\bit\s+medical\w*|\bgrup\w*\s+(?:medical\w*\s+)?2\b"
+                    r"|\bsal\w*\s+(?:de\s+)?operati\w*|\bterapie\s+intensiv\w*", c.t)
+    if mit:                                                   # r9 (industrial #12): IT medical (SR HD 60364-7-710)
+        c.foloseste(mit.start(), mit.end())
+        c.probleme.append(("I12", f"„{c.o(mit.start(), mit.end()).strip()}”: rețeaua IT medicală (grupa 2: trafo de separare "
+                                  "medical, controlor de izolație CPI, SR HD 60364-7-710) e în afara domeniului aplicației — "
+                                  "schemele de aici sunt TN / TT (I12).",
+                           "Rețeaua IT medicală (trafo de separare + CPI) se proiectează separat — desenez doar alimentarea "
+                           "tabloului (TN-S, din TG), sau tabloul nu e IT medical?"))
     tip = detecteaza_tip(c)
     c._tip = tip
     retea = detecteaza_retea(c)
@@ -5552,19 +5874,95 @@ def interpreteaza_local(text: str) -> dict:
                                    + (" (trifazat propus: puterea nu încape în monofazat)." if intr.get("retea") == "tri" else ".")))
     if getattr(c, "_prize_presupuse", None):
         txt = ", ".join(f"„{x}”" for x in dict.fromkeys(c._prize_presupuse))
-        c.nota(f"{txt}: circuite de prize fără calibru → 16 A pe circuit (PRESUPUS)")
-        c.intrebari.append(("I02", f"Calibrul circuitelor de prize {txt} nu e scris — desenate cu 16 A pe circuit. "
-                                   "Confirmați (16 A) sau indicați calibrul / puterea?"))
+        c.nota(f"{txt}: circuite fără calibru → 16 A pe circuitul de prize, 10 A pe cel de iluminat (PRESUPUS)")
+        c.intrebari.append(("I02", f"Calibrul circuitelor {txt} nu e scris — desenate cu 16 A (prize) / 10 A (iluminat) pe "
+                                   "circuit. Confirmați sau indicați calibrul / puterea?"))
     if c.fara_valoare:
         c.intrebari.append(("I02", "Lipsesc puterea (kW) sau calibrul (A) pentru: " + ", ".join(
 
             f"„{x}”" for x in dict.fromkeys(c.fara_valoare)) + ". Care sunt? (până atunci nu sunt desenate)"))
+    if tip == "cef" and isinstance(intr.get("bess"), dict) and not intr.get("invertoare") and not intr.get("Pn_inv_kW") \
+            and not re.search(r"\d\s*(?:kw|mw|kva)\b", c.t):        # r9 (fotovoltaic #60): „BESS 100 kWh” — PCS nescris
+        c.intrebari.append(("I02", f"Ce putere are convertorul bateriei (PCS, kW)? Până la răspuns: PCS "
+                                   f"{fmt(intr['bess'].get('P_kW') or 0)} kW (0,5C, presupus)."))
+    if tip in ("prosumator", "cef"):
+        _retea_mixta_pv(c, intr, ex)
+        mex = re.search(rf"\binvertor\w*\s+existent\w*\s+(?:de\s+)?(?P<v>{NUM})\s*kw\b|\b(?P<v2>{NUM})\s*kw\s+(?:deja\s+)?existent\w*", c.t)
+        if mex:                  # r9 (locuințe #52): invertorul existent se marchează (nu se desenează / listează ca nou)
+            pv_ = numar(mex.group("v") or mex.group("v2"))
+            inv_ = intr.get("invertoare")
+            if not inv_ and intr.get("Pn_inv_kW") and abs(intr["Pn_inv_kW"] - pv_) < 0.01:
+                inv_ = intr["invertoare"] = [{"n": 1, "Pn_kW": _nr(pv_)}]
+            for g in inv_ or []:
+                if abs((g.get("Pn_kW") or 0) - pv_) < 0.01:
+                    g["existent"] = True
+                    c.foloseste(mex.start(), mex.end())
+                    c.nota(f"„{c.o(mex.start(), mex.end()).strip()}” = invertor EXISTENT (se păstrează; nu intră în lista "
+                           "de echipamente noi)")
+                    break
+    al = intr.get("alimentare") or {}
+    if tip == "locuinta" and al.get("In_Q_bransament_A") and al.get("P_aprobata_kW") and intr.get("retea"):
+        # r9 (locuințe #61): „Q branșament 100 A” pe Pa 15 kW — Q-ul îl stabilește OD după Pa (ATR), nu „să nu sară”
+        q, pa_ = al["In_Q_bransament_A"], al["P_aprobata_kW"]
+        ib = pa_ * 1000 / ((U_TRI if intr["retea"] == "tri" else U_MONO) * 0.9)
+        q_uz = next((x for x in (16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250) if x >= ib), None)
+        if q_uz and q > 1.6 * q_uz:
+            c.intrebari.append(("I08", f"Q branșament {fmt(q)} A e mult peste Pa {fmt(pa_)} kW (Ib ≈ {fmt(ib, 0)} A → Q uzual "
+                                       f"{q_uz} A): calibrul îl stabilește OD prin ATR după puterea aprobată; un Q mai mare "
+                                       "cere mărire de putere (ATR nou), nu evită declanșările. Rămâne Q "
+                                       f"{fmt(q)} A (cu ATR pentru mai multă putere) sau Q {q_uz} A?"))
     neconsumat = plasa_siguranta(c, intr, tip)
     if neconsumat:
         c.intrebari.append(("I15", "Nu am folosit în schemă: " + "; ".join(f"„{x}”" for x in neconsumat)
                                    + ". Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"))
     return _finalizeaza(intr, ex, c.note, c.probleme, motor="reguli", intrebari=c.intrebari, avert=c.avert,
                         neconsumat=neconsumat)
+
+
+def _retea_mixta_pv(c: Ctx, intr: dict, ex: dict):
+    """r9 (fotovoltaic #55): „1 x SUN2000-10KTL-M1 trifazat + 1 x SUN2000-5KTL-L1 monofazat pe L1, BMPT 3x40 A” —
+    un invertor trifazat (sau BMPT 3×) face instalația TRIFAZATĂ; invertorul monofazat stă pe faza declarată."""
+    grupuri = intr.get("invertoare") or []
+    if len(grupuri) < 2:
+        return
+    fel = []
+    for g in grupuri:
+        mod = (g.get("model") or "").upper()
+        poz = c.t.find(mod.lower()) if mod else -1
+        dupa = c.t[poz + len(mod):poz + len(mod) + 30] if poz >= 0 else ""
+        dupa = re.split(r"[,;+]|\bsi\b", dupa)[0]
+        if re.search(r"monofaz\w*|\bmono\b|\b1f\b", dupa) or re.search(r"-L\d\b|\bSUNNY\s+BOY|-1\b", mod):
+            mf = re.search(r"\bpe\s+(?:faza\s+)?(l[123])\b", dupa)
+            fel.append(("mono", g, mf.group(1).upper() if mf else None))
+        elif re.search(r"trifaz\w*|\btri\b|\b3f\b", dupa) or re.search(r"KTL-M\d|LP3|HP3|-3\b|\bSTP", mod):
+            fel.append(("tri", g, None))
+        else:
+            fel.append((None, g, None))
+    if not any(f == "mono" for f, _, _ in fel) or not (any(f == "tri" for f, _, _ in fel) or re.search(r"\bbmpt\w*\s+3\s*×", c.t)):
+        return
+    intr["retea"] = ex["retea"] = "tri"
+    libere = ["L1", "L2", "L3"]
+    for f, g, faza in fel:
+        if f == "mono":
+            g["faza"] = faza or next((x for x in libere if x not in [k.get("faza") for _, k, _ in fel]), "L1")
+    c.probleme[:] = [p for p in c.probleme if "monofazat" not in p[1] or "Contradic" not in p[1]]
+    c.intrebari[:] = [q for q in c.intrebari if not q[1].startswith("Iac,max = 1,1·")]
+    faze = {"L1": 0.0, "L2": 0.0, "L3": 0.0}
+    for f, g, _ in fel:
+        n_p = g.get("n", 1) * (g.get("Pn_kW") or 0) * 1000 * FACTOR_INV
+        if f == "mono":
+            faze[g["faza"]] += n_p / U_MONO
+        else:
+            for k in faze:
+                faze[k] += n_p / (3 * U_MONO)
+    q_r = intr.get("In_Q_bransament_A")
+    fmax = max(faze, key=faze.get)
+    if q_r and faze[fmax] > q_r + 1e-6:
+        c.intrebari.append(("I08", f"Iac,max pe faza {fmax} ≈ {fmt(faze[fmax], 0)} A > BMPT {fmt(q_r)} A: se mărește protecția / "
+                                   "branșamentul, sau se mută invertorul monofazat pe altă fază / se limitează puterea?"))
+    c.nota("rețea mixtă: invertor trifazat + invertor monofazat (" + ", ".join(
+        f"{g.get('model') or fmt(g.get('Pn_kW')) + ' kW'} pe {g['faza']}" for f, g, _ in fel if f == "mono")
+        + ") → instalație trifazată 3 × 400 V")
 
 
 def _finalizeaza(intr, ex, note, probleme, motor, intrebari=(), avert=(), neconsumat=()) -> dict:
@@ -5879,7 +6277,7 @@ def normalizeaza_intrare(d: dict) -> dict:
     if isinstance(d.get("circuite"), list):
         out["circuite"] = [x for x in (_normalizeaza_circuit_loc(c) for c in d["circuite"]) if x]
     if isinstance(d.get("consumatori"), list):                        # r6: GE
-        out["consumatori"] = [{k: v for k, v in c.items() if k in ("nume", "P_kW", "n", "pornire", "siguranta", "rezerva")}
+        out["consumatori"] = [{k: v for k, v in c.items() if k in ("nume", "P_kW", "n", "pornire", "siguranta", "rezerva", "vital")}
                               for c in d["consumatori"] if isinstance(c, dict) and _numar_sau_none(c.get("P_kW"))]
     if isinstance(d.get("tablouri_secundare"), list):                 # r6: locuință
         out["tablouri_secundare"] = [

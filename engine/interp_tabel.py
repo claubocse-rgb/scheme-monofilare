@@ -50,7 +50,7 @@ ANTET = [
 ANTET = [(k, re.compile(rf"^{rx}$")) for k, rx in ANTET]
 RE_UNIT_ANTET = re.compile(r"\s*[\[(]\s*(kw|w|kva|a|m|km|kwp|kwh|v|buc)\s*[\])]\s*$|\s+(kw|kva|a|m|kwp|kwh|v)$")
 # rânduri fără rol în schema monofilară (BOM-ul unei oferte)
-RE_RAND_INUTIL = re.compile(r"\bstructur\w*|\bmontaj\w*|\bmanoper\w*|\btransport\w*|\bconector\w*|\bmc4\b|\baccesori\w*"
+RE_RAND_INUTIL = re.compile(r"\bstructur\w*|\bmontaj\w*|\bmanoper\w*|\btransport(?!o[ar])\w*|\bconector\w*|\bmc4\b|\baccesori\w*"
                             r"|\bcleme\b|\bsin[ae]\b|\bproiectare\b|\bavizare\b|\bcablu\w*\s+solar\w*|\bcablu\w*\s+(?:c\.?c|dc)\b")
 SEPARATORI = ("\t", "|", ";", ",")
 

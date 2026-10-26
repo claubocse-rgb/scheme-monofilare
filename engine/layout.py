@@ -109,6 +109,7 @@ class Layout:
         self._calc_note()
         i0 = len(c.items)
         self._schema()
+        self._muta_ref_laterale(i0)
         self._scaleaza(i0, marire=self.m.get("format", "A3") in ("A2", "A1"))
         self.meta["schema_bbox"] = _bbox_items(c.items[i0:])
         self.meta["zona_schema"] = (15.0, (self.note_top + 6 if self.m.get("note") else 15.0), self.x_right - 2, self.h - 15)
@@ -121,6 +122,23 @@ class Layout:
         if self.m.get("legenda", True): self._legenda()
         self._note()
         self._cartus()
+        if not self.m.get("blocaj"):
+            # r9 (industrial #14, S12): ștampila apare pe ORICE planșă cu BLOCANT — și pe cele găsite doar la verificarea
+            # desenului (V57 / V82 / V83, topologia), nu numai pe blocajele de calcul puse de constructor
+            try:
+                from . import topologie
+                c.meta = self.meta
+                bl = [v for v in topologie.verifica_topologie(self.m, c) if v.get("nivel") == "BLOCANT"]
+            except Exception:      # noqa: BLE001 — verificarea nu oprește desenul
+                bl = []
+            if bl:
+                cod = []
+                for v in bl:
+                    t_ = f"{v['cod']} ({v.get('obiect', '')})"
+                    if t_ not in cod:
+                        cod.append(t_)
+                self.m = dict(self.m, blocaj="NEVERIFICAT — CALCUL BLOCAT: " + ", ".join(cod[:5])
+                              + (f" și încă {len(cod) - 5}" if len(cod) > 5 else ""))
         if self.m.get("blocaj"):
             # r7 (S10): ștampila „NEVERIFICAT — CALCUL BLOCAT” (roșu), deasupra listei de echipamente
             t = self.m["blocaj"]
@@ -859,6 +877,11 @@ class Layout:
                     c.text(cx + w / 2 + 1.5, yc + 2.5, l["ref"], 2.6, True)
                 else:
                     c.text(cx, yc + (9.0 if t == "cutie" else 4.0), l["ref"], 2.6, True, align="middle")
+                    if t == "cutie":
+                        # r9 (locuințe f31/f33): eticheta deasupra casetei poate cădea pe o derivație (bara c.c. a
+                        # SPD-ului) — se mută la final, după ce tot desenul e cunoscut (_muta_ref_laterale)
+                        if not hasattr(self, "_ref_lat"): self._ref_lat = []
+                        self._ref_lat.append((c.items[-1], lb))
             if t in ("contor", "cutie"):
                 self._poz_mark(cx + w / 2 + 4, yc - 5.5, self._poz_add(l))
             elif t == "cleme":
@@ -879,6 +902,30 @@ class Layout:
             px, py = self._poz_liber(cands, i0)
             self._poz_mark(px, py, n_ap)
         return sym_bb
+
+    def _muta_ref_laterale(self, i0):
+        """r9: eticheta (ref) unei casete laterale tăiată de o linie a desenului (ex. „SB” peste bara c.c. a SPD-ului)
+        se mută lângă casetă: stânga, dreapta sau dedesubt — primul loc liber."""
+        from .canvas import text_bbox
+        lst = getattr(self, "_ref_lat", [])
+        if not lst: return
+        segs = []
+        for it in self.c.items[i0:]:
+            if isinstance(it, (Line, Polyline)):
+                segs += item_segments(it)
+        for t, (x1, y1, x2, y2) in lst:
+            def lovit():
+                bb = text_bbox(t)
+                bb = (bb[0] - 0.3, bb[1] - 0.3, bb[2] + 0.3, bb[3] + 0.3)
+                return any(seg_hits_box(a, b, bb) for a, b in segs)
+            if not lovit(): continue
+            p0, al0 = t.p, t.align
+            for p, al in (((x1 - 1.2, (y1 + y2) / 2 + 2.6), "right"), ((x2 + 1.2, (y1 + y2) / 2 + 2.6), "left"),
+                          (((x1 + x2) / 2, y1 - 3.4), "middle")):
+                t.p, t.align = p, al
+                if not lovit(): break
+            else:
+                t.p, t.align = p0, al0
 
     def _lat_bbox(self, cx, yc, l):
         t = l["tip"]
@@ -980,14 +1027,26 @@ class Layout:
             for s in lista:
                 lines += _wrap(s, maxc)
             lines = lines[:max_l]
-            rh = 2.2 * fh / 1.9 + step * len(lines)
-            ym = y - rh / 2 - 0.7
             ref = _refs_compacte(ref)
             def _fit(s_, h_, lat, bold=False):   # corpul de literă cu care textul încape în coloană (cu marjă)
                 from .canvas import text_width
                 return min(h_, h_ * lat / max(text_width(s_, h_, bold) * 1.1, 0.1))
-            hr = _fit(ref, 2.1, cols[2] - cols[1] - 2.5, True)
-            c.text(x0 + 4.5, ym, str(n), 2.1, align="middle"); c.text(x0 + cols[1] + 1.5, ym, ref, hr, True)
+            lat_ref = cols[2] - cols[1] - 2.5
+            hr = _fit(ref, 2.1, lat_ref, True)
+            ref_l = [ref]
+            if hr < 1.6:
+                # r9 (locuințe f42/f44/f45/f61): simboluri multe / nume lungi — rânduri de 1,6 mm (cel mult 3), restul „…”
+                ref_l = _rupe_refs(ref, 1.6, lat_ref)
+                if len(ref_l) > 3:
+                    ref_l = ref_l[:2] + [ref_l[2].rstrip(",") + " …"]
+            rh = 2.2 * fh / 1.9 + step * max(len(lines), len(ref_l) if len(ref_l) > 1 else 1)
+            ym = y - rh / 2 - 0.7
+            c.text(x0 + 4.5, ym, str(n), 2.1, align="middle")
+            if len(ref_l) == 1:
+                c.text(x0 + cols[1] + 1.5, ym, ref, hr, True)
+            else:
+                for i, s in enumerate(ref_l):
+                    c.text(x0 + cols[1] + 1.5, y - step - step * i, s, _fit(s, 1.6, lat_ref, True), True)
             c.text(x0 + 145, ym, str(buc), _fit(str(buc), 2.1, w - cols[3] - 1.5), align="middle")
             for i, s in enumerate(lines):
                 c.text(x0 + cols[2] + 1.5, y - step - step * i, s, _fit(s, fh, cols[3] - cols[2] - 2.5), layer="TEXT_GRI" if i else "TEXT")
@@ -1133,6 +1192,26 @@ def _refs_compacte(ref):
             flush(); run = [k]
     flush()
     return ", ".join(out)
+
+
+def _rupe_refs(ref, h, lat):
+    """r9: lista de simboluri „Q2, Q5.1, Iluminat exterior, …” rupt pe rânduri care încap în coloana „Simbol” la
+    înălțimea h (bold); un simbol singur prea lung e trunchiat cu „…”."""
+    from .canvas import text_width
+    def incape(s): return text_width(s, h, True) * 1.1 <= lat
+    out, cur = [], ""
+    for p in [x for x in (ref or "").split(", ") if x]:
+        if not incape(p + ","):
+            q = p
+            while len(q) > 2 and not incape(q + "…,"): q = q[:-1]
+            p = q + "…"
+        cand = f"{cur}, {p}" if cur else p
+        if cur and not incape(cand + ","):
+            out.append(cur + ","); cur = p
+        else:
+            cur = cand
+    if cur: out.append(cur)
+    return out or [ref]
 
 
 def _wrap(s, n):

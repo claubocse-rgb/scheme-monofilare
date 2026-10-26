@@ -1,0 +1,2909 @@
+{
+"verdicte": {
+"L01": "corect",
+"L02": "partial",
+"L03": "gresit",
+"L04": "partial",
+"L05": "corect",
+"L06": "corect",
+"L07": "corect",
+"L08": "partial",
+"L09": "corect",
+"L10": "corect",
+"L11": "corect",
+"L12": "corect",
+"L13": "corect",
+"L14": "partial",
+"L15": "corect",
+"L16": "corect",
+"L17": "partial",
+"L18": "corect",
+"L19": "corect",
+"L20": "corect",
+"L21": "partial",
+"L22": "corect",
+"L23": "partial",
+"L24": "corect",
+"L25": "corect",
+"L26": "corect",
+"L27": "corect",
+"L28": "corect",
+"L29": "corect",
+"L30": "corect",
+"L31": "corect",
+"L32": "partial",
+"L33": "corect",
+"L34": "corect",
+"L35": "gresit",
+"L36": "gresit",
+"L37": "corect",
+"L38": "partial",
+"L39": "corect",
+"L40": "corect",
+"L41": "corect",
+"L42": "partial",
+"L43": "corect",
+"L44": "gresit",
+"L45": "corect",
+"L46": "corect",
+"L47": "corect",
+"L48": "corect",
+"L49": "corect",
+"L50": "gresit",
+"L51": "gresit",
+"L52": "partial",
+"L53": "partial",
+"L54": "corect",
+"L55": "corect",
+"L56": "corect",
+"L57": "corect",
+"L58": "corect",
+"L59": "corect",
+"L60": "gresit",
+"L61": "partial",
+"L62": "corect",
+"L63": "corect",
+"L64": "corect",
+"L65": "corect",
+"L66": "corect",
+"L67": "corect",
+"L68": "corect",
+"L69": "corect",
+"F01": "corect",
+"F02": "corect",
+"F03": "corect",
+"F04": "corect",
+"F05": "corect",
+"F06": "corect",
+"F07": "corect",
+"F08": "corect",
+"F09": "corect",
+"F10": "corect",
+"F11": "corect",
+"F12": "corect",
+"F13": "corect",
+"F14": "partial",
+"F15": "corect",
+"F16": "corect",
+"F17": "corect",
+"F18": "corect",
+"F19": "corect",
+"F20": "corect",
+"F21": "corect",
+"F22": "gresit",
+"F23": "corect",
+"F24": "corect",
+"F25": "partial",
+"F26": "corect",
+"F27": "corect",
+"F28": "corect",
+"F29": "corect",
+"F30": "corect",
+"F31": "corect",
+"F32": "corect",
+"F33": "corect",
+"F34": "corect",
+"F35": "gresit",
+"F36": "corect",
+"F37": "corect",
+"F38": "corect",
+"F39": "corect",
+"F40": "corect",
+"F41": "corect",
+"F42": "corect",
+"F43": "corect",
+"F44": "corect",
+"F45": "corect",
+"F46": "corect",
+"F47": "corect",
+"F48": "corect",
+"F49": "partial",
+"F50": "corect",
+"F51": "corect",
+"F52": "corect",
+"F53": "corect",
+"F54": "corect",
+"F55": "gresit",
+"F56": "corect",
+"F57": "corect",
+"F58": "corect",
+"F59": "partial",
+"F60": "gresit",
+"F61": "partial",
+"F62": "corect",
+"F63": "corect",
+"F64": "corect",
+"F65": "corect",
+"F66": "corect",
+"F67": "corect",
+"F68": "partial",
+"I01": "corect",
+"I02": "partial",
+"I03": "gresit",
+"I04": "corect",
+"I05": "partial",
+"I06": "partial",
+"I07": "partial",
+"I08": "partial",
+"I09": "corect",
+"I10": "corect",
+"I11": "gresit",
+"I12": "partial",
+"I13": "corect",
+"I14": "gresit",
+"I15": "partial",
+"I16": "partial",
+"I17": "corect",
+"I18": "corect",
+"I19": "corect",
+"I20": "partial",
+"I21": "partial",
+"I22": "corect",
+"I23": "corect",
+"I24": "partial",
+"I25": "corect",
+"I26": "corect",
+"I27": "gresit",
+"I28": "corect",
+"I29": "corect",
+"I30": "corect",
+"I31": "corect",
+"I32": "partial",
+"I33": "gresit",
+"I34": "partial",
+"I35": "gresit",
+"I36": "corect",
+"I37": "partial",
+"I38": "corect",
+"I39": "corect",
+"I40": "corect",
+"I41": "corect",
+"I42": "corect",
+"I43": "partial",
+"I44": "partial",
+"I45": "corect",
+"I46": "corect",
+"I47": "corect",
+"I48": "corect",
+"I49": "partial",
+"I50": "gresit",
+"I51": "corect",
+"I52": "gresit",
+"I53": "partial",
+"I54": "gresit",
+"I55": "corect",
+"I56": "corect",
+"I57": "corect",
+"I58": "corect",
+"I59": "corect",
+"I60": "corect",
+"I61": "corect",
+"I62": "corect",
+"I63": "gresit",
+"I64": "corect",
+"I65": "corect",
+"I66": "partial",
+"I67": "partial",
+"I68": "gresit",
+"I69": "corect",
+"I70": "partial",
+"I71": "partial"
+},
+"amprente": {
+"L01": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 16,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L02": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 8,
+"kwh": null
+},
+"L03": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 22,
+"inv": [],
+"npl": 0,
+"nc": 21,
+"kwh": null
+},
+"L04": {
+"tip": "locuinta",
+"act": "refuza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 4,
+"inv": [],
+"npl": 0,
+"nc": 8,
+"kwh": null
+},
+"L05": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 7,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L06": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 11,
+"inv": [
+[
+1,
+10
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L07": {
+"tip": "locuinta",
+"act": "refuza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 9,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L08": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TT",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 8,
+"kwh": null
+},
+"L09": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 5,
+"inv": [],
+"npl": 0,
+"nc": 7,
+"kwh": null
+},
+"L10": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 18,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L11": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TT",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L12": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L13": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 12,
+"inv": [],
+"npl": 0,
+"nc": 7,
+"kwh": null
+},
+"L14": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": null,
+"sp": "TT",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L15": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": 10,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L16": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 6,
+"inv": [],
+"npl": 0,
+"nc": 8,
+"kwh": null
+},
+"L17": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 8,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L18": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TT",
+"pa": 10,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L19": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "mono",
+"sp": null,
+"pa": 5,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L20": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 30,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L21": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": 25,
+"inv": [
+[
+2,
+6
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L22": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 32,
+"inv": [
+[
+3,
+10
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L23": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 20,
+"inv": [],
+"npl": 0,
+"nc": 6,
+"kwh": null
+},
+"L24": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 20,
+"inv": [],
+"npl": 0,
+"nc": 8,
+"kwh": null
+},
+"L25": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": null,
+"pa": 9,
+"inv": [],
+"npl": 0,
+"nc": 7,
+"kwh": null
+},
+"L26": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TT",
+"pa": 30,
+"inv": [],
+"npl": 0,
+"nc": 7,
+"kwh": null
+},
+"L27": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 7,
+"inv": [],
+"npl": 0,
+"nc": 17,
+"kwh": null
+},
+"L28": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 16,
+"inv": [],
+"npl": 0,
+"nc": 12,
+"kwh": null
+},
+"L29": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 11,
+"inv": [],
+"npl": 0,
+"nc": 8,
+"kwh": null
+},
+"L30": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 13,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L31": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TT",
+"pa": 8,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L32": {
+"tip": "bransament",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L33": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 40,
+"inv": [
+[
+2,
+17.5
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L34": {
+"tip": "bransament",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L35": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 7,
+"nc": 0,
+"kwh": null
+},
+"L36": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 1,
+"nc": 0,
+"kwh": null
+},
+"L37": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": null,
+"pa": 6,
+"inv": [],
+"npl": 0,
+"nc": 6,
+"kwh": null
+},
+"L38": {
+"tip": "locuinta",
+"act": "refuza",
+"retea": "tri",
+"sp": "TT",
+"pa": 15,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L39": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 10,
+"inv": [],
+"npl": 0,
+"nc": 12,
+"kwh": null
+},
+"L40": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 20,
+"inv": [],
+"npl": 0,
+"nc": 12,
+"kwh": null
+},
+"L41": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 9,
+"inv": [],
+"npl": 0,
+"nc": 14,
+"kwh": null
+},
+"L42": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 16,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L43": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 30,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L44": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": null,
+"pa": 7,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L45": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 20,
+"inv": [],
+"npl": 0,
+"nc": 7,
+"kwh": null
+},
+"L46": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TT",
+"pa": 10,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L47": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TT",
+"pa": 12,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L48": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C",
+"pa": 5,
+"inv": [],
+"npl": 0,
+"nc": 5,
+"kwh": null
+},
+"L49": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 7,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L50": {
+"tip": "ge_ats",
+"act": "refuza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L51": {
+"tip": "cef",
+"act": "refuza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [
+[
+1,
+12
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": 15
+},
+"L52": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": 15,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": 10
+},
+"L53": {
+"tip": "prosumator",
+"act": "refuza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 7,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L54": {
+"tip": "bransament",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L55": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TT",
+"pa": 20,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L56": {
+"tip": "bransament",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L57": {
+"tip": "locuinta",
+"act": "refuza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 10,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L58": {
+"tip": "locuinta",
+"act": "refuza",
+"retea": "mono",
+"sp": null,
+"pa": 5,
+"inv": [],
+"npl": 0,
+"nc": 5,
+"kwh": null
+},
+"L59": {
+"tip": "prosumator",
+"act": "refuza",
+"retea": "mono",
+"sp": "TT",
+"pa": 6,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L60": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 15,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L61": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 15,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L62": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 8,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L63": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 16,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L64": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": 20,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L65": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": 18,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L66": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 11,
+"kwh": null
+},
+"L67": {
+"tip": null,
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"L68": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": null,
+"pa": 7,
+"inv": [],
+"npl": 0,
+"nc": 10,
+"kwh": null
+},
+"L69": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": 6,
+"inv": [],
+"npl": 0,
+"nc": 8,
+"kwh": null
+},
+"F01": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+4,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F02": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+50
+],
+[
+3,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F03": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+4,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F04": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+50
+],
+[
+2,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F05": {
+"tip": "cef",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+80
+],
+[
+2,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F06": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F07": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+6
+],
+[
+1,
+6
+],
+[
+1,
+6
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F08": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "mono",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+6
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F09": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": 120,
+"inv": [
+[
+1,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F10": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F11": {
+"tip": "cef",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+20
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F12": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+125
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F13": {
+"tip": "cef",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F14": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+30
+],
+[
+4,
+30
+],
+[
+5,
+30
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F15": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+25,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F16": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+16,
+250
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F17": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+5,
+300
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F18": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+20
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F19": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+8,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F20": {
+"tip": "cef",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": 200
+},
+"F21": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": 1000
+},
+"F22": {
+"tip": "prosumator",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": 4.8
+},
+"F23": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F24": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F25": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+30
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F26": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+4,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F27": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TT",
+"pa": null,
+"inv": [
+[
+2,
+15
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F28": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+25
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F29": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+30
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F30": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+12
+],
+[
+1,
+15
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F31": {
+"tip": "cef",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+110
+],
+[
+2,
+250
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F32": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F33": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F34": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F35": {
+"tip": "cef",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+25
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F36": {
+"tip": "cef",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F37": {
+"tip": "prosumator",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": 10,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F38": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+20
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F39": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F40": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+25
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F41": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+8,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F42": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+6,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F43": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+12,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": 2000
+},
+"F44": {
+"tip": "cef",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": 4000
+},
+"F45": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+12
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": 15
+},
+"F46": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": 100
+},
+"F47": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+33
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": 200
+},
+"F48": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+10
+],
+[
+1,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F49": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+10,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F50": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+30
+],
+[
+2,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": 200
+},
+"F51": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+4,
+125
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F52": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+12,
+250
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F53": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+25
+],
+[
+1,
+50
+],
+[
+1,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F54": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+5
+],
+[
+3,
+5
+],
+[
+3,
+5
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F55": {
+"tip": "prosumator",
+"act": "refuza",
+"retea": "mono",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+5
+],
+[
+1,
+10
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F56": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+20
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F57": {
+"tip": "prosumator",
+"act": "refuza",
+"retea": "mono",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+10
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F58": {
+"tip": "cef",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F59": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+4,
+20
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F60": {
+"tip": "cef",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": 100
+},
+"F61": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [
+[
+1,
+25
+],
+[
+1,
+125
+],
+[
+1,
+150
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F62": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F63": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+50
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F64": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+3,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F65": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+4,
+200
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F66": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+2,
+100
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F67": {
+"tip": "prosumator",
+"act": "genereaza",
+"retea": "mono",
+"sp": null,
+"pa": null,
+"inv": [
+[
+1,
+3.6
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"F68": {
+"tip": "cef",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [
+[
+4,
+110
+]
+],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I01": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 6,
+"nc": 0,
+"kwh": null
+},
+"I02": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 3,
+"nc": 0,
+"kwh": null
+},
+"I03": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I04": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 7,
+"nc": 0,
+"kwh": null
+},
+"I05": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I06": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 3,
+"nc": 0,
+"kwh": null
+},
+"I07": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I08": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 4,
+"nc": 0,
+"kwh": null
+},
+"I09": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 3,
+"nc": 0,
+"kwh": null
+},
+"I10": {
+"tip": "tablou",
+"act": "refuza",
+"retea": "mono",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I11": {
+"tip": "locuinta",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TT",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 5,
+"kwh": null
+},
+"I12": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 7,
+"nc": 0,
+"kwh": null
+},
+"I13": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C",
+"pa": null,
+"inv": [],
+"npl": 1,
+"nc": 0,
+"kwh": null
+},
+"I14": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 6,
+"nc": 0,
+"kwh": null
+},
+"I15": {
+"tip": "tablou",
+"act": "refuza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 5,
+"nc": 0,
+"kwh": null
+},
+"I16": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I17": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 6,
+"nc": 0,
+"kwh": null
+},
+"I18": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 6,
+"nc": 0,
+"kwh": null
+},
+"I19": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 3,
+"nc": 0,
+"kwh": null
+},
+"I20": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I21": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": "TT",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I22": {
+"tip": "pt",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I23": {
+"tip": "pt",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 4,
+"nc": 0,
+"kwh": null
+},
+"I24": {
+"tip": "ge_ats",
+"act": "refuza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I25": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 7,
+"nc": 0,
+"kwh": null
+},
+"I26": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 7,
+"nc": 0,
+"kwh": null
+},
+"I27": {
+"tip": "ge_ats",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I28": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 1,
+"nc": 0,
+"kwh": null
+},
+"I29": {
+"tip": "ge_ats",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I30": {
+"tip": "ge_ats",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I31": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I32": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I33": {
+"tip": "pt",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 4,
+"nc": 0,
+"kwh": null
+},
+"I34": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I35": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 1,
+"nc": 0,
+"kwh": null
+},
+"I36": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 1,
+"nc": 0,
+"kwh": null
+},
+"I37": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 3,
+"nc": 0,
+"kwh": null
+},
+"I38": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I39": {
+"tip": "ge_ats",
+"act": "refuza",
+"retea": null,
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I40": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I41": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 4,
+"nc": 0,
+"kwh": null
+},
+"I42": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 4,
+"nc": 0,
+"kwh": null
+},
+"I43": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 14,
+"nc": 0,
+"kwh": null
+},
+"I44": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 12,
+"nc": 0,
+"kwh": null
+},
+"I45": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 54,
+"nc": 0,
+"kwh": null
+},
+"I46": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 5,
+"nc": 0,
+"kwh": null
+},
+"I47": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 6,
+"nc": 0,
+"kwh": null
+},
+"I48": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 1,
+"nc": 0,
+"kwh": null
+},
+"I49": {
+"tip": "tablou",
+"act": "refuza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 5,
+"nc": 0,
+"kwh": null
+},
+"I50": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I51": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 5,
+"nc": 0,
+"kwh": null
+},
+"I52": {
+"tip": "bransament",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I53": {
+"tip": "pt",
+"act": "refuza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 7,
+"nc": 0,
+"kwh": null
+},
+"I54": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I55": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 3,
+"nc": 0,
+"kwh": null
+},
+"I56": {
+"tip": "tablou",
+"act": "refuza",
+"retea": "tri",
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I57": {
+"tip": "ge_ats",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I58": {
+"tip": "pt",
+"act": "refuza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I59": {
+"tip": "tablou",
+"act": "refuza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 2,
+"nc": 0,
+"kwh": null
+},
+"I60": {
+"tip": "tablou",
+"act": "refuza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I61": {
+"tip": "pt",
+"act": "genereaza",
+"retea": null,
+"sp": null,
+"pa": null,
+"inv": [],
+"npl": 6,
+"nc": 0,
+"kwh": null
+},
+"I62": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 3,
+"nc": 0,
+"kwh": null
+},
+"I63": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I64": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I65": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 11,
+"nc": 0,
+"kwh": null
+},
+"I66": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 6,
+"nc": 0,
+"kwh": null
+},
+"I67": {
+"tip": "ge_ats",
+"act": "genereaza",
+"retea": null,
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I68": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 4,
+"nc": 0,
+"kwh": null
+},
+"I69": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 13,
+"nc": 0,
+"kwh": null
+},
+"I70": {
+"tip": "bransament",
+"act": "genereaza",
+"retea": "mono",
+"sp": "TN-C-S",
+"pa": null,
+"inv": [],
+"npl": 0,
+"nc": 0,
+"kwh": null
+},
+"I71": {
+"tip": "tablou",
+"act": "genereaza",
+"retea": "tri",
+"sp": "TN-S",
+"pa": null,
+"inv": [],
+"npl": 1,
+"nc": 0,
+"kwh": null
+}
+}
+}

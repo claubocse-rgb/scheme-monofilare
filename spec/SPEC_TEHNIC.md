@@ -1237,6 +1237,48 @@ Rulează mereu (cu sau fără cheie API; fără cheie e singura citire). Corecț
    C/P/G): înainte 98/67/42 → după 206/1/0, P0/P1 90/91; r5–r7 fără regresii; `eval_llm` reguli locale 58 C / 2 P / 0 G
    (160/162). Rămas: I25 — motorul dă V02/V03 BLOCANT la 2 × NA2XY 4x240 în paralel (problemă de motor, nu de citire).
 
+### F.13 (r9) Clasele r9 — regulile locale (calea principală a versiunii publice, fără cheie API)
+Rescrierea are acum, în ordine: indentare → tabel → engleză → scurt → email → **autocorecturi** → **cifre** → **termeni**
+→ **lungimi** → **mărire** → **lanț de săgeți** → „din TG pleacă” → cascade → corpuri (`engine/interp_rescriere.py`,
+`interp_cifre.py`, `interp_cascade.py`; fiecare rescriere lasă o notă în „Am presupus”).
+
+1. **Autocorecturi** („nu,”, „scuze,”, „pardon”, „de fapt”, „corectez”, „adică <valoare>”, „greșit, e …”): marcatorul
+   înlocuiește, în aceeași propoziție, ultima entitate de același fel — grup cu cantitate („4 invertoare de 30 kW… nu, 5
+   invertoare de 30 kW” → doar 5 × 30), valoare cu aceeași unitate, schema de pământ, rețeaua, modelul; fără dublare.
+   Un model fără număr cu aceeași putere ca un grup numărat e modelul acelui grup (nu încă un invertor).
+2. **Cascade:** lanț „A → B (…) → C (…)” = C sub B; indentarea pe rânduri (≥ 3 niveluri) = arbore; „Din TG pleacă …”
+   când TG e tabloul descris = plecările lui (nu a doua sursă); „la rândul lui” ignorat. Locuință: mai multe TD / TE
+   („TE-etaj”, „TD mansardă: …. TD anexă: …”), fiecare cu cablul („alimentat 5x4 15m”), lungimea și circuitele lui
+   („4 circuite prize”, „2 AC 3,5 kW”, „flex 2,2 kW”); cu TE la etaj / mansardă, TG-ul casei ia setul parterului.
+3. **Nu sunt plecări:** P instalată / Pi (informativă când există Pa / P absorbită — Pa câștigă; în PV „Puterea
+   instalată a CEF: X kW.” e sumă de control); „DNO cut-out” = BMPT; „TT și TC” = transformatoare de măsură (nu schema
+   TT); „celulă întreruptor în vid / 50/51” → `celula_trafo: intreruptor`; „(1+1)”, „rezervă” → `rezerva`, aceeași
+   pornire ca unitatea activă; „Consumatori principali:” = lista plecărilor; compensare fixă trafo = notă, plecarea =
+   bateria automată.
+4. **Cifre:** „12 și 12 kW”, „10, 10 și 8 kW” = fiecare cu unitatea; „15 sau 25” (fără unitate) → întrebare; „N baterii
+   (X kWh fiecare)” = N × X; „P kW termic (Q kW electric)” = Q; „am doar 11 kW tri”; „limitate la 100 kW” lângă
+   invertoare = Pmax per invertor (notă), nu `limitare_injectie_kW`; invertor tri + mono → rețea tri, monofazatul pe
+   faza declarată (`invertoare[].faza`), Iac verificat pe fază; „metering at MV side” → `masura: MT`; codul „12K” din
+   model nu se rescrie în kW.
+5. **Lungimi:** „VE 3,7 kW, 60 m”, „la 30 m de tablou”, „Distanța până la saună 25 m” → `circuite[].L_m`, nu coloana;
+   „ap. la bloc” = apartament.
+6. **GE / backup:** GE la casă cu comutare manuală (și „pe tot tabloul”) = `ge_rezerva`; „pe circuitele de bază (…)”
+   → `ge_rezerva.circuite` (cheie nouă); hibrid + EPS / backup + Pa ≤ 30 kW = prosumator cu `backup.circuite`; „UPS /
+   EPS, fără panouri” = locuință + circuit UPS + întrebare; invertor „existent” → `invertoare[].existent` (cheie nouă).
+7. **Mărire:** „branșament mono 4 kW, vrem să trecem pe trifazat 15 kW” = mărire mono → tri 15 kW.
+8. **Siguranță:** tablou mixt → consumatorii de siguranță `siguranta: true`, ceilalți `siguranta: false` explicit
+   (rampe, iluminat normal, CTA); „stație de pompare PSI / grup de pompare incendiu” pe GE + ATS → `siguranta_tablou`,
+   „N pompe (1A+1R)” → `n: "1+1"`; „TE lift pompieri 18 kW” = plecarea lui; cablu „NHXH FE180 E90 4x10 la 70 m” pe
+   plecare (`cablu.tip_cablu`, `rezistent_foc`, `L_m`); GE + ATS: „Normali: …” → `consumatori[].vital: false`.
+9. **Contradicții întrebate:** Q1 impus < Ib din plecările în kW (I08); BMPM + tablou trifazat (I08); Q branșament >
+   1,6 × Q uzual pentru Pa (întrebare); sursă nedeclarată a unui tablou ≥ 100 kW fără P / Q1 declarat → întrebare
+   (sub — „Am presupus” BMPT); racord CEF nedeclarat → întrebare peste 100 kW, avertisment sub; BESS fără PCS →
+   întrebare; IT medical → I12; magazin / farmacie + TT ≠ locuință; cabluri „2 cabluri CYABY 3x185+95 în paralel” →
+   `cablu.n_paralel`, `cablu.tip_cablu` (+ `izolatie: XLPE` la N2XY / NA2XY) — verificat până în motor (Q1_C1).
+10. **Teste / reverificare:** `tests/test_interpretor_r9.py` (fiecare frază P0/P1 r9, amprenta frazelor corecte, plasa
+   pe tot r9, teste de clasă pe formulări noi), `teste/r9/reverificare.py` (r5…r9). r9 (208 fraze, verificări C/P/G):
+   înainte 145/41/22 → după 208/0/0, P0/P1 69/69; r5–r8 fără regresii.
+
 ### F.8 Răspunsul
 Totdeauna conține:
 1. „Am înțeles:” cu tipul schemei, puterile, numărul și lista plecărilor, lungimile și cartușul;

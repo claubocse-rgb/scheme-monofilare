@@ -52,6 +52,7 @@ INVENTAR = {
 "v": [],
 "tipuri": [
 "bransament",
+"cef",
 "locuinta",
 "prosumator"
 ]
@@ -175,6 +176,7 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
+"cef",
 "prosumator"
 ]
 },
@@ -440,6 +442,17 @@ INVENTAR = {
 "locuinta"
 ]
 },
+"alimentare.cablu.tip_cablu": {
+"t": [
+"string"
+],
+"v": [
+"CYY-F"
+],
+"tipuri": [
+"locuinta"
+]
+},
 "alimentare.tip": {
 "t": [
 "string"
@@ -468,7 +481,8 @@ INVENTAR = {
 "v": [
 "Centrală termică",
 "Frigider",
-"Iluminat"
+"Iluminat",
+"Pompă apă"
 ],
 "tipuri": [
 "prosumator"
@@ -481,7 +495,8 @@ INVENTAR = {
 "v": [
 "alt_circuit",
 "centrala_termica",
-"iluminat"
+"iluminat",
+"pompa_apa"
 ],
 "tipuri": [
 "prosumator"
@@ -503,6 +518,7 @@ INVENTAR = {
 "v": [
 "LUNA2000",
 "LUNA2000-10-S0",
+"LUNA2000-15-S0",
 "LUNA2000-5-S0",
 "US5000"
 ],
@@ -588,7 +604,8 @@ INVENTAR = {
 "SBH"
 ],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "bess.n_module": {
@@ -649,7 +666,8 @@ INVENTAR = {
 "Sungrow"
 ],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "bmpt_fortat": {
@@ -740,6 +758,19 @@ INVENTAR = {
 "tablou"
 ]
 },
+"cablu.tip_cablu": {
+"t": [
+"string"
+],
+"v": [
+"CYABY",
+"CYY-F",
+"NA2XY"
+],
+"tipuri": [
+"tablou"
+]
+},
 "cablu_C0.N_fortat": {
 "t": [
 "number"
@@ -790,6 +821,49 @@ INVENTAR = {
 "cef"
 ]
 },
+"cablu_C0.n_paralel": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"cef"
+]
+},
+"cablu_C0.tip_cablu": {
+"t": [
+"string"
+],
+"v": [
+"ACYABY",
+"CYABY",
+"NA2XY",
+"NYY-J"
+],
+"tipuri": [
+"cef"
+]
+},
+"cablu_inv.S_fortat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"cef"
+]
+},
+"cablu_inv.material": {
+"t": [
+"string"
+],
+"v": [
+"Cu"
+],
+"tipuri": [
+"cef"
+]
+},
 "cablu_inv.metoda": {
 "t": [
 "string"
@@ -800,6 +874,17 @@ INVENTAR = {
 "tipuri": [
 "cef",
 "prosumator"
+]
+},
+"cablu_inv.tip_cablu": {
+"t": [
+"string"
+],
+"v": [
+"NYY-J"
+],
+"tipuri": [
+"cef"
 ]
 },
 "cablu_pcs.izolatie": {
@@ -977,6 +1062,7 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
+"pt",
 "tablou"
 ]
 },
@@ -1067,6 +1153,7 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"directa",
 "stea_triunghi"
 ],
 "tipuri": [
@@ -1083,6 +1170,15 @@ INVENTAR = {
 ]
 },
 "consumatori[].siguranta": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"ge_ats"
+]
+},
+"consumatori[].vital": {
 "t": [
 "boolean"
 ],
@@ -1179,6 +1275,15 @@ INVENTAR = {
 "v": [],
 "tipuri": []
 },
+"invertoare[].existent": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"prosumator"
+]
+},
 "invertoare[].faza": {
 "t": [
 "string"
@@ -1189,6 +1294,7 @@ INVENTAR = {
 "L3"
 ],
 "tipuri": [
+"cef",
 "prosumator"
 ]
 },
@@ -1295,7 +1401,7 @@ INVENTAR = {
 "SG50CX",
 "SH10RT",
 "SH25T",
-"SUN-10 kW-SG04LP3-EU",
+"SUN-10K-SG04LP3-EU",
 "SUN2000 10KTL M1",
 "SUN2000-10KTL",
 "SUN2000-10KTL-M1",
@@ -1605,6 +1711,29 @@ INVENTAR = {
 "pt"
 ]
 },
+"plecari[].cablu.rezistent_foc": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": [
+"tablou"
+]
+},
+"plecari[].cablu.tip_cablu": {
+"t": [
+"string"
+],
+"v": [
+"CYABY",
+"CYY",
+"CYY-F",
+"NHXH"
+],
+"tipuri": [
+"tablou"
+]
+},
 "plecari[].copii": {
 "t": [
 "array"
@@ -1670,6 +1799,8 @@ INVENTAR = {
 ],
 "v": [
 "Atelier",
+"Benzi 1",
+"Benzi 2",
 "Birouri",
 "Compresor",
 "Cuptor",
@@ -1682,9 +1813,7 @@ INVENTAR = {
 "Iluminat hală",
 "Iluminat parcare",
 "Moară",
-"Motoare 1",
-"Motoare 2",
-"Motoare 3"
+"Motoare 1"
 ],
 "tipuri": [
 "pt",
@@ -1702,6 +1831,7 @@ INVENTAR = {
 "stea_triunghi"
 ],
 "tipuri": [
+"pt",
 "tablou"
 ]
 },
@@ -1750,7 +1880,6 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"pt",
 "tablou"
 ]
 },
@@ -2020,8 +2149,12 @@ INVENTAR = {
 "t": [
 "string"
 ],
-"v": [],
-"tipuri": []
+"v": [
+"Cu"
+],
+"tipuri": [
+"locuinta"
+]
 },
 "tablouri_secundare[].cablu.n_fortat": {
 "t": [
@@ -2053,6 +2186,7 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"Aer condiționat",
 "Aer condiționat 1",
 "Aer condiționat 2",
 "Compresor",
@@ -2065,7 +2199,9 @@ INVENTAR = {
 "Prize 2",
 "Prize 3",
 "Prize 4",
-"Strung"
+"Strung",
+"Ușă garaj",
+"prize 400V"
 ],
 "tipuri": [
 "locuinta"
@@ -2079,6 +2215,8 @@ INVENTAR = {
 "aer_conditionat",
 "iluminat",
 "motor",
+"plita",
+"poarta_automata",
 "prize"
 ],
 "tipuri": [
@@ -2115,6 +2253,7 @@ INVENTAR = {
 "TD Anexa",
 "TD Atelier",
 "TD Garaj",
+"TD Mansarda",
 "TE Etaj"
 ],
 "tipuri": [
@@ -2151,8 +2290,12 @@ INVENTAR = {
 "v": [
 "Statie hidranti",
 "TE desfumare",
+"TE hidranti",
+"TE lift pompieri",
 "Tablou desfumare",
+"Tablou iluminat de siguranta",
 "Tablou pompe incendiu",
+"statie pompare PSI",
 "tablou TDSI"
 ],
 "tipuri": [

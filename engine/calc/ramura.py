@@ -114,11 +114,25 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
     receptor = r.get("receptor", "forta")
     rol = r.get("rol", "final")
     cin = dict(r.get("cablu") or {})
-    if cin.get("n_fortat") is None and cin.get("S_fortat") is not None:
-        # r7 (#7, S9): cablul impus „2 cabluri în paralel” — `n_paralel` (sau `n`) pe dicționarul cablului = n_fortat
+    if cin.get("n_fortat") is None and (cin.get("S_fortat") is not None or cin.get("n_paralel") is not None):
+        # r7 (#7, S9): cablul impus „2 cabluri în paralel” — `n_paralel` (sau `n`) pe dicționarul cablului = n_fortat;
+        # r8b: și fără secțiune impusă (`n_paralel` singur fixează numărul de cabluri, S se alege la acel n)
         n_al = cin.get("n_paralel", cin.get("n"))
         if n_al is not None and not isinstance(n_al, bool) and float(n_al).is_integer() and n_al >= 1:
             cin["n_fortat"] = int(n_al)
+    tip_impus = None
+    if cin.get("tip_cablu"):
+        # r8b (industrial #25): denumirea impusă („NA2XY”) dă materialul și izolația (XLPE) — înainte izolația lipsea
+        # și se presupunea PVC: 2 × NA2XY 4x240 ieșea cu Iz' = 2·218·0,85 = 370 A în loc de 2·253·0,85 = 430 A
+        mi = norme.material_izolatie_din_denumire(cin["tip_cablu"])
+        if mi is not None:
+            tip_impus = str(cin["tip_cablu"]).upper().strip()
+            if cin.get("material") is None or cin.get("material_implicit"):
+                cin["material"], cin["material_implicit"] = mi[0], False
+            if cin.get("izolatie") is None:
+                cin["izolatie"] = mi[1]
+            if (cin["material"], cin["izolatie"]) != mi:
+                tip_impus = None                          # contradicție denumire / câmpuri explicite: câmpurile câștigă
     are_aval = bool(r.get("are_aval", False))
     metoda_explicita = cin.get("metoda") is not None and not cin.get("metoda_implicit")
     invertor = receptor in ("invertor", "pcs")
@@ -538,7 +552,17 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
             S = float(S_f)
             st = {"c": c, "n": n, "S": S, "n0": n, "S0": S, "schimb": None, "marit_du": False}
         else:
-            st = solutie(c)
+            st = None
+            n_f = cin.get("n_fortat")
+            if n_f is not None and int(n_f) > 1:
+                # r8b: numărul de cabluri în paralel impus fără secțiune („2 cabluri în paralel”) — cea mai mică S care
+                # satisface Iz_min la n impus (n·Iz·kgrup(n)), apoi ΔU; dacă nu există, căutarea normală
+                S_n = cb.cea_mai_mica_s(c, int(n_f), iz_min, smin(c["material"]))
+                if S_n is not None:
+                    n1, S1, marit = creste_du(c, int(n_f), S_n)
+                    st = {"c": c, "n": n1, "S": S1, "n0": int(n_f), "S0": S_n, "schimb": None, "marit_du": marit}
+            if st is None:
+                st = solutie(c)
             if st is None:
                 emite(j, "V01", BLOCANT, obiect, Iz_min=iz_min)
                 return _blocat(ib)
@@ -586,6 +610,17 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
             emite(j, "V02", BLOCANT, obiect, Ip=Ip, Iz=izp)
         if gt(I2, 1.45 * izp):
             emite(j, "V03", BLOCANT, obiect, I2=I2, lim=1.45 * izp)
+        if (gt(Ip, izp) or gt(I2, 1.45 * izp)) and cin.get("izolatie") is None and c["izolatie"] == "PVC":
+            # r8b: cablul impus fără izolație declarată se verifică conservator ca PVC; dacă e XLPE (N2XY, NA2XY…)
+            # Iz' e mai mare — spunem cât, ca proiectantul să precizeze izolația în loc să mărească inutil cablul
+            try:
+                _, _, izx = cb.iz_corectat(dict(c, izolatie="XLPE"), n, S)
+            except cb.InAfaraTabelelor:
+                izx = None
+            if izx is not None and not gt(Ip, izx) and not gt(I2, 1.45 * izx):
+                j.presupune(f"cablul impus {n}×{fmt_ro(S)} mm² {c['material']} verificat ca PVC (izolație nedeclarată); "
+                            f"dacă este XLPE (N2XY / NA2XY) Iz' = {fmt_ro(izx)} A ≥ Ip = {fmt_ro(Ip)} A — precizați "
+                            f"izolația sau denumirea cablului", obiect)
 
     mat, izl = c["material"], c["izolatie"]
     N_f, PE_f, PE_loc_f = cin.get("N_fortat"), cin.get("PE_fortat"), cin.get("PE_loc")
@@ -669,10 +704,12 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
             need_f = ik3o * 1000.0 * math.sqrt(t3) / norme.K_FAZA[(mat, izl)]
             j.pas(f"{obiect}: termic fază la Ik3max (t = {fmt_ro(t3)} s): n·S ≥ {fmt_ro(need_f, 1)} mm²")
             if lt(ev["n"] * ev["S"], need_f):
-                if S_f is not None:
-                    v35 = ("B", need_f)
-                elif ctx.get("ik3_implicit"):
+                if ctx.get("ik3_implicit"):
+                    # r9 (fotovoltaic #25): Ik3max PRESUPUS (implicit 25 kA) nu blochează nici secțiunea impusă —
+                    # AVERTISMENT „introdu Ik3 real”; cu Ik3 declarat, secțiunea impusă insuficientă rămâne BLOCANT
                     v35 = ("AV", need_f)
+                elif S_f is not None:
+                    v35 = ("B", need_f)
                 else:
                     S3 = next((s for s in cb.sectiuni(c) if ge(ev["n"] * s, need_f)), None)
                     if S3 is None:
@@ -726,6 +763,8 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
                 ev = alt
                 n1, n3, t1 = necesar_pe(ev)
                 v36 = ("INFO_marit_cablu", max(n1, n3))
+            elif f3 and not f1 and ctx.get("ik3_implicit") and S_f is not None and PE_f is None:
+                v36 = ("AV", n3)        # r9 (#25): doar Ik3max PRESUPUS depășit, pe secțiunea impusă → AVERTISMENT
             elif (S_f is not None and not r.get("_pe_liber")) or PE_f is not None or ev["loc"] == "PEN":
                 v36 = ("B", max(n1, n3))
             elif f3 and not f1 and ctx.get("ik3_implicit"):
@@ -896,15 +935,19 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         prot_out["intrerupator_motor"] = True
     if prot.get("Icu_fortat"):
         prot_out["Icu_fortat"] = True
+    tip_txt = tip_impus if tip_impus and not cb.monopolar(c) and norme.material_izolatie_din_denumire(tip_impus) == \
+        (mat, izl) else None
     rez = {"obiect": obiect, "Ib_A": ib, "Ip_min_A": ip_min, "protectie": prot_out, "I2_A": I2, "Iz_min_A": iz_min,
            "material": mat, "izolatie": izl, "metoda": c["metoda"], "n_paralel": n, "S_faza_mm2": S,
            "S_N_mm2": ev["N"], "S_PE_mm2": ev["s_pe"], "PE": ev["loc"], "Iz_tabel_A": ev["Iz_tab"],
            "k_total": ev["k"], "Iz_corectat_A": ev["Izp"],
            "cablu": text_cablu(mat, izl, c["metoda"], n, S, ev["N"], ev["s_pe"], ev["loc"], retea,
-                               monopolar=cb.monopolar(c)),
+                               monopolar=cb.monopolar(c), tip=tip_txt),
            "L_m": L, "dU_ramura_pct": ev["dU_r"], "dU_cumulat_pct": ev["dU_c"], "dU_limita_pct": lim,
            "Ik3max_origine_kA": ik3o, "Ik3max_capat_kA": ev["Ik3c"], "Ik1min_capat_A": ev["Ik1"],
            "Ia_A": ia_v, "t_deconectare_s": t_cer, "retea": retea, "receptor": receptor}
+    if tip_txt:
+        rez["tip_cablu"] = tip_txt
     if cb.monopolar(c):
         rez["monopolar"] = True
     if plafon[0] and gt(ev["dU_c"], lim):

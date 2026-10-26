@@ -1,0 +1,623 @@
+[
+ {
+  "id": 1,
+  "cat": "email",
+  "text": "Bună ziua,\n\nVă scriu pentru casa din Paleu. Branșamentul e trifazat, putere aprobată 16 kW conform avizului, schema TN-C-S. În casă avem: plită inducție 7,2 kW (trifazată), cuptor 3 kW, mașină de spălat vase 2 kW, două aparate de aer condiționat de câte 2,6 kW, boiler 2 kW. Garajul e lipit de casă.\n\nMulțumesc,\nAndrei",
+  "asteptat": "tri 16 kW TN-C-S; plită 3F, cuptor, MSV, 2 AC, boiler; fără întrebări",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "tri 16 kW, 10 circuite (plită 3F, cuptor, MSV, 2 AC, boiler), QB C25 (Ib 24,3 A); „Paleu” apare în lista „dedicate”"
+ },
+ {
+  "id": 2,
+  "cat": "email",
+  "text": "Salut! Suntem o familie tânără și ne-am mutat într-un apartament de 3 camere, bloc din 2008. Avem contract monofazat de 6 kW. Vrem tablou nou cu: priză separată pt uscător (2,5 kW), plită 2 zone 3,5 kW, boiler 1,5 kW și 1 AC. Nu știm dacă e TN-S sau TN-C-S, vă rog să ne spuneți.",
+  "asteptat": "mono 6 kW apartament; schema de pământ necunoscută → întrebare sau presupunere TN-C-S declarată; uscător, plită, boiler, AC",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "„contract monofazat de 6 kW” neconsumat → Pa presupusă 6,8 kW din bilanț; nesiguranța TN-S/TN-C-S nu e întrebată (TN-C-S tacit)"
+ },
+ {
+  "id": 3,
+  "cat": "email",
+  "text": "Stimate domn inginer, atașat aveți lista. Casă P+1, rețea trifazată, Pa = 22 kW, TN-C-S. Parter: bucătărie (plită 3F 8 kW), centrală gaz, 6 circuite prize, 3 iluminat. Etaj: tablou separat TE-etaj alimentat cu CYY-F 5x6 de 18 m, cu 4 circuite prize, 2 iluminat, 2 AC 3,5 kW. Vă mulțumesc.",
+  "asteptat": "tri 22 kW; TG parter + TE etaj 5×6 18 m cu 4 prize, 2 ilum, 2 AC; cantitățile respectate",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "TE-etaj necreat (întrebat); circuitele etajului contopite în TG cu nume dublate (Prize 1…4 ×2, Iluminat 1–2 ×2); 5×6 18 m pus pe coloană → BLOCANT V02/V03"
+ },
+ {
+  "id": 4,
+  "cat": "email",
+  "text": "Buna ziua, avem o casa veche in Tileagd, bransament monofazat 4 kW, vrem sa trecem pe trifazat 15 kW pentru o pompa de caldura aer-apa de 9 kW electric (trifazata). Restul consumatorilor: frigider, masina de spalat, cuptor 2,5 kW. Schema TN-C-S.",
+  "asteptat": "mărire mono 4 → tri 15 kW (nu contradicție); PC 9 kW 3F; cuptor",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "mărire mono 4 → tri 15: Pa = 4 kW (vechea), întreabă „mono sau tri?”; „trifazat 15 kW” la neconsumat (clasa r8 #6 nereparată pe această formulare)"
+ },
+ {
+  "id": 5,
+  "cat": "email",
+  "text": "Hello,\nI'm renovating a flat in Cluj. Single-phase, 7 kW contracted, TN-C-S. I need circuits for: induction hob 3.7 kW, oven 2.5 kW, washing machine, dishwasher, 2 air conditioners, lighting and sockets. Thanks, Tom",
+  "asteptat": "en: apartament mono 7 kW TN-C-S; plită, cuptor, MSP, MSV, 2 AC",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "engleză: apartament mono 7 kW TN-C-S, plită, cuptor, MSP, MSV, 2 AC (r8: tip nedeterminat)"
+ },
+ {
+  "id": 6,
+  "cat": "email",
+  "text": "Bună seara. Pentru avizul de prosumator: avem casă cu branșament trifazat, putere aprobată consum 11 kW, TN-C-S. Montăm invertor Huawei SUN2000-10KTL-M1 (10 kW, trifazat), 22 panouri de 455 W. Distanța invertor - tablou 8 m. Vă rog schema.",
+  "asteptat": "prosumator tri 10 kW, PA 11 kW, PI integrată; 10KTL = 10 kW; L 8 m",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "prosumator Huawei 10KTL = 10 kW, Pa 11, PI integrată, L 8 m, 10,01 kWp"
+ },
+ {
+  "id": 7,
+  "cat": "email",
+  "text": "Buna ziua. In ATR scrie: putere aprobata 9 kW monofazat. Noi vrem totusi sa montam o statie de incarcare 11 kW trifazata pentru masina noua. Se poate? Restul casei e normal, TN-C-S.",
+  "asteptat": "contradicție VE 11 kW 3F pe mono 9 kW → întrebare/propunere mărire; nu desenează tăcut",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "VE 11 kW 3F pe mono 9 → întreabă dacă e trifazat; putea propune și varianta VE 7,4 kW 1F / mărire"
+ },
+ {
+  "id": 8,
+  "cat": "email",
+  "text": "Salutare, vă scriu de la service-ul nostru. Clientul are casă tri 25 kW TT (RA măsurat 12 ohmi), vrea saună 9 kW 400V, jacuzzi exterior 3 kW și o pompă de piscină de 1,1 kW. Distanța până la saună 25 m.",
+  "asteptat": "tri 25 kW TT RA 12 Ω; saună 9 kW 3F (L 25 m), jacuzzi, pompă piscină cu DDR 30 mA",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "saună desenată de DOUĂ ori (15 m și 25 m); „casă tri 25 kW” neconsumat → Pa presupusă 22,4; jacuzzi sub DDR comun cu prizele"
+ },
+ {
+  "id": 9,
+  "cat": "whatsapp",
+  "text": "salut sefu, ap 2 cam, 1f, 5kw, tn-c-s, plita 3.5 si boiler",
+  "asteptat": "apartament mono 5 kW; plită 3,5, boiler",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "apartament mono 5 kW; plită 3,5 kW (15 A) pe C32/3×6 > QB C25 (V40) — C20/3×4 ajungea"
+ },
+ {
+  "id": 10,
+  "cat": "whatsapp",
+  "text": "casa tri 18k tncs pc 8k",
+  "asteptat": "tri 18 kW; PC 8 kW 3F; „18k”/„8k” = kW",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "„18k” / „8k” înțelese (r8: pierdute)"
+ },
+ {
+  "id": 11,
+  "cat": "whatsapp",
+  "text": "Monofazic 32A, casa, tt cu 2 tarusi",
+  "asteptat": "mono 32 A ≈ 7,4 kW TT; casă",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "mono Q 32 A TT, RA 4 Ω presupus semnalat; Pa din bilanț 5,4 în loc de 32 A·230 V ≈ 7,4 kW"
+ },
+ {
+  "id": 12,
+  "cat": "whatsapp",
+  "text": "tri 3x32A casa tncs",
+  "asteptat": "tri 3×32 A ≈ 22 kW; casă",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "tri 3×32 A → Q 32 A, dar Pa presupusă 5,4 kW din bilanț (≈ 21 kW din Q)"
+ },
+ {
+  "id": 13,
+  "cat": "whatsapp",
+  "text": "boiler 2kw ac 3kw plita 7kw. casa. tn-c-s. puterea aprobata 12kw trifazat",
+  "asteptat": "tri 12 kW; Pa = 12 (nu 2/3/7); boiler, AC, plită",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "Pa = 12 kW (nu 2/3/7), QB C20"
+ },
+ {
+  "id": 14,
+  "cat": "whatsapp",
+  "text": "vreau statie ve 22kw dar am doar 11 kw tri tt",
+  "asteptat": "VE 22 kW > Pa 11 kW → întrebare/limitare 11 kW",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "„am doar 11 kw tri tt” → tri și 11 kW pierdute, întreabă rețeaua; VE 22 > Pa 11 neabordat"
+ },
+ {
+  "id": 15,
+  "cat": "whatsapp",
+  "text": "nu mai stiu daca e mono sau tri, cred ca tri, casa 10kw",
+  "asteptat": "rețea incertă → întrebare (nu presupune tri)",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "„cred că tri” → întreabă (bine) dar planșa provizorie e deja trifazată"
+ },
+ {
+  "id": 16,
+  "cat": "whatsapp",
+  "text": "AC 12000 BTU x3, apartament mono 6kw tncs",
+  "asteptat": "mono 6 kW; 3 circuite AC (~1,1 kW el. fiecare)",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "3 circuite AC din „12000 BTU x3”; curent tipic 12,1 A (≈ 2,6 kW) supraestimat (≈ 1,1 kW el.)"
+ },
+ {
+  "id": 17,
+  "cat": "whatsapp",
+  "text": "casa monofazata 8 kw, tncs, + garaj cu tablou separat (prize, iluminat, usa garaj), cablu 3x4 20m",
+  "asteptat": "mono 8 kW; TD garaj mono 3×4 20 m cu prize, ilum, ușă — dimensionare corectă",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "TD Garaj mono 3×4 20 m, C16 — P0 r8 (3×240) REPARAT; dar „prize” din garaj pierdute tăcut"
+ },
+ {
+  "id": 18,
+  "cat": "whatsapp",
+  "text": "salut! panouri 8 kw tri, pa 10, casa, tt ra 9 ohm",
+  "asteptat": "prosumator tri 8 kW, PA 10 kW TT RA 9 Ω",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "prosumator tri 8 kW, Pa 10, TT RA 9"
+ },
+ {
+  "id": 19,
+  "cat": "whatsapp",
+  "text": "pv 3.6 kw mono pe ap la bloc?? pa 5",
+  "asteptat": "prosumator mono 3,6 kW la apartament, PA 5",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "prosumator mono 3,6 kW pe apartament, V43 selectivitate DDR semnalată"
+ },
+ {
+  "id": 20,
+  "cat": "whatsapp",
+  "text": "29kw invertor tri, pa 30 tncs casa",
+  "asteptat": "29 > 27 → releu PI extern în TD",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "29 kW → TD-PV cu PI externă pe BD QG; DDR 30 mA pe 29 kW"
+ },
+ {
+  "id": 21,
+  "cat": "whatsapp",
+  "text": "am 2 invertoare: 12 si 12 kw, tri, pa 25 kw",
+  "asteptat": "Σ 24 ≤ 27 → PI integrată; fără releu extern",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "„2 invertoare: 12 și 12 kW” → 2 × 6 kW (Σ 12), întrebare cu varianta greșită; Σ real 24 kW"
+ },
+ {
+  "id": 22,
+  "cat": "whatsapp",
+  "text": "3 invertoare de 10kw pe casa tri pa 32 tncs",
+  "asteptat": "Σ 30 > 27 → releu PI extern",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "3 × 10 = 30 > 27 → PI externă, QG C50"
+ },
+ {
+  "id": 23,
+  "cat": "whatsapp",
+  "text": "casa tri 20 kw tncs, generator 10 kva cu ats pe circuitele de baza (centrala, frigider, iluminat)",
+  "asteptat": "casă 20 kW + GE 10 kVA cu ATS pe circuite rezervate; casa nu dispare",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "GE 10 kVA + ATS desenat corect cu casa (progres), dar comutat pe TOATĂ bara în loc de circuitele de bază cerute; GE 10 kVA pe Pa 20 fără avertisment"
+ },
+ {
+  "id": 24,
+  "cat": "excel",
+  "text": "Consumator\tP (kW)\tFaze\nPompa caldura\t9\t3\nBoiler\t2\t1\nPlita\t7,5\t3\nAC dormitor\t1,2\t1\nCasa trifazata, Pa 20 kW, TN-C-S",
+  "asteptat": "tri 20 kW; PC 9 3F, boiler, plită 7,5 3F, AC; Pa = 20 (nu 9)",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "tabel cu tab: Pa = 20 (P0 r8 #17 reparat), faze din tabel respectate"
+ },
+ {
+  "id": 25,
+  "cat": "excel",
+  "text": "Nr;Circuit;Putere\n1;Iluminat;0,8 kW\n2;Prize living;2 kW\n3;Plita;6 kW\n4;Cuptor;3 kW\nRetea;monofazat;9 kW",
+  "asteptat": "mono 9 kW; 4 circuite; Pa = 9 (nu 0,8)",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "CSV „;”: Pa 9 (nu 0,8), plită 6 kW C32 3×6; Q 40 A < Ib 41,2 A (doar avertisment)"
+ },
+ {
+  "id": 26,
+  "cat": "excel",
+  "text": "Circuit | Putere | Lungime\nSauna | 8 kW 3F | 22 m\nPiscina pompa | 1,5 kW | 30 m\nIluminat gradina | 0,4 kW | 40 m\n---\nbransament: 3F, 30 kW, TT, Ra=7 ohm",
+  "asteptat": "tri 30 kW TT RA 7 Ω; saună 8 kW 3F 22 m; pompă 30 m; ilum. grădină 40 m",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "tabel „|” cu lungimi: saună 22 m, pompă 30 m, ilum. grădină 40 m; TT RA 7"
+ },
+ {
+  "id": 27,
+  "cat": "excel",
+  "text": "tip,cantitate,putere unitara\npriza,8,\niluminat,4,\nAC,2,2.5kW\nboiler,1,2kW\nlocuinta mono 7kW tncs",
+  "asteptat": "mono 7 kW; 8 prize / 4 ilum (grupate în circuite rezonabile), 2 AC, boiler; fără plită fantomă",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "„priza,8 / iluminat,4” → 8 + 4 circuite (cantitatea de aparate citită ca nr. de circuite); fără plită fantomă"
+ },
+ {
+  "id": 28,
+  "cat": "excel",
+  "text": "Denumire\tP\nIncarcator VE\t11 kW\nPompa de caldura\t6 kW\nCasa\t3F 16 kW TN-C-S",
+  "asteptat": "tri 16 kW; VE 11 kW 3F, PC 6 kW; Pa 16",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "VE 11 kW 3F + PC 6 kW pe 16 kW; avertisment Pc > Pa; nicio sugestie de management de sarcină"
+ },
+ {
+  "id": 29,
+  "cat": "excel",
+  "text": "| Receptor | kW |\n|---|---|\n| Plita | 7 |\n| Cuptor | 3,5 |\n| Boiler | 2 |\n| AC | 2,5 |\n\nap. trifazat 11 kW, tn-c-s",
+  "asteptat": "apartament tri 11 kW; tabel markdown; Pa = 11",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "tabel markdown, „ap.” recunoscut ca apartament, Pa 11"
+ },
+ {
+  "id": 30,
+  "cat": "atr",
+  "text": "AVIZ TEHNIC DE RACORDARE nr. 1102/2026\nUtilizator: casa de locuit\nPutere aprobata: 13 kW\nTensiune: 0,4 kV, trifazat\nGrup de masura: BMPT montat la limita de proprietate\nCurent de scurtcircuit: Ik3 = 5 kA\nSchema de legare la pamant: TN-C-S",
+  "asteptat": "tri 13 kW, Ik 5 kA (nu Q 5000 A), BMPT la limită",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "ATR: Ik3 5 kA folosit corect (r8: Q 4200 A), Pa 13, QB C20"
+ },
+ {
+  "id": 31,
+  "cat": "atr",
+  "text": "ATR – loc de consum si producere. Pa consum: 8 kW; Pa producere: 8 kW; monofazat 230V; schema TT, Rp <= 4 ohm; invertor 6 kW",
+  "asteptat": "prosumator mono 6 kW, PA 8, TT RA ≤ 4 Ω; fără întrebări (nu CEF)",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "ATR prosumator mono 6 kW TT (r8: CEF + întrebare), V71 > 3,68 kW"
+ },
+ {
+  "id": 32,
+  "cat": "atr",
+  "text": "Extras ATR: Pi = 18 kW, Pa = 14 kW, racord trifazat subteran, BMPTd, protectie la bransament 3x25A, TN-C-S, coloana Cu 5x10 35m",
+  "asteptat": "tri Pa 14 kW; Q 3×25 A declarat respectat; coloană 5×10 35 m",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "Pi 18 kW luat drept putere de calcul, Pa 14 kW neconsumat → Ib 28,9 > Q 25 A, BLOCANT"
+ },
+ {
+  "id": 33,
+  "cat": "atr",
+  "text": "ATR: Puterea maxima simultan absorbita = 40 kW; Puterea maxima simultan evacuata = 35 kW; 0,4 kV; TN-C-S. Instalatie de producere: 2 invertoare x 17,5 kW",
+  "asteptat": "prosumator tri 35 kW > 27 → TD cu releu PI; PA 40",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "ATR 2 × 17,5 = 35 kW → PI externă; Pa absorbită 40 nefigurată"
+ },
+ {
+  "id": 34,
+  "cat": "atr",
+  "text": "Certificat de racordare: monofazat, Pa 6,9 kW, intrerupator bransament 1x32A, TN-C-S, locuinta",
+  "asteptat": "mono 6,9 kW; Q 32 A declarat",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "certificat de racordare mono 6,9 kW, Q 32 A, RCBO 300 mA S tip A"
+ },
+ {
+  "id": 35,
+  "cat": "tablou",
+  "text": "casa tri 24 kw tncs. TG la parter. TD mansarda: 3 prize, 2 iluminat, 1 AC, alimentat 5x4 15m. TD anexa (atelier): prize 400V 16A, flex 2,2 kW, alimentat 5x6 40m",
+  "asteptat": "TG + 2 TD (mansardă 5×4 15 m, atelier 5×6 40 m) cu circuitele lor",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "TG + 2 TD → tip „tablou” cu Q1 16 A (din „prize 400V 16A”), TD atelier și „flex 2,2 kW” pierdute, BLOCANT"
+ },
+ {
+  "id": 36,
+  "cat": "tablou",
+  "text": "tablou secundar monofazat in foisor: priza gratar 2kw, iluminat, priza exterioara; din TG casa mono 7kw tncs, cablu 3x2.5 25m",
+  "asteptat": "TD foișor mono 3×2,5 25 m — de semnalat că 2 kW + prize pe 3×2,5 e ok (C16); nu 3×240",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "TD foișor → tip tablou cu P = 7 kW (Pa casei), „3x2.5” citit ca Al → BLOCANT V13; iluminat și priză ext. neconsumate"
+ },
+ {
+  "id": 37,
+  "cat": "tablou",
+  "text": "apartament mono 6 kw, tablou TE in hol + tablou mic in baie pt incalzire pardoseala 2kw",
+  "asteptat": "TE + TD baie (sau circuit dedicat); mono 6 kW",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "tabloul din baie întrebat; încălzire 2 kW circuit separat"
+ },
+ {
+  "id": 38,
+  "cat": "pc",
+  "text": "pompa de caldura 16 kW termic (consum max 5 kW electric) trifazata, casa tri 15 kW tt",
+  "asteptat": "PC cu P electrică 5 kW 3F (nu 16)",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "„16 kW termic (consum max 5 kW electric)” → PC 16 kW electric, întrebare de mărire absurdă (r8 #40 nereparat)"
+ },
+ {
+  "id": 39,
+  "cat": "pc",
+  "text": "PC aer-apa monobloc 8kw cu rezistenta de backup 6kw, casa mono 10 kw tncs",
+  "asteptat": "PC + rezistență backup 6 kW: Σ 14 > 10 sau circuit separat; mono → avertisment",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "întreabă corect mono 10 kW > 40 A; nu pune la îndoială PC 8 kW mono (36,6 A pe C40) + rezistență 6 kW = 14 > 10"
+ },
+ {
+  "id": 40,
+  "cat": "pc",
+  "text": "heat pump 3-phase 10kW electrical, house 3-phase 20kW, TN-C-S, plus EV charger 11kW",
+  "asteptat": "en: tri 20 kW; PC 10 kW 3F, VE 11 kW 3F",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "engleză: tri 20 kW, PC 10 kW 3F, VE 11 kW 3F; Σ 21 > 20 doar avertisment"
+ },
+ {
+  "id": 41,
+  "cat": "ac",
+  "text": "casa mono 9kw tncs, 4 aparate AC de 1 kW fiecare",
+  "asteptat": "mono 9 kW; 4 circuite AC 1 kW",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "4 AC × 1 kW, câte un circuit"
+ },
+ {
+  "id": 42,
+  "cat": "ve",
+  "text": "wallbox 7,4 kW monofazat la casa tri 16 kw tn-c-s, la 30 m de tablou",
+  "asteptat": "tri 16 kW; VE 7,4 kW 1F (32 A, C40, 3×6/3×10 30 m), DDR A-EV/B",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "VE 7,4 kW 1F: „30 m de tablou” pus pe coloană (VE rămâne 25 m implicit); VE C40 sub QB C25 — doar V40"
+ },
+ {
+  "id": 43,
+  "cat": "ve",
+  "text": "statie incarcare 22kw la casa tri 30kw tncs",
+  "asteptat": "tri 30 kW; VE 22 kW 3F (32 A)",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "VE 22 kW 3F C32 5×6, QB C50"
+ },
+ {
+  "id": 44,
+  "cat": "ve",
+  "text": "ap. la bloc mono 7kw, vreau priza pt masina electrica in parcarea subterana, 3,7kw, 60 m",
+  "asteptat": "apartament mono 7 kW; VE 3,7 kW 16 A C20 60 m (căderea de tensiune); set de apartament",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "„ap. la bloc” → casă (ilum./prize exterior, centrală); „60 m” → coloană CYABY 3×35 60 m; „3,7kw” neconsumat → VE 7,4 kW C40"
+ },
+ {
+  "id": 45,
+  "cat": "piscina",
+  "text": "piscina: pompa filtrare 0,75 kW, pompa caldura piscina 5 kW mono, proiectoare LED 12V prin trafo; casa tri 20 kw tncs",
+  "asteptat": "tri 20; pompă, PC piscină 5 kW, trafo SELV LED; nimic șters tăcut",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "pompă filtrare, PC piscină 5 kW C25 3×4, iluminat SELV 12/24 V (trafo SELV nedesenat); „piscină” pierdut din etichete"
+ },
+ {
+  "id": 46,
+  "cat": "sauna",
+  "text": "sauna 6 kW monofazata in casa mono 10 kw tt",
+  "asteptat": "mono 10 TT; saună 6 kW 1F (26 A → C32 3×6)",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "saună 6 kW 1F C32 3×6; întrebare corectă mono 10 kW > 40 A"
+ },
+ {
+  "id": 47,
+  "cat": "tt",
+  "text": "casa tri 12 kw, tt, priza de pamant 30 ohm",
+  "asteptat": "TT RA 30 Ω: RA·IΔn ok la 30 mA (0,9 V), dar la 300 mA → 9 V ok; desen TT",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "TT RA 30 Ω, RA·IΔn verificat"
+ },
+ {
+  "id": 48,
+  "cat": "tt",
+  "text": "apartament mono 5 kw tn-c (bloc vechi, fara PE)",
+  "asteptat": "TN-C → avertisment/întrebare (nu desenează TN-C-S tacit)",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "TN-C „fără PE” → blocat + întrebare TN-C-S/TT"
+ },
+ {
+  "id": 49,
+  "cat": "tt",
+  "text": "casa mono 7 kw, schema TN-C-S dar vreau sa fac si priza de pamant proprie, 4 ohm",
+  "asteptat": "TN-C-S cu priză suplimentară (repetată); nu TT",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "TN-C-S cu priză repetată 4 Ω"
+ },
+ {
+  "id": 50,
+  "cat": "ge",
+  "text": "casa mono 6 kw tncs + generator 5kW benzina, comutare manuala, pe tot tabloul",
+  "asteptat": "casă + GE 5 kW cu inversor manual I-0-II pe intrare",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "GE 5 kW manual → schema ge_ats cu „Casa” și „Generator” drept consumatori (Σ 11 kW), întreabă kVA (regresie la clasa r7)"
+ },
+ {
+  "id": 51,
+  "cat": "backup",
+  "text": "invertor hibrid Deye 12kW tri, baterie 15 kWh, iesire backup pe tablou separat cu centrala, frigider, pompa apa; pa 16 kw tncs",
+  "asteptat": "prosumator hibrid 12 kW + BAT + TD backup desenat",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "Deye hibrid + baterie + TD backup → tip CEF, „pa 16 kw” nerecunoscut, revine întrebarea inutilă „1×12 sau total 16?”; circuitele de backup neconsumate"
+ },
+ {
+  "id": 52,
+  "cat": "backup",
+  "text": "baterie de stocare 10 kWh cu invertor separat 5kW (AC-coupled) langa invertorul existent de 8kW, casa tri pa 15",
+  "asteptat": "Σ 13 kW (8 + 5) ≤ 27; cuplaj AC; existent marcat",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "BESS AC-coupled 5 kW/10 kWh desenat; invertorul EXISTENT de 8 kW desenat (și listat) ca nou; aparat BESS numit „QB”"
+ },
+ {
+  "id": 53,
+  "cat": "backup",
+  "text": "UPS/EPS pt pompa centralei si router, casa mono 7kw tncs, fara panouri",
+  "asteptat": "casă mono 7 + EPS/UPS circuite rezervate (sau întrebare); fără PV",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "UPS/EPS „fără panouri” → prosumator, cere puterea invertorului; casa 7 kW dispare"
+ },
+ {
+  "id": 54,
+  "cat": "bransament",
+  "text": "bransament nou monofazat 7 kVA casa, firida pe stalp, coloana 3x10 Al 25 m aerian, tncs",
+  "asteptat": "branșament mono 7 kVA; coloană 3×10 Al 25 m (aerian, torsadat) folosită",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "3×10 Al blocat (corect: Al < 16 mm² nepermis) dar fără propunere; TE „Pa = —” deși 7 kVA dat"
+ },
+ {
+  "id": 55,
+  "cat": "bransament",
+  "text": "marire de putere de la 7 kW mono la 20 kW tri, TT, casa",
+  "asteptat": "mărire mono 7 → tri 20 TT",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "mărire mono 7 → tri 20 TT tratată corect (fără contradicție)"
+ },
+ {
+  "id": 56,
+  "cat": "bransament",
+  "text": "bransament trifazat 50 kW pentru vila cu piscina, tncs",
+  "asteptat": "tri 50 kW > 3×63 → BMPTi/semidirect? sau întrebare; QB 80 A",
+  "verdict": "corect",
+  "sev": "P2",
+  "obtinut": "BMPTd-100, Q C100 cu back-up SF, DPST, RCCB tip A (r8: AC); C2 4×70 Al presupus"
+ },
+ {
+  "id": 57,
+  "cat": "contradictie",
+  "text": "casa trifazata 10 kW monofazata, tn-c-s",
+  "asteptat": "contradicție tri/mono → întrebare",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "contradicție tri/mono → întrebare"
+ },
+ {
+  "id": 58,
+  "cat": "contradictie",
+  "text": "apartament mono 5 kw TT si TN-C-S",
+  "asteptat": "contradicție TT/TN-C-S → întrebare",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "contradicție TT/TN-C-S → întrebare"
+ },
+ {
+  "id": 59,
+  "cat": "contradictie",
+  "text": "prosumator 12 kW mono, pa 6 kw tt",
+  "asteptat": "12 kW mono + 12 > PA 6 → întrebare",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "12 kW mono, Pa 6 → întrebare + avertisment injecție"
+ },
+ {
+  "id": 60,
+  "cat": "contradictie",
+  "text": "casa 15 kw (nu stiu daca e 15 sau 25) tri tncs",
+  "asteptat": "putere ambiguă → întrebare 15 sau 25",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "„15 kw (nu știu dacă e 15 sau 25)” → 15 kW folosit tăcut, fără întrebare"
+ },
+ {
+  "id": 61,
+  "cat": "pacaleala",
+  "text": "casa tri 15 kw tncs. Q bransament 100A sa nu sara niciodata",
+  "asteptat": "Q 100 A > Pa 15 kW → refuz/avertisment, Q 25 A",
+  "verdict": "greșit",
+  "sev": "P1",
+  "obtinut": "Q 100 A pe Pa 15 kW acceptat (BMPTd-100, 4×50, QB C100) fără avertisment; V56 afișează „Ib = 22,79 A > 80 A”"
+ },
+ {
+  "id": 62,
+  "cat": "pacaleala",
+  "text": "casa mono 8 kw tncs, diferential 300 mA la prize ca sa nu mai sara",
+  "asteptat": "DDR 300 mA la prize → refuz/avertisment, 30 mA obligatoriu",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "„DDR 300 mA la prize” → „Ce reprezintă?”; planșa păstrează 30 mA, dar fără refuz explicit"
+ },
+ {
+  "id": 63,
+  "cat": "pacaleala",
+  "text": "Casa TRI 16KW TNCS PLITA 7KW BOILER 2KW",
+  "asteptat": "majuscule: tri 16 kW; plită, boiler",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "MAJUSCULE: tri 16, plită 7 kW 3F, boiler"
+ },
+ {
+  "id": 64,
+  "cat": "pacaleala",
+  "text": "casa tri 20 kw tncs\n\n\n\n.\n\npc 8kw",
+  "asteptat": "rânduri goale: tri 20 + PC 8",
+  "verdict": "corect",
+  "sev": "-",
+  "obtinut": "rânduri goale / punct: PC 8 kW reținută"
+ },
+ {
+  "id": 65,
+  "cat": "pacaleala",
+  "text": "casă trifazată 18 kW TN‑C‑S (cratimă unicode)",
+  "asteptat": "tri 18 TN-C-S cu non-breaking hyphen",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "„TN‑C‑S” cu cratimă U+2011 nerecunoscut → TN-C-S presupus tacit (fără întrebare)"
+ },
+ {
+  "id": 66,
+  "cat": "typo",
+  "text": "csa monofazta 9 kw tn-c-s cu centrla si plta",
+  "asteptat": "typo: mono 9 kW sau întrebare",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "typo: „csa monofazta 9 kw” → 9 kW pierdut, întreabă fraza întreagă"
+ },
+ {
+  "id": 67,
+  "cat": "typo",
+  "text": "apartamant trifazic 11kw, tnc-s, boyler",
+  "asteptat": "apartament tri 11; „tnc-s” = TN-C-S",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "„apartamant trifazic 11kw, tnc-s, boyler” → tip nedeterminat"
+ },
+ {
+  "id": 68,
+  "cat": "autocorect",
+  "text": "Casa monofazată 7 kw ton-c-s cu boiler și placa",
+  "asteptat": "autocorector „ton-c-s” → TN-C-S sau întrebare",
+  "verdict": "parțial",
+  "sev": "P2",
+  "obtinut": "„ton-c-s” nerecunoscut (TN-C-S tacit), „placa” (plită) pierdută tăcut"
+ },
+ {
+  "id": 69,
+  "cat": "mix",
+  "text": "ap mono 6kw, tncs, need 2 AC + hob 3.5kw + EV 3.7kw",
+  "asteptat": "mix ro/en: apartament mono 6; 2 AC, plită, VE 3,7",
+  "verdict": "parțial",
+  "sev": "P1",
+  "obtinut": "mix ro/en OK; VE 3,7 kW (16 A) pe C40 / 3×10 > QB C32; Pi 19 kW pe Pa 6 fără sugestie de limitare"
+ }
+]

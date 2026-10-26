@@ -1,0 +1,85 @@
+import json
+D='/home/claude/sm/teste/r9/locuinte'
+V={
+1:("corect","P2","tri 16 kW, 10 circuite (plită 3F, cuptor, MSV, 2 AC, boiler), QB C25 (Ib 24,3 A); „Paleu” apare în lista „dedicate”"),
+2:("parțial","P1","„contract monofazat de 6 kW” neconsumat → Pa presupusă 6,8 kW din bilanț; nesiguranța TN-S/TN-C-S nu e întrebată (TN-C-S tacit)"),
+3:("greșit","P1","TE-etaj necreat (întrebat); circuitele etajului contopite în TG cu nume dublate (Prize 1…4 ×2, Iluminat 1–2 ×2); 5×6 18 m pus pe coloană → BLOCANT V02/V03"),
+4:("greșit","P1","mărire mono 4 → tri 15: Pa = 4 kW (vechea), întreabă „mono sau tri?”; „trifazat 15 kW” la neconsumat (clasa r8 #6 nereparată pe această formulare)"),
+5:("corect","-","engleză: apartament mono 7 kW TN-C-S, plită, cuptor, MSP, MSV, 2 AC (r8: tip nedeterminat)"),
+6:("corect","-","prosumator Huawei 10KTL = 10 kW, Pa 11, PI integrată, L 8 m, 10,01 kWp"),
+7:("corect","P2","VE 11 kW 3F pe mono 9 → întreabă dacă e trifazat; putea propune și varianta VE 7,4 kW 1F / mărire"),
+8:("parțial","P1","saună desenată de DOUĂ ori (15 m și 25 m); „casă tri 25 kW” neconsumat → Pa presupusă 22,4; jacuzzi sub DDR comun cu prizele"),
+9:("corect","P2","apartament mono 5 kW; plită 3,5 kW (15 A) pe C32/3×6 > QB C25 (V40) — C20/3×4 ajungea"),
+10:("corect","-","„18k” / „8k” înțelese (r8: pierdute)"),
+11:("corect","P2","mono Q 32 A TT, RA 4 Ω presupus semnalat; Pa din bilanț 5,4 în loc de 32 A·230 V ≈ 7,4 kW"),
+12:("parțial","P2","tri 3×32 A → Q 32 A, dar Pa presupusă 5,4 kW din bilanț (≈ 21 kW din Q)"),
+13:("corect","-","Pa = 12 kW (nu 2/3/7), QB C20"),
+14:("parțial","P1","„am doar 11 kw tri tt” → tri și 11 kW pierdute, întreabă rețeaua; VE 22 > Pa 11 neabordat"),
+15:("parțial","P2","„cred că tri” → întreabă (bine) dar planșa provizorie e deja trifazată"),
+16:("corect","P2","3 circuite AC din „12000 BTU x3”; curent tipic 12,1 A (≈ 2,6 kW) supraestimat (≈ 1,1 kW el.)"),
+17:("parțial","P1","TD Garaj mono 3×4 20 m, C16 — P0 r8 (3×240) REPARAT; dar „prize” din garaj pierdute tăcut"),
+18:("corect","-","prosumator tri 8 kW, Pa 10, TT RA 9"),
+19:("corect","-","prosumator mono 3,6 kW pe apartament, V43 selectivitate DDR semnalată"),
+20:("corect","P2","29 kW → TD-PV cu PI externă pe BD QG; DDR 30 mA pe 29 kW"),
+21:("greșit","P1","„2 invertoare: 12 și 12 kW” → 2 × 6 kW (Σ 12), întrebare cu varianta greșită; Σ real 24 kW"),
+22:("corect","-","3 × 10 = 30 > 27 → PI externă, QG C50"),
+23:("parțial","P1","GE 10 kVA + ATS desenat corect cu casa (progres), dar comutat pe TOATĂ bara în loc de circuitele de bază cerute; GE 10 kVA pe Pa 20 fără avertisment"),
+24:("corect","-","tabel cu tab: Pa = 20 (P0 r8 #17 reparat), faze din tabel respectate"),
+25:("corect","P2","CSV „;”: Pa 9 (nu 0,8), plită 6 kW C32 3×6; Q 40 A < Ib 41,2 A (doar avertisment)"),
+26:("corect","-","tabel „|” cu lungimi: saună 22 m, pompă 30 m, ilum. grădină 40 m; TT RA 7"),
+27:("parțial","P2","„priza,8 / iluminat,4” → 8 + 4 circuite (cantitatea de aparate citită ca nr. de circuite); fără plită fantomă"),
+28:("corect","P2","VE 11 kW 3F + PC 6 kW pe 16 kW; avertisment Pc > Pa; nicio sugestie de management de sarcină"),
+29:("corect","-","tabel markdown, „ap.” recunoscut ca apartament, Pa 11"),
+30:("corect","-","ATR: Ik3 5 kA folosit corect (r8: Q 4200 A), Pa 13, QB C20"),
+31:("corect","P2","ATR prosumator mono 6 kW TT (r8: CEF + întrebare), V71 > 3,68 kW"),
+32:("greșit","P1","Pi 18 kW luat drept putere de calcul, Pa 14 kW neconsumat → Ib 28,9 > Q 25 A, BLOCANT"),
+33:("corect","P2","ATR 2 × 17,5 = 35 kW → PI externă; Pa absorbită 40 nefigurată"),
+34:("corect","-","certificat de racordare mono 6,9 kW, Q 32 A, RCBO 300 mA S tip A"),
+35:("greșit","P1","TG + 2 TD → tip „tablou” cu Q1 16 A (din „prize 400V 16A”), TD atelier și „flex 2,2 kW” pierdute, BLOCANT"),
+36:("greșit","P1","TD foișor → tip tablou cu P = 7 kW (Pa casei), „3x2.5” citit ca Al → BLOCANT V13; iluminat și priză ext. neconsumate"),
+37:("corect","P2","tabloul din baie întrebat; încălzire 2 kW circuit separat"),
+38:("parțial","P1","„16 kW termic (consum max 5 kW electric)” → PC 16 kW electric, întrebare de mărire absurdă (r8 #40 nereparat)"),
+39:("parțial","P2","întreabă corect mono 10 kW > 40 A; nu pune la îndoială PC 8 kW mono (36,6 A pe C40) + rezistență 6 kW = 14 > 10"),
+40:("corect","P2","engleză: tri 20 kW, PC 10 kW 3F, VE 11 kW 3F; Σ 21 > 20 doar avertisment"),
+41:("corect","-","4 AC × 1 kW, câte un circuit"),
+42:("parțial","P1","VE 7,4 kW 1F: „30 m de tablou” pus pe coloană (VE rămâne 25 m implicit); VE C40 sub QB C25 — doar V40"),
+43:("corect","-","VE 22 kW 3F C32 5×6, QB C50"),
+44:("greșit","P1","„ap. la bloc” → casă (ilum./prize exterior, centrală); „60 m” → coloană CYABY 3×35 60 m; „3,7kw” neconsumat → VE 7,4 kW C40"),
+45:("corect","P2","pompă filtrare, PC piscină 5 kW C25 3×4, iluminat SELV 12/24 V (trafo SELV nedesenat); „piscină” pierdut din etichete"),
+46:("corect","P2","saună 6 kW 1F C32 3×6; întrebare corectă mono 10 kW > 40 A"),
+47:("corect","-","TT RA 30 Ω, RA·IΔn verificat"),
+48:("corect","-","TN-C „fără PE” → blocat + întrebare TN-C-S/TT"),
+49:("corect","P2","TN-C-S cu priză repetată 4 Ω"),
+50:("greșit","P1","GE 5 kW manual → schema ge_ats cu „Casa” și „Generator” drept consumatori (Σ 11 kW), întreabă kVA (regresie la clasa r7)"),
+51:("greșit","P1","Deye hibrid + baterie + TD backup → tip CEF, „pa 16 kw” nerecunoscut, revine întrebarea inutilă „1×12 sau total 16?”; circuitele de backup neconsumate"),
+52:("parțial","P1","BESS AC-coupled 5 kW/10 kWh desenat; invertorul EXISTENT de 8 kW desenat (și listat) ca nou; aparat BESS numit „QB”"),
+53:("greșit","P1","UPS/EPS „fără panouri” → prosumator, cere puterea invertorului; casa 7 kW dispare"),
+54:("parțial","P2","3×10 Al blocat (corect: Al < 16 mm² nepermis) dar fără propunere; TE „Pa = —” deși 7 kVA dat"),
+55:("corect","-","mărire mono 7 → tri 20 TT tratată corect (fără contradicție)"),
+56:("corect","P2","BMPTd-100, Q C100 cu back-up SF, DPST, RCCB tip A (r8: AC); C2 4×70 Al presupus"),
+57:("corect","-","contradicție tri/mono → întrebare"),
+58:("corect","-","contradicție TT/TN-C-S → întrebare"),
+59:("corect","-","12 kW mono, Pa 6 → întrebare + avertisment injecție"),
+60:("parțial","P1","„15 kw (nu știu dacă e 15 sau 25)” → 15 kW folosit tăcut, fără întrebare"),
+61:("greșit","P1","Q 100 A pe Pa 15 kW acceptat (BMPTd-100, 4×50, QB C100) fără avertisment; V56 afișează „Ib = 22,79 A > 80 A”"),
+62:("parțial","P2","„DDR 300 mA la prize” → „Ce reprezintă?”; planșa păstrează 30 mA, dar fără refuz explicit"),
+63:("corect","-","MAJUSCULE: tri 16, plită 7 kW 3F, boiler"),
+64:("corect","-","rânduri goale / punct: PC 8 kW reținută"),
+65:("parțial","P2","„TN‑C‑S” cu cratimă U+2011 nerecunoscut → TN-C-S presupus tacit (fără întrebare)"),
+66:("parțial","P2","typo: „csa monofazta 9 kw” → 9 kW pierdut, întreabă fraza întreagă"),
+67:("parțial","P2","„apartamant trifazic 11kw, tnc-s, boyler” → tip nedeterminat"),
+68:("parțial","P2","„ton-c-s” nerecunoscut (TN-C-S tacit), „placa” (plită) pierdută tăcut"),
+69:("parțial","P1","mix ro/en OK; VE 3,7 kW (16 A) pe C40 / 3×10 > QB C32; Pi 19 kW pe Pa 6 fără sugestie de limitare"),
+}
+F=json.load(open(D+'/fraze.json'))
+for f in F:
+    v=V[f['id']]; f.update(verdict=v[0],sev=v[1],obtinut=v[2])
+json.dump(F,open(D+'/fraze.json','w'),ensure_ascii=False,indent=1)
+from collections import Counter
+print(Counter(v[0] for v in V.values()), Counter(v[1] for v in V.values()))
+rows=[]
+for f in F:
+    t=f['text'].replace('\n','⏎').replace('\t','⇥').replace('|','\\|')
+    if len(t)>140: t=t[:140]+'…'
+    rows.append(f"| {f['id']} | {f['cat']} | `{t}` | {f['asteptat']} | {f['obtinut']} | **{f['verdict']}** | {f['sev']} |")
+open(D+'/tabel.md','w').write('\n'.join(rows))

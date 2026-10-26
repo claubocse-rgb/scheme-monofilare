@@ -13,8 +13,12 @@ import re
 
 try:
     from .interp_tabel import rescrie_tabel
+    from .interp_cifre import rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire
+    from .interp_cascade import rescrie_lant, rescrie_indentare, rescrie_din_tg
 except ImportError:  # rulare ca script
     from engine.interp_tabel import rescrie_tabel  # type: ignore
+    from engine.interp_cifre import rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire  # type: ignore
+    from engine.interp_cascade import rescrie_lant, rescrie_indentare, rescrie_din_tg  # type: ignore
 
 _DIA = str.maketrans("șşțţăâîȘŞȚŢĂÂÎ", "ssttaaiSSTTAAI")
 NUM = r"\d+(?:[.,]\d+)?"
@@ -37,7 +41,9 @@ EN = [
     (r"\bmain\s+(?:lv\s+)?(?:distribution\s+)?(?:panel|switchboard|board)\b|\bMSB\b|\bMDB\b", "TG"),
     (r"\bsub[\s-]*(?:panel|board|distribution\s+board)\b|\bdistribution\s+(?:panel|board)\b|\bDB\b", "TD"),
     (r"\bpanel\b|\bswitchboard\b|\bboard\b", "tablou"),
-    (r"\boutgoing(?:\s+feeders?)?\b|\bfeeders\b", "plecari"),
+    (r"\boutgoings?(?:\s+feeders?)?\b|\bfeeders\b", "plecari"),
+    # r9 (industrial #66): „fed from DNO cut-out 100A” = branșamentul (BMPT), nu o plecare
+    (r"\b(?:dno|utility|supplier'?s?|network)\s+(?:service\s+)?cut[\s-]*out\b|\bservice\s+cut[\s-]*out\b", "BMPT"),
     (r"\bloads\b|\bconsumers\b", "consumatori"),
     (r"\bthree[\s-]*phase\b|\b3[\s-]*phase\b|\b3ph\b|\btri[\s-]*phase\b", "trifazat"),
     (r"\bsingle[\s-]*phase\b|\b1[\s-]*phase\b|\bmono[\s-]*phase\b|\b1ph\b", "monofazat"),
@@ -71,7 +77,10 @@ EN = [
     (r"\bdry[\s-]*type\b|\bcast[\s-]*resin\b", "uscat"), (r"\boil[\s-]*(?:immersed|filled|type)\b", "ulei"),
     (r"\b(?:zero|no)\s+(?:export|injection|feed[\s-]*in)\b", "injectie zero"),
     (r"\bexport\s+limit(?:ed|ation)?\s*(?:to|at|of)?\s*", "injectie limitata "),
-    (r"\bmv\s+metering\b", "masura MT"), (r"\blv\s+metering\b", "masura JT"),
+    (r"\bmv\s+metering\b|\bmetering\s+(?:at|on)\s+(?:the\s+)?mv(?:\s+side)?\b|\bmv[\s-]+side\s+metering\b",
+     "masura MT"),
+    (r"\blv\s+metering\b|\bmetering\s+(?:at|on)\s+(?:the\s+)?lv(?:\s+side)?\b|\blv[\s-]+side\s+metering\b",
+     "masura JT"),
     (r"\bmain\s+(?:circuit\s+)?breaker\b|\bincomer\b|\bmain\s+switch\b", "intrerupator general"),
     (r"\bat\s+(?:the\s+)?(?:busbar|bus)\b", "la bara"),
     (r"\bcables\b", "cabluri"), (r"\bcable\b", "cablu"),
@@ -97,7 +106,8 @@ EN_MEREU = {r"\bheat\s+pumps?\b", r"\b(?:ev|car)\s+chargers?\b|\bcharging\s+stat
             r"\bsingle[\s-]*phase\b|\b1[\s-]*phase\b|\bmono[\s-]*phase\b|\b1ph\b",
             r"\bthree[\s-]*phase\b|\b3[\s-]*phase\b|\b3ph\b|\btri[\s-]*phase\b",
             r"\b(?:zero|no)\s+(?:export|injection|feed[\s-]*in)\b", r"\bexport\s+limit(?:ed|ation)?\s*(?:to|at|of)?\s*",
-            r"\bmv\s+metering\b", r"\blv\s+metering\b", r"\bno\s+batter(?:y|ies)\b|\bwithout\s+batter(?:y|ies)\b",
+            r"\bmv\s+metering\b|\bmetering\s+(?:at|on)\s+(?:the\s+)?mv(?:\s+side)?\b|\bmv[\s-]+side\s+metering\b",
+            r"\blv\s+metering\b|\bmetering\s+(?:at|on)\s+(?:the\s+)?lv(?:\s+side)?\b|\blv[\s-]+side\s+metering\b", r"\bno\s+batter(?:y|ies)\b|\bwithout\s+batter(?:y|ies)\b",
             r"\bdry[\s-]*type\b|\bcast[\s-]*resin\b"}
 
 
@@ -157,30 +167,97 @@ def rescrie_cascade(text: str) -> tuple[str, list[str]]:
 
 
 # ------------------------------------------------------------------------------------------------- autocorecturi
+_RE_MARCATOR_CORECTURA = re.compile(
+    r"(?:\.{2,}|…|[,;:!]|\s)\s*(?:"
+    r"(?:(?:scuze|pardon|sorry|am\s+gresit|greseala|gresit)\s*[,!.:]*\s*)?"
+    r"(?:de\s+fapt|corectez|corectie|corect\s+este|corect\s+e|(?:ba\s+)?nu\s*[,:]|adica\s+(?=\d))"
+    r"|(?:scuze|pardon|sorry|am\s+gresit|greseala|gresit)\s*[,!.:]+(?:\s*(?:e|este)\b)?"
+    r")\s*:?\s*", re.I)
+_RE_SP_TOKEN = re.compile(r"\b(?:tn-?c-?s|tn-?s|tn-?c|tt|it)\b(?![\w-])", re.I)
+_RE_RETEA_TOKEN = re.compile(r"\b(?:monofaz\w*|trifaz\w*|mono|tri)\b", re.I)
+_RE_VAL_U = re.compile(rf"(?<![\w.,])({NUM})\s*(kwp|kwh|kva|kvar|kw|mw|mva|a|m|ohm)\b", re.I)
+
+
+def _corectura(text: str, m) -> tuple[str, str] | None:
+    """O singură autocorectură la marcatorul `m`; întoarce (text nou, notă) sau None (marcatorul nu e o corectură)."""
+    n = _norm(text)
+    marcator = n[m.start():m.end()]
+    inainte, dupa = text[:m.start()], text[m.end():]
+    # clauza veche: de la ultimul separator puternic (. ; sau început) — corectura nu sare peste propoziții
+    s0 = max([x.end() for x in re.finditer(r"(?<!\d)\.(?!\d)(?!\.)\s|;|\n", inainte)] or [0])
+    zona = inainte[s0:]
+    mc = re.match(r"\s*(?P<nou>[^,;\n]+?)(?=\s*(?:[,;\n]|\.\s|\.$|\.{2,}|$))", dupa)
+    if not mc:
+        return None
+    nou = mc.group("nou").strip()
+    rest = dupa[mc.end():]
+    nn = _norm(nou)
+    slab = re.search(r"\badica\b|(?:^|\s)(?:e|este)\s*$", marcator.strip()) is not None and not re.search(
+        r"scuze|pardon|sorry|gresit|greseala|de\s+fapt|corect", marcator)
+    # (1) grup cu cantitate: „4 invertoare de 30 kW... nu, 5 invertoare de 30 kW” → toată sintagma veche se înlocuiește
+    mg = re.match(r"(\d+)\s*(?:x\s*)?([a-z]{3,})", nn)
+    if mg and mg.group(2) not in ("kw", "kva", "kwp", "kwh", "mw", "ohm", "kvar"):
+        stem = mg.group(2)[:5]
+        cand = list(re.finditer(rf"(?<![\w.,])\d+\s*(?:x\s*)?{re.escape(stem)}\w*", _norm(zona)))
+        if cand:
+            v = cand[-1]
+            vechi = zona[v.start():].rstrip(" .…,;:!")
+            out = inainte[:s0 + v.start()] + nou + rest
+            return out, f"autocorectură: „{vechi.strip()}” → „{nou}” (ultima valoare scrisă câștigă)"
+    # (2) schema de legare la pământ / (3) rețeaua
+    for rx in (_RE_SP_TOKEN, _RE_RETEA_TOKEN):
+        mt = rx.match(nou)
+        if mt:
+            cand = list(rx.finditer(zona))
+            if not cand:
+                return None
+            v = cand[-1]
+            out = inainte[:s0 + v.start()] + mt.group(0) + inainte[s0 + v.end():] + nou[mt.end():] + rest
+            return out, f"autocorectură: „{v.group(0)}” → „{mt.group(0)}” (ultima valoare scrisă câștigă)"
+    # (4) o valoare cu unitate (eventual precedată de nume: „plita 5 kw”) → ultima valoare cu aceeași unitate
+    mv = _RE_VAL_U.search(nou)
+    if mv and len(nou[:mv.start()].split()) <= 2:
+        u = mv.group(2).lower()
+        cand = [x for x in _RE_VAL_U.finditer(zona) if x.group(2).lower() == u]
+        if not cand:
+            return None
+        v = cand[-1]
+        if slab and (abs(len(inainte) - (s0 + v.end())) > 40 or v.group(1) == mv.group(1)):
+            return None
+        out = inainte[:s0 + v.start()] + mv.group(0) + inainte[s0 + v.end():] + nou[mv.end():] + rest
+        return out, f"autocorectură: „{v.group(0)}” → „{mv.group(0)}” (ultima valoare scrisă câștigă)"
+    if slab or re.search(r"\bnu\s*[,:]", marcator):
+        if not re.match(r"[A-Za-z]{1,6}[\s-]?\d", nou):
+            return None
+    # (5) un model (litere + cifre)
+    cand = list(re.finditer(r"\b[A-Za-z]{1,6}[\s-]?\d+[\w.\-]*\b", zona))
+    if not cand:
+        return None
+    v = cand[-1]
+    out = inainte[:s0 + v.start()] + nou + inainte[s0 + v.end():] + rest
+    return out, f"autocorectură: „{v.group(0)}” → „{nou}” (ultima valoare scrisă câștigă)"
+
+
 def rescrie_autocorectura(text: str) -> tuple[str, list[str]]:
     """„1 x SG125CX... scuze, de fapt SG110CX” → „1 x SG110CX”; „15 kW, corectez: 20 kW” → „20 kW”.
-    Valoarea / modelul dinaintea indiciului de corectură (în aceeași clauză) se înlocuiește cu ce urmează."""
-    m = re.search(r"(?:\.{2,}|[,;:!]|\s)\s*(?:(?:scuze|pardon|sorry|am\s+gresit|greseala)\s*[,!.]*\s*)?"
-                  r"(?:de\s+fapt|corectez|corectie|corect\s+este|corect\s+e)\s*:?\s*", text, re.I)
-    if not m:
-        return text, []
-    dupa = text[m.end():]
-    mn = re.match(r"(?P<nou>[^,;]+)", dupa)
-    if not mn:
-        return text, []
-    nou = mn.group("nou").strip()
-    inainte = text[:m.start()]
-    # elementul înlocuit: un model (litere + cifre) sau o valoare cu aceeași unitate, ultimul înaintea corecturii
-    mu = re.match(rf"({NUM})\s*([a-zA-Z]+)\b", nou)
-    if mu:
-        cand = list(re.finditer(rf"(?<![\w.,]){NUM}\s*{re.escape(mu.group(2))}\b", inainte, re.I))
-    else:
-        cand = list(re.finditer(r"\b[A-Za-z]{1,6}[\s-]?\d+[\w.\-]*\b", inainte))
-    if not cand:
-        return text, []
-    v = cand[-1]
-    out = inainte[:v.start()] + nou + inainte[v.end():] + dupa[mn.end():]
-    return out, [f"autocorectură: „{v.group(0)}” → „{nou}” (ultima valoare scrisă câștigă)"]
+    r9: și „… nu, 5 invertoare de 30 kW”, „3 pompe de 11 kW, scuze, 15 kW”, „TN-C-S... nu, TN-S”, „greșit, e 20 kW”,
+    „pardon, 3x40A”, „adică 25 kW” — ultima valoare câștigă pentru aceeași entitate (grup cu cantitate, valoare cu
+    aceeași unitate, schema de pământ, rețeaua, modelul), în aceeași propoziție; fără dublare."""
+    note = []
+    for _ in range(6):
+        gasit = None
+        for m in _RE_MARCATOR_CORECTURA.finditer(_norm(text)):
+            if m.start() == 0:
+                continue
+            r = _corectura(text, m)
+            if r:
+                gasit = r
+                break
+        if not gasit:
+            break
+        text, nota = gasit
+        note.append(nota)
+    return text, note
 
 
 RE_CORPURI = re.compile(rf"(?P<n>\d+)\s*(?:corpuri|lampi|lămpi|aparate|proiectoare|spoturi|plafoniere)(?:\s+(?:de\s+)?iluminat)?\s*"
@@ -247,7 +324,7 @@ TYPO_R8 = [(r"\bcsaa\b", "casa"), (r"\bcaas\b", "casa"), (r"\btirfaz", "trifaz")
            (r"\bprosumtor\b", "prosumator"), (r"\btn\s+c\s+s\b", "tn-c-s"), (r"\btn\s+s\b", "tn-s")]
 TYPO_R8 = [(re.compile(rx, re.I), rep) for rx, rep in TYPO_R8]
 # „15k”, „5k” (mesaj scurt) = kW
-RE_K_KW = re.compile(r"(?<![\w.,])(\d+(?:[.,]\d+)?)\s*k\b(?!\s*(?:w|va|wh|wp|v|a)\b)", re.I)
+RE_K_KW = re.compile(r"(?<![\w.,-])(\d+(?:[.,]\d+)?)\s*k\b(?![-\w])(?!\s*(?:w|va|wh|wp|v|a)\b)", re.I)
 
 
 def rescrie_scurt(text: str) -> tuple[str, list[str]]:
@@ -274,7 +351,8 @@ def rescrie_scurt(text: str) -> tuple[str, list[str]]:
 def rescrie(text: str) -> tuple[str, list[str]]:
     """Toate rescrierile r8, în ordine; întoarce (text, note)."""
     note = []
-    for f in (rescrie_tabel, rescrie_en, rescrie_scurt, rescrie_email, rescrie_cascade, rescrie_autocorectura, rescrie_corpuri):
+    for f in (rescrie_indentare, rescrie_tabel, rescrie_en, rescrie_scurt, rescrie_email, rescrie_autocorectura, rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire,
+              rescrie_lant, rescrie_din_tg, rescrie_cascade, rescrie_corpuri):
 
 
 

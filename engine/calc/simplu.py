@@ -14,7 +14,7 @@ from .ramura import calculeaza_ramura
 from .texte import text_lista, text_desen, text_cablu
 from .verificari import emite, BLOCANT
 
-CAMPURI_CABLU = ("material", "izolatie", "metoda", "n_alte", "theta", "rho_sol", "S_fortat", "n_fortat")
+CAMPURI_CABLU = ("material", "izolatie", "metoda", "n_alte", "theta", "rho_sol", "S_fortat", "n_fortat", "tip_cablu")
 
 
 def _parametri_protectie(prot, retea):

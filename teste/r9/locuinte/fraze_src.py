@@ -1,0 +1,95 @@
+import json
+F = [
+# --- email lung ---
+("email", "Bună ziua,\n\nVă scriu pentru casa din Paleu. Branșamentul e trifazat, putere aprobată 16 kW conform avizului, schema TN-C-S. În casă avem: plită inducție 7,2 kW (trifazată), cuptor 3 kW, mașină de spălat vase 2 kW, două aparate de aer condiționat de câte 2,6 kW, boiler 2 kW. Garajul e lipit de casă.\n\nMulțumesc,\nAndrei",
+ "tri 16 kW TN-C-S; plită 3F, cuptor, MSV, 2 AC, boiler; fără întrebări"),
+("email", "Salut! Suntem o familie tânără și ne-am mutat într-un apartament de 3 camere, bloc din 2008. Avem contract monofazat de 6 kW. Vrem tablou nou cu: priză separată pt uscător (2,5 kW), plită 2 zone 3,5 kW, boiler 1,5 kW și 1 AC. Nu știm dacă e TN-S sau TN-C-S, vă rog să ne spuneți.",
+ "mono 6 kW apartament; schema de pământ necunoscută → întrebare sau presupunere TN-C-S declarată; uscător, plită, boiler, AC"),
+("email", "Stimate domn inginer, atașat aveți lista. Casă P+1, rețea trifazată, Pa = 22 kW, TN-C-S. Parter: bucătărie (plită 3F 8 kW), centrală gaz, 6 circuite prize, 3 iluminat. Etaj: tablou separat TE-etaj alimentat cu CYY-F 5x6 de 18 m, cu 4 circuite prize, 2 iluminat, 2 AC 3,5 kW. Vă mulțumesc.",
+ "tri 22 kW; TG parter + TE etaj 5×6 18 m cu 4 prize, 2 ilum, 2 AC; cantitățile respectate"),
+("email", "Buna ziua, avem o casa veche in Tileagd, bransament monofazat 4 kW, vrem sa trecem pe trifazat 15 kW pentru o pompa de caldura aer-apa de 9 kW electric (trifazata). Restul consumatorilor: frigider, masina de spalat, cuptor 2,5 kW. Schema TN-C-S.",
+ "mărire mono 4 → tri 15 kW (nu contradicție); PC 9 kW 3F; cuptor"),
+("email", "Hello,\nI'm renovating a flat in Cluj. Single-phase, 7 kW contracted, TN-C-S. I need circuits for: induction hob 3.7 kW, oven 2.5 kW, washing machine, dishwasher, 2 air conditioners, lighting and sockets. Thanks, Tom",
+ "en: apartament mono 7 kW TN-C-S; plită, cuptor, MSP, MSV, 2 AC"),
+("email", "Bună seara. Pentru avizul de prosumator: avem casă cu branșament trifazat, putere aprobată consum 11 kW, TN-C-S. Montăm invertor Huawei SUN2000-10KTL-M1 (10 kW, trifazat), 22 panouri de 455 W. Distanța invertor - tablou 8 m. Vă rog schema.",
+ "prosumator tri 10 kW, PA 11 kW, PI integrată; 10KTL = 10 kW; L 8 m"),
+("email", "Buna ziua. In ATR scrie: putere aprobata 9 kW monofazat. Noi vrem totusi sa montam o statie de incarcare 11 kW trifazata pentru masina noua. Se poate? Restul casei e normal, TN-C-S.",
+ "contradicție VE 11 kW 3F pe mono 9 kW → întrebare/propunere mărire; nu desenează tăcut"),
+("email", "Salutare, vă scriu de la service-ul nostru. Clientul are casă tri 25 kW TT (RA măsurat 12 ohmi), vrea saună 9 kW 400V, jacuzzi exterior 3 kW și o pompă de piscină de 1,1 kW. Distanța până la saună 25 m.",
+ "tri 25 kW TT RA 12 Ω; saună 9 kW 3F (L 25 m), jacuzzi, pompă piscină cu DDR 30 mA"),
+# --- whatsapp ---
+("whatsapp", "salut sefu, ap 2 cam, 1f, 5kw, tn-c-s, plita 3.5 si boiler", "apartament mono 5 kW; plită 3,5, boiler"),
+("whatsapp", "casa tri 18k tncs pc 8k", "tri 18 kW; PC 8 kW 3F; „18k”/„8k” = kW"),
+("whatsapp", "Monofazic 32A, casa, tt cu 2 tarusi", "mono 32 A ≈ 7,4 kW TT; casă"),
+("whatsapp", "tri 3x32A casa tncs", "tri 3×32 A ≈ 22 kW; casă"),
+("whatsapp", "boiler 2kw ac 3kw plita 7kw. casa. tn-c-s. puterea aprobata 12kw trifazat", "tri 12 kW; Pa = 12 (nu 2/3/7); boiler, AC, plită"),
+("whatsapp", "vreau statie ve 22kw dar am doar 11 kw tri tt", "VE 22 kW > Pa 11 kW → întrebare/limitare 11 kW"),
+("whatsapp", "nu mai stiu daca e mono sau tri, cred ca tri, casa 10kw", "rețea incertă → întrebare (nu presupune tri)"),
+("whatsapp", "AC 12000 BTU x3, apartament mono 6kw tncs", "mono 6 kW; 3 circuite AC (~1,1 kW el. fiecare)"),
+("whatsapp", "casa monofazata 8 kw, tncs, + garaj cu tablou separat (prize, iluminat, usa garaj), cablu 3x4 20m", "mono 8 kW; TD garaj mono 3×4 20 m cu prize, ilum, ușă — dimensionare corectă"),
+("whatsapp", "salut! panouri 8 kw tri, pa 10, casa, tt ra 9 ohm", "prosumator tri 8 kW, PA 10 kW TT RA 9 Ω"),
+("whatsapp", "pv 3.6 kw mono pe ap la bloc?? pa 5", "prosumator mono 3,6 kW la apartament, PA 5"),
+("whatsapp", "29kw invertor tri, pa 30 tncs casa", "29 > 27 → releu PI extern în TD"),
+("whatsapp", "am 2 invertoare: 12 si 12 kw, tri, pa 25 kw", "Σ 24 ≤ 27 → PI integrată; fără releu extern"),
+("whatsapp", "3 invertoare de 10kw pe casa tri pa 32 tncs", "Σ 30 > 27 → releu PI extern"),
+("whatsapp", "casa tri 20 kw tncs, generator 10 kva cu ats pe circuitele de baza (centrala, frigider, iluminat)", "casă 20 kW + GE 10 kVA cu ATS pe circuite rezervate; casa nu dispare"),
+# --- excel / csv ---
+("excel", "Consumator\tP (kW)\tFaze\nPompa caldura\t9\t3\nBoiler\t2\t1\nPlita\t7,5\t3\nAC dormitor\t1,2\t1\nCasa trifazata, Pa 20 kW, TN-C-S", "tri 20 kW; PC 9 3F, boiler, plită 7,5 3F, AC; Pa = 20 (nu 9)"),
+("excel", "Nr;Circuit;Putere\n1;Iluminat;0,8 kW\n2;Prize living;2 kW\n3;Plita;6 kW\n4;Cuptor;3 kW\nRetea;monofazat;9 kW", "mono 9 kW; 4 circuite; Pa = 9 (nu 0,8)"),
+("excel", "Circuit | Putere | Lungime\nSauna | 8 kW 3F | 22 m\nPiscina pompa | 1,5 kW | 30 m\nIluminat gradina | 0,4 kW | 40 m\n---\nbransament: 3F, 30 kW, TT, Ra=7 ohm", "tri 30 kW TT RA 7 Ω; saună 8 kW 3F 22 m; pompă 30 m; ilum. grădină 40 m"),
+("excel", "tip,cantitate,putere unitara\npriza,8,\niluminat,4,\nAC,2,2.5kW\nboiler,1,2kW\nlocuinta mono 7kW tncs", "mono 7 kW; 8 prize / 4 ilum (grupate în circuite rezonabile), 2 AC, boiler; fără plită fantomă"),
+("excel", "Denumire\tP\nIncarcator VE\t11 kW\nPompa de caldura\t6 kW\nCasa\t3F 16 kW TN-C-S", "tri 16 kW; VE 11 kW 3F, PC 6 kW; Pa 16"),
+("excel", "| Receptor | kW |\n|---|---|\n| Plita | 7 |\n| Cuptor | 3,5 |\n| Boiler | 2 |\n| AC | 2,5 |\n\nap. trifazat 11 kW, tn-c-s", "apartament tri 11 kW; tabel markdown; Pa = 11"),
+# --- ATR ---
+("atr", "AVIZ TEHNIC DE RACORDARE nr. 1102/2026\nUtilizator: casa de locuit\nPutere aprobata: 13 kW\nTensiune: 0,4 kV, trifazat\nGrup de masura: BMPT montat la limita de proprietate\nCurent de scurtcircuit: Ik3 = 5 kA\nSchema de legare la pamant: TN-C-S", "tri 13 kW, Ik 5 kA (nu Q 5000 A), BMPT la limită"),
+("atr", "ATR – loc de consum si producere. Pa consum: 8 kW; Pa producere: 8 kW; monofazat 230V; schema TT, Rp <= 4 ohm; invertor 6 kW", "prosumator mono 6 kW, PA 8, TT RA ≤ 4 Ω; fără întrebări (nu CEF)"),
+("atr", "Extras ATR: Pi = 18 kW, Pa = 14 kW, racord trifazat subteran, BMPTd, protectie la bransament 3x25A, TN-C-S, coloana Cu 5x10 35m", "tri Pa 14 kW; Q 3×25 A declarat respectat; coloană 5×10 35 m"),
+("atr", "ATR: Puterea maxima simultan absorbita = 40 kW; Puterea maxima simultan evacuata = 35 kW; 0,4 kV; TN-C-S. Instalatie de producere: 2 invertoare x 17,5 kW", "prosumator tri 35 kW > 27 → TD cu releu PI; PA 40"),
+("atr", "Certificat de racordare: monofazat, Pa 6,9 kW, intrerupator bransament 1x32A, TN-C-S, locuinta", "mono 6,9 kW; Q 32 A declarat"),
+# --- tablouri secundare ---
+("tablou", "casa tri 24 kw tncs. TG la parter. TD mansarda: 3 prize, 2 iluminat, 1 AC, alimentat 5x4 15m. TD anexa (atelier): prize 400V 16A, flex 2,2 kW, alimentat 5x6 40m", "TG + 2 TD (mansardă 5×4 15 m, atelier 5×6 40 m) cu circuitele lor"),
+("tablou", "tablou secundar monofazat in foisor: priza gratar 2kw, iluminat, priza exterioara; din TG casa mono 7kw tncs, cablu 3x2.5 25m", "TD foișor mono 3×2,5 25 m — de semnalat că 2 kW + prize pe 3×2,5 e ok (C16); nu 3×240"),
+("tablou", "apartament mono 6 kw, tablou TE in hol + tablou mic in baie pt incalzire pardoseala 2kw", "TE + TD baie (sau circuit dedicat); mono 6 kW"),
+# --- pompa de caldura / AC ---
+("pc", "pompa de caldura 16 kW termic (consum max 5 kW electric) trifazata, casa tri 15 kW tt", "PC cu P electrică 5 kW 3F (nu 16)"),
+("pc", "PC aer-apa monobloc 8kw cu rezistenta de backup 6kw, casa mono 10 kw tncs", "PC + rezistență backup 6 kW: Σ 14 > 10 sau circuit separat; mono → avertisment"),
+("pc", "heat pump 3-phase 10kW electrical, house 3-phase 20kW, TN-C-S, plus EV charger 11kW", "en: tri 20 kW; PC 10 kW 3F, VE 11 kW 3F"),
+("ac", "casa mono 9kw tncs, 4 aparate AC de 1 kW fiecare", "mono 9 kW; 4 circuite AC 1 kW"),
+# --- VE ---
+("ve", "wallbox 7,4 kW monofazat la casa tri 16 kw tn-c-s, la 30 m de tablou", "tri 16 kW; VE 7,4 kW 1F (32 A, C40, 3×6/3×10 30 m), DDR A-EV/B"),
+("ve", "statie incarcare 22kw la casa tri 30kw tncs", "tri 30 kW; VE 22 kW 3F (32 A)"),
+("ve", "ap. la bloc mono 7kw, vreau priza pt masina electrica in parcarea subterana, 3,7kw, 60 m", "apartament mono 7 kW; VE 3,7 kW 16 A C20 60 m (căderea de tensiune); set de apartament"),
+# --- piscina / sauna ---
+("piscina", "piscina: pompa filtrare 0,75 kW, pompa caldura piscina 5 kW mono, proiectoare LED 12V prin trafo; casa tri 20 kw tncs", "tri 20; pompă, PC piscină 5 kW, trafo SELV LED; nimic șters tăcut"),
+("sauna", "sauna 6 kW monofazata in casa mono 10 kw tt", "mono 10 TT; saună 6 kW 1F (26 A → C32 3×6)"),
+# --- TT / TN ---
+("tt", "casa tri 12 kw, tt, priza de pamant 30 ohm", "TT RA 30 Ω: RA·IΔn ok la 30 mA (0,9 V), dar la 300 mA → 9 V ok; desen TT"),
+("tt", "apartament mono 5 kw tn-c (bloc vechi, fara PE)", "TN-C → avertisment/întrebare (nu desenează TN-C-S tacit)"),
+("tt", "casa mono 7 kw, schema TN-C-S dar vreau sa fac si priza de pamant proprie, 4 ohm", "TN-C-S cu priză suplimentară (repetată); nu TT"),
+# --- generator / backup ---
+("ge", "casa mono 6 kw tncs + generator 5kW benzina, comutare manuala, pe tot tabloul", "casă + GE 5 kW cu inversor manual I-0-II pe intrare"),
+("backup", "invertor hibrid Deye 12kW tri, baterie 15 kWh, iesire backup pe tablou separat cu centrala, frigider, pompa apa; pa 16 kw tncs", "prosumator hibrid 12 kW + BAT + TD backup desenat"),
+("backup", "baterie de stocare 10 kWh cu invertor separat 5kW (AC-coupled) langa invertorul existent de 8kW, casa tri pa 15", "Σ 13 kW (8 + 5) ≤ 27; cuplaj AC; existent marcat"),
+("backup", "UPS/EPS pt pompa centralei si router, casa mono 7kw tncs, fara panouri", "casă mono 7 + EPS/UPS circuite rezervate (sau întrebare); fără PV"),
+# --- branșamente ---
+("bransament", "bransament nou monofazat 7 kVA casa, firida pe stalp, coloana 3x10 Al 25 m aerian, tncs", "branșament mono 7 kVA; coloană 3×10 Al 25 m (aerian, torsadat) folosită"),
+("bransament", "marire de putere de la 7 kW mono la 20 kW tri, TT, casa", "mărire mono 7 → tri 20 TT"),
+("bransament", "bransament trifazat 50 kW pentru vila cu piscina, tncs", "tri 50 kW > 3×63 → BMPTi/semidirect? sau întrebare; QB 80 A"),
+# --- contradicții / păcăleli ---
+("contradictie", "casa trifazata 10 kW monofazata, tn-c-s", "contradicție tri/mono → întrebare"),
+("contradictie", "apartament mono 5 kw TT si TN-C-S", "contradicție TT/TN-C-S → întrebare"),
+("contradictie", "prosumator 12 kW mono, pa 6 kw tt", "12 kW mono + 12 > PA 6 → întrebare"),
+("contradictie", "casa 15 kw (nu stiu daca e 15 sau 25) tri tncs", "putere ambiguă → întrebare 15 sau 25"),
+("pacaleala", "casa tri 15 kw tncs. Q bransament 100A sa nu sara niciodata", "Q 100 A > Pa 15 kW → refuz/avertisment, Q 25 A"),
+("pacaleala", "casa mono 8 kw tncs, diferential 300 mA la prize ca sa nu mai sara", "DDR 300 mA la prize → refuz/avertisment, 30 mA obligatoriu"),
+("pacaleala", "Casa TRI 16KW TNCS PLITA 7KW BOILER 2KW", "majuscule: tri 16 kW; plită, boiler"),
+("pacaleala", "casa tri 20 kw tncs\n\n\n\n.\n\npc 8kw", "rânduri goale: tri 20 + PC 8"),
+("pacaleala", "casă trifazată 18 kW TN‑C‑S (cratimă unicode)", "tri 18 TN-C-S cu non-breaking hyphen"),
+("typo", "csa monofazta 9 kw tn-c-s cu centrla si plta", "typo: mono 9 kW sau întrebare"),
+("typo", "apartamant trifazic 11kw, tnc-s, boyler", "apartament tri 11; „tnc-s” = TN-C-S"),
+("autocorect", "Casa monofazată 7 kw ton-c-s cu boiler și placa", "autocorector „ton-c-s” → TN-C-S sau întrebare"),
+("mix", "ap mono 6kw, tncs, need 2 AC + hob 3.5kw + EV 3.7kw", "mix ro/en: apartament mono 6; 2 AC, plită, VE 3,7"),
+]
+out = [{"id": i+1, "cat": c, "text": t, "asteptat": a} for i, (c, t, a) in enumerate(F)]
+json.dump(out, open('/home/claude/sm/teste/r9/locuinte/fraze.json', 'w'), ensure_ascii=False, indent=1)
+print(len(out))

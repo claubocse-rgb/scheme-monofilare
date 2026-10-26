@@ -340,6 +340,25 @@ def _valideaza(inp, j, retea):
     return al, out
 
 
+VE_CURENTI_NOMINALI_A = (6, 10, 13, 16, 20, 25, 32, 40, 63)   # curenții de încărcare uzuali ai stațiilor (IEC 61851)
+VE_FACTOR_CONTINUU = 1.25          # DECIZIE [NEVERIFICAT]: sarcină continuă — In ≥ 1,25·I încărcare (practica producătorilor)
+MCB_SERIE_VE = (10, 13, 16, 20, 25, 32, 40, 50, 63)
+
+
+def curent_ve(p_kw, tri):
+    """r9 (locuințe #42, #44, #69): curentul nominal de încărcare al stației VE din puterea ei — P/(3·230) sau P/230,
+    rotunjit la curentul nominal uzual (7,4 kW → 32 A, 3,7 kW → 16 A, 11 kW tri → 16 A, 22 kW tri → 32 A)."""
+    i = p_kw * 1000.0 / ((3 if tri else 1) * norme.U_0_V)
+    return next((x for x in VE_CURENTI_NOMINALI_A if x >= i * 0.97), i)
+
+
+def calibru_ve(p_kw, tri):
+    """r9: calibrul MCB al circuitului VE = treapta ≥ 1,25 · I încărcare (3,7 kW → C20, 7,4 kW → C40, 11 kW tri → C20,
+    22 kW tri → C40) — nu C40 indiferent de putere."""
+    t = VE_FACTOR_CONTINUU * curent_ve(p_kw, tri)
+    return next((x for x in MCB_SERIE_VE if x >= t - 1e-9), MCB_SERIE_VE[-1])
+
+
 def _circuit(c, retea, j):
     """Intrarea B.1 a unui circuit al locuinței, cu valorile implicite ale receptorului (declarate)."""
     d = _rec(c["receptor"])
@@ -358,6 +377,10 @@ def _circuit(c, retea, j):
         j.presupune(f"{eticheta_receptor(c['receptor'])}: lungime circuit {fmt_ro(L, 0)} m", c["obiect"])
     S_min = (d["S_tri"] if tri and d["S_tri"] else d["S_mono"])
     In_min = (d["In_tri"] if tri and d["In_tri"] else d["In_mono"])
+    if d["grupa"] == "VE":
+        In_min = calibru_ve(float(P), tri)
+        j.presupune(f"{eticheta_receptor(c['receptor'])}: calibrul din puterea stației — I încărcare = "
+                    f"{fmt_ro(curent_ve(float(P), tri), 1)} A × 1,25 (sarcină continuă, DECIZIE) → C{In_min}", c["obiect"])
     cab = {"material": "Cu", "metoda": "B2"}
     cab.update({k: v for k, v in (c.get("cablu") or {}).items() if v is not None})
     cab["L"] = float(L)
@@ -703,7 +726,7 @@ def _tablouri_secundare(inp, retea, j):
     tds = inp.get("tablouri_secundare")
     if not tds:
         return inp, {}
-    from .scheme import _pi
+    from .scheme import expandeaza_plecari
     inp = dict(inp)
     circ = list(inp.get("circuite") or [])
     td_map = {}
@@ -718,16 +741,40 @@ def _tablouri_secundare(inp, retea, j):
             emite(j, "V07", BLOCANT, f"TD·{nume}", "param", camp="tablouri_secundare.circuite", x=repr(cc)[:60],
                   conditie="cel puțin un circuit {nume, P_kW}")
             continue
+        # r8b: `n_circuite` multiplică circuitul („prize 4 circ” = 4 circuite) și în bilanțul TD-ului, nu doar pe desen
+        cc = expandeaza_plecari(cc)
+        casnic = [_receptor_casnic_td(c) for c in cc]
         cc = [_p_implicit_td(c, nume, j) for c in cc]
         td = dict(td, circuite=cc)
         try:
-            pis = [_pi(dict(c, retea=c.get("retea", "tri" if retea == "tri" else "mono")), 1) for c in cc]
+            pn = [_p_bilant_td(c, rc, retea) for c, rc in zip(cc, casnic)]
+            pis = [x[0] for x in pn]
         except (TypeError, ValueError):
             emite(j, "V07", BLOCANT, f"TD·{nume}", "param", camp="tablouri_secundare.circuite.P_kW", x=repr(cc)[:60],
                   conditie="P_kW / In_A numerice")
             continue
-        ks = td.get("ks") or norme.ks_implicit(len(cc))
-        p = ks * sum(pis)
+        note = {}
+        for c, (pi, p_in) in zip(cc, pn):
+            if p_in is not None:
+                note.setdefault((float(c["In_A"]), pi, p_in), []).append(c.get("nume") or "circuit")
+        for (in_a, pi, p_in), nn in note.items():
+            j.presupune(f"tablou secundar {nume}: {', '.join('„' + x + '”' for x in nn)} dat{'e' if len(nn) > 1 else ''} "
+                        f"prin calibru {fmt_ro(in_a)} A → {fmt_ro(pi)} kW în bilanț (puterea implicită a receptorului, "
+                        f"nu U·In·cosφ = {fmt_ro(p_in)} kW — DECIZIE) — declarați P_kW dacă sarcina e alta")
+        if td.get("ks"):
+            ks = td["ks"]
+            p = ks * sum(pis)
+        elif all(casnic):
+            # r8b DECIZIE: tabloul secundar cu receptoare casnice (etaj, mansardă) — simultaneitatea locuinței, ca la
+            # circuitele TE (norme.LOCUINTA_KS_GENERAL după numărul receptoarelor generale; continue cu ks = 1), nu
+            # ks-ul de tablou de distribuție IEC 61439-2 (0,7 la 7 circuite)
+            gen = [pi for pi, rc in zip(pis, casnic) if not norme.LOCUINTA_RECEPTORI[rc][14]]
+            cont = sum(pi for pi, rc in zip(pis, casnic) if norme.LOCUINTA_RECEPTORI[rc][14])
+            ks = next(k for n_, k in norme.LOCUINTA_KS_GENERAL if len(gen) <= n_) if gen else 1.0
+            p = ks * sum(gen) + cont
+        else:
+            ks = norme.ks_implicit(len(cc))
+            p = ks * sum(pis)
         tri_c = any(c.get("retea") == "tri" or (c.get("pornire") is not None and c.get("retea") != "mono") for c in cc)
         faza = td.get("faza")
         if faza is None and retea == "tri" and (tri_c or p > 3.68):
@@ -747,6 +794,49 @@ def _tablouri_secundare(inp, retea, j):
               f"alimentare = {fmt_ro(p)} kW ({'3F' if faza == '3F' else 'monofazat'})")
     inp["circuite"] = circ
     return inp, td_map
+
+
+def _receptor_casnic_td(c):
+    """r8b: cheia receptorului casnic (norme.LOCUINTA_RECEPTORI) a unui circuit de tablou secundar, sau None (forță,
+    motor, receptor de atelier) — din `receptor` sau, în lipsă, din nume (iluminat / prize)."""
+    if not isinstance(c, dict):
+        return None
+    rec = c.get("receptor")
+    if rec in norme.LOCUINTA_RECEPTORI and rec != "tablou_secundar":
+        return rec
+    if rec is None:
+        from .scheme import receptor_dupa_nume
+        r2 = receptor_dupa_nume(c.get("nume", ""), 1)
+        return r2 if r2 in ("iluminat", "prize") else None
+    return rec if rec in ("iluminat", "prize") else None
+
+
+def _retea_circuit_td(c, ret):
+    """Rețeaua unui circuit din tabloul secundar: dată, sau (TD trifazat) monofazat pentru iluminat / prize / receptoare
+    mici și trifazat pentru motoare și receptoare mari."""
+    if c.get("retea") is not None or ret != "tri":
+        return c.get("retea") or ret
+    from .scheme import receptor_dupa_nume
+    rec = c.get("receptor") or receptor_dupa_nume(c.get("nume", ""), 1)
+    mic = (c.get("P_kW") is not None and float(c["P_kW"]) <= 2.0) or (c.get("In_A") or 99) <= 16
+    return "mono" if rec in ("iluminat", "prize") or (mic and rec != "motor") else "tri"
+
+
+def _p_bilant_td(c, rec_casnic, ret):
+    """r8b: puterea unui circuit al tabloului secundar în bilanțul TD-ului. P_kW dat → P_kW. Dat doar prin calibru
+    (In_A): receptor casnic → puterea implicită a receptorului (ca la circuitele TE), plafonată la U·In·cosφ — DECIZIE:
+    calibrul unui circuit de prize C16 nu e sarcina lui (3,7 kW încărcat continuu ar umfla TD-ul peste P aprobată);
+    receptor de forță / motor → U·In·cosφ (conservator, ca înainte). Rețeaua: a circuitului (iluminat / prize mono).
+    Întoarce (P bilanț, U·In·cosφ dacă P a fost redusă — pentru nota de ipoteze — altfel None)."""
+    from .scheme import _pi
+    cr = dict(c, retea=_retea_circuit_td(c, "tri" if ret == "tri" else "mono"))
+    p_in = _pi(cr, 1)
+    if c.get("P_kW") is not None or c.get("In_A") is None or rec_casnic is None:
+        return p_in, None
+    p_imp = float(norme.LOCUINTA_RECEPTORI[rec_casnic][0])
+    if cr["retea"] == "tri" and norme.LOCUINTA_RECEPTORI[rec_casnic][1]:
+        p_imp = float(norme.LOCUINTA_RECEPTORI[rec_casnic][1])
+    return (p_imp, p_in) if p_imp < p_in else (p_in, None)
 
 
 TD_S_MAX_ILUMINAT_MM2 = 50.0      # r8: plafonul alimentării unui TD cu iluminat (un singur cablu, fără paralel)
@@ -788,10 +878,7 @@ def _circuite_td(td, ret, tt=False):
         c = dict(c)
         if ret == "tri" and c.get("retea") is None:
             # monofazate implicit: iluminat / prize / receptoare mici; motoarele și receptoarele mari — trifazate
-            from .scheme import receptor_dupa_nume
-            rec = c.get("receptor") or receptor_dupa_nume(c.get("nume", ""), 1)
-            mic = (c.get("P_kW") is not None and float(c["P_kW"]) <= 2.0) or (c.get("In_A") or 99) <= 16
-            c["retea"] = "mono" if rec in ("iluminat", "prize") or (mic and rec != "motor") else "tri"
+            c["retea"] = _retea_circuit_td(c, ret)
         if c.get("DDR") is None and c.get("ddr") is None:
             c["DDR"] = {"IdN_mA": 30, "tip": "A", "_motor": True}
         if (c.get("cablu") or {}).get("S_fortat") is None:
@@ -823,11 +910,47 @@ def _calculeaza_td(td, x, rr, j):
     return {"nume": td["nume"], "retea": ret, "ks": td.get("ks"), "plecari": lista}
 
 
+RECEPTORI_UNICI = ("sauna", "plita", "cuptor", "boiler", "pompa_caldura", "vehicul_electric", "centrala_termica",
+                   "masina_spalat_rufe", "masina_spalat_vase", "uscator")
+
+
+def _comaseaza_duplicate(inp, j):
+    """r9 (locuințe #8): același receptor dedicat declarat de două ori cu același nume și date COMPLEMENTARE (ex.
+    „Saună 9 kW 3F” + „Saună la 25 m”) = un singur circuit — nu se desenează de două ori. Date contradictorii (P / L
+    diferite) → rămân două circuite."""
+    circ = inp.get("circuite")
+    if not isinstance(circ, list):
+        return
+    out = []
+    for c in circ:
+        if not isinstance(c, dict):
+            out.append(c)
+            continue
+        cheie = (c.get("receptor"), _fara_diac(str(c.get("nume") or "")).strip().lower())
+        tinta = next((o for o in out if isinstance(o, dict) and c.get("receptor") in RECEPTORI_UNICI
+                      and (o.get("receptor"), _fara_diac(str(o.get("nume") or "")).strip().lower()) == cheie
+                      and not o.get("n") and not c.get("n")
+                      and all(o.get(k) == v for k, v in c.items() if k in o and k not in ("nume",))), None)
+        if tinta is None:
+            out.append(c)
+            continue
+        tinta.update({k: v for k, v in c.items() if k not in tinta})
+        j.presupune(f"„{c.get('nume')}” declarat de două ori cu date complementare — un singur circuit "
+                    f"(datele combinate)")
+    inp["circuite"] = out
+
+
+def _fara_diac(s):
+    import unicodedata
+    return "".join(ch for ch in unicodedata.normalize("NFD", s) if unicodedata.category(ch) != "Mn")
+
+
 def calculeaza_locuinta(inp, j):
     """SPEC §C.8: bilanț, branșament + coloană C2, Q general, SPD T2, grupe DDR, circuite și repartizarea pe faze."""
     n_v, n_i, n_p = len(j.verificari), len(j.info), len(j._presupus)
     cutie = {}
     try:
+        _comaseaza_duplicate(inp, j)
         from .scheme import tensiune_jt_nesuportata
         if tensiune_jt_nesuportata(inp, j):
             return {}
@@ -1513,9 +1636,19 @@ def _calculeaza(inp, j, cutie):
                 g["DDR"]["Icn_kA"] = prot.get("Icu_kA")
             if in_q_br and prot.get("In_A") and gt(prot["In_A"], in_q_br):
                 # r6: față de un Q de branșament PRESUPUS — AVERTISMENT (Q-ul real se cere), nu BLOCANT
-                emite(j, "V40", AVERTISMENT if q_pres is not None else BLOCANT, x["c"]["obiect"], "loc",
+                ve_c = x["d"]["grupa"] == "VE"
+                emite(j, "V40", AVERTISMENT if (q_pres is not None and not ve_c) else BLOCANT, x["c"]["obiect"], "loc",
                       aparat=f"{'RCBO' if g['DDR'] and g['DDR']['aparat'] == 'RCBO' else 'MCB'} {prot.get('curba', '')}"
                              f"{prot['In_A']}", a=in_q_br, b=prot["In_A"])
+                if ve_c:
+                    # r9 (locuințe #42, #44, #69): stația VE cere mai mult decât branșamentul — nu se desenează tăcut
+                    j.verificari[-1]["mesaj"] += (f" — stația VE de {fmt_ro(x['r']['P_kW'])} kW depășește "
+                                                  f"branșamentul (Q {fmt_ro(in_q_br, 0)} A)")
+                    j.verificari[-1]["remediere"] = (
+                        "întrebare pentru beneficiar: stație VE de putere mai mică / curent de încărcare limitat din "
+                        "setări (ex. 16 A → C20), gestionarea dinamică a sarcinii (DLM) sau mărirea puterii aprobate "
+                        "(Q branșament mai mare)")
+                    j.verificari[-1]["intrebare"] = True
             # protecția la defect (contact indirect), explicit pe fiecare circuit (P0-3)
             idn_g = g["DDR"]["IdN_mA"] if g["DDR"] else None
             if g["DDR"] and tt:
