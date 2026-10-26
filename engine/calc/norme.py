@@ -873,8 +873,8 @@ LOCUINTA_DDR_TIPURI = ("AC", "A", "F", "B")
 # o casă obișnuită să nu iasă cu V43 din cauza propriei presupuneri. Branșamentul vechi cu DDR tip AC / instantaneu se
 # declară (alimentare.DDR_bransament_tip = "AC", DDR_bransament_selectiv = false) și atunci avertismentele rămân.
 LOCUINTA_DDR_BRANSAMENT_IMPLICIT = {"tip": "A", "selectiv": True}
-# r5 (locuințe P1-9): Q-ul din ATR la P aprobată fără Q declarat = calibrul standard ≥ Pa / U (cosφ 1, convenția ATR:
-# 7 kW mono → 32 A; 10 kW mono → 40 A (limita BMPM); 15 kW tri → 25 A; 25 kW tri → 40 A; 40 kW tri → 63 A)
+# cosφ 1 doar pentru limita blocului (BMPM 40 A ↔ ~9,2 kW). Q presupus (r8, proiectant): calibrul standard ≥ Ib la
+# cosφ 0,95 (LOCUINTA_COSFI): 7 kW mono → 40 A; 11 kW tri → 20 A; 15 kW tri → 25 A; 25 kW tri → 40 A
 LOCUINTA_Q_DIN_PA_COSFI = 1.0
 # r5: încărcarea VE fără DDR declarat — DDR 30 mA tip A + RDC-DD 6 mA c.c. în stație (SR HD 60364-7-722 art. 722.531.3.101),
 # compatibil cu un DDR tip A în amonte; tip B se declară pe circuit (DDR: {tip: "B"})

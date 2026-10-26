@@ -262,8 +262,8 @@ CIRC = [{"nume": "Iluminat", "receptor": "iluminat"}, {"nume": "Prize", "recepto
         {"nume": "Prize bucătărie", "receptor": "prize_bucatarie"}, {"nume": "Baie", "receptor": "prize_baie"}]
 
 
-# r6b (DECIZIE, de confirmat): perechile standard ATR, Pa = U·In (cosφ 1): 7 kW mono → 32 A; 11 kW tri → 16 A
-@pytest.mark.parametrize("retea,pa,q", [("mono", 7, 32), ("mono", 5, 25), ("tri", 25, 40), ("tri", 15, 25), ("tri", 11, 16)])
+# r8 (proiectant): Q presupus = calibrul standard ≥ Ib la cosφ 0,95: 7 kW mono → 40 A; 11 kW tri → 20 A
+@pytest.mark.parametrize("retea,pa,q", [("mono", 7, 40), ("mono", 5, 25), ("tri", 25, 40), ("tri", 15, 25), ("tri", 11, 20)])
 def test_q_presupus_uzual_din_atr(retea, pa, q):
     r = calculeaza(_loc(retea, CIRC, tip="bransament_existent", P_aprobata_kW=pa))
     assert r["rezultat"]["alimentare"]["Q"]["In_A"] == q and r["rezultat"]["alimentare"]["Q_presupus"]

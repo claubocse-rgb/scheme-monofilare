@@ -1130,9 +1130,9 @@ def _calculeaza(inp, j, cutie):
                 q_pres = max(x for x in serie if x <= lim_b)
             elif pa is not None:
                 # r5 (P1-9): Q-ul uzual din ATR pentru P aprobată (Pa = U·In, cosφ 1): 7 kW mono → 32 A, 25 kW tri → 40 A
-                # r6b (DECIZIE, de confirmat): perechile standard din ATR rămân (Pa = U·In, cosφ 1): 7 kW mono → 32 A, 11 kW tri → 16 A;
-                # Ib la cosφ 0,95 poate depăși ușor Q — e convenția ATR, nu o eroare (V04 avertizează)
-                q_pres = (prima_din_serie(serie, pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI) - 1e-6)
+                # r8 (proiectant, 26.10): Q presupus = calibrul standard ≥ Ib (cosφ 0,95), nu perechea la cosφ 1 —
+                # 11 kW tri: Ib 16,7 A → 20 A (nu 16 A); 7 kW mono: Ib 32,0 A → 40 A; limita blocului rămâne la cosφ 1
+                q_pres = (prima_din_serie(serie, max(pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI), i_dim))
                           or max(x for x in serie if x <= lim_b))
                 # r8 (#12, #18): perechea ATR rămâne, dar Q presupus nu coboară sub Ib cu mai mult de toleranța
                 # 1,13·In (curentul convențional de nedeclanșare) — altfel calibrul următor din serie (≤ limita blocului)
@@ -1177,7 +1177,7 @@ def _calculeaza(inp, j, cutie):
         # r5 (L04): branșament NOU cu puterea cerută declarată → Q din puterea cerută (convenția ATR, cosφ 1), nu din Pc;
         # Pc > P cerută rămâne semnalat (V46 „pc”), Q-ul nu se mărește în tăcere
         serie_n = SERIE_Q_MONO if retea == "mono" else SERIE_Q_TRI_TOATE
-        q_n = prima_din_serie(serie_n, pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI))
+        q_n = prima_din_serie(serie_n, max(pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI), i_dim))
         if q_n is not None:
             bi["Q_In_A"] = q_n
             bi["Ib_A"] = min(float(q_n), max(i_dim, i_calc_max))

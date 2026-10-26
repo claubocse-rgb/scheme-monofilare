@@ -196,8 +196,8 @@ def test_td_cablu_declarat_ramane_pe_plecare():
 def test_q_presupus_pereche_atr_in_toleranta_1_13():
     r = calculeaza({"tip_schema": "locuinta", "retea": "tri", "schema_pamant": "TT", "RA_ohm": 10,
                     "circuite": [{"nume": "Iluminat", "receptor": "iluminat"}], "alimentare": {"P_aprobata_kW": 22}})
-    v = [x for x in _v(r, "V46") if x["obiect"] == "Q"]
-    assert v and "perechea ATR" in v[0]["mesaj"] and "limita blocului" not in v[0]["mesaj"]
+    # r8 (proiectant): Q presupus ≥ Ib → 22 kW tri, Ib 33,4 A → 40 A (nu C32 în toleranță)
+    assert r["rezultat"]["alimentare"]["Q"]["In_A"] == 40
 
 
 def test_bransament_rccb_tip_a_si_mcb_back_up():

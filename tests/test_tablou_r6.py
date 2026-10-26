@@ -147,7 +147,7 @@ def test_q_presupus_nu_blocheaza_case_banale(retea, pa):
 
 def test_q_presupus_treapta_peste_ib():
     r = calculeaza(_loc("tri", C, P_aprobata_kW=11))
-    assert r["rezultat"]["alimentare"]["Q"]["In_A"] == 16                     # perechea ATR 11 kW tri ↔ 16 A (r6b, DECIZIE)
+    assert r["rezultat"]["alimentare"]["Q"]["In_A"] == 20                     # r8 (proiectant): 11 kW tri, Ib 16,7 A → 20 A
 
 
 def test_q_declarat_ramane_blocant():

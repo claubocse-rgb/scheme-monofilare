@@ -125,7 +125,7 @@ def test_mn5_blocant_pe_q_presupus_spune_ca_e_presupus():
     # r6: Q presupus ≥ Ib (16,71 A → 20 A) și, fiind presupus, AVERTISMENT (nu BLOCANT)
     assert not [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
     b = [v for v in _v(r, "V46", "AVERTISMENT") if v["obiect"] == "Q" and "1,13" in v["mesaj"]]
-    assert b and b[0]["mesaj"].startswith("Q branșament presupus 16 A (nedeclarat)")
+    assert b and b[0]["mesaj"].startswith("Q branșament presupus 20 A (nedeclarat)")
     assert b[0]["remediere"].startswith("introdu Q branșament real")
 
 
