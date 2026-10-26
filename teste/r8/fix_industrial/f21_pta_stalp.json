@@ -1,0 +1,20 @@
+{
+ "tip_schema": "pt",
+ "Sn_kVA": 250,
+ "U_MT_kV": 20,
+ "pt_aerian": true,
+ "plecari": [
+  {
+   "nume": "TD-1",
+   "In_A": 125
+  },
+  {
+   "nume": "TD-2",
+   "In_A": 125
+  },
+  {
+   "nume": "TD-3",
+   "In_A": 125
+  }
+ ]
+}

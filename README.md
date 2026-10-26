@@ -117,10 +117,29 @@ Modelul se poate salva/deschide ca JSON (`Salvează model` / `Deschide model`).
 * `CEF 300 kWp cu 3 invertoare de 100 kW și BESS 200 kWh`
 * `post trafo 630 kVA cu plecări de 250, 160 și 100 A`
 
-Interpretorul local (`engine/chat.py`) recunoaște tipul schemei, puterea / curentul, lungimea și materialul cablului,
-plecările (nume + kW sau A), beneficiarul, localitatea / județul, planșa și faza, apoi dimensionează (Ib, In, Ir, secțiune,
-ΔU, raport TC) și construiește modelul. Dacă există SDK-ul `anthropic` și credențiale (`ANTHROPIC_API_KEY` sau
-`ant auth login`), modelul este rafinat de Claude (`claude-opus-5-5`); altfel se folosește doar interpretorul local.
+**Citirea textului (SPEC §F.11).** Cu o cheie API Anthropic, **Claude (`claude-opus-5-5`) e interpretorul principal**:
+citește fraza, emailul, extrasul de ATR sau tabelul lipit (și în engleză) și întoarce intrarea fizică prin unealta
+`intrare_fizica` (schema JSON generată din motor, `engine/interp_schema.py`), plus întrebările pentru ce e ambiguu și
+fragmentele neînțelese. Regulile locale (`engine/interpretor.py`) rulează mereu în paralel: unde diferă pe o cheie
+critică (tipul schemei, rețeaua, schema de pământ, P aprobată / Q, invertoarele, nr. de trafo, sursa tabloului,
+consumatorii de siguranță) primești o **întrebare cu ambele variante**. Verificările F.7 (refuzuri / întrebări) și
+„Am presupus” se aplică la fel. Claude nu dimensionează nimic — dimensionează motorul.
+**Fără cheie** aplicația funcționează exact ca înainte, doar cu regulile locale („citire avansată indisponibilă”).
+
+### Cum pui cheia API
+* **Aplicația locală (`python3 app.py`)** — oricare dintre:
+  * variabila de mediu: `export ANTHROPIC_API_KEY=sk-ant-…` înainte de `python3 app.py`;
+  * în interfață: „Descrie instalația” → „Citire avansată” → lipești cheia → „Folosește cheia”. Cheia stă doar în
+    memoria procesului; dacă bifezi „Ține minte pe acest calculator”, se scrie în
+    `~/.config/scheme-monofilare/anthropic_api_key` (drepturi 0600, niciodată în proiect, în exporturi sau în depozit).
+    „Șterge” o elimină din ambele.
+* **Versiunea web (GitHub Pages, Pyodide)** — nu există server: cheia se introduce în același câmp, rămâne **doar în
+  browserul tău** (în memorie; în `localStorage` numai dacă bifezi „ține minte”), iar browserul trimite descrierea direct
+  la `api.anthropic.com` (antetul `anthropic-dangerous-direct-browser-access`). Python-ul din browser face fuziunea cu
+  regulile locale și verificările. Nu bifa „ține minte” pe un calculator folosit de alții.
+
+Schema se regenerează după modificări ale motorului cu `python3 -m engine.interp_schema --genereaza`
+(testul `tests/test_interpretor_claude.py::test_inventarul_e_la_zi` cere asta).
 
 ## Dimensionare
 

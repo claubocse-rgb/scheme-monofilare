@@ -19,10 +19,49 @@ window.SM_WEB = true;
   let salvat = {}; try { salvat = JSON.parse(localStorage.getItem(LS) || '{}') || {}; } catch { }
   w.postMessage({ tip: 'start', date: salvat });
   const orig = window.fetch.bind(window);
+  // F.9 citirea avansată: fără server, apelul către Claude îl face browserul, cu cheia utilizatorului ținută
+  // DOAR aici (memorie; localStorage numai la „ține minte”). Worker-ul Python face fuziunea cu regulile locale.
+  const LS_CHEIE = 'sm.web.cheie_anthropic';
+  let CHEIE = null; try { CHEIE = localStorage.getItem(LS_CHEIE) || null; } catch { }
+  const jsonRasp = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+  const laWorker = async (cale, metoda, obj) => {
+    const bytes = new TextEncoder().encode(obj == null ? '' : JSON.stringify(obj));
+    const id = ++seq;
+    const r = await new Promise(res => { pend.set(id, res); w.postMessage({ id, metoda, cale, corp: bytes }, [bytes.buffer]); });
+    return JSON.parse(new TextDecoder().decode(r.corp));
+  };
+  async function chatAvansat(corp) {
+    const c = await laWorker('/api/chat/cerere', 'POST', { text: corp.text });
+    try {
+      const r = await orig(c.url, { method: 'POST', body: JSON.stringify(c.corp), headers: {
+        'content-type': 'application/json', 'x-api-key': CHEIE, 'anthropic-version': c.versiune, 'anthropic-beta': c.beta,
+        'anthropic-dangerous-direct-browser-access': 'true' } });
+      const j = await r.json().catch(() => null);
+      if (!r.ok || !j) throw new Error('HTTP ' + r.status + (j && j.error && j.error.message ? ': ' + j.error.message : ''));
+      return laWorker('/api/chat', 'POST', Object.assign({}, corp, { raspuns_llm: j }));
+    } catch (e) {
+      return laWorker('/api/chat', 'POST', Object.assign({}, corp, { claude: false, eroare_llm: 'apel eșuat (' + (e && e.message || e) + ')' }));
+    }
+  }
   window.fetch = async (url, opts = {}) => {
     const u = typeof url === 'string' ? url : url.url;
     if (!u.startsWith('/api/')) return orig(url, opts);
     await ready;
+    const cale0 = u.split('?')[0];
+    if (cale0 === '/api/setari/cheie') {
+      let d = {}; try { d = JSON.parse(opts.body || '{}'); } catch { }
+      CHEIE = String(d.cheie || '').trim() || null;
+      try { if (CHEIE && d.pastreaza) localStorage.setItem(LS_CHEIE, CHEIE); else localStorage.removeItem(LS_CHEIE); } catch { }
+      return jsonRasp({ claude: !!CHEIE, claude_sursa: CHEIE ? 'browser' : null });
+    }
+    if (cale0 === '/api/info') {
+      const i = await laWorker('/api/info', 'GET');
+      return jsonRasp(Object.assign(i, { claude: !!CHEIE, claude_sursa: CHEIE ? 'browser' : null }));
+    }
+    if (cale0 === '/api/chat' && typeof opts.body === 'string') {
+      let d = null; try { d = JSON.parse(opts.body); } catch { }
+      if (d && CHEIE && d.claude !== false && d.raspuns_llm == null) return jsonRasp(await chatAvansat(d));
+    }
     const b = opts.body; let bytes;
     if (b == null) bytes = new Uint8Array(0);
     else if (typeof b === 'string') bytes = new TextEncoder().encode(b);

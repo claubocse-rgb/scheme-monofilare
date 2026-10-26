@@ -1,0 +1,2302 @@
+[
+ {
+  "nr": 1,
+  "fraza": "TG hala productie, alimentat din PT propriu 630 kVA, TN-S, plecari: TD-1 125A 60m, TD-2 80A 45m, compresor 37 kW 30m, iluminat 12 kW",
+  "asteptat": "tablou, origine pt_propriu Sn 630, TN-S, 4 plecari cu L; iluminat L lipsa",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 630,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 125,
+     "L_m": 60
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 80,
+     "L_m": 45
+    },
+    {
+     "nume": "Compresor",
+     "P_kW": 37,
+     "L_m": 30
+    },
+    {
+     "nume": "Iluminat",
+     "P_kW": 12
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TD-1 125A 60m”: lungimea scrisă după calibru (60 m) aparține plecării TD-1",
+   "„TD-2 80A 45m”: lungimea scrisă după calibru (45 m) aparține plecării TD-2",
+   "„compresor 37 kW 30m”: lungimea scrisă după calibru (30 m) aparține plecării Compresor",
+   "„TD-1”, „TD-2” păstrate cu majuscule",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 4600 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "Compresor = receptor motor (cosφ 0,85)",
+   "Iluminat = receptor iluminat (ΔU ≤ 3 %)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 630 kVA, 4 plecări: TD-1 125 A (60 m), TD-2 80 A (45 m), Compresor 37 kW (30 m), Iluminat 12 kW.\nAm presupus: „TD-1 125A 60m”: lungimea scrisă după calibru (60 m) aparține plecării TD-1; „TD-2 80A 45m”: lungimea scrisă după calibru (45 m) aparține plecării TD-2; „compresor 37 kW 30m”: lungimea scrisă după calibru (30 m) aparține plecării Compresor; „TD-1”, „TD-2” păstrate cu majuscule; trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 4600 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); Compresor = receptor motor (cosφ 0,85); Iluminat = receptor iluminat (ΔU ≤ 3 %); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·Compresor vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 P4·Iluminat vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 2,
+  "fraza": "tablou general cu 4 plecari de 63 A, coloana 35 m din retea, cablu CYABY pe pat de cabluri",
+  "asteptat": "tablou 4x63A TD-1..4, Cu, pat E, grupare 4, L col 35",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "L_alimentare_m": 35,
+   "cablu": {
+    "material": "Cu",
+    "metoda": "E"
+   },
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 63,
+     "cablu": {
+      "material": "Cu",
+      "metoda": "E",
+      "n_alte": 3
+     }
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 63,
+     "cablu": {
+      "material": "Cu",
+      "metoda": "E",
+      "n_alte": 3
+     }
+    },
+    {
+     "nume": "TD-3",
+     "In_A": 63,
+     "cablu": {
+      "material": "Cu",
+      "metoda": "E",
+      "n_alte": 3
+     }
+    },
+    {
+     "nume": "TD-4",
+     "In_A": 63,
+     "cablu": {
+      "material": "Cu",
+      "metoda": "E",
+      "n_alte": 3
+     }
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„cu 4 plecari” = număr de plecări, NU material Cu",
+   "„4 plecari de 63 A” = 4 plecări identice de 63 A",
+   "lungimea „35 m” = 35 m se aplică DOAR alimentării TG; plecări L = 50 m",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,8 (4 plecări) (NU prima valoare din text)",
+   "plecări: L = 50 m, Cu PVC E (pat de cabluri / în aer)",
+   "plecările pe același pat de cabluri: grupare 4 circuite, k grupare B.52.17 = 0,77",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 4 plecări: TD-1 63 A, TD-2 63 A, TD-3 63 A, TD-4 63 A, alimentarea 35 m, material Cu, metoda E.\nAm presupus: „cu 4 plecari” = număr de plecări, NU material Cu; „4 plecari de 63 A” = 4 plecări identice de 63 A; lungimea „35 m” = 35 m se aplică DOAR alimentării TG; plecări L = 50 m; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,8 (4 plecări) (NU prima valoare din text); plecări: L = 50 m, Cu PVC E (pat de cabluri / în aer); plecările pe același pat de cabluri: grupare 4 circuite, k grupare B.52.17 = 0,77; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 954 A < Ia 3000 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 2 kA (Ik3max 16,86 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 2 kA (Ik3max 16,86 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·TD-3 vs amonte: selectivitate parțială până la 2 kA (Ik3max 16,86 kA) — confirmă cu tabelele producătorului",
+   "V42 P4·TD-4 vs amonte: selectivitate parțială până la 2 kA (Ik3max 16,86 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 3,
+  "fraza": "TG atelier mecanic 3 plecari: strung 7,5kW, freza 11 kw, compresor 15 kW, alimentare 80m Al in pamant",
+  "asteptat": "tablou 3 motoare, L 80 Al D1",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "L_alimentare_m": 80,
+   "cablu": {
+    "material": "Al",
+    "metoda": "D1"
+   },
+   "plecari": [
+    {
+     "nume": "Strung",
+     "P_kW": 7.5,
+     "cablu": {
+      "material": "Al",
+      "metoda": "D1"
+     }
+    },
+    {
+     "nume": "Freza",
+     "P_kW": 11,
+     "cablu": {
+      "material": "Al",
+      "metoda": "D1"
+     }
+    },
+    {
+     "nume": "Compresor",
+     "P_kW": 15,
+     "cablu": {
+      "material": "Al",
+      "metoda": "D1"
+     }
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„7,5kW”: 7,5 cu virgulă zecimală (virgula = separator zecimal)",
+   "lungimea „80m” = 80 m se aplică DOAR alimentării TG; plecări L = 50 m",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanț: Σ = 33,5 kW, ks = 0,9 → Pc = 30,2 kW (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "Compresor = receptor motor (cosφ 0,85)",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 3 plecări: Strung 7,5 kW, Freza 11 kW, Compresor 15 kW, alimentarea 80 m, material Al, metoda D1.\nAm presupus: „7,5kW”: 7,5 cu virgulă zecimală (virgula = separator zecimal); lungimea „80m” = 80 m se aplică DOAR alimentării TG; plecări L = 50 m; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanț: Σ = 33,5 kW, ks = 0,9 → Pc = 30,2 kW (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); Compresor = receptor motor (cosφ 0,85); sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 416 A < Ia 500 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V42 P1·Strung vs amonte: selectivitate parțială până la 0,25 kA (Ik3max 2,58 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·Freza vs amonte: selectivitate parțială până la 0,25 kA (Ik3max 2,58 kA) — confirmă cu tabelele producătorului",
+   "V31 P3·Compresor: Ik1min 280 A < Ia 384 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V42 P3·Compresor vs amonte: selectivitate parțială până la 0,25 kA (Ik3max 2,58 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 4,
+  "fraza": "tg birouri P+2: TE parter 40A, TE etaj1 40A, TE etaj2 40A, server 25A, lift 11kW, HVAC 32 kW",
+  "asteptat": "6 plecari",
+  "actiune": "genereaza_cu_intrebare",
+  "tip": "locuinta",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "locuinta",
+   "circuite": [
+    {
+     "nume": "Iluminat parter",
+     "receptor": "iluminat"
+    },
+    {
+     "nume": "Iluminat etaj",
+     "receptor": "iluminat"
+    },
+    {
+     "nume": "Iluminat exterior",
+     "receptor": "iluminat"
+    },
+    {
+     "nume": "Prize parter",
+     "receptor": "prize"
+    },
+    {
+     "nume": "Prize etaj",
+     "receptor": "prize"
+    },
+    {
+     "nume": "Prize bucătărie",
+     "receptor": "prize_bucatarie"
+    },
+    {
+     "nume": "Plită",
+     "receptor": "plita"
+    },
+    {
+     "nume": "Cuptor",
+     "receptor": "cuptor"
+    },
+    {
+     "nume": "Prize baie parter",
+     "receptor": "prize_baie"
+    },
+    {
+     "nume": "Prize baie etaj",
+     "receptor": "prize_baie"
+    },
+    {
+     "nume": "Mașină de spălat rufe",
+     "receptor": "masina_spalat_rufe"
+    },
+    {
+     "nume": "Mașină de spălat vase",
+     "receptor": "masina_spalat_vase"
+    },
+    {
+     "nume": "Boiler",
+     "receptor": "boiler"
+    },
+    {
+     "nume": "Centrală termică",
+     "receptor": "centrala_termica"
+    },
+    {
+     "nume": "Prize exterior",
+     "receptor": "prize_exterior"
+    }
+   ],
+   "alimentare": {
+    "P_aprobata_kW": 11,
+    "In_Q_bransament_A": 40
+   }
+  },
+  "intrebari": [
+   "Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”."
+  ],
+  "presupus": [
+   "circuitele nu sunt listate → set tipic pentru casă P+1: Iluminat parter, Iluminat etaj, Iluminat exterior, Prize parter, Prize etaj, Prize bucătărie, Plită, Cuptor, Prize baie parter, Prize baie etaj, Mașină de spălat rufe, Mașină de spălat vase, Boiler, Centrală termică, Prize exterior (15 circuite) — PRESUPUNERE, corectați lista dacă diferă",
+   "alimentare din branșament existent (implicit)",
+   "coloana BMPT → tabloul locuinței: lungime implicită (motor)",
+   "coloană și circuite Cu",
+   "schema TN-C-S, separare PEN în BMPT",
+   "puterile și lungimile circuitelor nedeclarate: valori tipice pe receptor (norme.LOCUINTA_RECEPTORI)",
+   "ks după numărul receptoarelor generale (0,8 / 0,6 / 0,5 / 0,4); sarcinile continue (VE, pompă de căldură, încălzire electrică) cu ks = 1",
+   "DDR 30 mA pe grupe de cel mult 5 circuite",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: locuință (casă P+1) — rețea nespecificată, P aprobată = 11 kW, Q branșament 40 A, 15 circuite, dintre care dedicate: Plită, Cuptor, Mașină de spălat rufe, Mașină de spălat vase, Boiler, Centrală termică.\nAm presupus: circuitele nu sunt listate → set tipic pentru casă P+1: Iluminat parter, Iluminat etaj, Iluminat exterior, Prize parter, Prize etaj, Prize bucătărie, Plită, Cuptor, Prize baie parter, Prize baie etaj, Mașină de spălat rufe, Mașină de spălat vase, Boiler, Centrală termică, Prize exterior (15 circuite) — PRESUPUNERE, corectați lista dacă diferă; alimentare din branșament existent (implicit); coloana BMPT → tabloul locuinței: lungime implicită (motor); coloană și circuite Cu; schema TN-C-S, separare PEN în BMPT; puterile și lungimile circuitelor nedeclarate: valori tipice pe receptor (norme.LOCUINTA_RECEPTORI); ks după numărul receptoarelor generale (0,8 / 0,6 / 0,5 / 0,4); sarcinile continue (VE, pompă de căldură, încălzire electrică) cu ks = 1; DDR 30 mA pe grupe de cel mult 5 circuite; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).\nÎntrebare: Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”.",
+  "avert": [],
+  "blocant": [
+   "V07 retea: rețeaua nu este specificată (monofazat sau trifazat)"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 5,
+  "fraza": "Tablou general ferma vaci 250 vite: muls 15 kW, racire lapte 22 kW, ventilatie 6x1,5kW, iluminat grajd 4 kW, pompe apa 2x5,5 kW, coloana 120 m din PT ATR",
+  "asteptat": "ferma, multiplicatori 6x1,5 si 2x5,5, L 120",
+  "actiune": "refuza",
+  "tip": "pt",
+  "refuz": "I02",
+  "refuz_motiv": "Lipsește puterea transformatorului (kVA) (I02).",
+  "intrare": {
+   "tip_schema": "pt"
+  },
+  "intrebari": [
+   "Care este puterea trafo (kVA)?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, plecările 120 m.\nNu pot genera schema: Lipsește puterea transformatorului (kVA) (I02).\nÎntrebare: Care este puterea trafo (kVA)?",
+  "avert": [],
+  "verdict": "gresit"
+ },
+ {
+  "nr": 6,
+  "fraza": "TG hala depozitare cca 150A, plecari TD-1 63A, TD-2 63A, TD-3 40A, incarcare stivuitoare 3x16A",
+  "asteptat": "tablou In Q1 ~150A? plecari",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 150,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 63
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 63
+    },
+    {
+     "nume": "TD-3",
+     "In_A": 40
+    },
+    {
+     "nume": "Incarcare stivuitoare 1",
+     "In_A": 16
+    },
+    {
+     "nume": "Incarcare stivuitoare 2",
+     "In_A": 16
+    },
+    {
+     "nume": "Incarcare stivuitoare 3",
+     "In_A": 16
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„cca 150A” = 150 A, aproximativ",
+   "„incarcare stivuitoare 3x16A” = 3 plecări de 16 A (nu 48 A)",
+   "„TD-1”, „TD-2”, „TD-3” păstrate cu majuscule",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "ks = 0,7 (6 plecări); Q1 impus 150 A",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 150 A, 6 plecări: TD-1 63 A, TD-2 63 A, TD-3 40 A, Incarcare stivuitoare 1 16 A, Incarcare stivuitoare 2 16 A, Incarcare stivuitoare 3 16 A.\nAm presupus: „cca 150A” = 150 A, aproximativ; „incarcare stivuitoare 3x16A” = 3 plecări de 16 A (nu 48 A); „TD-1”, „TD-2”, „TD-3” păstrate cu majuscule; cosφ 0,9 (forță, iluminat, prize, tablou); ks = 0,7 (6 plecări); Q1 impus 150 A; plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V05 Q1/C1: calibrul 150 A nu există în seria MCCB"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "partial"
+ },
+ {
+  "nr": 7,
+  "fraza": "tablou cu 3 plecari: TD1 100A, TD2 50A",
+  "asteptat": "I05 refuz (3 cerute, 2 gasite)",
+  "actiune": "refuza",
+  "tip": "tablou",
+  "refuz": "I05",
+  "refuz_motiv": "S-au cerut 3 plecări, dar s-au găsit 2 (I05).",
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "TD1",
+     "In_A": 100
+    },
+    {
+     "nume": "TD2",
+     "In_A": 50
+    }
+   ]
+  },
+  "intrebari": [
+   "Care este a treia plecare?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: tablou, 2 plecări: TD1 100 A, TD2 50 A.\nNu pot genera schema: S-au cerut 3 plecări, dar s-au găsit 2 (I05).\nÎntrebare: Care este a treia plecare?",
+  "avert": [],
+  "verdict": "corect"
+ },
+ {
+  "nr": 8,
+  "fraza": "tablou general 5 plecari",
+  "asteptat": "I02 refuz",
+  "actiune": "refuza",
+  "tip": "tablou",
+  "refuz": "I02",
+  "refuz_motiv": "Lipsesc puterile sau calibrele plecărilor și puterea tabloului (I02).",
+  "intrare": {
+   "tip_schema": "tablou"
+  },
+  "intrebari": [
+   "Care sunt puterile (kW) sau calibrele (A) celor 5 plecări?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: tablou.\nNu pot genera schema: Lipsesc puterile sau calibrele plecărilor și puterea tabloului (I02).\nÎntrebare: Care sunt puterile (kW) sau calibrele (A) celor 5 plecări?",
+  "avert": [],
+  "verdict": "corect"
+ },
+ {
+  "nr": 9,
+  "fraza": "TG cu plecari 160, 63 si 40 A, coloana 25 m",
+  "asteptat": "unitate comuna A",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "L_alimentare_m": 25,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 160
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 63
+    },
+    {
+     "nume": "TD-3",
+     "In_A": 40
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "unitatea „A” se aplică tuturor numerelor din listă (unitate comună)",
+   "lungimea „25 m” = 25 m se aplică DOAR alimentării TG; plecări L = 50 m",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,9 (3 plecări) (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 3 plecări: TD-1 160 A, TD-2 63 A, TD-3 40 A, alimentarea 25 m.\nAm presupus: „si” = „și” (fără diacritice); unitatea „A” se aplică tuturor numerelor din listă (unitate comună); lungimea „25 m” = 25 m se aplică DOAR alimentării TG; plecări L = 50 m; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,9 (3 plecări) (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 1020 A < Ia 3000 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V31 P1·TD-1: Ik1min 867 A < Ia 950 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V41 P1·TD-1 vs amonte: raport Ip amonte/aval 1,48 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 2 kA (Ik3max 21,4 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 2 kA (Ik3max 21,4 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·TD-3 vs amonte: selectivitate parțială până la 2 kA (Ik3max 21,4 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 10,
+  "fraza": "TG plecari 160, 63, 40",
+  "asteptat": "I03 refuz, fara unitate",
+  "actiune": "refuza",
+  "tip": "tablou",
+  "refuz": "I03",
+  "refuz_motiv": "Valoarea 40 din listă nu are unitate (A sau kW).",
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "P_kW": 160
+    },
+    {
+     "nume": "TD-2",
+     "P_kW": 63
+    },
+    {
+     "nume": "TD-3",
+     "P_kW": 40
+    }
+   ]
+  },
+  "intrebari": [
+   "Valorile din listă sunt în A (calibre) sau în kW (puteri)?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: tablou, 3 plecări: TD-1 160 None, TD-2 63 None, TD-3 40 None.\nNu pot genera schema: Valoarea 40 din listă nu are unitate (A sau kW).\nÎntrebare: Valorile din listă sunt în A (calibre) sau în kW (puteri)?",
+  "avert": [],
+  "verdict": "corect"
+ },
+ {
+  "nr": 11,
+  "fraza": "tablou monofazat 3x63A",
+  "asteptat": "I08 contradictie",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 63
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "alimentarea tabloului L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 63 A.\nAm presupus: cosφ 0,9 (forță, iluminat, prize, tablou); alimentarea tabloului L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 12,
+  "fraza": "TG 400V TN-C-S, plecari: TD-1 cu sub-plecari (iluminat 3 kW, prize 4 kW, pompa 5,5 kW), TD-2 cu sub-plecari (motor 18,5 kW 40m, ventilator 4 kW)",
+  "asteptat": "cascada TD-1 si TD-2 cu copii",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "TD-1 cu sub-plecari",
+     "copii": [
+      {
+       "nume": "Iluminat",
+       "P_kW": 3
+      },
+      {
+       "nume": "Prize",
+       "P_kW": 4
+      },
+      {
+       "nume": "Pompa",
+       "P_kW": 5.5
+      }
+     ]
+    },
+    {
+     "nume": "TD-2 cu sub-plecari",
+     "copii": [
+      {
+       "nume": "Motor",
+       "P_kW": 18.5,
+       "L_m": 40
+      },
+      {
+       "nume": "Ventilator",
+       "P_kW": 4
+      }
+     ]
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„5,5 kW”: 5,5 cu virgulă zecimală (virgula = separator zecimal)",
+   "„18,5 kW”: 18,5 cu virgulă zecimală (virgula = separator zecimal)",
+   "„motor 18,5 kW 40m”: lungimea scrisă după calibru (40 m) aparține plecării Motor",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "sub-plecări: circuite finale Cu PVC metoda C, L = 25 m",
+   "P TD-1 cu sub-plecari din bilanțul sub-plecărilor (ks 0,9)",
+   "P TD-2 cu sub-plecari din bilanțul sub-plecărilor (ks 0,9)",
+   "Iluminat = receptor iluminat (ΔU ≤ 3 %)",
+   "Pompa = receptor motor (cosφ 0,85)",
+   "Motor = receptor motor (cosφ 0,85)",
+   "Ventilator = receptor motor (cosφ 0,85)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 2 plecări: TD-1 cu sub-plecari cu sub-plecări: Iluminat 3 kW, Prize 4 kW, Pompa 5,5 kW, TD-2 cu sub-plecari cu sub-plecări: Motor 18,5 kW (40 m), Ventilator 4 kW.\nAm presupus: „5,5 kW”: 5,5 cu virgulă zecimală (virgula = separator zecimal); „18,5 kW”: 18,5 cu virgulă zecimală (virgula = separator zecimal); „motor 18,5 kW 40m”: lungimea scrisă după calibru (40 m) aparține plecării Motor; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); sub-plecări: circuite finale Cu PVC metoda C, L = 25 m; P TD-1 cu sub-plecari din bilanțul sub-plecărilor (ks 0,9); P TD-2 cu sub-plecari din bilanțul sub-plecărilor (ks 0,9); Iluminat = receptor iluminat (ΔU ≤ 3 %); Pompa = receptor motor (cosφ 0,85); Motor = receptor motor (cosφ 0,85); Ventilator = receptor motor (cosφ 0,85); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 545 A < Ia 630 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V42 P1·TD-1 cu sub-plecari vs amonte: selectivitate parțială până la 0,32 kA (Ik3max 4,06 kA) — confirmă cu tabelele producătorului",
+   "V42 P1·TD-1 cu sub-plecari.1·Iluminat vs amonte: selectivitate parțială până la 0,11 kA (Ik3max 1,18 kA) — confirmă cu tabelele producătorului",
+   "V42 P1·TD-1 cu sub-plecari.2·Prize vs amonte: selectivitate parțială până la 0,11 kA (Ik3max 1,18 kA) — confirmă cu tabelele producătorului",
+   "V41 P1·TD-1 cu sub-plecari.3·Pompa vs amonte: raport Ip amonte/aval 1,54 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P1·TD-1 cu sub-plecari.3·Pompa vs amonte: selectivitate parțială până la 0,11 kA (Ik3max 1,18 kA) — confirmă cu tabelele producătorului",
+   "V41 P2·TD-2 cu sub-plecari vs amonte: raport Ip amonte/aval 1,26 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P2·TD-2 cu sub-plecari vs amonte: selectivitate parțială până la 0,32 kA (Ik3max 4,06 kA) — confirmă cu tabelele producătorului",
+   "V31 P2·TD-2 cu sub-plecari.1·Motor: Ik1min 231 A < Ia 400 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V41 P2·TD-2 cu sub-plecari.1·Motor vs amonte: raport Ip amonte/aval 1,25 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P2·TD-2 cu sub-plecari.1·Motor vs amonte: selectivitate parțială până la 0,35 kA (Ik3max 2,08 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 cu sub-plecari.2·Ventilator vs amonte: selectivitate parțială până la 0,35 kA (Ik3max 2,08 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 13,
+  "fraza": "TG: TD-Hala 200A 90m (TD-H1 63A 30m; TD-H2 63A 45m); TD-Birouri 63A 25m",
+  "asteptat": "cascada cu ;",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 200,
+   "L_alimentare_m": 90
+  },
+  "intrebari": [],
+  "presupus": [
+   "lungimea „90m” = 90 m se aplică DOAR alimentării TG",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 200 A, alimentarea 90 m.\nAm presupus: lungimea „90m” = 90 m se aplică DOAR alimentării TG; cosφ 0,9 (forță, iluminat, prize, tablou); sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 14,
+  "fraza": "tablou general hala, iluminat 5 circuite de 16 A, prize 4 circuite de 25A, forta 2x32A",
+  "asteptat": "multiplicatori circuite",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "Circuit 1",
+     "In_A": 16
+    },
+    {
+     "nume": "Circuit 2",
+     "In_A": 16
+    },
+    {
+     "nume": "Circuit 3",
+     "In_A": 16
+    },
+    {
+     "nume": "Circuit 4",
+     "In_A": 16
+    },
+    {
+     "nume": "Circuit 5",
+     "In_A": 16
+    },
+    {
+     "nume": "Prize 4 circuite de",
+     "In_A": 25
+    },
+    {
+     "nume": "Forta 1",
+     "In_A": 32
+    },
+    {
+     "nume": "Forta 2",
+     "In_A": 32
+    }
+   ],
+   "circuite_finale": true
+  },
+  "intrebari": [],
+  "presupus": [
+   "„5 circuite de 16 A” = 5 plecări identice de 16 A",
+   "„forta 2x32A” = 2 plecări de 32 A (nu 64 A)",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,7 (8 plecări) (NU prima valoare din text)",
+   "circuite Cu PVC metoda C, L = 25 m (circuite finale)",
+   "tablou cu circuite finale (circuite_finale): MCB curba B pentru iluminat/prize, C pentru restul; DDR 30 mA tip A pe circuitele de prize",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 8 plecări: Circuit 1 16 A, Circuit 2 16 A, Circuit 3 16 A, Circuit 4 16 A, Circuit 5 16 A, Prize 4 circuite de 25 A, Forta 1 32 A, Forta 2 32 A.\nAm presupus: „5 circuite de 16 A” = 5 plecări identice de 16 A; „forta 2x32A” = 2 plecări de 32 A (nu 64 A); cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,7 (8 plecări) (NU prima valoare din text); circuite Cu PVC metoda C, L = 25 m (circuite finale); tablou cu circuite finale (circuite_finale): MCB curba B pentru iluminat/prize, C pentru restul; DDR 30 mA tip A pe circuitele de prize; alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 848 A < Ia 1500 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V42 P1·Circuit 1 vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·Circuit 2 vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·Circuit 3 vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului",
+   "V42 P4·Circuit 4 vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului",
+   "V42 P5·Circuit 5 vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului",
+   "V42 P6·Prize 4 circuite de vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului",
+   "V42 P7·Forta 1 vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului",
+   "V42 P8·Forta 2 vs amonte: selectivitate parțială până la 1 kA (Ik3max 11,49 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 15,
+  "fraza": "TG plecari: motor pompa 30 kW pornire stea-triunghi 50 m, motor ventilator 45kW cu convertizor 35m, banda transportoare 7.5 kW",
+  "asteptat": "motoare, pornire",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "P_kW": 30,
+   "L_alimentare_m": 50
+  },
+  "intrebari": [],
+  "presupus": [
+   "lungimea „50 m” = 50 m se aplică DOAR alimentării TG",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, P = 30 kW, alimentarea 50 m.\nAm presupus: lungimea „50 m” = 50 m se aplică DOAR alimentării TG; cosφ 0,9 (forță, iluminat, prize, tablou); sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 16,
+  "fraza": "tg plecari td-1 250A 120m, td-2 160 A 0,15 km Al XLPE in tub",
+  "asteptat": "km conversie, Al XLPE D1",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 2160,
+   "L_alimentare_m": 150,
+   "cablu": {
+    "material": "Al",
+    "izolatie": "XLPE",
+    "metoda": "D1"
+   },
+   "plecari": [
+    {
+     "nume": "Td-1",
+     "In_A": 250,
+     "L_m": 120,
+     "cablu": {
+      "material": "Al",
+      "izolatie": "XLPE",
+      "metoda": "D1"
+     }
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„0,15 km”: 0,15 cu virgulă zecimală (virgula = separator zecimal)",
+   "„td-1 250A 120m”: lungimea scrisă după calibru (120 m) aparține plecării Td-1",
+   "lungimea „0,15 km” = 150 m se aplică DOAR alimentării tabloului",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "ks = 1 (1 plecări); Q1 impus 2160 A",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 2160 A, 1 plecări: Td-1 250 A (120 m), alimentarea 150 m, material Al, izolatie XLPE, metoda D1.\nAm presupus: „0,15 km”: 0,15 cu virgulă zecimală (virgula = separator zecimal); „td-1 250A 120m”: lungimea scrisă după calibru (120 m) aparține plecării Td-1; lungimea „0,15 km” = 150 m se aplică DOAR alimentării tabloului; cosφ 0,9 (forță, iluminat, prize, tablou); ks = 1 (1 plecări); Q1 impus 2160 A; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V05 Q1/C1: calibrul 2160 A nu există în seria ACB"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 17,
+  "fraza": "TG plecari: TD-1 63A 1 000 m",
+  "asteptat": "L 1000 m absurd/ΔU",
+  "actiune": "refuza",
+  "tip": "tablou",
+  "refuz": "I03",
+  "refuz_motiv": "Valoarea 1 din listă nu are unitate (A sau kW).",
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "TD-1 63A",
+     "P_kW": 1,
+     "L_m": 0
+    }
+   ]
+  },
+  "intrebari": [
+   "Valorile din listă sunt în A (calibre) sau în kW (puteri)?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: tablou, 1 plecări: TD-1 63A 1 None (0 m).\nNu pot genera schema: Valoarea 1 din listă nu are unitate (A sau kW).\nÎntrebare: Valorile din listă sunt în A (calibre) sau în kW (puteri)?",
+  "avert": [],
+  "verdict": "partial"
+ },
+ {
+  "nr": 18,
+  "fraza": "TG plecari: TD-1 63A 2.500 m",
+  "asteptat": "punct mii => 2500 m",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 63,
+     "L_m": 2500
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TD-1 63A 2.500 m”: lungimea scrisă după calibru (2500 m) aparține plecării TD-1",
+   "„TD-1” păstrat cu majuscule",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 1 (1 plecări) (NU prima valoare din text)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 1 plecări: TD-1 63 A (2500 m).\nAm presupus: „TD-1 63A 2.500 m”: lungimea scrisă după calibru (2500 m) aparține plecării TD-1; „TD-1” păstrat cu majuscule; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 1 (1 plecări) (NU prima valoare din text); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 545 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V35 Q1/C1: fază 1×25 mm² < 46,5 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător",
+   "V36 Q1/C1: PE 10 mm² < 24,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "V09 P1·TD-1: lungime 2500 m > 1000 m — verifică datele",
+   "V21 P1·TD-1: ΔU cumulat 4,72 % > 3 %",
+   "V31 P1·TD-1: Ik1min 290 A < Ia 320 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V41 P1·TD-1 vs amonte: raport Ip amonte/aval 1,02 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 0,64 kA (Ik3max 4,06 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 19,
+  "fraza": "tablou general cu plecari TD-1 40A si TD-2 30 kVA",
+  "asteptat": "kVA la plecare?",
+  "actiune": "genereaza_cu_intrebare",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 100,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 40
+    }
+   ]
+  },
+  "intrebari": [
+   "Confirmați 100 kVA?"
+  ],
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "„TD-1” păstrat cu majuscule",
+   "30 kVA nu e putere standard în norme.TRAFO → 100 kVA (următoarea)",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 1250 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 6,3 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 100 kVA, 1 plecări: TD-1 40 A.\nAm presupus: „si” = „și” (fără diacritice); „TD-1” păstrat cu majuscule; 30 kVA nu e putere standard în norme.TRAFO → 100 kVA (următoarea); trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 1250 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 6,3 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); beneficiar și adresă necompletate (câmpuri goale în cartuș).\nÎntrebare: Confirmați 100 kVA?",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 3,86 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 3,86 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 20,
+  "fraza": "TG cu plecari: cuptor industrial 60 kW cosfi 1, TD-3 100A",
+  "asteptat": "cosfi",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "cosfi": 1.0,
+   "plecari": [
+    {
+     "nume": "cuptor industrial 60 kW cosfi",
+     "In_A": 1
+    },
+    {
+     "nume": "TD-3",
+     "In_A": 100
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "unitatea „A” se aplică tuturor numerelor din listă (unitate comună)",
+   "„TD-3” păstrat cu majuscule",
+   "P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 2 plecări: cuptor industrial 60 kW cosfi 1 A, TD-3 100 A.\nAm presupus: unitatea „A” se aplică tuturor numerelor din listă (unitate comună); „TD-3” păstrat cu majuscule; P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V05 P1·cuptor industrial 60 kW cosfi: calibrul 1 A nu există în seria gG"
+  ],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 784 A < Ia 1500 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V41 P2·TD-3 vs amonte: raport Ip amonte/aval 1,06 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P2·TD-3 vs amonte: selectivitate parțială până la 1 kA (Ik3max 9,37 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 21,
+  "fraza": "PT 630 kVA 20/0,4 kV cu 4 plecari de 250 A, lungime 100 m",
+  "asteptat": "pt, 4x250A, L 100 la toate (declarat)",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 630,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 250,
+     "L_m": 100
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 250,
+     "L_m": 100
+    },
+    {
+     "nume": "TD-3",
+     "In_A": 250,
+     "L_m": 100
+    },
+    {
+     "nume": "TD-4",
+     "In_A": 250,
+     "L_m": 100
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„cu 4 plecari” = număr de plecări, NU material Cu",
+   "„4 plecari de 250 A” = 4 plecări identice de 250 A",
+   "la PT, o lungime generală se aplică tuturor plecărilor („100 m” = 100 m)",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 4600 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 630 kVA, 4 plecări: TD-1 250 A (100 m), TD-2 250 A (100 m), TD-3 250 A (100 m), TD-4 250 A (100 m), plecările 100 m.\nAm presupus: „cu 4 plecari” = număr de plecări, NU material Cu; „4 plecari de 250 A” = 4 plecări identice de 250 A; la PT, o lungime generală se aplică tuturor plecărilor („100 m” = 100 m); trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 4600 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·TD-3 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 P4·TD-4 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 22,
+  "fraza": "post de transformare 1000kVA, plecari TG1 1000A 20m, TG2 400A 80m, iluminat exterior 10 kW 300m",
+  "asteptat": "pt 1000, 3 plecari",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 1000,
+   "plecari": [
+    {
+     "nume": "TG1",
+     "In_A": 1000,
+     "L_m": 20
+    },
+    {
+     "nume": "TG2",
+     "In_A": 400,
+     "L_m": 80
+    },
+    {
+     "nume": "Iluminat exterior",
+     "P_kW": 10,
+     "L_m": 300
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TG1 1000A 20m”: lungimea scrisă după calibru (20 m) aparține plecării TG1",
+   "„TG2 400A 80m”: lungimea scrisă după calibru (80 m) aparține plecării TG2",
+   "„iluminat exterior 10 kW 300m”: lungimea scrisă după calibru (300 m) aparține plecării Iluminat exterior",
+   "„TG1”, „TG2” păstrate cu majuscule",
+   "trafo ulei 20/0,4 kV Dyn5, uk 6 %, Pk 7600 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "Iluminat exterior = receptor iluminat (ΔU ≤ 3 %)",
+   "plecarea de 1000 A: MCCB (gG doar până la 630 A pe plecări)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 1000 kVA, 3 plecări: TG1 1000 A (20 m), TG2 400 A (80 m), Iluminat exterior 10 kW (300 m).\nAm presupus: „TG1 1000A 20m”: lungimea scrisă după calibru (20 m) aparține plecării TG1; „TG2 400A 80m”: lungimea scrisă după calibru (80 m) aparține plecării TG2; „iluminat exterior 10 kW 300m”: lungimea scrisă după calibru (300 m) aparține plecării Iluminat exterior; „TG1”, „TG2” păstrate cu majuscule; trafo ulei 20/0,4 kV Dyn5, uk 6 %, Pk 7600 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); Iluminat exterior = receptor iluminat (ΔU ≤ 3 %); plecarea de 1000 A: MCCB (gG doar până la 630 A pe plecări); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V45 P1·TG1: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×240 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "V41 P1·TG1 vs amonte: raport Ip amonte/aval 1,52 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P1·TG1 vs amonte: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TG2 vs amonte: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·Iluminat exterior vs amonte: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 23,
+  "fraza": "PTAB 400 kVA cu celula de linie intrare-iesire si celula trafo, masura pe MT, plecari TD-1 200A, TD-2 160A",
+  "asteptat": "celule MT, masura MT",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 400,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 200
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 160
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "„TD-1”, „TD-2” păstrate cu majuscule",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 3250 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 25 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 400 kVA, 2 plecări: TD-1 200 A, TD-2 160 A.\nAm presupus: „si” = „și” (fără diacritice); „TD-1”, „TD-2” păstrate cu majuscule; trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 3250 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 25 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 24,
+  "fraza": "post trafo 1600 kva ulei, masura pe JT semidirecta, plecari: TG hala 1250A 15m",
+  "asteptat": "masura JT semidirecta TC",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 1600,
+   "plecari": [
+    {
+     "nume": "TG hala",
+     "In_A": 1250,
+     "L_m": 15
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TG hala 1250A 15m”: lungimea scrisă după calibru (15 m) aparține plecării TG hala",
+   "trafo ulei 20/0,4 kV Dyn5, uk 6 %, Pk 12000 W (Tier 2)",
+   "celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > 1000 kVA)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "plecarea de 1250 A: MCCB (gG doar până la 630 A pe plecări)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 1600 kVA, 1 plecări: TG hala 1250 A (15 m).\nAm presupus: „TG hala 1250A 15m”: lungimea scrisă după calibru (15 m) aparține plecării TG hala; trafo ulei 20/0,4 kV Dyn5, uk 6 %, Pk 12000 W (Tier 2); celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > 1000 kVA); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); plecarea de 1250 A: MCCB (gG doar până la 630 A pe plecări); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V45 P1·TG hala: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×300 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "V42 P1·TG hala vs amonte: selectivitate parțială până la 24 kA (Ik3max 39,66 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 24 kA (Ik3max 39,66 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 25,
+  "fraza": "PT 750 kVA plecari TD-1 400A, TD-2 250A",
+  "asteptat": "I07 Sn nestandard → 800 + intrebare",
+  "actiune": "genereaza_cu_intrebare",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 800,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 400
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 250
+    }
+   ]
+  },
+  "intrebari": [
+   "Confirmați 800 kVA (sau 630 kVA)?"
+  ],
+  "presupus": [
+   "„TD-1”, „TD-2” păstrate cu majuscule",
+   "750 kVA nu e putere standard în norme.TRAFO → 800 kVA (următoarea)",
+   "trafo ulei 20/0,4 kV Dyn5, uk 6 %, Pk 6000 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 50 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 800 kVA, 2 plecări: TD-1 400 A, TD-2 250 A.\nAm presupus: „TD-1”, „TD-2” păstrate cu majuscule; 750 kVA nu e putere standard în norme.TRAFO → 800 kVA (următoarea); trafo ulei 20/0,4 kV Dyn5, uk 6 %, Pk 6000 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 50 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); beneficiar și adresă necompletate (câmpuri goale în cartuș).\nÎntrebare: Confirmați 800 kVA (sau 630 kVA)?",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 26,
+  "fraza": "PT 3000 kVA cu 2 plecari de 1600A",
+  "asteptat": "I12 refuz",
+  "actiune": "refuza",
+  "tip": "pt",
+  "refuz": "I12",
+  "refuz_motiv": "Sn = 3000 kVA > 2500 kVA: în afara domeniului aplicației (SPEC §A.3).",
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 3000,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 1600
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 1600
+    }
+   ]
+  },
+  "intrebari": [
+   "Împărțiți instalația pe mai multe posturi de transformare?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 3000 kVA, 2 plecări: TD-1 1600 A, TD-2 1600 A.\nNu pot genera schema: Sn = 3000 kVA > 2500 kVA: în afara domeniului aplicației (SPEC §A.3).\nÎntrebare: Împărțiți instalația pe mai multe posturi de transformare?",
+  "avert": [],
+  "verdict": "corect"
+ },
+ {
+  "nr": 27,
+  "fraza": "pt 100 kva pt ferma, plecari 2x63A",
+  "asteptat": "pt minuscula = pentru? ambig; 'pt 100 kva' - kva => PT",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 100,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 63
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 63
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„pt” minuscul = „pentru” (nu post de transformare)",
+   "„2x63A” = 2 plecări de 63 A (nu 126 A)",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 1250 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 6,3 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 100 kVA, 2 plecări: TD-1 63 A, TD-2 63 A.\nAm presupus: „pt” minuscul = „pentru” (nu post de transformare); „2x63A” = 2 plecări de 63 A (nu 126 A); trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 1250 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 6,3 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 3,86 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 3,86 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 3,86 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 28,
+  "fraza": "PT 250kVA trafo uscat, plecari: ferma porci 100A 200m; moara furaje 30kW 80m",
+  "asteptat": "trafo uscat",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 250,
+   "plecari": [
+    {
+     "nume": "Ferma porci",
+     "In_A": 100,
+     "L_m": 200
+    },
+    {
+     "nume": "Moara furaje",
+     "P_kW": 30,
+     "L_m": 80
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„ferma porci 100A 200m”: lungimea scrisă după calibru (200 m) aparține plecării Ferma porci",
+   "„moara furaje 30kW 80m”: lungimea scrisă după calibru (80 m) aparține plecării Moara furaje",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 2350 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 16 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "Moara furaje = receptor motor (cosφ 0,85)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 250 kVA, 2 plecări: Ferma porci 100 A (200 m), Moara furaje 30 kW (80 m).\nAm presupus: „ferma porci 100A 200m”: lungimea scrisă după calibru (200 m) aparține plecării Ferma porci; „moara furaje 30kW 80m”: lungimea scrisă după calibru (80 m) aparține plecării Moara furaje; trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 2350 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 16 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); Moara furaje = receptor motor (cosφ 0,85); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·Ferma porci vs amonte: selectivitate parțială până la 3,84 kA (Ik3max 9,59 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·Moara furaje vs amonte: selectivitate parțială până la 3,84 kA (Ik3max 9,59 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 3,84 kA (Ik3max 9,59 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 29,
+  "fraza": "transformator 20/0.4kV 400 kVA cu TGJT, plecari TD-1 315A 50m",
+  "asteptat": "pt",
+  "actiune": "genereaza",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 400,
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 315,
+     "L_m": 50
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TD-1 315A 50m”: lungimea scrisă după calibru (50 m) aparține plecării TD-1",
+   "„TD-1” păstrat cu majuscule",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 3250 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 25 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 400 kVA, 1 plecări: TD-1 315 A (50 m).\nAm presupus: „TD-1 315A 50m”: lungimea scrisă după calibru (50 m) aparține plecării TD-1; „TD-1” păstrat cu majuscule; trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 3250 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 25 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ },
+ {
+  "nr": 30,
+  "fraza": "PT 630 kVA cu 4 plecari",
+  "asteptat": "I02 refuz / lipsa puteri plecari",
+  "actiune": "genereaza_cu_intrebare",
+  "tip": "pt",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "pt",
+   "Sn_kVA": 630
+  },
+  "intrebari": [
+   "Care sunt plecările din TGJT (kW sau A)?"
+  ],
+  "presupus": [
+   "„cu 4 plecari” = număr de plecări, NU material Cu",
+   "trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 4600 W (Tier 2)",
+   "celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător)",
+   "S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, Sn = 630 kVA.\nAm presupus: „cu 4 plecari” = număr de plecări, NU material Cu; trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 4600 W (Tier 2); celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător); S\"kQ = 500 MVA (rețea MT 20 kV, valoare implicită); beneficiar și adresă necompletate (câmpuri goale în cartuș).\nÎntrebare: Care sunt plecările din TGJT (kW sau A)?",
+  "avert": [],
+  "blocant": [
+   "V07 schema: TGJT fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "partial"
+ },
+ {
+  "nr": 31,
+  "fraza": "grup electrogen 100 kVA cu ATS pentru consumatori vitali 60 kW, retea 125A",
+  "asteptat": "ge_ats Sn 100, P 60",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 100,
+   "P_sarcina_kW": 60
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 60 kW, Sn GE = 100 kVA.\nAm presupus: cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 QR/C1: Ik1min 784 A < Ia 1200 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V31 C3: Ik1min 659 A < Ia 1200 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 32,
+  "fraza": "GE 250kVA + AAR, consumatori vitali: pompe incendiu 2x30kW, iluminat siguranta 3kW, server 10kW",
+  "asteptat": "ge_ats + plecari vitale",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 250,
+   "P_sarcina_kW": 30
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 30 kW, Sn GE = 250 kVA.\nAm presupus: cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 QR/C1: Ik1min 545 A < Ia 600 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V35 QR/C1: fază 1×25 mm² < 46,5 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător",
+   "V36 QR/C1: PE 10 mm² < 24,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "V31 C3: Ik1min 526 A < Ia 600 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 33,
+  "fraza": "generator diesel 60 kVA, ATS, sarcina 45 kW, cablu GE-ATS 15m",
+  "asteptat": "ge_ats L",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 60,
+   "P_sarcina_kW": 45
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 45 kW, Sn GE = 60 kVA.\nAm presupus: cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 QR/C1: Ik1min 576 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V35 QR/C1: fază 1×35 mm² < 46,5 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător",
+   "V36 QR/C1: PE 10 mm² < 24,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "V31 C3: Ik1min 436 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 34,
+  "fraza": "grup electrogen 500 kva pentru hala, sarcina vitala 380 kW",
+  "asteptat": "GE 500 kVA, P 380 → ok? cos 0,8 → 400 kW",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 500,
+   "P_sarcina_kW": 380
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 380 kW, Sn GE = 500 kVA.\nAm presupus: cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V50 schema: Ib = 609,43 A > 250 A: nu există BMPT; racord din PT (măsură în PT) sau PT propriu"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 35,
+  "fraza": "GE 30 kVA ATS sarcina 40 kW",
+  "asteptat": "GE subdimensionat → avertisment/blocant",
+  "actiune": "refuza",
+  "tip": "ge_ats",
+  "refuz": "V86",
+  "refuz_motiv": "Sarcina 64,2 A > In GE 43,3 A — V86.",
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 30,
+   "P_sarcina_kW": 40
+  },
+  "intrebari": [
+   "Măriți GE la cel puțin 50 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 44,4 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 40 kW, Sn GE = 30 kVA.\nNu pot genera schema: Sarcina 64,2 A > In GE 43,3 A — V86.\nÎntrebare: Măriți GE la cel puțin 50 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 44,4 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?",
+  "avert": [],
+  "verdict": "corect"
+ },
+ {
+  "nr": 36,
+  "fraza": "PT 1000 kVA + TG hala cu plecari TD-1 250A 40m, TD-2 160A 60m, plus GE 200 kVA cu ATS pe tabloul vital 120 kW",
+  "asteptat": "combinatie; ce face/refuza",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 1000,
+   "P_sarcina_kW": 120
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 120 kW, Sn GE = 1000 kVA.\nAm presupus: cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 QR/C1: Ik1min 954 A < Ia 2400 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V45 QG/C2: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 3 sisteme de cabluri monopolare Cu XLPE 1×185 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "V31 C3: Ik1min 923 A < Ia 2400 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 37,
+  "fraza": "TG hala 250A din retea, plecari TD-1 100A, TD-2 63A, si CEF pe acoperis 50 kWp cu invertor 50 kW",
+  "asteptat": "combinatie TG + CEF; prosumator?",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 50,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 50
+    }
+   ],
+   "cablu_inv": {
+    "metoda": "E"
+   }
+  },
+  "intrebari": [],
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "„invertor 50 kW” = 1 invertor de 50 kW",
+   "invertoare pe acoperiș → cablurile c.a. pozate pe pat de cabluri / în aer (metoda E)",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 55 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (50 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: CEF, P c.c. = 50 kWp, 1 × invertor 50 kW.\nAm presupus: „si” = „și” (fără diacritice); „invertor 50 kW” = 1 invertor de 50 kW; invertoare pe acoperiș → cablurile c.a. pozate pe pat de cabluri / în aer (metoda E); Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 55 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (50 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V32 INV-1: Ik1min 846 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "V35 INV-1: fază 1×25 mm² < 30,7 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător",
+   "V36 INV-1: PE 25 mm² < 30,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "V41 QG vs INV-1: amonte = aval = 95 A — fără selectivitate"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 38,
+  "fraza": "hala productie: PT 630kVA, TG, GE 150kVA ATS, CEF 100 kWp",
+  "asteptat": "combinatie multipla",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 630
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, Sn GE = 630 kVA.\nAm presupus: cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V50 schema: Ib = 900 A > 250 A: nu există BMPT; racord din PT (măsură în PT) sau PT propriu"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 39,
+  "fraza": "TG cu plecari: TD-1 100A, invertor fotovoltaic 30 kW",
+  "asteptat": "invertor in TG → tip CEF?",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "cef",
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 30
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "30 kW = putere c.a. totală → 1 × 30 kW",
+   "kWp nedeclarat (raport c.c./c.a. necalculat)",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 33 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (30 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: CEF, P c.a. = 30 kW, 1 × invertor 30 kW.\nAm presupus: 30 kW = putere c.a. totală → 1 × 30 kW; kWp nedeclarat (raport c.c./c.a. necalculat); Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 33 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (30 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V41 QG vs INV-1: amonte = aval = 63 A — fără selectivitate"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 40,
+  "fraza": "tablou general pentru SC Agro Ferma Nord SRL, loc. Salonta jud. Bihor, plansa E-03, faza PT, plecari TD-1 80A 50m, TD-2 63A",
+  "asteptat": "cartus; 'faza PT' nu PT",
+  "actiune": "refuza",
+  "tip": "pt",
+  "refuz": "I02",
+  "refuz_motiv": "Lipsește puterea transformatorului (kVA) (I02).",
+  "intrare": {
+   "tip_schema": "pt",
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 80,
+     "L_m": 50
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 63
+    }
+   ]
+  },
+  "intrebari": [
+   "Care este puterea trafo (kVA)?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, 2 plecări: TD-1 80 A (50 m), TD-2 63 A, beneficiar SC Agro Ferma Nord SRL, Salonta, jud. Bihor, planșa E03, faza PT.\nNu pot genera schema: Lipsește puterea transformatorului (kVA) (I02).\nÎntrebare: Care este puterea trafo (kVA)?",
+  "avert": [],
+  "verdict": "gresit"
+ },
+ {
+  "nr": 41,
+  "fraza": "Tablou TG alimentat cu cablu 3x150+70 Cu din TGD existent 45m, In 250A, plecari TD-1 100A, TD-2 100A",
+  "asteptat": "cablu impus",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 250,
+   "L_alimentare_m": 45,
+   "cablu": {
+    "material": "Cu"
+   },
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 100,
+     "cablu": {
+      "material": "Cu"
+     }
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 100,
+     "cablu": {
+      "material": "Cu"
+     }
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TD-1”, „TD-2” păstrate cu majuscule",
+   "lungimea „45m” = 45 m se aplică DOAR alimentării TG; plecări L = 50 m",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "ks = 0,9 (2 plecări); Q1 impus 250 A",
+   "plecări: L = 50 m, Cu PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 250 A, 2 plecări: TD-1 100 A, TD-2 100 A, alimentarea 45 m, material Cu.\nAm presupus: „TD-1”, „TD-2” păstrate cu majuscule; lungimea „45m” = 45 m se aplică DOAR alimentării TG; plecări L = 50 m; cosφ 0,9 (forță, iluminat, prize, tablou); ks = 0,9 (2 plecări); Q1 impus 250 A; plecări: L = 50 m, Cu PVC D1 (în tub în pământ), trasee separate (fără grupare); sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 1006 A < Ia 3000 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 2 kA (Ik3max 17,64 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 2 kA (Ik3max 17,64 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "partial"
+ },
+ {
+  "nr": 42,
+  "fraza": "TG atelier 3 plecari: TD-1 32A, TD-2 32A, TD-3 32A, retea TT RA 30 ohm",
+  "asteptat": "schema TT",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 32
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 32
+    },
+    {
+     "nume": "TD-3",
+     "In_A": 32
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TD-1”, „TD-2”, „TD-3” păstrate cu majuscule",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,9 (3 plecări) (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 3 plecări: TD-1 32 A, TD-2 32 A, TD-3 32 A.\nAm presupus: „TD-1”, „TD-2”, „TD-3” păstrate cu majuscule; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,9 (3 plecări) (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 685 A < Ia 1200 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V36 Q1/C1: PE 16 mm² < 24,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 0,8 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 0,8 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·TD-3 vs amonte: selectivitate parțială până la 0,8 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 43,
+  "fraza": "tablou distributie ferma pasari, ventilatoare 10 x 1,1 kW, incalzire 3 x 9 kW, hranire 2,2kW",
+  "asteptat": "lista fara trigger plecari?",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "P_kW": 1.1
+  },
+  "intrebari": [],
+  "presupus": [
+   "„1,1 kW”: 1,1 cu virgulă zecimală (virgula = separator zecimal)",
+   "„2,2kW”: 2,2 cu virgulă zecimală (virgula = separator zecimal)",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "alimentarea tabloului L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, P = 1,1 kW.\nAm presupus: „1,1 kW”: 1,1 cu virgulă zecimală (virgula = separator zecimal); „2,2kW”: 2,2 cu virgulă zecimală (virgula = separator zecimal); cosφ 0,9 (forță, iluminat, prize, tablou); alimentarea tabloului L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 44,
+  "fraza": "TG hala 2 plecari: TD-1 125A 50m pozat aparent pe perete, TD-2 63A 30m in aer pe pat",
+  "asteptat": "pozare C vs E per plecare",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 1125,
+   "L_alimentare_m": 50,
+   "cablu": {
+    "metoda": "E"
+   }
+  },
+  "intrebari": [],
+  "presupus": [
+   "lungimea „50m” = 50 m se aplică DOAR alimentării TG",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 1125 A, alimentarea 50 m, metoda E.\nAm presupus: lungimea „50m” = 50 m se aplică DOAR alimentării TG; cosφ 0,9 (forță, iluminat, prize, tablou); sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 45,
+  "fraza": "TG plecari td-1 25 A, td-2 60 A",
+  "asteptat": "2 plecari minuscule",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "Td-1",
+     "In_A": 25
+    },
+    {
+     "nume": "Td-2",
+     "In_A": 60
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 2 plecări: Td-1 25 A, Td-2 60 A.\nAm presupus: cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V05 P2·Td-2: calibrul 60 A nu există în seria gG"
+  ],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 685 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V36 Q1/C1: PE 16 mm² < 24,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "V42 P1·Td-1 vs amonte: selectivitate parțială până la 0,64 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": true,
+  "verdict": "corect"
+ },
+ {
+  "nr": 46,
+  "fraza": "TG plecari: TD-1 25 A pozat aparent, TD-2 40A",
+  "asteptat": "2 plecari, TD-1 pozare C",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 25,
+   "cablu": {
+    "metoda": "C"
+   }
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 25 A, metoda C.\nAm presupus: cosφ 0,9 (forță, iluminat, prize, tablou); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 47,
+  "fraza": "tablou general, plecari: TD-1 40A, TD-2 25A, schema TT, RA 20 ohm",
+  "asteptat": "TT, RA 20",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 40
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 25
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„TD-1”, „TD-2” păstrate cu majuscule",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 2 plecări: TD-1 40 A, TD-2 25 A.\nAm presupus: „TD-1”, „TD-2” păstrate cu majuscule; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,9 (2 plecări) (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 545 A < Ia 630 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V41 P1·TD-1 vs amonte: raport Ip amonte/aval 1,57 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 0,32 kA (Ik3max 4,06 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 0,32 kA (Ik3max 4,06 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 48,
+  "fraza": "TG din retea TN-C-S, plecari: pompa 15 CP, compresor 11kW",
+  "asteptat": "CP→11 kW sau intrebare; 2 plecari",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "P_kW": 11
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, P = 11 kW.\nAm presupus: cosφ 0,9 (forță, iluminat, prize, tablou); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 49,
+  "fraza": "PT 400 kVA si GE 100 kVA cu ATS, sarcina vitala 70 kW",
+  "asteptat": "combinatie: GE 100, nu 400",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 400,
+   "P_sarcina_kW": 70
+  },
+  "intrebari": [],
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 70 kW, Sn GE = 400 kVA.\nAm presupus: „si” = „și” (fără diacritice); cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 QR/C1: Ik1min 848 A < Ia 1500 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V31 C3: Ik1min 826 A < Ia 1500 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 50,
+  "fraza": "GE 100kVA cu ATS, consumatori vitali 2 pompe x 15 kW si iluminat 5 kW",
+  "asteptat": "P vital 35 kW",
+  "actiune": "genereaza",
+  "tip": "ge_ats",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "ge_ats",
+   "Sn_GE_kVA": 100,
+   "P_sarcina_kW": 15
+  },
+  "intrebari": [],
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "cosφ 0,9",
+   "x\"d = 0,12 (valoare tipică)",
+   "ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B",
+   "fără excitație susținută declarată (Ik1 ≈ In_G)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: grup electrogen + ATS, P = 15 kW, Sn GE = 100 kVA.\nAm presupus: „si” = „și” (fără diacritice); cosφ 0,9; x\"d = 0,12 (valoare tipică); ATS 4 poli cu interblocaj mecanic + electric, categoria AC-33B; fără excitație susținută declarată (Ik1 ≈ In_G); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V35 QR/C1: fază 1×6 mm² < 30,7 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător",
+   "V36 QR/C1: PE 6 mm² < 30,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 51,
+  "fraza": "tablou general hala 3x400V, plecari: TD-1 In=100A L=60m, TD-2 In=63A L=40m",
+  "asteptat": "format In= L=",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "In_Q1_A": 100,
+   "L_alimentare_m": 60
+  },
+  "intrebari": [],
+  "presupus": [
+   "lungimea „60m” = 60 m se aplică DOAR alimentării TG",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, Q1 = 100 A, alimentarea 60 m.\nAm presupus: lungimea „60m” = 60 m se aplică DOAR alimentării TG; cosφ 0,9 (forță, iluminat, prize, tablou); sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [
+   "V07 schema: tabloul fără nicio plecare — nu există ce dimensiona"
+  ],
+  "avertisment": [],
+  "blocheaza_export": true,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 52,
+  "fraza": "TG plecari: TD-1 100 A, TD-2 63 A, TD-3 40 A; alimentare 3x185+95 Al 70 m din PT",
+  "asteptat": "tablou, origine PT, cablu impus",
+  "actiune": "refuza",
+  "tip": "pt",
+  "refuz": "I03",
+  "refuz_motiv": "Valoarea 185 din listă nu are unitate (A sau kW).",
+  "intrare": {
+   "tip_schema": "pt",
+   "plecari": [
+    {
+     "nume": "TD-1",
+     "In_A": 100,
+     "L_m": 70,
+     "cablu": {
+      "material": "Al"
+     }
+    },
+    {
+     "nume": "TD-2",
+     "In_A": 63,
+     "L_m": 70,
+     "cablu": {
+      "material": "Al"
+     }
+    },
+    {
+     "nume": "TD-3",
+     "In_A": 40,
+     "L_m": 70,
+     "cablu": {
+      "material": "Al"
+     }
+    },
+    {
+     "nume": "Alimentare 1",
+     "P_kW": 185,
+     "L_m": 70,
+     "cablu": {
+      "material": "Al"
+     }
+    },
+    {
+     "nume": "Alimentare 2",
+     "P_kW": 185,
+     "L_m": 70,
+     "cablu": {
+      "material": "Al"
+     }
+    },
+    {
+     "nume": "Alimentare 3",
+     "P_kW": 185,
+     "L_m": 70,
+     "cablu": {
+      "material": "Al"
+     }
+    }
+   ]
+  },
+  "intrebari": [
+   "Valorile din listă sunt în A (calibre) sau în kW (puteri)?"
+  ],
+  "presupus": [],
+  "intelegere": "Am înțeles: post de transformare 20/0,4 kV, 6 plecări: TD-1 100 A (70 m), TD-2 63 A (70 m), TD-3 40 A (70 m), Alimentare 1 185 None (70 m), Alimentare 2 185 None (70 m), Alimentare 3 185 None (70 m), plecările 70 m, material Al.\nNu pot genera schema: Valoarea 185 din listă nu are unitate (A sau kW).\nÎntrebare: Valorile din listă sunt în A (calibre) sau în kW (puteri)?",
+  "avert": [],
+  "verdict": "gresit"
+ },
+ {
+  "nr": 53,
+  "fraza": "tablou general monofazat cu plecari: iluminat 2 kW, prize 3 kW",
+  "asteptat": "tablou mono",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "Iluminat",
+     "P_kW": 2
+    },
+    {
+     "nume": "Prize",
+     "P_kW": 3
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanț: Σ = 5 kW, ks = 0,9 → Pc = 4,5 kW (NU prima valoare din text)",
+   "plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare)",
+   "Iluminat = receptor iluminat (ΔU ≤ 3 %)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 2 plecări: Iluminat 2 kW, Prize 3 kW.\nAm presupus: cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanț: Σ = 5 kW, ks = 0,9 → Pc = 4,5 kW (NU prima valoare din text); plecări: L = 50 m, Al PVC D1 (în tub în pământ), trasee separate (fără grupare); Iluminat = receptor iluminat (ΔU ≤ 3 %); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V42 P1·Iluminat vs amonte: selectivitate parțială până la 0,05 kA (Ik3max 1,63 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·Prize vs amonte: selectivitate parțială până la 0,05 kA (Ik3max 1,63 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "gresit"
+ },
+ {
+  "nr": 54,
+  "fraza": "TG ferma: plecari grajd 1 40A 80m, grajd 2 40A 95m, siloz 63A 60m",
+  "asteptat": "3 plecari cu L",
+  "actiune": "genereaza",
+  "tip": "tablou",
+  "refuz": null,
+  "refuz_motiv": null,
+  "intrare": {
+   "tip_schema": "tablou",
+   "plecari": [
+    {
+     "nume": "Grajd 1",
+     "In_A": 40,
+     "L_m": 80
+    },
+    {
+     "nume": "Grajd 2",
+     "In_A": 40,
+     "L_m": 95
+    },
+    {
+     "nume": "Siloz",
+     "In_A": 63,
+     "L_m": 60
+    }
+   ]
+  },
+  "intrebari": [],
+  "presupus": [
+   "„grajd 1 40A 80m”: lungimea scrisă după calibru (80 m) aparține plecării Grajd 1",
+   "„grajd 1 40A 80m” = numele „Grajd 1” + 40 A (separatorul de mii prin spațiu NU se acceptă în liste)",
+   "„grajd 2 40A 95m”: lungimea scrisă după calibru (95 m) aparține plecării Grajd 2",
+   "„grajd 2 40A 95m” = numele „Grajd 2” + 40 A (separatorul de mii prin spațiu NU se acceptă în liste)",
+   "„siloz 63A 60m”: lungimea scrisă după calibru (60 m) aparține plecării Siloz",
+   "cosφ 0,9 (forță, iluminat, prize, tablou)",
+   "P tablou din bilanțul plecărilor: ks = 0,9 (3 plecări) (NU prima valoare din text)",
+   "alimentarea TG L = 50 m",
+   "sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intelegere": "Am înțeles: tablou, 3 plecări: Grajd 1 40 A (80 m), Grajd 2 40 A (95 m), Siloz 63 A (60 m).\nAm presupus: „grajd 1 40A 80m”: lungimea scrisă după calibru (80 m) aparține plecării Grajd 1; „grajd 1 40A 80m” = numele „Grajd 1” + 40 A (separatorul de mii prin spațiu NU se acceptă în liste); „grajd 2 40A 95m”: lungimea scrisă după calibru (95 m) aparține plecării Grajd 2; „grajd 2 40A 95m” = numele „Grajd 2” + 40 A (separatorul de mii prin spațiu NU se acceptă în liste); „siloz 63A 60m”: lungimea scrisă după calibru (60 m) aparține plecării Siloz; cosφ 0,9 (forță, iluminat, prize, tablou); P tablou din bilanțul plecărilor: ks = 0,9 (3 plecări) (NU prima valoare din text); alimentarea TG L = 50 m; sursa: rețea publică prin BMPT cu RCCB 300 mA în amonte; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "avert": [],
+  "blocant": [],
+  "avertisment": [
+   "V31 Q1/C1: Ik1min 862 A < Ia 1920 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "V42 P1·Grajd 1 vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 12,93 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·Grajd 2 vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 12,93 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·Siloz vs amonte: selectivitate parțială până la 1,28 kA (Ik3max 12,93 kA) — confirmă cu tabelele producătorului"
+  ],
+  "blocheaza_export": false,
+  "verdict": "corect"
+ }
+]

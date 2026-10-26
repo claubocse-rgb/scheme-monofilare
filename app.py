@@ -6,7 +6,7 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 ROOT = pathlib.Path(__file__).parent
 sys.path.insert(0, str(ROOT))
-from engine import presets, layout, render_svg, render_dxf, symbols, bom, interpretor, constructor, validare, memoriu, deviz, echipamente
+from engine import presets, layout, render_svg, render_dxf, symbols, bom, interpretor, constructor, validare, memoriu, deviz, echipamente, cheie_api
 from engine.calc import dimensioneaza_ramura_simpla
 
 def _find_chrome():
@@ -209,13 +209,9 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, json.dumps({k: {"nume": v[0], "model": v[1]} for k, v in presets.PRESETS.items()}, ensure_ascii=False))
         if p == "/api/sabloane":
             return self._send(200, json.dumps({k: {"nume": v[0], "descriere": v[1], "calc": v[2]} for k, v in SABLOANE.items()}, ensure_ascii=False))
-        if p == "/api/info":
-            try:
-                import anthropic, os  # noqa
-                claude = bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN") or os.path.exists(os.path.expanduser("~/.config/anthropic")))
-            except ImportError:
-                claude = False
-            return self._send(200, json.dumps({"claude": claude, "pdf": bool(CHROME)}))
+        if p == "/api/info":       # F.9: citirea avansată (Claude) e disponibilă când există o cheie API
+            return self._send(200, json.dumps({"claude": bool(cheie_api.citeste()), "claude_sursa": cheie_api.sursa(),
+                                               "pdf": bool(CHROME)}))
         if p == "/api/preturi":
             return self._send(200, json.dumps(deviz.citeste_catalog(), ensure_ascii=False))
         if p == "/api/profile":
@@ -360,10 +356,34 @@ class H(BaseHTTPRequestHandler):
             if p == "/api/dimensionare":
                 r = dimensioneaza_ramura_simpla(model)
                 return self._send(200, json.dumps(r, ensure_ascii=False, default=str))
+            if p == "/api/setari/cheie":     # F.9: cheia API — doar în memoria procesului (+ ~/.config dacă „ține minte”)
+                try:
+                    sursa = cheie_api.seteaza(model.get("cheie"), pastreaza=bool(model.get("pastreaza")))
+                except ValueError as e:
+                    return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
+                return self._send(200, json.dumps({"claude": bool(cheie_api.citeste()), "claude_sursa": sursa}))
+            if p == "/api/chat/cerere":      # versiunea web: corpul cererii către Claude (apelul îl face browserul)
+                return self._send(200, json.dumps({"url": interpretor.URL_API, "beta": interpretor.BETA_LLM,
+                                                   "versiune": interpretor.VERSIUNE_API,
+                                                   "corp": interpretor.cerere_llm(str(model.get("text", "")))}, ensure_ascii=False))
             if p == "/api/chat":
-                it = interpretor.interpreteaza(model.get("text", ""), foloseste_llm=bool(model.get("claude")))
+                # F.9: Claude e interpretorul principal când există cheie (sau când browserul aduce deja răspunsul lui);
+                # regulile locale rulează mereu ca verificare încrucișată / rezervă
+                text = str(model.get("text", ""))
+                if model.get("raspuns_llm") is not None:
+                    it = interpretor.interpreteaza(text, raspuns_llm=model["raspuns_llm"])
+                else:
+                    it = interpretor.interpreteaza(text, foloseste_llm=model.get("claude", True) is not False and bool(cheie_api.citeste()))
+                avansat = it.get("motor") == "llm"
+                motiv = model.get("eroare_llm") or next((x for x in it.get("presupus") or [] if x.startswith("(LLM indisponibil")
+                                                         or x.startswith("(citirea Claude")), None)
                 out = {"interpretare": {k: it.get(k) for k in ("actiune", "tip_schema", "presupus", "intrebari", "refuz_cod", "refuz_motiv",
-                                                               "intelegere", "avertismente", "motor", "intrare_fizica", "cartus")}}
+                                                               "intelegere", "avertismente", "motor", "intrare_fizica", "cartus",
+                                                               "verificare_incrucisata")},
+                       "citire": {"avansata": avansat,
+                                  "mesaj": "citire avansată (Claude), verificată cu regulile locale" if avansat else
+                                  ("citire avansată indisponibilă — " + (str(motiv).strip("()") if motiv else "fără cheie API")
+                                   + "; s-au folosit regulile locale")}}
                 if it.get("actiune") != "refuza" and it.get("intrare_fizica"):
                     cart = {}
                     c = it.get("cartus") or {}

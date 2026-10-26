@@ -114,6 +114,11 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
     receptor = r.get("receptor", "forta")
     rol = r.get("rol", "final")
     cin = dict(r.get("cablu") or {})
+    if cin.get("n_fortat") is None and cin.get("S_fortat") is not None:
+        # r7 (#7, S9): cablul impus „2 cabluri în paralel” — `n_paralel` (sau `n`) pe dicționarul cablului = n_fortat
+        n_al = cin.get("n_paralel", cin.get("n"))
+        if n_al is not None and not isinstance(n_al, bool) and float(n_al).is_integer() and n_al >= 1:
+            cin["n_fortat"] = int(n_al)
     are_aval = bool(r.get("are_aval", False))
     metoda_explicita = cin.get("metoda") is not None and not cin.get("metoda_implicit")
     invertor = receptor in ("invertor", "pcs")
@@ -156,7 +161,20 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
     U = u_calcul(retea)
     cos_dat = r.get("cosfi")
     cosfi = cos_dat if cos_dat is not None else norme.COSFI_IMPLICIT.get(receptor, 0.9)
-    if cos_dat is None and not invertor:
+    eta_m = None
+    motor_p = (receptor == "motor" and r.get("P_kW") is not None and r.get("Ib_A") is None and r.get("In_A") is None
+               and r.get("S_kVA") is None)
+    if motor_p:
+        # r7 (S8): In motor = P/(√3·U·η·cosφ) — η și cosφ tipice IE3 4 poli pe treaptă de putere (norme.MOTOR_IE3_4P),
+        # dacă fișa nu le dă; fără η, Ib (și releul termic reglat la Ib) ieșea cu 8–12 % sub curentul real
+        eta0, cos0 = norme.motor_eta_cosfi(float(r["P_kW"]))
+        eta_m = float(r.get("randament") or eta0)
+        if cos_dat is None:
+            cosfi = cos0
+        if r.get("randament") is None or cos_dat is None:
+            j.presupune(f"motor {fmt_ro(r['P_kW'])} kW: η {fmt_ro(eta_m, 3)}, cosφ {fmt_ro(cosfi, 2)} — valori tipice IE3 4 poli "
+                        f"(SR EN IEC 60034-30-1); se înlocuiesc cu datele de pe plăcuța motorului", obiect)
+    elif cos_dat is None and not invertor:
         j.presupune(f"cosφ {fmt_ro(cosfi)} ({'motor' if receptor == 'motor' else 'forță, iluminat, prize, tablou'})")
     ks = r.get("ks", 1.0) or 1.0
     in_dat = r.get("In_A")
@@ -182,6 +200,12 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         ib = float(r["S_kVA"]) * 1000.0 / U
         ip_min = ib
         j.pas(f"{obiect}: S = {fmt_ro(r['S_kVA'])} kVA → Ib = {fmt_ro(ib)} A")
+    elif eta_m is not None:
+        pc = ks * float(r["P_kW"])
+        ib = pc * 1000.0 / (U * eta_m * cosfi)
+        ip_min = ib
+        j.pas(f"{obiect}: motor P = {fmt_ro(pc)} kW → In = P/({'√3·400' if retea == 'tri' else '230'}·η·cosφ) = "
+              f"{fmt_ro(pc)}·1000/({fmt_ro(U, 1)}·{fmt_ro(eta_m, 3)}·{fmt_ro(cosfi, 2)}) = {fmt_ro(ib)} A")
     else:
         pc = ks * float(r["P_kW"])
         ib = pc * 1000.0 / (U * cosfi)
@@ -233,14 +257,38 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
             emite(j, "V06", BLOCANT, obiect, Ib=ib, tip=tip)
             return _blocat(ib)
         j.pas(f"{obiect}: motor cu pornire {PORNIRE_TXT.get(pornire, pornire)} → MCCB (întreruptor-motor) în loc de gG")
+    motor_ma = False
+    p_motor = r.get("P_kW")
+    if (ip_porn is not None and pornire == "directa" and tip == "MCB" and tip_f is None and in_f is None
+            and ((p_motor is not None and ge(float(p_motor), norme.MOTOR_DOL_P_MIN_INTRERUPATOR_MOTOR_KW))
+                 or gt(ip_min, 63.0))):
+        # r6 (#12, #21): motor DOL ≥ 18,5 kW pe MCB curba C — vârful asimetric de la pornire (≈ 2·Ip pornire ≈ 12·Ib)
+        # depășește banda magnetică a curbei C (5…10·In) → întrerupător-motor / MCCB cu declanșator magnetic pentru
+        # motoare (Im ≈ 13·In, reglaj termic = Ib) + contactor + releu termic (SR EN 60947-4-1)
+        tip = "MCCB"
+        motor_ma = True
+        serie = r.get("serie_In") or pr.SERII[tip]
+        In = pr.alege_calibru(tip, ip_min, serie)
+        if In is None:
+            emite(j, "V06", BLOCANT, obiect, Ib=ib, tip=tip)
+            return _blocat(ib)
+        j.pas(f"{obiect}: motor {fmt_ro(p_motor) + ' kW ' if p_motor is not None else ''}cu pornire directă → "
+              f"întrerupător-motor (MCCB, magnetic {fmt_ro(norme.MOTOR_IM_MULTIPLU)}·In) în loc de MCB curba C")
+
+    def prag_motor(x):
+        """Pragul de nedeclanșare la pornire: întrerupătorul-motor e verificat la vârful asimetric."""
+        if motor_ma:
+            return 0.8 * norme.MOTOR_IM_MULTIPLU * x / norme.MOTOR_VARF_ASIMETRIC
+        return prag_pornire(tip, x, curba)
+
     if ip_porn is not None:
-        prag = prag_pornire(tip, In, curba)
+        prag = prag_motor(In)
         if prag is None or lt(prag, ip_porn):
             if in_f is None:
                 for x in sorted(serie):
                     if x < In:
                         continue
-                    pg = prag_pornire(tip, x, curba)
+                    pg = prag_motor(x)
                     if pg is not None and ge(pg, ip_porn):
                         j.pas(f"{obiect}: pornire {PORNIRE_TXT.get(pornire, pornire)}: Ip = {fmt_ro(k_porn)}·Ib = {fmt_ro(ip_porn)} A > prag "
                               f"{fmt_ro(prag) if prag is not None else '—'} A al {tip} {fmt_ro(In)} A → calibru {fmt_ro(x)} A "
@@ -255,6 +303,13 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         else:
             motor_v23 = ("INFO", prag)
     prot = pr.construieste(tip, In, ip_min, curba, are_aval)
+    if motor_ma:
+        prot["Im_A"] = norme.MOTOR_IM_MULTIPLU * In
+        prot["intrerupator_motor"] = True
+        j.pas(f"{obiect}: vârf asimetric la pornire ≈ {fmt_ro(norme.MOTOR_VARF_ASIMETRIC)}·Ip = "
+              f"{fmt_ro(norme.MOTOR_VARF_ASIMETRIC * ip_porn)} A ≤ 0,8·Im = {fmt_ro(0.8 * prot['Im_A'])} A "
+              f"(Im = {fmt_ro(norme.MOTOR_IM_MULTIPLU)}·In)" if ge(0.8 * prot["Im_A"], norme.MOTOR_VARF_ASIMETRIC * ip_porn)
+              else f"{obiect}: vârf asimetric la pornire peste 0,8·Im — de confirmat cu producătorul")
     ik3o = ctx["Ik3_kA"]
     icu_f = r.get("Icu_fortat")
     if icu_f is not None:
@@ -409,6 +464,13 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
             # v1.6 (§C.8, N2): ținta de mărire mai strictă decât limita (bugetul coloanei locuinței); limita V20/V21
             # rămâne cea normată
             tinta = min(tinta, float(r["tinta_dU"]))
+        if r.get("tinta_dU_ramura") is not None and not invertor:
+            # r8 (P0 #46): bugetul ΔU al RAMURII (alimentarea unui tablou secundar al locuinței) — relativ la ΔU deja
+            # cumulat la origine, nu o țintă absolută: cumulat ≤ max(limita, origine + buget), dar ≤ limita max − 1 %
+            # (rămâne loc circuitelor din tabloul secundar). Înainte, 1,5 % absolut sub 2,2 % la origine creștea
+            # cablul până la 4 × 3×240 mm² pentru 17 A.
+            sus = (lim_max - 1.0) if lim_max is not None else tinta + float(r["tinta_dU_ramura"])
+            tinta = min(max(tinta, du0 + float(r["tinta_dU_ramura"])), max(sus, tinta))
         sect = cb.sectiuni(cc)
         s_max = r.get("S_max_dU")
         while gt(du0 + du(cc, n, S), tinta):
@@ -762,8 +824,17 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         emite(j, "V31", INFO, obiect, "INFO", ik1=round(ev["Ik1"]), ia=ia_v)
     elif stare == "ddr_amonte":
         emite(j, "V31", AVERTISMENT, obiect, "AV", ik1=round(ev["Ik1"]), ia=ia_v)
+        if ctx.get("ddr_amonte_presupus"):
+            # r5 (P1-11): DDR-ul din amonte e PRESUPUS (origine nedeclarată) — mesajul nu-l prezintă ca dat confirmat
+            j.verificari[-1]["mesaj"] += (" — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea "
+                                          "tabloului nu e declarată; fără el deconectarea NU este asigurată")
+            j.verificari[-1]["remediere"] = "originea tabloului declarată (BMPT / tablou existent cu IdN_amonte_mA / PT propriu) sau DDR pe plecare"
     elif stare == "z_implicit":
         emite(j, "V32", AVERTISMENT, obiect, ik1=round(ev["Ik1"]), ia=ia_v)
+    elif stare == "regim_ge" and ctx.get("ge_siguranta"):
+        # r6: GE care alimentează circuite de siguranță (fără DDR) — tratat la nivelul schemei (V97 AVERTISMENT:
+        # legături echipotențiale suplimentare + RCM)
+        emite(j, "V85", AVERTISMENT, obiect, "ramura", x=round(ev["Ik1"]), y=ia_v)
     elif stare == "regim_ge":
         # v1.2 R2 (N-C1): regim GE fără DDR — deconectarea automată nu este asigurată
         emite(j, "V85", BLOCANT, obiect, "ramura", x=round(ev["Ik1"]), y=ia_v)
@@ -821,6 +892,8 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
             prot_out.update({"Isd_A": prot.get("Isd_A"), "Isd_multiplu": prot.get("Isd_multiplu"),
                              "Ii_A": prot["Ii_A"], "tsd_s": prot["tsd_s"]})
     prot_out["Icu_kA"] = prot.get("Icu_kA")
+    if prot.get("intrerupator_motor"):
+        prot_out["intrerupator_motor"] = True
     if prot.get("Icu_fortat"):
         prot_out["Icu_fortat"] = True
     rez = {"obiect": obiect, "Ib_A": ib, "Ip_min_A": ip_min, "protectie": prot_out, "I2_A": I2, "Iz_min_A": iz_min,
@@ -842,6 +915,8 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         rez["protectie_neutru"] = True
     if ip_porn is not None:
         rez.update({"pornire": pornire, "Ip_pornire_A": ip_porn, "dU_pornire_pct": du_porn})
+    elif receptor == "motor" and pornire:
+        rez["pornire"] = pornire          # r5: VFD (Ip ≈ In) — pornirea rămâne în rezultat pentru aparatajul desenat
     # M9: Ik1min nu poate depăși Ik3max (impedanțe incoerente) → V15 BLOCANT
     if gt(ev["Ik1"], ev["Ik3c"] * 1000.0 * (1 + 1e-6)):
         emite(j, "V15", BLOCANT, obiect, ik1=round(ev["Ik1"]), ik3=round(ev["Ik3c"] * 1000.0))
@@ -854,7 +929,8 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
                 "idn_tt_mA": idn_aval_tt(ddr_tt) if ddr_tt else ctx.get("idn_tt_mA"),
                 "regim_ge": ctx.get("regim_ge", False),
                 # v1.3: cel mai apropiat DDR din amonte (selectivitatea DDR în serie, §B.18.1) și RA în TT
-                "ddr_sus": ddr_sus_aval, "RA_tt": ctx.get("RA_tt")}
+                "ddr_sus": ddr_sus_aval, "RA_tt": ctx.get("RA_tt"),
+                "ddr_amonte_presupus": ctx.get("ddr_amonte_presupus") and not ctx.get("ddr_ramura")}
     return {"rezultat": rez, "prot": prot, "ctx_aval": ctx_aval, "blocat": False, "Ib": ib, "Ip": Ip}
 
 

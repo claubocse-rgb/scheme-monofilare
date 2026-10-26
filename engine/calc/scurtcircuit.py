@@ -14,27 +14,28 @@ C_MIN = norme.C_MIN
 
 def z_retea_od(ik3_kA):
     """SPEC §B.13, sursa „rețea publică OD”: Z_Q = c_max·Un/(√3·Ik3_OD); X_Q = Z_Q/√(1+0,1²); R_Q = 0,1·X_Q."""
-    z = C_MAX * UN / (SQRT3 * ik3_kA * 1000.0)
+    z = C_MAX * norme.u_n() / (SQRT3 * ik3_kA * 1000.0)
     x = z / math.sqrt(1 + norme.OD_RX_RAPORT ** 2)
     return (norme.OD_RX_RAPORT * x, x)
 
 
 def ik3_din_z(z):
     """SPEC §B.13: Ik3max = c_max·Un/(√3·|Z|) [kA]."""
-    return C_MAX * UN / (SQRT3 * modul(z)) / 1000.0
+    return C_MAX * norme.u_n() / (SQRT3 * modul(z)) / 1000.0
 
 
 def ik1_din_zb(zb):
     """SPEC §B.14: Ik1min = c_min·U0/|Z_bucla| [A]."""
-    return C_MIN * U0 / modul(zb)
+    return C_MIN * norme.u_0() / modul(zb)
 
 
-def trafo(sn_kva, skq_mva=None):
+def trafo(sn_kva, skq_mva=None, izolatie="ulei"):
     """SPEC §B.13, sursa „trafo propriu”, și §B.14 (bucla Dyn): impedanțele rețelei MT și ale trafo-ului, K_T,
     Ik3max și Ik1min la bara JT. Returnează un dict cu toate mărimile."""
     skq = skq_mva or norme.MT_SKQ_IMPLICIT_MVA
-    uk, pk, p0 = norme.TRAFO[sn_kva]
+    uk, pk, p0 = norme.trafo_date(sn_kva, izolatie)
     sn = sn_kva * 1000.0
+    UN = norme.u_n()           # r7: 0,4 kV sau 0,8 kV (trafo 20/0,8 kV al CEF cu invertoare de 800 V)
     zq = C_MAX * UN ** 2 / (skq * 1e6)
     xq = zq / math.sqrt(1 + norme.MT_RX_RAPORT ** 2)
     rq = norme.MT_RX_RAPORT * xq
@@ -45,7 +46,7 @@ def trafo(sn_kva, skq_mva=None):
     kt = 0.95 * C_MAX / (1 + 0.6 * x_t)
     zk = (rq + kt * rt, xq + kt * xt)
     zb = (rt + 2.0 / 3.0 * rq, xt + 2.0 / 3.0 * xq)
-    return {"Sn_kVA": sn_kva, "In_T_A": norme.in_trafo_jt(sn_kva), "uk_pct": uk, "Pk_W": pk, "P0_W": p0,
+    return {"Sn_kVA": sn_kva, "In_T_A": norme.in_trafo_jt(sn_kva), "uk_pct": uk, "Pk_W": pk, "P0_W": p0, "izolatie": izolatie,
             "Z_Q": (rq, xq), "Z_T": (rt, xt), "K_T": kt, "Zk": zk, "Zb": zb, "SkQ_MVA": skq,
             "Ik3max_bara_kA": ik3_din_z(zk), "Ik1min_bara_A": ik1_din_zb(zb)}
 

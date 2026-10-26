@@ -1,0 +1,18 @@
+{
+ "tip_schema": "ge_ats",
+ "schema_pamant": "TN-S",
+ "Sn_GE_kVA": 125,
+ "sursa_retea": "tgd",
+ "P_sarcina_kW": 57.2,
+ "consumatori": [
+  {
+   "nume": "Electropompa",
+   "P_kW": 55,
+   "pornire": "stea_triunghi"
+  },
+  {
+   "nume": "Jockey",
+   "P_kW": 2.2
+  }
+ ]
+}

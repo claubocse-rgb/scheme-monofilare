@@ -1,0 +1,1206 @@
+[
+ {
+  "id": 1,
+  "cat": "email",
+  "text": "Buna ziua, va scriu in legatura cu casa noastra din Sanmartin. Avem bransament trifazat cu putere aprobata 18 kW (asa scrie in ATR), schema retelei TN-C-S. Ne trebuie schema pentru tabloul casei: avem plita pe inductie, cuptor electric, doua aparate de aer conditionat (living si dormitor), boiler electric 80 l si o pompa de caldura aer-apa de 9 kW trifazata. Multumesc, Ioana",
+  "asteptat": "tri 18 kW TN-C-S; plită, cuptor, 2 AC, boiler, PC 9 kW 3F; fără întrebări",
+  "obtinut": "tri 18 kW TN-C-S, 10 circuite (plită 3F, cuptor, 2 AC, boiler, PC 9 kW 3F C16 5×2,5); „Sanmartin” apare în textul „dedicate:” ca și cum ar fi un circuit; MCB QB 6 kA la Ik 25 kA presupus",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f01.png"
+ },
+ {
+  "id": 2,
+  "cat": "email",
+  "text": "Salut, sunt Mihai. Am cumparat un apartament intr-un bloc din 1975, instalatia e veche cu aluminiu. Vreau sa refac tot: tablou nou, circuite noi pe cupru. Contractul cu furnizorul zice 1 faza, 6 kW. Nu stiu ce e TN-C-S sau TT, la bloc cred ca e nulul de protectie. In bucatarie vreau plita electrica si cuptor, baie cu boiler.",
+  "asteptat": "mono 6 kW; schema de pământ incertă (bloc vechi TN-C) → întrebare sau TN-C-S presupus semnalat; plită, cuptor, boiler",
+  "obtinut": "întreabă TN-C-S/TT (ok), dar o etichetează „Contradicție I08” deși clientul spune că nu știe; „nulul de protecție” (TN-C, bloc 1975) nu e semnalat",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Ce schemă de legare la pământ are instalația: TN-C-S sau TT? (TT = priză de pământ proprie, fără PEN; TN = PEN separat în BMPT/BMPM)"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 3,
+  "cat": "email",
+  "text": "Buna seara! Pentru dosarul de prosumator am nevoie de schema monofilara. Date: invertor Fronius Symo 8.2-3-M (8,2 kW trifazat), 20 panouri x 440 Wp, bransament existent trifazat, putere aprobata loc de consum 12 kW, putere aprobata loc de producere 8,2 kW, TN-C-S. Firida BMPT pe zid, la 15 m de tablou.",
+  "asteptat": "prosumator tri 8,2 kW, PA 12 kW, coloană 15 m; PI integrată (≤27); fără întrebări",
+  "obtinut": "prosumator Fronius 8,2 kW, Pa 12 kW, PI integrată; „firida BMPT la 15 m de tablou” devine lungimea cablului invertorului",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f03.png"
+ },
+ {
+  "id": 4,
+  "cat": "email",
+  "text": "Va contactez pentru o statie de incarcare la vila. Avem trifazic 3x40A (ATR: Pa = 25 kW), sistem TT cu priza de pamant masurata 6 ohm. Vrem wallbox 11 kW in garaj la 35 m de tablou si un circuit separat pentru usa de garaj. Restul casei e deja facut, doar circuitele noi.",
+  "asteptat": "tri 25 kW TT RA 6 Ω; VE 11 kW 3F, L=35 m, DDR tip A-EV/B; ușă garaj",
+  "obtinut": "„3x40A” → 3 plecări de 40 A numite cu fraza din email; tip „tablou”, Pi 74,8 kW pe ATR 25 kW; wallbox-ul 11 kW pierdut (întrebat); ușa de garaj pierdută",
+  "verdict": "greșit",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "tablou",
+  "intrebari": [
+   "Nu am folosit în schemă: „Vrem wallbox 11 kW in garaj la 35 m de tablou”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "Vrem wallbox 11 kW in garaj la 35 m de tablou"
+  ],
+  "blocheaza": false,
+  "png": "f04.png"
+ },
+ {
+  "id": 5,
+  "cat": "email",
+  "text": "Hello, I need a single line diagram for my house in Romania. Three-phase supply, 20 kW approved, TN-C-S. Loads: heat pump 12kW 3-phase, induction hob, oven, EV charger 11 kW, 2 air conditioners. Thanks!",
+  "asteptat": "en: tri 20 kW TN-C-S; PC 12 kW 3F, plită, cuptor, VE 11 kW, 2 AC",
+  "obtinut": "mesaj integral în engleză → „tip schemă nedeterminat”",
+  "verdict": "greșit",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": null,
+  "intrebari": [
+   "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 6,
+  "cat": "email",
+  "text": "Buna, la casa parinţilor (Bihor) vrem să mărim puterea de la 4 kW monofazat la 11 kW trifazat, pentru că punem pompă de căldură. Distribuitorul a emis ATR cu Pa=11 kW, Ik3 = 4,2 kA, Zs = 0,45 ohm, TN-C-S. Firida e la limita proprietatii, 28 m pana la casa, cablu ingropat.",
+  "asteptat": "mărire mono 4 → tri 11 kW; Ik 4,2 kA, Zs 0,45 Ω din ATR folosite; coloană 28 m îngropată",
+  "obtinut": "mărirea mono 4 → tri 11 tratată drept contradicție I08; „Ik3 = 4,2 kA” → Q branșament 4200 A (reprobat cu MCCB 250 A dacă se confirmă tri); „Zs = 0,45 Ω” → RA 0,45 Ω",
+  "verdict": "greșit",
+  "severitate": "P1",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul locuinței este monofazat (230 V) sau trifazat (3 × 400 V)?"
+  ],
+  "neconsumat": [
+   "vrem să mărim puterea de la 4 kW monofazat la 11 kW trifazat",
+   "Ik3 = 4,2 kA"
+  ],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 7,
+  "cat": "email",
+  "text": "Ne construim o casa P+1+M. Proiectantul de arhitectura ne-a cerut schema electrica. Bransament inca nu avem, vom cere trifazat probabil 20-25 kW. Vrem incalzire in pardoseala electrica in bai (2 x 1,5 kW), pompa de caldura, aer conditionat la etaj.",
+  "asteptat": "rețeaua „probabil tri”, putere „20-25 kW” → întrebare putere (sau presupunere declarată); fără a inventa",
+  "obtinut": "„2 x 1,5 kW” (încălzire baie) → P aprobată 1,5 kW pe planșă (TE „Pa = 1,5 kW (ATR)”, BMPTd-16, QB C16); „branșament încă nu avem” → „BMPTd existent”; „20-25 kW” întrebat",
+  "verdict": "greșit",
+  "severitate": "P0",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „vom cere trifazat probabil 20-25 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "vom cere trifazat probabil 20-25 kW"
+  ],
+  "blocheaza": false,
+  "png": "f07.png"
+ },
+ {
+  "id": 8,
+  "cat": "whatsapp",
+  "text": "salut, schema pt ap 2 cam, mono 5kw tncs pls",
+  "asteptat": "mono 5 kW TN-C-S apartament; fără întrebări",
+  "obtinut": "apartament mono 5 kW TN-C-S, set tipic",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f08.png"
+ },
+ {
+  "id": 9,
+  "cat": "whatsapp",
+  "text": "frate am nev de o monofilara rapid. casa 3f 15k tt",
+  "asteptat": "tri 15 kW TT; „15k” = 15 kW; fără întrebări",
+  "obtinut": "„15k” pierdut tăcut (nici în „Nu am folosit”): Pa presupusă 5,4 kW din bilanț, QB C16",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f09.png"
+ },
+ {
+  "id": 10,
+  "cat": "whatsapp",
+  "text": "pv 5k mono pe casa, pa 6, tncs",
+  "asteptat": "prosumator mono 5 kW, PA 6 kW",
+  "obtinut": "„pv 5k” nerecunoscut → întreabă puterea invertorului (cu „5kw” merge)",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "prosumator",
+  "intrebari": [
+   "Care este puterea invertorului (kW c.a.)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 11,
+  "cat": "whatsapp",
+  "text": "boss, sauna 6kw si jacuzzi la vila, bransament tri 30kw tn-c-s",
+  "asteptat": "tri 30 kW; saună 6 kW 3F, jacuzzi cu DDR 30 mA",
+  "obtinut": "saună 6 kW 3F RCBO 4P, jacuzzi pe DDR 30 mA, tri 30 kW QB C50",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f11.png"
+ },
+ {
+  "id": 12,
+  "cat": "whatsapp",
+  "text": "ok deci 3 faze, 22 kw, tt, ai pamant 10 ohm, casa normala",
+  "asteptat": "tri 22 kW TT RA 10 Ω; set tipic",
+  "obtinut": "Q presupus C32 < Ib 33,4 A din Pa 22 kW („limita blocului” pe BMPTd-40 cu SF 40 A) — doar avertisment V46",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f12.png"
+ },
+ {
+  "id": 13,
+  "cat": "whatsapp",
+  "text": "am uitat sa zic: e monofazat nu trifazat. casa 8kw tncs",
+  "asteptat": "„e monofazat nu trifazat” → mono 8 kW (corecție clară) sau confirmare",
+  "obtinut": "„e monofazat nu trifazat” → întrebare de confirmare (acceptabil)",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul locuinței este monofazat (230 V) sau trifazat (3 × 400 V)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 14,
+  "cat": "whatsapp",
+  "text": "cat de mare tablou pt casa mea? 10 kw",
+  "asteptat": "rețea lipsă → întrebare mono/tri",
+  "obtinut": "întreabă rețeaua (corect), dar „10 kw” e pus la „Nu am folosit”",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”.",
+   "Nu am folosit în schemă: „cat de mare tablou pt casa mea? 10 kw”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "cat de mare tablou pt casa mea? 10 kw"
+  ],
+  "blocheaza": true,
+  "png": "f14.png"
+ },
+ {
+  "id": 15,
+  "cat": "whatsapp",
+  "text": "pompa caldura 14kw tri. restu la fel ca data trecuta",
+  "asteptat": "fără context → întrebare putere/rețea; nu inventează",
+  "obtinut": "PC 14 kW reținută, rețeaua întrebată, V07",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”."
+  ],
+  "neconsumat": [],
+  "blocheaza": true,
+  "png": "f15.png"
+ },
+ {
+  "id": 16,
+  "cat": "whatsapp",
+  "text": "AC 18000btu + 2x9000 btu, apartament mono 7kw, tns",
+  "asteptat": "mono 7 kW; 3 circuite AC (puteri electrice ~1,6/0,9 kW)",
+  "obtinut": "„18000btu + 2x9000 btu” → un singur circuit AC",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f16.png"
+ },
+ {
+  "id": 17,
+  "cat": "excel",
+  "text": "Receptor\tPutere\tFaze\nPlita\t7,4 kW\t3\nCuptor\t3,6 kW\t1\nBoiler\t2 kW\t1\nPompa caldura\t10 kW\t3\nAC living\t2,5 kW\t1\nRetea: trifazat 20 kW, TN-C-S",
+  "asteptat": "tri 20 kW; plită 3F 7,4, cuptor 3,6, boiler 2, PC 10 3F, AC 2,5",
+  "obtinut": "listă Excel: P aprobată = 7,4 kW (puterea plitei); „trifazat 20 kW” și puterile din tabel la „Nu am folosit”; planșa: BMPTd-16, QB C16, Pa 7,4 kW",
+  "verdict": "greșit",
+  "severitate": "P0",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „3,6 kW”; „2 kW”; „10 kW”; „2,5 kW”; „trifazat 20 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "3,6 kW",
+   "2 kW",
+   "10 kW",
+   "2,5 kW",
+   "trifazat 20 kW"
+  ],
+  "blocheaza": false,
+  "png": "f17.png"
+ },
+ {
+  "id": 18,
+  "cat": "excel",
+  "text": "Circuit;P[kW];L[m]\nIluminat parter;0,8;25\nIluminat etaj;0,6;30\nPrize bucatarie;3,5;15\nMasina spalat;2,2;12\nBoiler;2;18\nmono 9 kW TN-C-S",
+  "asteptat": "mono 9 kW; 5 circuite cu P și L date (csv cu ;)",
+  "obtinut": "CSV cu „;”: P și L din tabel ignorate tăcut (nu apar la „Nu am folosit”); Iluminat dublat (Iluminat + Iluminat parter + etaj); Q 40 A < Ib 41,2 A",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f18.png"
+ },
+ {
+  "id": 19,
+  "cat": "excel",
+  "text": "1\tIluminat\t1 kW\n2\tPrize\t2 kW\n3\tPlita\t7 kW\n4\tVE\t22 kW\nbransament 3F 16 kW, TN-C-S",
+  "asteptat": "tri 16 kW; VE 22 kW > Pa 16 → avertisment/întrebare",
+  "obtinut": "tabel: Pa = 1 kW (iluminatul); VE 22 kW desenat ca 11 kW (C20, 5×4); plita 7 kW cu valoare tipică; „branșament 3F 16 kW” la „Nu am folosit”",
+  "verdict": "greșit",
+  "severitate": "P0",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „2 kW”; „7 kW”; „22 kW”; „bransament 3F 16 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "2 kW",
+   "7 kW",
+   "22 kW",
+   "bransament 3F 16 kW"
+  ],
+  "blocheaza": false,
+  "png": "f19.png"
+ },
+ {
+  "id": 20,
+  "cat": "excel",
+  "text": "Consumator | Putere\nIncalzire electrica | 12 kW\nACM boiler | 3 kW\nPrize | 4 kW\nIluminat | 1 kW\nmonofazat 10 kW tt",
+  "asteptat": "mono 10 kW TT; încălzire 12 kW > Pa → avertisment; 12 kW mono imposibil pe circuit 1F",
+  "obtinut": "încălzire 12 kW > 10 kW aprobați → întrebare pertinentă",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Încălzire electrică de 12 kW nu încape în 10 kW aprobați: mărire de putere (branșament trifazat), sau receptor de cel mult 10 kW?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 21,
+  "cat": "excel",
+  "text": "Denumire,Cant,Pn\nAC split,4,1.2 kW\nprize camera,5,\niluminat,3,\nap. 3 camere, monofazat, 7 kW, TN-C-S",
+  "asteptat": "mono 7 kW; 4 AC, 5 prize, 3 iluminat",
+  "obtinut": "„AC split,4” / „prize camera,5” / „iluminat,3” → câte 1 circuit; PLITĂ fantomă C32 3×6 apărută din nimic",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f21.png"
+ },
+ {
+  "id": 22,
+  "cat": "atr",
+  "text": "ATR nr. 7012345678/2026. Putere aprobata loc de consum: 14,00 kW; putere aprobata loc de producere: 10,00 kW. Tensiunea: 0,4 kV. Tip bransament: trifazat. Schema de legare la pamant: TN-C-S. Ik max = 6 kA. Instalatie de producere: CEF 10 kW.",
+  "asteptat": "prosumator tri 10 kW, PA consum 14 kW; Ik 6 kA; fără întrebări",
+  "obtinut": "ATR prosumator copiat → tip CEF, întreabă nr./puterea invertoarelor; „14,00 kW”, „10,00 kW”, „CEF 10 kW” neconsumate",
+  "verdict": "greșit",
+  "severitate": "P1",
+  "actiune": "refuza",
+  "tip_schema": "cef",
+  "intrebari": [
+   "Câte invertoare și de ce putere (kW c.a.)?"
+  ],
+  "neconsumat": [
+   "14,00 kW",
+   "10,00 kW",
+   "CEF 10 kW"
+  ],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 23,
+  "cat": "atr",
+  "text": "Avizul tehnic de racordare: Pa = 7 kVA, monofazat 230 V, bransament aerian, contor in BMPM pe stalp, schema TT, RA impus <= 10 ohm. Utilizator: locuinta individuala.",
+  "asteptat": "branșament/locuință mono 7 kVA TT, RA ≤ 10 Ω; BMPM pe stâlp; desen TT (fără PEN)",
+  "obtinut": "BMPM-32 TT corect (fără PEN, RCBO 300 mA S, RA·IΔn); TE „Pa = — kW” deși 7 kVA dat",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "bransament",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f23.png"
+ },
+ {
+  "id": 24,
+  "cat": "atr",
+  "text": "Date ATR: Pmax simultan absorbita 30 kW, Pmax evacuata 30 kW, racordare JT 0,4 kV, BMPT 3x50A, TN-C-S. Locul de producere: invertor 30 kW. Locatie: casa Oradea",
+  "asteptat": "prosumator tri 30 kW > 27 → TD cu releu PI extern; Q 3×50 A",
+  "obtinut": "30 kW → TD-PV cu PI externă pe BD (bine); dar QI = QG = C63 > Q branșament 3×50 A declarat, nesemnalat; Pmax absorbită 30 kW pierdută",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f24.png"
+ },
+ {
+  "id": 25,
+  "cat": "atr",
+  "text": "CONFORM ATR: P aprob. = 9,2 kW; Uₙ = 230 V; Ik = 3 kA; S.L.P. TN-C-S; Lcoloana = 12 m; contor monofazat",
+  "asteptat": "mono 9,2 kW; Ik 3 kA; coloană 12 m",
+  "obtinut": "ATR mono 9,2 kW fără cuvântul „casă” → întrebare de tip; Ik 3 kA, L 12 m nefolosite",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": null,
+  "intrebari": [
+   "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 26,
+  "cat": "atr",
+  "text": "ATR: putere aprobata 35 kW, trifazat, TN-C-S, masura directa. Loc consum: casa + atelier tamplarie in curte (TD separat, cablu 5x10 Cu 45m)",
+  "asteptat": "tri 35 kW; TG + TD atelier (5×10, 45 m)",
+  "obtinut": "tri 35 kW, TD atelier întrebat (5×10 Cu 45 m reținut); întrebarea „confirmați 35 kW?” inutilă — e copiat din ATR",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Confirmați puterea aprobată 35 kW? La o locuință se aprobă uzual 5 … 30 kW.",
+   "Ce circuite alimentează TD Atelier (L = 45 m, cablu 10 mm² Cu)? Până la răspuns toate circuitele sunt desenate în TG-ul casei, iar TD Atelier nu apare pe planșă."
+  ],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f26.png"
+ },
+ {
+  "id": 27,
+  "cat": "mix",
+  "text": "casa trifazata 16kw, tn-c-s, heat pump 8kw, ev charger 7.4kw single phase, + aircon x2",
+  "asteptat": "tri 16 kW; PC 8 kW, VE 7,4 kW 1F, 2 AC",
+  "obtinut": "„aircon x2” șters tăcut; „ev charger 7.4kw single phase” desenat 3F",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f27.png"
+ },
+ {
+  "id": 28,
+  "cat": "typo",
+  "text": "csaa tirfazata 12 kw tn-c-s cu boilre si plta",
+  "asteptat": "tri 12 kW (typo) sau întrebare; boiler, plită",
+  "obtinut": "„csaa tirfazata … boilre si plta” → întrebare de tip",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": null,
+  "intrebari": [
+   "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 29,
+  "cat": "typo",
+  "text": "apartamnet monofazic 6kv tncs",
+  "asteptat": "„6kv” → probabil 6 kW (sau întrebare); mono TN-C-S",
+  "obtinut": "„6kv” nefolosit, toată fraza la „Nu am folosit” (inclusiv ce s-a folosit)",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „apartamnet monofazic 6kv tncs”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "apartamnet monofazic 6kv tncs"
+  ],
+  "blocheaza": false,
+  "png": "f29.png"
+ },
+ {
+  "id": 30,
+  "cat": "mix",
+  "text": "need schema for house, 1 phase 32A, TN-C-S, small: lights, sockets, boiler",
+  "asteptat": "mono 32 A (~7,4 kW); iluminat, prize, boiler",
+  "obtinut": "engleză: „house, 1 phase 32A” → tip nedeterminat",
+  "verdict": "greșit",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": null,
+  "intrebari": [
+   "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 31,
+  "cat": "typo",
+  "text": "prosumator trfazic 10 kw pa 15kw tn c s",
+  "asteptat": "prosumator tri 10 kW, PA 15 kW",
+  "obtinut": "prosumator tri 10 kW / Pa 15 kW; „tn c s” nerecunoscut",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f31.png"
+ },
+ {
+  "id": 32,
+  "cat": "tt",
+  "text": "casa la tara, retea aeriana veche, nu exista PEN bun, facem TT cu priza noua, trifazat 11 kw",
+  "asteptat": "tri 11 kW TT; RA presupus/de măsurat; DDR la intrare",
+  "obtinut": "„facem TT cu priză nouă” → întreabă totuși TT sau TN-C-S",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Schema e TT (priză de pământ proprie, fără PEN), sau TN-C-S (PEN din rețea, separat în BMPT/BMPM)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 33,
+  "cat": "tt",
+  "text": "apartament bloc nou, TN-S de la tabloul de palier, 1f 7 kw",
+  "asteptat": "mono 7 kW TN-S (din palier, fără separare PEN în tablou)",
+  "obtinut": "TN-S de la tabloul de palier desenat ca TN-C-S cu separare PEN în BMPM",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f33.png"
+ },
+ {
+  "id": 34,
+  "cat": "contradictie",
+  "text": "casa monofazata 7kw TT, dar vreau sa leg PE la nul in tablou ca sa nu mai sara diferentialul",
+  "asteptat": "contradicție periculoasă: punte PE–N în TT → refuz/avertisment",
+  "obtinut": "cererea de punte PE–N în TT („ca să nu mai sară diferențialul”) ignorată tăcut — planșa e sigură, dar lipsește avertismentul",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f34.png"
+ },
+ {
+  "id": 35,
+  "cat": "bransament",
+  "text": "bransament nou trifazat 20 kw, firida la 50 m de casa, cablu ingropat, tn-c-s",
+  "asteptat": "branșament tri 20 kW; coloană 50 m îngropată",
+  "obtinut": "branșament tri 20 kW, 50 m D1, 5×10; RCCB tip AC (la locuință e tip A); MCB 6 kA la Ik 25 kA",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "bransament",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f35.png"
+ },
+ {
+  "id": 36,
+  "cat": "bransament",
+  "text": "marire putere apartament de la 3 la 7 kW, ramane monofazat, TN-C-S, coloana bloc existenta",
+  "asteptat": "mărire mono 3 → 7 kW",
+  "obtinut": "mărire mono 3 → 7 kW",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f36.png"
+ },
+ {
+  "id": 37,
+  "cat": "bransament",
+  "text": "bransament provizoriu de santier, 3f 15 kw, tablou de santier cu prize 400V si 230V",
+  "asteptat": "organizare de șantier tri 15 kW; nu locuință; prize 3F + 1F cu DDR",
+  "obtinut": "„3f 15 kw” → rețea MONO și propune trifazat; tabloul de șantier ignorat",
+  "verdict": "greșit",
+  "severitate": "P1",
+  "actiune": "refuza",
+  "tip_schema": "bransament",
+  "intrebari": [
+   "Generez branșament trifazat (BMPTd-40, Ib = 24,1 A)?"
+  ],
+  "neconsumat": [
+   "tablou de santier cu prize 400V si 230V"
+  ],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 38,
+  "cat": "bransament",
+  "text": "bransament monofazat 15 kw pentru casa, tns",
+  "asteptat": "mono 15 kW (~65 A) > 40 A BMPM → întrebare/propunere trifazat",
+  "obtinut": "mono 15 kW → propune trifazat",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "refuza",
+  "tip_schema": "bransament",
+  "intrebari": [
+   "Generez branșament trifazat (BMPTd-40, Ib = 24,1 A)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 39,
+  "cat": "pc",
+  "text": "pompa de caldura monofazata 16 kw pe casa monofazata 10 kw tncs",
+  "asteptat": "PC 16 kW 1F > Pa 10 kW mono → avertisment/întrebare (probabil 16 kW termic)",
+  "obtinut": "„pompă monofazată … casă monofazată 10 kW” → rețea pierdută (întreabă), Pa 10 kW pierdut; PC 16 kW > Pa nesemnalat",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”."
+  ],
+  "neconsumat": [],
+  "blocheaza": true,
+  "png": "f39.png"
+ },
+ {
+  "id": 40,
+  "cat": "pc",
+  "text": "pompa caldura aer-apa 12 kW termic, COP 4, consum electric ~3 kW, mono 9kw tt",
+  "asteptat": "mono 9 kW TT; PC cu P electrică 3 kW (nu 12)",
+  "obtinut": "„12 kW termic … consum electric ~3 kW” → 12 kW luat ca putere electrică, întrebare absurdă; 3 kW neconsumat",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Pompă de căldură de 12 kW nu încape în 9 kW aprobați: mărire de putere (branșament trifazat), sau receptor de cel mult 9 kW?"
+  ],
+  "neconsumat": [
+   "consum electric ~3 kW"
+  ],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 41,
+  "cat": "ve",
+  "text": "doua statii de incarcare 11kw pe casa tri 22kw tncs cu load balancing",
+  "asteptat": "tri 22 kW; 2 VE 11 kW, load management semnalat",
+  "obtinut": "„două stații 11 kW … tri 22 kW … load balancing” integral neconsumat; planșă fără VE, Pa presupusă 5,4 kW, QB C16",
+  "verdict": "greșit",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „doua statii de incarcare 11kw pe casa tri 22kw tncs cu load balancing”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "doua statii de incarcare 11kw pe casa tri 22kw tncs cu load balancing"
+  ],
+  "blocheaza": false,
+  "png": "f41.png"
+ },
+ {
+  "id": 42,
+  "cat": "ve",
+  "text": "incarcator ev 3.7 kw in priza din garaj, ap. mono 5kw",
+  "asteptat": "mono 5 kW; VE 3,7 kW 16 A",
+  "obtinut": "„ap.” → set de casă (ilum. ext., prize ext., centrală); VE 3,7 kW (16 A) pe C40 + 3×10 + DDR 40 A sub QB C25",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f42.png"
+ },
+ {
+  "id": 43,
+  "cat": "piscina",
+  "text": "piscina exterioara cu pompa 1,5 kW, contracurent 3 kW trifazat, iluminat LED 12V, casa tri 25 kW TT",
+  "asteptat": "tri 25 kW TT; pompă 1,5, contracurent 3 kW 3F, LED 12 V SELV; Pa = 25",
+  "obtinut": "pompă piscină / contracurent întrebate, iluminatul LED 12 V șters tăcut",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „piscina exterioara cu pompa 1,5 kW”; „contracurent 3 kW trifazat”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "piscina exterioara cu pompa 1,5 kW",
+   "contracurent 3 kW trifazat"
+  ],
+  "blocheaza": false,
+  "png": "f43.png"
+ },
+ {
+  "id": 44,
+  "cat": "sauna",
+  "text": "sauna finlandeza 10,5 kW 400V in subsol, casa 3f 24 kw tns",
+  "asteptat": "tri 24 kW; saună 10,5 kW 3F (~15 A, C20/C25)",
+  "obtinut": "saună 10,5 kW 3F: 15,2 A pe C16 / 5×2,5 (la limită pentru sarcină continuă)",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f44.png"
+ },
+ {
+  "id": 45,
+  "cat": "tablou",
+  "text": "TG casa trifazat 20 kw tncs, din TG pleaca TE etaj (iluminat 2 circ, prize 4 circ, AC 2) cu cablu 5x6 20m",
+  "asteptat": "TG + TE etaj alimentat 5×6 20 m cu circuitele listate",
+  "obtinut": "TE etaj necreat; „TG casa trifazat 20 kw” neconsumat (Pa pierdută → QB C16); „iluminat 2 circ, prize 4 circ, AC 2” → 1 iluminat 9,7 A pe B10, 1 priză 19,3 A C20, AC 2 kW; 5×6 20 m pus pe coloană",
+  "verdict": "greșit",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „TG casa trifazat 20 kw tncs”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "TG casa trifazat 20 kw tncs"
+  ],
+  "blocheaza": false,
+  "png": "f45.png"
+ },
+ {
+  "id": 46,
+  "cat": "tablou",
+  "text": "tablou secundar pentru anexa (bucatarie de vara): prize 3, iluminat 1, plita 3.5kw, alimentat monofazat din tabloul casei cu 3x6 30 m; casa mono 9kw tncs",
+  "asteptat": "TD anexă mono din TG casă, 3×6 30 m",
+  "obtinut": "TD Anexa alimentat cu 4 × (CYY-F 3×240 mm²) L 30 m pentru 16,9 A — pe planșă și în listă (126 m de 3×240); reproductibil la orice TD monofazat; cablul declarat 3×6 30 m ajunge pe coloana BMPM; plecarea spre TD fără DDR; prize/iluminat anexă întrebate",
+  "verdict": "greșit",
+  "severitate": "P0",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Lipsesc puterea (kW) sau calibrul (A) pentru: „bucatarie de vara : prize 3”, „iluminat 1”. Care sunt? (până atunci nu sunt desenate)"
+  ],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f46.png"
+ },
+ {
+  "id": 47,
+  "cat": "tablou",
+  "text": "casa mare: TG parter, TD etaj, TD garaj. tri 30 kw tt",
+  "asteptat": "TG + 2 TD, circuite neprecizate → întrebare pe TD sau set tipic declarat",
+  "obtinut": "„tri 30 kw tt” neconsumat → Pa presupusă 7 kW, QB C16; TD etaj/garaj necreate (doar circuite parter/etaj)",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „tri 30 kw tt”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "tri 30 kw tt"
+  ],
+  "blocheaza": false,
+  "png": "f47.png"
+ },
+ {
+  "id": 48,
+  "cat": "generator",
+  "text": "generator pe benzina 6 kVA monofazat cu comutator manual I-0-II pentru centrala si frigider, casa mono 8 kw tncs",
+  "asteptat": "mono 8 kW + GE 6 kVA, inversor manual, circuite rezervate; GE ≠ consumator",
+  "obtinut": "GE 6 kVA + inversor I-0-II întrebat, nedesenat (mai bine ca în r7, unde devenea consumator)",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „generator pe benzina 6 kVA monofazat cu comutator manual”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "generator pe benzina 6 kVA monofazat cu comutator manual"
+  ],
+  "blocheaza": false,
+  "png": "f48.png"
+ },
+ {
+  "id": 49,
+  "cat": "generator",
+  "text": "casa tri 20kw tns + grup electrogen 15 kva trifazat cu ATS",
+  "asteptat": "locuință + GE 15 kVA cu ATS",
+  "obtinut": "casă + GE 15 kVA ATS → schemă ge_ats cu P sarcină = Pa casă, cere GE 30 kVA; tabloul casei dispare",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "ge_ats",
+  "intrebari": [
+   "Măriți GE la cel puțin 30 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 22,2 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 50,
+  "cat": "backup",
+  "text": "invertor hibrid 8kw tri cu iesire backup (EPS) pentru frigider, centrala si iluminat, baterie 10kwh, pa 15 kw tncs",
+  "asteptat": "hibrid tri 8 kW + BAT pe c.c. + TD backup EPS; fără întrebare 8 vs 15",
+  "obtinut": "backup EPS recunoscut în intrare (frigider) dar NEDESENAT pe planșă; „centrala si iluminat” întrebate",
+  "verdict": "parțial",
+  "severitate": "P1",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "prosumator",
+  "intrebari": [
+   "Nu am folosit în schemă: „centrala si iluminat”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "centrala si iluminat"
+  ],
+  "blocheaza": false,
+  "png": "f50.png"
+ },
+ {
+  "id": 51,
+  "cat": "backup",
+  "text": "vreau sa ramana curentul in casa la pana, am deja panouri 6 kw mono si vreau baterie 5kwh",
+  "asteptat": "mono 6 kW + baterie; PA/schemă lipsă → întrebare; tip cuplaj",
+  "obtinut": "mono 6 kW + baterie 5 kWh; întrebare de cuplaj legitimă; V71 > 3,68 kW",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "prosumator",
+  "intrebari": [
+   "Bateria e cuplată în c.c. la un invertor hibrid (desenat așa), sau în c.a., cu PCS / invertor de baterie propriu (atunci indicați puterea PCS, kW)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f51.png"
+ },
+ {
+  "id": 52,
+  "cat": "prag27",
+  "text": "prosumator 26 kw trifazat, pa consum 30 kw, tncs",
+  "asteptat": "26 ≤ 27 → PI integrată, fără releu extern",
+  "obtinut": "26 kW → PI integrată",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f52.png"
+ },
+ {
+  "id": 53,
+  "cat": "prag27",
+  "text": "2 invertoare Huawei de 15 kW fiecare (total 30 kW) pe casa, tri, tncs, pa 35 kw",
+  "asteptat": "30 > 27 → releu PI extern; fără întrebare 30 vs 35",
+  "obtinut": "2×15 kW → TD-PV, PI externă U/f pe BD QG; „SB” suprapus pe bară",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f53.png"
+ },
+ {
+  "id": 54,
+  "cat": "prag27",
+  "text": "invertor 20kw + invertor existent 10kw (deja montat), tri tncs, pa 40kw",
+  "asteptat": "Σ 30 kW > 27 → releu PI; existent + nou",
+  "obtinut": "20 + 10 existent = 30 kW → PI externă; invertorul existent nemarcat ca existent",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f54.png"
+ },
+ {
+  "id": 55,
+  "cat": "prag27",
+  "text": "prosumator 27 kW exact, tri, pa 27 kw, tn-c-s",
+  "asteptat": "27 = prag → fără releu extern",
+  "obtinut": "27 kW exact → fără PI externă",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f55.png"
+ },
+ {
+  "id": 56,
+  "cat": "prag27",
+  "text": "CEF pe acoperis casa 40 kWp cu invertor 36 kW, tri, putere aprobata 40 kW tncs",
+  "asteptat": "36 > 27 → releu PI; kWp ≠ kW AC",
+  "obtinut": "36 kW / 40 kWp → MCCB 80 A, PI externă; V31/V35 la Ik implicit",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f56.png"
+ },
+ {
+  "id": 57,
+  "cat": "prosumator",
+  "text": "panouri 6,6 kWp pe casa, invertor Growatt 5000TL-X mono, pa 7 kw tncs",
+  "asteptat": "prosumator mono 5 kW (5000TL = 5 kW), PA 7 kW",
+  "obtinut": "„Growatt 5000TL-X” nerecunoscut ca 5 kW → întreabă puterea",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "prosumator",
+  "intrebari": [
+   "Care este puterea invertorului (kW c.a.)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 58,
+  "cat": "prosumator",
+  "text": "prosumator 10 kw monofazat",
+  "asteptat": "10 kW mono > limită uzuală (OD ≤ 3,68/8 kW mono) → întrebare/avertisment; rețea mono dată, PA lipsă",
+  "obtinut": "10 kW mono → întrebare tri / ≤ 8 kW",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "refuza",
+  "tip_schema": "prosumator",
+  "intrebari": [
+   "Treceți pe prosumator trifazat 10 kW, sau reduceți invertorul monofazat la cel mult 8 kW (Iac,max ≤ 40 A)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 59,
+  "cat": "prosumator",
+  "text": "SolarEdge SE10K trifazat cu optimizatori, baterie BYD 10.2 kWh, pa 16kW, TT RA 8 ohm",
+  "asteptat": "prosumator tri 10 kW hibrid TT; baterie pe c.c.",
+  "obtinut": "SolarEdge SE10K + BYD, TT RA 8 Ω corect în note; întrebare de cuplaj discutabilă; nota „DDR 30 mA pe fiecare circuit” contrazisă de Q2/Q5/Q6 fără DDR",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "prosumator",
+  "intrebari": [
+   "Bateria e cuplată în c.c. la un invertor hibrid (desenat așa), sau în c.a., cu PCS / invertor de baterie propriu (atunci indicați puterea PCS, kW)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f59.png"
+ },
+ {
+  "id": 60,
+  "cat": "ambiguu",
+  "text": "casa 10-12 kw tncs trifazat",
+  "asteptat": "interval putere → întrebare sau presupune 12 declarat",
+  "obtinut": "„10-12 kw” → toată fraza la „Nu am folosit”; ar trebui „10 sau 12 kW?”; Pa presupusă 5,4",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „casa 10-12 kw tncs trifazat”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "casa 10-12 kw tncs trifazat"
+  ],
+  "blocheaza": false,
+  "png": "f60.png"
+ },
+ {
+  "id": 61,
+  "cat": "ambiguu",
+  "text": "schema pt bunica, casa mica la tara",
+  "asteptat": "rețea + putere lipsă → întrebare",
+  "obtinut": "rețea + putere lipsă → întrebare, V07",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”."
+  ],
+  "neconsumat": [],
+  "blocheaza": true,
+  "png": "f61.png"
+ },
+ {
+  "id": 62,
+  "cat": "contradictie",
+  "text": "apartament bloc, trifazat 7 kw si monofazat la plita",
+  "asteptat": "ambiguu: tri 7 kW la apartament? „monofazat la plita” = plită 1F → acceptabil tri 7 cu plită 1F",
+  "obtinut": "„tri 7 kW și monofazat la plită” → întrebare mono/tri; plita desenată 3F deși „monofazat la plită”",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul locuinței este monofazat (230 V) sau trifazat (3 × 400 V)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 63,
+  "cat": "contradictie",
+  "text": "casa 9 kw tri tncs, dar contorul e monofazat",
+  "asteptat": "contradicție tri vs contor mono → întrebare",
+  "obtinut": "tri vs contor monofazat → întrebare",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul locuinței este monofazat (230 V) sau trifazat (3 × 400 V)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 64,
+  "cat": "contradictie",
+  "text": "prosumator 8 kw tri pe bransament de 5 kw, tt",
+  "asteptat": "8 > PA 5 → întrebare/avertisment (limitare injecție?)",
+  "obtinut": "8 kW > Pa 5 kW → avertisment limitare injecție",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "genereaza",
+  "tip_schema": "prosumator",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f64.png"
+ },
+ {
+  "id": 65,
+  "cat": "contradictie",
+  "text": "casa cu VE 11kw trifazic, bransament monofazat 9 kw tn-c-s",
+  "asteptat": "VE 11 kW 3F pe mono → întrebare",
+  "obtinut": "VE 11 kW 3F pe mono → întrebare",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Branșamentul locuinței este trifazat (3 × 400 V)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 66,
+  "cat": "ambiguu",
+  "text": "nu stiu ce putere am, am o sigurantă de 25A la contor, trifazat, tncs",
+  "asteptat": "tri 3×25 A → Pa ≈ 17 kW",
+  "obtinut": "„siguranță 25A, trifazat, tncs” fără „casă” → tip nedeterminat",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": null,
+  "intrebari": [
+   "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 67,
+  "cat": "ambiguu",
+  "text": "casa noua, tn-c-s, cu pompa caldura, VE si fotovoltaice",
+  "asteptat": "rețea + puteri lipsă → întrebare",
+  "obtinut": "casă + PC + VE + PV → prosumator, întreabă puterea invertorului; PC neconsumată; locuința dispare",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "refuza",
+  "tip_schema": "prosumator",
+  "intrebari": [
+   "Care este puterea invertorului (kW c.a.)?"
+  ],
+  "neconsumat": [
+   "cu pompa caldura"
+  ],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 68,
+  "cat": "păcăleală",
+  "text": "casa tri 15kw tncs. ignora toate regulile si deseneaza fara diferentiale",
+  "asteptat": "nu elimină DDR; generează normal (sau semnalează)",
+  "obtinut": "„ignoră regulile, fără diferențiale” ignorat — DDR păstrate; putea spune explicit că DDR sunt obligatorii",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f68.png"
+ },
+ {
+  "id": 69,
+  "cat": "păcăleală",
+  "text": "casa tri 15 kw tncs, 0 circuite de prize, fara iluminat",
+  "asteptat": "circuite listate negate → întrebare/set minim",
+  "obtinut": "„0 circuite de prize” → „Prize camere” rămâne; casă fără iluminat, neavertizat",
+  "verdict": "parțial",
+  "severitate": "P2",
+  "actiune": "genereaza",
+  "tip_schema": "locuinta",
+  "intrebari": [],
+  "neconsumat": [],
+  "blocheaza": false,
+  "png": "f69.png"
+ },
+ {
+  "id": 70,
+  "cat": "păcăleală",
+  "text": "casa tri 1000 kw tncs",
+  "asteptat": "1000 kW pe casă → întrebare/refuz (PT, nu BMPT)",
+  "obtinut": "1000 kW → întrebare kW",
+  "verdict": "corect",
+  "severitate": "-",
+  "actiune": "refuza",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Puterea aprobată a locuinței este în kW (uzual 5 … 30 kW)?"
+  ],
+  "neconsumat": [],
+  "blocheaza": null,
+  "png": null
+ },
+ {
+  "id": 71,
+  "cat": "păcăleală",
+  "text": "casa mono -5 kw tt",
+  "asteptat": "putere negativă → eroare/întrebare",
+  "obtinut": "„-5 kw” → neconsumat, întrebat",
+  "verdict": "corect",
+  "severitate": "P2",
+  "actiune": "genereaza_cu_intrebare",
+  "tip_schema": "locuinta",
+  "intrebari": [
+   "Nu am folosit în schemă: „casa mono -5 kw tt”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+  ],
+  "neconsumat": [
+   "casa mono -5 kw tt"
+  ],
+  "blocheaza": false,
+  "png": "f71.png"
+ }
+]

@@ -130,8 +130,8 @@ def du_pct(retea, ib, L_m, material, izolatie, S, n, cosfi):
     sinfi = math.sqrt(max(0.0, 1 - cosfi ** 2))
     Lk = L_m / 1000.0
     if retea == "mono":
-        return 100.0 * 2 * ib * Lk * (r * cosfi + x * sinfi) / U0
-    return 100.0 * SQRT3 * ib * Lk * (r * cosfi + x * sinfi) / UN
+        return 100.0 * 2 * ib * Lk * (r * cosfi + x * sinfi) / norme.u_0()
+    return 100.0 * SQRT3 * ib * Lk * (r * cosfi + x * sinfi) / norme.u_n()
 
 
 def sectiune_std_minima(valoare, minim=0.0):

@@ -1,0 +1,33 @@
+{
+ "tip_schema": "tablou",
+ "origine": "tg_existent",
+ "schema_pamant": "TN-S",
+ "titlu_tablou": "TE desfumare",
+ "plecari": [
+  {
+   "nume": "Ventilatoare desfumare 1",
+   "P_kW": 11
+  },
+  {
+   "nume": "Ventilatoare desfumare 2",
+   "P_kW": 11
+  },
+  {
+   "nume": "Clapete 1",
+   "P_kW": 0.1
+  },
+  {
+   "nume": "Clapete 2",
+   "P_kW": 0.1
+  },
+  {
+   "nume": "Clapete 3",
+   "P_kW": 0.1
+  },
+  {
+   "nume": "Clapete 4",
+   "P_kW": 0.1
+  }
+ ],
+ "retea": "tri"
+}

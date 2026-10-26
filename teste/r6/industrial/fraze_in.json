@@ -1,0 +1,272 @@
+[
+ {
+  "nr": 1,
+  "fraza": "TG hala sudura, din PT propriu 400 kVA TN-S, plecari: aparat sudura 3x25 kVA, compresor 22kw 40m, pod rulant 2x7,5kW, iluminat hala 6 circuite 16A, prize 400V 4x32A",
+  "asteptat": "tablou, origine pt_propriu 400, TN-S; sudura 3 plecari S=25 kVA; compresor motor; pod rulant 2 motoare; iluminat 6 circ MCB B16; prize 4x32A"
+ },
+ {
+  "nr": 2,
+  "fraza": "tg-1 atelier tamplarie din tgd existent 60m cablu cyaby 5x25, plecari: circular 5,5 kw, rindea 4 kw, exhaustor 7,5kw stea triunghi, iluminat 2 kw monofazat, prize 3 circ 16A",
+  "asteptat": "tablou origine tg_existent L60 CYABY 5x25 impus; circular/rindea motoare; exhaustor Y/D; iluminat 1P; prize 3x16A cu DDR"
+ },
+ {
+  "nr": 3,
+  "fraza": "TD-2 hala, alimentat din TG, 3x400V TN-S, 8 circuite iluminat B10, 6 circuite prize 16A cu DDR 30mA, 2 prize trifazate 32A",
+  "asteptat": "tablou TD-2 origine tg_existent; 8 iluminat B10; 6 prize 16A DDR 30mA; 2x32A 3P"
+ },
+ {
+  "nr": 4,
+  "fraza": "TE-P1 birouri monofazat 230V din TG parter 25m, iluminat 4 circ 10A, prize 6 circ 16A, AC 2 x 3,5 kW",
+  "asteptat": "tablou mono, origine tg_existent L25; 4 il B10, 6 prize B16+DDR, 2 AC 3,5 kW; aparate 1P+N/2P"
+ },
+ {
+  "nr": 5,
+  "fraza": "tablou pompe statie epurare: 2 pompe submersibile 11 kW cu softstarter, suflanta 15 kW cu convertizor, iluminat 1 kW; alimentare din PT 250 kVA, 120 m Al",
+  "asteptat": "tablou origine pt_propriu 250, L 120 Al; 2 pompe softstarter; suflanta VFD; iluminat"
+ },
+ {
+  "nr": 6,
+  "fraza": "TG supermarket TN-C-S din BMPT 250A: HVAC chiller 75 kW, frig comercial 45 kW, iluminat 25 kW, prize casa marcat 10 circuite 16A, TD-depozit 63A 40m",
+  "asteptat": "tablou BMPT, Q1 250; 5 tipuri plecari, 10 circ prize; chiller motor/compresor"
+ },
+ {
+  "nr": 7,
+  "fraza": "tg ferma, din retea, plecari: hranitor 3 CP, ventilatoare 12 x 0,75 kw, pompa apa 4 kW 120m, iluminat grajd 3 circuite",
+  "asteptat": "tablou; 3 CP=2,2 kW; 12 vent; pompa L120; iluminat fara putere → intrebare/presupunere declarata"
+ },
+ {
+  "nr": 8,
+  "fraza": "TG 3x400V plecari motor 55kW pornire directa 25m, motor 22 kW soft-starter 30m",
+  "asteptat": "2 motoare: DOL 55 kW (ΔU pornire!), 22 kW softstarter; sursa nedeclarata → intrebare"
+ },
+ {
+  "nr": 9,
+  "fraza": "TG hala, din PT propriu 1000 kVA uscat, In 1600 A, plecari TD-1 400A 80m, TD-2 400A 120m, TD-3 250A, TD-4 160A, compresor 90 kW VFD",
+  "asteptat": "tablou origine pt 1000; Q1 1600 ACB; 5 plecari; compresor VFD"
+ },
+ {
+  "nr": 10,
+  "fraza": "TG cu 3 plecari: TD-1 63A, TD-2 40A, TD-3 32A, schema TT, priza de pamant 10 ohm, din BMPT",
+  "asteptat": "TT, RA 10, DDR pe plecari (sau DDR general S), origine bmpt"
+ },
+ {
+  "nr": 11,
+  "fraza": "tablou TT ferma RA 50 ohm, plecari prize 3x16A, iluminat 2x10A",
+  "asteptat": "TT RA 50; retea nedeclarata, sarcina mica (~68A?) → intrebare retea; DDR"
+ },
+ {
+  "nr": 12,
+  "fraza": "TG TN-C cu plecari TD-1 100A, TD-2 63A",
+  "asteptat": "TN-C: PEN, fara DDR, S≥10 Cu/16 Al; sau intrebare/avertisment"
+ },
+ {
+  "nr": 13,
+  "fraza": "TG schema IT, plecari TD-1 63A",
+  "asteptat": "IT in afara domeniului → refuz/intrebare"
+ },
+ {
+  "nr": 14,
+  "fraza": "TG din PT, TN-C-S, plecari TD-1 160A, TD-2 100A",
+  "asteptat": "origine PT fara kVA → intrebare kVA; TN-C-S"
+ },
+ {
+  "nr": 15,
+  "fraza": "TG alimentat din BMPT trifazat 3x63A, plecari: pompa 5,5kw, iluminat 2kW, prize 3,5 kW",
+  "asteptat": "Q1 63, origine bmpt; pompa motor; prize DDR"
+ },
+ {
+  "nr": 16,
+  "fraza": "TG plecari TD-1 16A, TD-2 10A",
+  "asteptat": "sarcina mica (26 A) — rețeaua NU se presupune → intrebare mono/tri"
+ },
+ {
+  "nr": 17,
+  "fraza": "tablou general monofazat 230V, plecari: iluminat 1,5 kW, prize 2 kW, centrala 0,2 kW, pompa caldura 9 kW",
+  "asteptat": "tablou mono; pompa caldura 9 kW mono ~43A; Q1 ~63A 2P; avertisment/limita mono"
+ },
+ {
+  "nr": 18,
+  "fraza": "tablou monofazat cu motor 7,5 kW trifazat",
+  "asteptat": "contradictie mono vs motor trifazat → I08/intrebare"
+ },
+ {
+  "nr": 19,
+  "fraza": "TG trifazat cu plecari monofazate: iluminat 3 kW, prize 3,6 kW, boiler 2 kW, plus pompa 4 kW trifazata",
+  "asteptat": "tri; 3 plecari 1P+N, pompa 3P motor"
+ },
+ {
+  "nr": 20,
+  "fraza": "TG 230V, plecari TD-1 63A 3P, TD-2 32A",
+  "asteptat": "contradictie 230V vs 3P → intrebare"
+ },
+ {
+  "nr": 21,
+  "fraza": "TG hala: TD-1 160A 70m (pompa 30kW, compresor 18,5 kW, iluminat 3 kW); TD-2 100A 50m (prize 6x16A, sudura 20 kVA); TD-3 63A",
+  "asteptat": "cascada 3 TD, copii cu motoare; sudura kVA"
+ },
+ {
+  "nr": 22,
+  "fraza": "TG -> TD-P (parter) 63A 20m cu iluminat 3 circ, prize 4 circ; TD-E1 (etaj) 40A 35m cu iluminat 2 circ, prize 3 circ, AC 5 kW",
+  "asteptat": "cascada TD-P, TD-E1 cu copii; circuite fara putere → presupus/intrebare"
+ },
+ {
+  "nr": 23,
+  "fraza": "TG birouri din TG existent cladire, alimentare CYY-F 5x35 30m, plecari TE-P1 32A, TE-P2 32A, TE-P3 32A, server 16A cu UPS 10 kVA",
+  "asteptat": "origine tg_existent; cablu impus CYY-F 5x35; 4 plecari; UPS mentionat"
+ },
+ {
+  "nr": 24,
+  "fraza": "PT zidit 2x630 kVA, plecari TG1 800A, TG2 800A",
+  "asteptat": "2 trafo → in afara domeniului / intrebare; NU un trafo 630 tacut"
+ },
+ {
+  "nr": 25,
+  "fraza": "PTAB 630 kva cu trafo uscat, celule: 2 linie, masura, protectie trafo cu intreruptor, masura pe MT, plecari TG1 800A 30m, TG2 250A 60m, baterie condensatoare 150 kvar",
+  "asteptat": "pt 630 uscat; celule 2L+M+T intreruptor; masura MT; compensare 150 kvar"
+ },
+ {
+  "nr": 26,
+  "fraza": "post trafo aerian PTA 160 kVA pe stalp, masura pe JT directa, plecari 2 x 100A",
+  "asteptat": "PTA 160; masura directa la 231 A nepermis → semidirecta/intrebare"
+ },
+ {
+  "nr": 27,
+  "fraza": "PT 400 kVA ulei 20/0,4, uk 4%, Scc retea 350 MVA, plecari TG 630A 15m",
+  "asteptat": "Scc 350 MVA folosit; plecare 630A (In trafo 577A) → avertisment"
+ },
+ {
+  "nr": 28,
+  "fraza": "PT 1250 kVA, celula trafo cu siguranta, plecari TD-1 1000A, TD-2 800A",
+  "asteptat": "1250 kVA cu sigurante MT → avertisment (>1000 kVA intreruptor) / respecta cerinta cu nota"
+ },
+ {
+  "nr": 29,
+  "fraza": "PT 630 kVA 6/0,4 kV plecari TD-1 400A",
+  "asteptat": "MT 6 kV (nu 20 kV) — sigurante 6 kV / intrebare"
+ },
+ {
+  "nr": 30,
+  "fraza": "post de transformare 400 kVA, tensiune MT 20 kV, masura MT, plecari TG hala 630A 25m, TD exterior 63A 200m, GE 150 kVA cu ATS pe TD-vital 100 kW",
+  "asteptat": "combinatie PT + GE → intrebare explicita; nu GE 400"
+ },
+ {
+  "nr": 31,
+  "fraza": "GE 150 kVA cu ATS in TGD, sursa retea din BMPT 200A, consumatori vitali 90 kW, cablu GE 25 m",
+  "asteptat": "ge_ats Sn150, retea bmpt QR 200, P 90, L GE 25"
+ },
+ {
+  "nr": 32,
+  "fraza": "grup electrogen 80kVA, AAR, alimentare normala din PT 400kVA, sarcina 55 kW, L GE-AAR 20m",
+  "asteptat": "ge_ats 80, sursa pt 400, P 55, L 20"
+ },
+ {
+  "nr": 33,
+  "fraza": "GE 40 kVA monofazat cu ATS, sarcina 25 kW",
+  "asteptat": "GE mono 40 kVA → 174A; ATS 2P; sau intrebare (GE mono >20 kVA rar)"
+ },
+ {
+  "nr": 34,
+  "fraza": "GE 250 kVA in paralel cu reteaua, sincronizare",
+  "asteptat": "in afara domeniului → refuz"
+ },
+ {
+  "nr": 35,
+  "fraza": "GE 200kVA ATS pentru pompe incendiu 2 x 45 kW stea triunghi si hidrofor 7,5 kW",
+  "asteptat": "P vital 97,5 kW, pornire Y/D; pompe incendiu fara DDR; sursa retea → intrebare"
+ },
+ {
+  "nr": 36,
+  "fraza": "GE cu ATS pt TG existent 400A, sarcina vitala 150 kW",
+  "asteptat": "Sn GE lipsa → intrebare/refuz (I02)"
+ },
+ {
+  "nr": 37,
+  "fraza": "GE 100kVA ATS, retea din TGD existent",
+  "asteptat": "sarcina lipsa → intrebare; sursa tg_existent"
+ },
+ {
+  "nr": 38,
+  "fraza": "TG din PT propriu 630 kVA, coloana 2x(NA2XY 4x240) 90 m, In 400A, plecari TD-1 160A, TD-2 160A",
+  "asteptat": "cablu impus 2x NA2XY 4x240 Al XLPE; Q1 400"
+ },
+ {
+  "nr": 39,
+  "fraza": "TG plecari: TD-1 63A cablu CYABY 5x10 80m, TD-2 32A CYY-F 5x6 30m",
+  "asteptat": "cablu impus pe plecare; 5x10 la 63A → BLOCANT Iz"
+ },
+ {
+  "nr": 40,
+  "fraza": "TG plecari TD-1 100A cu cablu 4x16 Cu",
+  "asteptat": "cablu impus subdimensionat → BLOCANT"
+ },
+ {
+  "nr": 41,
+  "fraza": "TG TN-S si TT, plecari TD-1 40A",
+  "asteptat": "contradictie schema pamant → intrebare"
+ },
+ {
+  "nr": 42,
+  "fraza": "PT 630 kVA cu plecare TG 1600A",
+  "asteptat": "plecare > In trafo 909 A → blocant/intrebare"
+ },
+ {
+  "nr": 43,
+  "fraza": "TG 3 plecari: TD-1 63A, TD-2 40A, TD-3 25A, TD-4 16A",
+  "asteptat": "I05 3 cerute 4 gasite"
+ },
+ {
+  "nr": 44,
+  "fraza": "tablou monofazat 3x400V",
+  "asteptat": "contradictie I08"
+ },
+ {
+  "nr": 45,
+  "fraza": "TG din BMPT 100A plecari TD-1 125A",
+  "asteptat": "plecare 125 > sursa 100 → blocant/intrebare"
+ },
+ {
+  "nr": 46,
+  "fraza": "GE 100 kVA ATS sarcina 120 kW",
+  "asteptat": "V86 refuz"
+ },
+ {
+  "nr": 47,
+  "fraza": "TG hala alimentat din PT propriu si din BMPT, plecari TD-1 63A",
+  "asteptat": "doua surse → intrebare"
+ },
+ {
+  "nr": 48,
+  "fraza": "tg hala prod, sursa tgd exist., td-1 125 a/60 m, td-2 80a/45m, td-3 50A/30m, tn-s",
+  "asteptat": "origine tg_existent; 3 plecari cu L (format a/m); TN-S; 50A nestandard?"
+ },
+ {
+  "nr": 49,
+  "fraza": "TG; plecari: 3 x TD 63A (TD-1..TD-3) + 2 x pompa 7,5kW",
+  "asteptat": "3 TD 63A + 2 pompe motor"
+ },
+ {
+  "nr": 50,
+  "fraza": "TD-2 din TG 50 m CYABY 5x16, 3x400V, plecari: masina spalat industriala 12 kW, uscator 9 kW, calandru 6 kW, iluminat 4x10A",
+  "asteptat": "tablou TD-2, origine tg, cablu impus 5x16; 3 utilaje + 4 il"
+ },
+ {
+  "nr": 51,
+  "fraza": "TE-P1 230V din TG 20m, 8 circuite: 3 iluminat 10A, 4 prize 16A, 1 boiler 2kW",
+  "asteptat": "tablou mono 8 circuite; il B10 x3, prize B16 x4 DDR, boiler"
+ },
+ {
+  "nr": 52,
+  "fraza": "TG hala din PT 630 kVA, compensare factor putere baterie condensatoare 120 kvar automata, plecari TD-1 250A, TD-2 160A",
+  "asteptat": "origine pt 630; plecare BC 120 kvar (~173A, Q ≥1,43·In)"
+ },
+ {
+  "nr": 53,
+  "fraza": "TG 125A din BMPT, SPD T2, plecari: incarcator EV 22 kW, incarcator EV 11 kW, iluminat parcare 2 kW 150m",
+  "asteptat": "Q1 125; SPD T2; EV cu DDR tip B / A-EV 6mA; il L150"
+ },
+ {
+  "nr": 54,
+  "fraza": "TG fabrica, TN-S din PT 1600 kVA, motor compresor 160 kW cu softstarter, motor 75 kW stea-triunghi, TD-uri: TD-1 400A, TD-2 250A",
+  "asteptat": "origine pt 1600; 2 motoare mari; 2 TD"
+ }
+]

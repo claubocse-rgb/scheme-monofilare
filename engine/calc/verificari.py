@@ -18,7 +18,11 @@ CATALOG = {
             "mărirea secțiunii sau reducerea calibrului"),
     "V03": ("I2 > 1,45·Iz'", {"": "{obiect}: I2 = {I2} A > 1,45·Iz' = {lim} A"},
             "mărirea secțiunii sau reducerea calibrului"),
-    "V04": ("Ib > Ip (calibru impus)", {"": "{obiect}: Ib = {Ib} A > protecție {Ip} A"}, "calibru mai mare"),
+    "V04": ("Ib > Ip (calibru impus)", {"": "{obiect}: Ib = {Ib} A > protecție {Ip} A",
+                                         "atr": "{obiect}: P = {P} kW cu Q {Ip} A — perechea ATR (Pa = U·In, cosφ 1: "
+                                                "Ib = {Iatr} A ≤ {Ip} A); la cosφ {cos} Ib = {Ib} A > {Ip} A, dar ≤ "
+                                                "1,13·In = {lim} A (nu declanșează convențional) — fără rezervă"},
+            "calibru mai mare"),
     "V05": ("Calibru inexistent",
             {"": "{obiect}: calibrul {In} A nu există în seria {tip}",
              "trafo": "{obiect}: Sn = {Sn} kVA nu există în seria standard de transformatoare"},
@@ -30,7 +34,10 @@ CATALOG = {
              "tip": "{obiect}: tip de schemă necunoscut ({tip}) — se acceptă: {acceptate}",
              "plecari": "{obiect}: {tablou} fără nicio plecare — nu există ce dimensiona",
              "param": "{obiect}: {camp} = {x} — {conditie}",
-             "intern": "{obiect}: date de intrare incomplete sau invalide ({detaliu})"},
+             "intern": "{obiect}: date de intrare incomplete sau invalide ({detaliu})",
+             "string_generic": "{obiect}: stringurile nu sunt descrise (module / string, stringuri / MPPT) — câmpul PV e "
+                               "desenat generic „conform proiect DC”; Voc(Tmin), SPD c.c. și gPV de verificat în "
+                               "proiectul de c.c."},
             "introduceți puterea / valori numerice plauzibile"),
     "V08": ("cosφ absurd", {"B": "{obiect}: cosφ = {x} în afara intervalului (0; 1]",
                             "AV": "{obiect}: cosφ = {x} < 0,7 — verificați datele"}, "0,9 uzual"),
@@ -46,6 +53,7 @@ CATALOG = {
              "retea": "{obiect}: rețea „{retea}” necunoscută — se acceptă numai „tri” (3 × 400/230 V) sau „mono” (230 V)",
              "camp": "{obiect}: valoarea „{valoare}” a câmpului {camp} nu este acceptată",
              "surse": "{obiect}: mai multe surse de putere în aceeași intrare ({surse}) — se acceptă una singură",
+             "contradictie": "{obiect}: date contradictorii — {detaliu}",
              "limita": "{obiect}: R_limita_ohm = {x} Ω > limita normată {lim} Ω ({motiv}) — limita normată nu poate "
                        "fi ridicată (se poate doar coborî)"},
             "aparat cu numărul corect de poli / o singură sursă de putere (P_kW, S_kVA sau Ib_A)"),
@@ -127,7 +135,11 @@ CATALOG = {
                              "amonte": "TT: DDR din amonte (originea alimentării) IΔn {IdN} mA: RA·IΔn = {RA}·{IdN}/1000 = "
                                        "{x} V > 50 V — segmentul C1 (până la primul DDR al tabloului) nu e protejat",
                              "ra": "TT: RA nedeclarat — s-a presupus {RA} Ω; introduceți rezistența măsurată a prizei "
-                                   "de pământ (valoarea implicită e neconservatoare)"},
+                                   "de pământ (valoarea implicită e neconservatoare)",
+                             "cef_amonte": "TT: racord fără BMPT și fără DDR declarat în amonte — QG are bloc diferențial "
+                                           "reglabil, dar segmentul C0 dintre QG și punctul de racord nu e protejat "
+                                           "diferențial: DDR la originea alimentării conform ATR (declarați "
+                                           "IdN_amonte_mA) sau C0 cu izolație dublă / clasa II"},
             "priză de pământ mai bună sau DDR 100/30 mA în amonte (la originea alimentării) — declarați IdN_amonte_mA"),
     "V35": ("Stabilitate termică fază",
             {"B": "{obiect}: fază {n}×{S} mm² < {x} mm² la Ik3max",
@@ -186,6 +198,8 @@ CATALOG = {
              "bloc": "{obiect}: Q branșament nedeclarat — Ib {Ib} A cere un Q peste limita blocului {bloc} ({lim} A)",
              "q_pres": "{obiect}: Q branșament existent nedeclarat — presupus {Q} A (calibrul standard ≥ Ib {Ib} A{baza}); "
                        "se completează din ATR / certificatul de racordare",
+             "pc_nou": "{obiect}: Pc din bilanț {Pc} kW > puterea cerută pentru branșamentul nou {P} kW — Q ales pe "
+                       "puterea cerută; ATR pentru {Pc} kW sau simultaneitate confirmată?",
              "pa_pres": "{obiect}: puterea aprobată (ATR) nedeclarată — presupusă din bilanț, Pc {Pc} kW (Ib {Ib} A); "
                         "se completează din ATR / certificatul de racordare"},
             "{rem}"),
@@ -210,7 +224,15 @@ CATALOG = {
             {"raport": "{obiect}: raport Ip amonte/aval {r} < 1,6 — selectivitate nesigură la suprasarcină",
              "egal": "{obiect}: amonte = aval = {a} A — fără selectivitate",
              "bmpt": "{obiect}: coordonare SF–Q fixată prin ST 4-JT / ST 3-JT (SF aparține OD)",
-             "gg": "{obiect}: raport gG amonte/aval {r} < 1,6 (SR EN 60269-2)"},
+             "un_generator": "{obiect}: QG și protecția unicului invertor / PCS ({a} A / {b} A) sunt în serie pe același "
+                             "curent de injecție — selectivitatea între ele nu e necesară (un singur generator)",
+             "pt_serie": "{obiect}: QG (Ir {a} A) și Q JT (Ir {b} A) în serie pe legătura C0 — selectivitate prin "
+                         "temporizare: tsd Q JT = {t} s > tsd QG",
+             "gg": "{obiect}: raport gG amonte/aval {r} < 1,6 (SR EN 60269-2)",
+             "inversat": "{obiect}: Ir QG {a} A > Ir Q JT {b} A (Q JT al trafo reglat cel mult {lim} A = {k}·In_T) — "
+                         "selectivitate inversată: Q JT declanșează înaintea QG",
+             "ordonat": "{obiect}: Ir Q JT reglat la {b} A ≥ Ir QG {a} A (≤ {k}·In_T = {lim} A, Σ Iac {i} A ≤ In_T) — "
+                        "reglajele cresc spre amonte"},
             "calibru amonte mai mare"),
     "V42": ("Selectivitate la scurtcircuit",
             {"INFO": "{obiect}: selectivitate totală (Ik3max {Ik} kA ≤ Is {Is} kA)",
@@ -244,7 +266,8 @@ CATALOG = {
             {"": "F (tensiune contor) legat în circuitul secundar al TC"}, "derivație din bare"),
     "V60": ("Q trafo sub In_T",
             {"B": "Q JT {x} A < In_T {y} A — întreruptorul general sub puterea trafo",
-             "AV": "Ir QG {x} A > In_T {y} A — trafo neprotejat la suprasarcină"},
+             "AV": "Ir QG {x} A > In_T {y} A — trafo neprotejat la suprasarcină",
+             "sigma": "Σ Iac {x} A > Σ Ir Q JT {y} A ({n} trafo) — injecția maximă declanșează Q JT"},
             "Q JT ≥ In_T"),
     "V61": ("Siguranțe MT > 1000 kVA",
             {"": "celulă trafo cu siguranțe MT la {Sn} kVA > 1000 kVA — întreruptor + releu 50/51, 50N/51N"},
@@ -263,26 +286,43 @@ CATALOG = {
              "AV": "S = {x} kVA > 173 kVA: racord JT doar direct din PT OD conform ATR",
              "bmpt": "racord JT prin BMPT: Ip QG {x} A > In Q BMPTi-250 = {y} A — QG nu se coordonează cu Q din BMPT"},
             "PT propriu"),
-    "V67": ("Trafo CEF sub S", {"": "Sn trafo {x} kVA < S invertoare+PCS {y} kVA"}, "trafo mai mare"),
+    "V67": ("Trafo CEF sub S", {"": "Sn trafo {x} kVA < S invertoare+PCS {y} kVA",
+                                "n": "Σ Sn trafo {n} × {sn} = {x} kVA < S invertoare+PCS {y} kVA",
+                                "sectie": "secția {k}: Sn T{k} {x} kVA < S invertoare+PCS ale secției {y} kVA ({inv})"},
+            "trafo mai mare"),
     "V68": ("Voc(Tmin)", {"B": "Voc la Tmin {x} V > Umax {y} V", "INFO": "Voc la Tmin {x} V ≤ Umax {y} V",
                           "beta": "β(Voc) = {x} %/K neplauzibil — coeficientul de temperatură al Voc este negativ "
                                   "(c-Si: −0,25…−0,35 %/K); Voc(Tmin) nu se poate verifica"},
             "mai puține module pe string"),
-    "V69": ("gPV", {"": "nu există gPV în [{a}; {b}] A"}, "alt modul / alt invertor"),
+    "V69": ("gPV", {"": "nu există gPV în [{a}; {b}] A",
+                    "generic": "{obiect}: siguranțe gPV necesare pe fiecare string ({motiv}), dar Isc al modulului lipsește — "
+                               "desenate „conform proiect DC”; calibrul In ∈ [1,5·Isc; min(2,4·Isc; Irev)] se alege "
+                               "din fișa modulului"},
+            "alt modul / alt invertor; introduceți Isc / fișa modulului"),
     "V70": ("Categorie RfG / prosumator",
             {"INFO": "modul generator categoria {X} (Pn = {P} kW)",
              "AV": "modul generator categoria {X} (Pn = {P} kW) — cerințe RfG tip {X} (Ord. ANRE 208/2018), PI conform ATR",
              "B": "peste 400 kW nu e prosumator — schema CEF"}, ""),
     "V71": ("Invertor mono > 3,68 kW",
-            {"": "invertor monofazat {P} kW > 3,68 kW — verificați cerința OD privind dezechilibrul"}, "trifazat"),
+            {"": "invertor monofazat {P} kW > 3,68 kW — verificați cerința OD privind dezechilibrul",
+             "dezechilibru": "invertoare monofazate pe rețea trifazată: S pe faze {det} — dezechilibru {d} kVA > {lim} kVA "
+                             "(prag DECIZIE, practica OD; cerința exactă în ATR)",
+             "faze": "invertoare monofazate repartizate pe faze: {det} — dezechilibru {d} kVA ≤ {lim} kVA"}, "trifazat"),
     "V72": ("Injecție > Q branșament",
             {"AV": "Iac,max {x} A > Q branșament {y} A — limitați injecția (setare invertor) sau solicitați ATR nou",
              "INFO": "Iac,max {x} A ≤ Q branșament {y} A"}, "limitarea injecției"),
     "V73": ("Tip DDR invertor",
-            {"": "DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"},
+            {"": "DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)",
+             "mare": "{obiect}: DDR {IdN} mA pe un invertor de {P} kW — curentul capacitiv de scurgere al câmpului PV "
+                     "îl declanșează; IΔn ≥ 100 mA conform fișei invertorului / ATR"},
             "confirmați tipul DDR din fișa invertorului"),
     "V74": ("SPD c.c.", {"": "SPD c.c. Ucpv {x} V < Voc,max {y} V"}, "SPD cu Ucpv mai mare"),
     "V75": ("PI citat greșit", {"": "PI: pentru CEF ne-prosumator se aplică Ord. ANRE 208/2018 + ATR"}, ""),
+    "V76": ("Putere injectabilă > puterea aprobată",
+            {"": "puterea injectabilă ({ce}) {x} kW > puterea aprobată / evacuată din ATR {y} kW — limitați injecția "
+                 "la Pa (EMS / setare invertor + analizor la punctul de racord) sau solicitați ATR nou",
+             "INFO": "puterea injectabilă {x} kW ≤ puterea aprobată / evacuată {y} kW"},
+            "limitare_injectie_kW = Pa (EMS) sau ATR nou"),
     "V80": ("Listă ≠ desen", {"": "{ref}: lista „{a}” ≠ parametri „{b}”"}, "regenerarea listei"),
     "V81": ("Notă ≠ model", {"": "nota {k}: „{a}” ≠ model „{b}”"}, "regenerarea notelor"),
     "V82": ("Tablou desenat în carcasa altui tablou", {"": "{td} desenat în interiorul {tg}"}, ""),
@@ -296,9 +336,40 @@ CATALOG = {
                     "{IdN} mA S asociat Q_G (Zs·IΔn ≤ U0)"},
             "DDR, protecție 51V"),
     "V86": ("GE subdimensionat", {"": "sarcina {x} A > In_G {y} A — GE minim {Sn} kVA",
-                                  "ir": "sarcina {x} A > Ir Q_G {y} A (Q_G reglat ≤ In_G) — GE minim {Sn} kVA"},
+                                  "ir": "sarcina {x} A > Ir Q_G {y} A (Q_G reglat ≤ In_G) — GE minim {Sn} kVA",
+                                  "supra": "GE {Sn_GE} kVA față de sarcina {P} kW (GE minim {Sn} kVA): QR {qr} A pe "
+                                           "sarcină, ATS {ats} A pe GE — sarcina vitală e completă (toți consumatorii, "
+                                           "pornirea motoarelor)?"},
             "GE din seria GE_SN_KVA ≥ P/cosφ: minim {Sn} kVA"),
     "V87": ("ATS neconform", {"": "ATS {detaliu}"}, "ATS 4P cu interblocaj mecanic + electric"),
+    "V96": ("Nesuportat de motor",
+            {"": "nesuportat: {ce} — {detaliu}"},
+            "{remediere}"),
+    "V97": ("Circuite de siguranță (I7/2011, P118-3)",
+            {"": "{obiect}: circuit de siguranță ({nume}) — fără DDR, cablu rezistent la foc (E90), alimentare "
+                 "prioritară; DDR-G pe Q_G înlocuit cu monitorizare diferențială (RCM, doar semnalizare)",
+             "ge": "regim GE: Ik1 ≈ {x} A < Ia(Q_G) {y} A, iar circuitele de siguranță nu pot trece prin DDR — "
+                   "contactul indirect se asigură prin legături echipotențiale suplimentare (SR HD 60364-4-41 "
+                   "art. 415.2) și RCM cu alarmă; de confirmat (sau GE cu excitație susținută și Q_G electronic)",
+             "plecare": "{obiect}: circuit de siguranță ({nume}) — fără DDR pe ramură și în amonte, cablu rezistent la "
+                        "foc NHXH FE180/E90, releu termic doar de semnalizare (nu declanșează), ks = 1, pornirea declarată "
+                        "păstrată",
+             "ddr": "{obiect}: consumator de siguranță ({nume}) cu DDR pe calea lui ({ddr}) — interzis (I7/2011, "
+                    "P118-3, SR HD 60364-5-56 art. 560.7): un DDR poate întrerupe alimentarea pompei / ventilatorului de "
+                    "incendiu",
+             "tt": "{obiect}: consumator de siguranță ({nume}) în schemă TT — fără DDR, protecția la contact indirect nu "
+                   "este asigurată (în TT deconectarea se face numai prin DDR)",
+             "amonte_q1": "circuitele de siguranță ({nume}) racordate înaintea întreruptorului general Q1 (la bornele "
+                          "de intrare ale tabloului) — nu sunt deconectate de Q1 / de deconectarea generală (I7/2011)",
+             "tablou": "tablou de siguranță: {detaliu}"},
+            "proiect de specialitate pentru instalația de stingere (P118-3) / ATR; fără DDR pe calea consumatorilor de "
+            "siguranță (racord înaintea DDR-ului / întreruptorului general, RCM doar alarmă)"),
+    "V98": ("Compensarea puterii reactive",
+            {"": "baterie de condensatoare {Q} kvar: In = {In} A, întreruptor ≥ 1,43·In = {Imin} A (armonici + "
+                 "toleranța capacității, SR EN 60831-1), cablu dimensionat la 1,43·In",
+             "mare": "baterie de condensatoare {Q} kvar > 60 % din Sn PT {Sn} kVA — supracompensare posibilă, "
+                     "verificați factorul de putere țintă"},
+            "regulator automat de factor de putere pe trepte, conform fișei producătorului"),
     "V88": ("CEF fără protecții c.c.", {"": "INV-{i}: lipsește {element} c.c."}, ""),
     "V89": ("Compatibilitate modul–invertor (fișe tehnice)",
             {"min": "string {n} module: Vmpp la 70 °C ≈ {x} V < MPPT min {y} V — invertorul iese din MPPT vara",
@@ -309,6 +380,20 @@ CATALOG = {
              "idc": "Impp pe intrarea MPPT = {np}·Impp = {x} A > Idc max invertor {y} A — limitare de curent (clipping)"},
             "alt număr de module pe string / de stringuri pe MPPT, conform fișelor"),
     "V90": ("Ipoteze de calcul", {"": "{lista}"}, ""),
+    "V91": ("Putere declarată ≠ Σ invertoare",
+            {"": "Σ Pn invertoare = {x} kW ≠ puterea totală declarată {y} kW — confirmați numărul și puterea invertoarelor",
+             "alias": "Pn_inv_kW = {y} kW ≠ Σ invertoare[] = {x} kW — se folosește lista invertoarelor",
+             "monofazat": "rețea monofazată declarată, dar {detaliu} — confirmați rețeaua (monofazat / trifazat)",
+             "bess_kwh": "capacitatea BESS {n} × {k} kWh = {x} kWh ≠ kWh declarat {y} kWh — se folosește {x} kWh",
+             "bess_pcs": "puterea BESS {n} × PCS {k} kW = {x} kW ≠ P declarată {y} kW — se folosește {x} kW"},
+            "corectați lista invertoarelor (n × Pn) sau puterea totală declarată"),
+    "V92": ("Limitarea injecției",
+            {"": "injecția în rețea limitată la {P} kW{z}: analizor / contor de control cu TC la punctul de racord + "
+                 "controller EMS cu comandă către {n} {ce}",
+             "fara_efect": "limitarea injecției {P} kW ≥ Σ Pn {Pn} kW — limitarea nu are efect",
+             "zero_aprobat": "injecție zero declarată, dar puterea aprobată / evacuată din ATR este {y} kW — confirmați: "
+                             "injecție zero (EMS limitează la 0 kW) sau injecție până la {y} kW (limitare_injectie_kW = {y})"},
+            "reglaje EMS și timp de răspuns conform ATR"),
 }
 
 

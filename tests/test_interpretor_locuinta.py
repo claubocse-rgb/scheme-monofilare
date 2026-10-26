@@ -114,7 +114,8 @@ def test_bransament_simplu_ramane_bransament():
 def test_mono_13kw_atentionare_trifazat():
     r = interpreteaza_local("casă monofazată 13 kW")
     _forma_valida(r)
-    assert r["actiune"] == "genereaza"
+    # r7 (locuințe #20, #23): peste 40 A (9,2 kW) la monofazat se generează ȘI se întreabă trecerea pe trifazat
+    assert r["actiune"] == "genereaza_cu_intrebare" and any("trifazat" in q for q in r["intrebari"])
     assert any("peste 11 kW se recomandă trifazat" in a for a in r["avertismente"])
     assert "Verificări:" in r["intelegere"]
     assert not interpreteaza_local("casă monofazată 9 kW")["avertismente"] or not any(
@@ -125,7 +126,8 @@ def test_fara_circuite_set_tipic_p1():
     r = interpreteaza_local("tablou de casă P+1, trifazat, Q 25 A")
     _forma_valida(r)
     assert [c["nume"] for c in r["intrare_fizica"]["circuite"]] == [n for n, _ in m.SET_TIPIC["casa_p1"]]
-    assert _circ(r, "Plită")["faza"] == "3F"
+    # r5 (P1-10): plita și cuptorul electrice intră doar dacă sunt numite
+    assert not {"plita", "cuptor"} & set(_rec(r))
     assert any("set tipic pentru casă P+1" in p for p in r["presupus"])
 
 
@@ -187,10 +189,13 @@ def test_llm_locuinta_normalizare(monkeypatch):
     i = r["intrare_fizica"]
     assert r["motor"] == "llm" and i["ks"] == 0.7 and i["RA_ohm"] == 25 and i["schema_pamant"] == "TT"
     assert i["alimentare"] == {"tip": "bransament_nou", "P_aprobata_kW": 15, "L_coloana_m": 20}
-    assert i["circuite"] == [{"nume": "Plită", "receptor": "plita", "P_kW": 7.5, "faza": "3F"},
-                             {"nume": "Frigider", "receptor": "alt_circuit"}]
+    # F.9: receptorii citiți de Claude + setul tipic al locuinței (aceeași convenție ca regulile locale)
+    assert {"nume": "Plită", "receptor": "plita", "P_kW": 7.5, "faza": "3F"} in i["circuite"]
+    assert {"nume": "Frigider", "receptor": "alt_circuit"} in i["circuite"]
+    assert any(c["receptor"] == "iluminat" for c in i["circuite"])
     monkeypatch.setattr(m, "intrare_llm", lambda text: {"tip_schema": "locuinta", "retea": "mono"})   # fără circuite
-    assert interpreteaza("casă 7 kW", foloseste_llm=True)["motor"] == "reguli"
+    r = interpreteaza("casă 7 kW", foloseste_llm=True)       # F.9: setul tipic declarat ca presupunere (ca regulile locale)
+    assert r["motor"] == "llm" and r["intrare_fizica"]["circuite"] and any("set tipic" in p for p in r["presupus"])
 
 
 def test_reteaua_nu_se_presupune():

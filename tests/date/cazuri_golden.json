@@ -139,6 +139,11 @@
     "data": "2026-10-22",
     "caz": "R02",
     "motiv": "v1.3 (SPEC §B.18.1, selectivitatea DDR în serie): DDR-ul invertorului (30 mA tip A) e în aval de RCBO-ul 300 mA din BMPM, care nu e de tip S (ST 3-JT nu-l cere; norme.BMPM_RCBO_SELECTIV [NEVERIFICAT]) → V43 AVERTISMENT nou pe „INV vs RCBO BMPM” (SR HD 60364-5-53 art. 535.3: amonte tip S și IΔn ≥ 3·IΔn aval). Restul valorilor neschimbate."
+   },
+   {
+    "data": "2026-10-23",
+    "caz": "B04–B12, B15–B17, B19, B20, B23, B24",
+    "motiv": "r8 (locuințe #35, DECIZIE): DDR-ul general 300 mA din BMPT tip A (nu AC) — receptoarele actuale (convertizoare, pompe de căldură, plite cu inducție, VE) produc curenți de defect pulsatorii c.c.; tip AC doar declarat (DDR_bransament_tip). RCCB.tip AC → A; restul valorilor neschimbate."
    }
   ]
  },
@@ -351,7 +356,7 @@
      "poli": 4,
      "In_A": 16,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -437,7 +442,7 @@
      "poli": 4,
      "In_A": 25,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -523,7 +528,7 @@
      "poli": 4,
      "In_A": 25,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -609,7 +614,7 @@
      "poli": 4,
      "In_A": 40,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -695,7 +700,7 @@
      "poli": 4,
      "In_A": 63,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -779,7 +784,7 @@
      "poli": 4,
      "In_A": 100,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -864,7 +869,7 @@
      "poli": 4,
      "In_A": 125,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "TC": "3 × 125/5 A, cl. 0,5, 5 VA",
     "TC_sarcina_VA": 2.7,
@@ -955,7 +960,7 @@
      "poli": 4,
      "In_A": 250,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "TC": "3 × 250/5 A, cl. 0,5, 5 VA",
     "TC_sarcina_VA": 2.7,
@@ -1045,7 +1050,7 @@
      "poli": 4,
      "In_A": 250,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "TC": "3 × 250/5 A, cl. 0,5, 5 VA",
     "TC_sarcina_VA": 2.7,
@@ -1193,7 +1198,7 @@
      "poli": 4,
      "In_A": 100,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -1279,7 +1284,7 @@
      "poli": 4,
      "In_A": 100,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -1364,7 +1369,7 @@
      "poli": 4,
      "In_A": 80,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -1469,7 +1474,7 @@
    },
    "implicite_aplicate": "cosφ 0,9; coloană C2 Al PVC metoda D1 (Al→Cu dacă rezultă < 16 mm²), sol 20 °C, ρ 2,5 K·m/W, fără grupare; Ik3max OD 25 kA (implicit); Zbuclă OD 0,18 + j0,09 Ω (implicit); TN-C-S; RCCB 300 mA în BMPT",
    "asteptat": {
-    "Ib_A": 144.34,
+    "Ib_A": 144.3376,
     "bloc": "BMPTi-250",
     "Q": {
      "tip": "MCCB",
@@ -1487,13 +1492,13 @@
      "poli": 4,
      "In_A": 160,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
-    "TC": "3 × 150/5 A, cl. 0,5, 5 VA",
+    "TC": "3 × 200/5 A, cl. 0,5, 5 VA",
     "TC_sarcina_VA": 2.7,
     "contor": "semidirect 3 × 230/400 V, 5 A (furnizat de OD)",
     "C2": {
-     "Ib_A": 144.34,
+     "Ib_A": 144.3376,
      "protectie": {
       "tip": "MCCB",
       "In_A": 160,
@@ -1513,12 +1518,12 @@
      "k_total": 1.0,
      "Iz_corectat_A": 169.0,
      "cablu": "CYABY 4×95 mm² + FY 1×50 mm² (PE)",
-     "dU_ramura_pct": 0.53,
-     "dU_cumulat_pct": 0.53,
+     "dU_ramura_pct": 0.5309,
+     "dU_cumulat_pct": 0.5309,
      "dU_limita_pct": 3.0,
      "Ik3max_origine_kA": 25.0,
-     "Ik3max_capat_kA": 16.86,
-     "Ik1min_capat_A": 954.0,
+     "Ik3max_capat_kA": 16.8607,
+     "Ik1min_capat_A": 954.438,
      "Ia_A": 1920.0,
      "t_deconectare_s": 5.0
     },
@@ -1545,7 +1550,8 @@
     "C2: Ik3max la origine 25.0 kA, la capăt 16.86 kA; Ik1min la capăt 954.44 A; Ia(5 s) = 1920.0 A",
     "C2: termic fază la Ik3max (t = 0,02 s): n·S ≥ 30.7 mm²",
     "C2: N = 95 mm², PE = 50 mm² (separat); termic PE: S ≥ 24.7 mm² (t = 0,3 s la Ik1min)"
-   ]
+   ],
+   "nota_r7": "r7: In motor cu η/cosφ IE3, ks = 1 pe iluminat, TC primar ≥ 1,2·Ib — valori actualizate"
   },
   {
    "id": "B20",
@@ -1578,7 +1584,7 @@
      "poli": 4,
      "In_A": 25,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -1897,11 +1903,11 @@
     "bilant": {
      "Pi_kW": 60.0,
      "ks": 0.9,
-     "Pc_kW": 54.0,
+     "Pc_kW": 54.5,
      "P_declarat_kW": null
     },
     "Q1_C1": {
-     "Ib_A": 86.6,
+     "Ib_A": 87.4044,
      "protectie": {
       "tip": "MCCB",
       "In_A": 100,
@@ -1921,30 +1927,30 @@
      "k_total": 1.0,
      "Iz_corectat_A": 91.0,
      "cablu": "ACYABY 4×50 mm² + FY 1×16 mm² (PE)",
-     "dU_ramura_pct": 1.91,
-     "dU_cumulat_pct": 1.91,
+     "dU_ramura_pct": 1.9287,
+     "dU_cumulat_pct": 1.9287,
      "dU_limita_pct": 3.0,
      "Ik3max_origine_kA": 25.0,
-     "Ik3max_capat_kA": 5.24,
-     "Ik1min_capat_A": 595.0,
+     "Ik3max_capat_kA": 5.2382,
+     "Ik1min_capat_A": 594.9949,
      "Ia_A": 1200.0,
      "t_deconectare_s": 5.0
     },
     "bara_TG": {
-     "Ik3max_kA": 5.24,
-     "dU_pct": 1.91
+     "Ik3max_kA": 5.2382,
+     "dU_pct": 1.9287
     },
     "plecari": [
      {
       "nume": "Grajd",
       "nivel": 0,
-      "Ib_A": 40.09,
+      "Ib_A": 40.0938,
       "protectie": {
        "tip": "gG",
        "In_A": 50,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 55.17,
+      "Iz_min_A": 55.1724,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 35.0,
@@ -1955,25 +1961,25 @@
       "k_total": 1.0,
       "Iz_corectat_A": 77.0,
       "cablu": "ACYABY 4×35 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 0.85,
-      "dU_cumulat_pct": 2.76,
+      "dU_ramura_pct": 0.845,
+      "dU_cumulat_pct": 2.7738,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 5.24,
-      "Ik3max_capat_kA": 2.78,
-      "Ik1min_capat_A": 397.0,
-      "Ia_A": 260.0,
+      "Ik3max_origine_kA": 5.2382,
+      "Ik3max_capat_kA": 2.7784,
+      "Ik1min_capat_A": 397.1863,
+      "Ia_A": 260,
       "t_deconectare_s": 5.0
      },
      {
       "nume": "Moară",
       "nivel": 0,
-      "Ib_A": 50.94,
+      "Ib_A": 53.7931,
       "protectie": {
        "tip": "MCCB",
        "In_A": 63,
        "Icu_kA": 25
       },
-      "Iz_min_A": 53.55,
+      "Iz_min_A": 56.7,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 25.0,
@@ -1984,25 +1990,25 @@
       "k_total": 1.0,
       "Iz_corectat_A": 64.0,
       "cablu": "ACYABY 4×25 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 1.3982,
-      "dU_cumulat_pct": 3.3092,
+      "dU_ramura_pct": 1.4917,
+      "dU_cumulat_pct": 3.4204,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 5.24,
+      "Ik3max_origine_kA": 5.2382,
       "Ik3max_capat_kA": 2.3587,
-      "Ik1min_capat_A": 397.0,
+      "Ik1min_capat_A": 381.5994,
       "Ia_A": 756.0,
       "t_deconectare_s": 0.4
      },
      {
       "nume": "Iluminat",
       "nivel": 0,
-      "Ib_A": 8.02,
+      "Ib_A": 8.0188,
       "protectie": {
        "tip": "gG",
        "In_A": 10,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 13.1,
+      "Iz_min_A": 13.1034,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 6.0,
@@ -2013,13 +2019,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 38.0,
       "cablu": "CYABY 5×6 mm²",
-      "dU_ramura_pct": 0.58,
-      "dU_cumulat_pct": 2.49,
+      "dU_ramura_pct": 0.5819,
+      "dU_cumulat_pct": 2.5106,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 5.24,
-      "Ik3max_capat_kA": 1.26,
-      "Ik1min_capat_A": 278.0,
-      "Ia_A": 82.0,
+      "Ik3max_origine_kA": 5.2382,
+      "Ik3max_capat_kA": 1.2648,
+      "Ik1min_capat_A": 278.1043,
+      "Ia_A": 82,
       "t_deconectare_s": 0.4
      }
     ]
@@ -2029,37 +2035,43 @@
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "Q1/C1",
-     "mesaj": "Q1/C1: Ik1min 595 A < Ia 1200 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+     "mesaj": "Ik1min 595 A < Ia 1200 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
     },
     {
      "cod": "V36",
      "nivel": "AVERTISMENT",
      "obiect": "Q1/C1",
-     "mesaj": "Q1/C1: PE 16 mm² < 24,7 mm² la Ik3max IMPLICIT — introduceți Ik3 real sau I²t producător"
+     "mesaj": "PE 16 mm² < 24,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P1·Grajd vs amonte",
-     "mesaj": "P1·Grajd vs amonte: selectivitate parțială până la 0,8 kA (Ik3max 5,24 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 0,8 kA (Ik3max 5,24 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "P2·Moară",
-     "mesaj": "P2·Moară: Ik1min 382 A < Ia 756 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+     "mesaj": "Ik1min 382 A < Ia 756 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
+    },
+    {
+     "cod": "V41",
+     "nivel": "AVERTISMENT",
+     "obiect": "P2·Moară vs amonte",
+     "mesaj": "raport Ip amonte/aval 1,59 < 1,6 — selectivitate nesigură la suprasarcină"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P2·Moară vs amonte",
-     "mesaj": "P2·Moară vs amonte: selectivitate parțială până la 0,8 kA (Ik3max 5,24 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 0,8 kA (Ik3max 5,24 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P3·Iluminat vs amonte",
-     "mesaj": "P3·Iluminat vs amonte: selectivitate parțială până la 0,8 kA (Ik3max 5,24 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 0,8 kA (Ik3max 5,24 kA) — confirmă cu tabelele producătorului"
     }
    ],
    "verificari_info": [
@@ -2102,7 +2114,8 @@
     "P3·Iluminat: ΔU = 0.58 % (L = 50 m); cumulat = 1.91 + 0.58 = 2.49 % (limită 3 %)",
     "P3·Iluminat: Ik3max la origine 5.24 kA, la capăt 1.26 kA; Ik1min la capăt 278.1 A; Ia(0,4 s) = 82.0 A",
     "P3·Iluminat: N = 6 mm², PE = 6 mm² (cablu); termic PE: S ≥ 1.5 mm² (t = 0,4 s la Ik1min)"
-   ]
+   ],
+   "nota_r7": "r7: In motor cu η/cosφ IE3, ks = 1 pe iluminat, TC primar ≥ 1,2·Ib — valori actualizate"
   },
   {
    "id": "T03",
@@ -2659,13 +2672,13 @@
    "implicite_aplicate": "cosφ 0,9 (motor 0,85); ks după IEC 61439-2 tab. 101; alimentare și plecări Al PVC D1 (Al→Cu sub 16 mm²), sub-plecări Cu PVC metoda C 30 °C; L implicit 50 m (plecări) / 25 m (sub-plecări); trasee separate (fără grupare) dacă nu se spune altfel; sursa: rețea publică prin BMPT cu RCCB 300 mA; Ik3max OD 25 kA, Zbuclă OD 0,18 + j0,09 Ω (implicite)",
    "asteptat": {
     "bilant": {
-     "Pi_kW": 99.24,
+     "Pi_kW": 99.2361,
      "ks": 0.9,
-     "Pc_kW": 89.31,
+     "Pc_kW": 89.3125,
      "P_declarat_kW": 200
     },
     "Q1_C1": {
-     "Ib_A": 320.75,
+     "Ib_A": 320.7501,
      "protectie": {
       "tip": "MCCB",
       "In_A": 400,
@@ -2685,18 +2698,18 @@
      "k_total": 0.85,
      "Iz_corectat_A": 370.6,
      "cablu": "2 × (ACYABY 4×240 mm² + FY 1×70 mm² (PE))",
-     "dU_ramura_pct": 1.42,
-     "dU_cumulat_pct": 1.42,
+     "dU_ramura_pct": 1.417,
+     "dU_cumulat_pct": 1.417,
      "dU_limita_pct": 3.0,
      "Ik3max_origine_kA": 25.0,
-     "Ik3max_capat_kA": 14.8,
-     "Ik1min_capat_A": 931.0,
+     "Ik3max_capat_kA": 14.7961,
+     "Ik1min_capat_A": 930.8955,
      "Ia_A": 816.0,
      "t_deconectare_s": 5.0
     },
     "bara_TG": {
-     "Ik3max_kA": 14.8,
-     "dU_pct": 1.42
+     "Ik3max_kA": 14.7961,
+     "dU_pct": 1.417
     },
     "plecari": [
      {
@@ -2708,7 +2721,7 @@
        "In_A": 63,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 69.52,
+      "Iz_min_A": 69.5172,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 35.0,
@@ -2719,13 +2732,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 77.0,
       "cablu": "ACYABY 4×35 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 1.33,
-      "dU_cumulat_pct": 2.75,
+      "dU_ramura_pct": 1.3278,
+      "dU_cumulat_pct": 2.7448,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 14.8,
-      "Ik3max_capat_kA": 4.6,
-      "Ik1min_capat_A": 529.0,
-      "Ia_A": 320.0,
+      "Ik3max_origine_kA": 14.7961,
+      "Ik3max_capat_kA": 4.598,
+      "Ik1min_capat_A": 529.0986,
+      "Ia_A": 320,
       "t_deconectare_s": 5.0
      },
      {
@@ -2737,7 +2750,7 @@
        "In_A": 32,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 35.31,
+      "Iz_min_A": 35.3103,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 10.0,
@@ -2748,25 +2761,25 @@
       "k_total": 1.0,
       "Iz_corectat_A": 50.0,
       "cablu": "CYABY 5×10 mm²",
-      "dU_ramura_pct": 1.39,
-      "dU_cumulat_pct": 2.81,
+      "dU_ramura_pct": 1.3895,
+      "dU_cumulat_pct": 2.8065,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 14.8,
-      "Ik3max_capat_kA": 2.5,
-      "Ik1min_capat_A": 458.0,
-      "Ia_A": 150.0,
+      "Ik3max_origine_kA": 14.7961,
+      "Ik3max_capat_kA": 2.4958,
+      "Ik1min_capat_A": 457.7208,
+      "Ia_A": 150,
       "t_deconectare_s": 5.0
      },
      {
       "nume": "Pompe",
       "nivel": 0,
-      "Ib_A": 67.92,
+      "Ib_A": 71.2673,
       "protectie": {
        "tip": "MCCB",
        "In_A": 80,
        "Icu_kA": 25
       },
-      "Iz_min_A": 68.0,
+      "Iz_min_A": 72.0,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 35.0,
@@ -2777,10 +2790,10 @@
       "k_total": 1.0,
       "Iz_corectat_A": 77.0,
       "cablu": "ACYABY 4×35 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 1.3656,
-      "dU_cumulat_pct": 2.7826,
+      "dU_ramura_pct": 1.4469,
+      "dU_cumulat_pct": 2.8639,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 14.8,
+      "Ik3max_origine_kA": 14.7961,
       "Ik3max_capat_kA": 4.598,
       "Ik1min_capat_A": 529.0986,
       "Ia_A": 960.0,
@@ -2793,31 +2806,31 @@
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P1·Hală vs amonte",
-     "mesaj": "P1·Hală vs amonte: selectivitate parțială până la 3,84 kA (Ik3max 14,8 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 3,84 kA (Ik3max 14,8 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P2·Birouri vs amonte",
-     "mesaj": "P2·Birouri vs amonte: selectivitate parțială până la 3,84 kA (Ik3max 14,8 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 3,84 kA (Ik3max 14,8 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "P3·Pompe",
-     "mesaj": "P3·Pompe: Ik1min 529 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+     "mesaj": "Ik1min 529 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
     },
     {
      "cod": "V36",
      "nivel": "AVERTISMENT",
      "obiect": "P3·Pompe",
-     "mesaj": "P3·Pompe: PE 10 mm² < 14,6 mm² la Ik3max IMPLICIT — introduceți Ik3 real sau I²t producător"
+     "mesaj": "PE 10 mm² < 14,6 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P3·Pompe vs amonte",
-     "mesaj": "P3·Pompe vs amonte: selectivitate parțială până la 3,84 kA (Ik3max 14,8 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 3,84 kA (Ik3max 14,8 kA) — confirmă cu tabelele producătorului"
     }
    ],
    "verificari_info": [
@@ -2860,7 +2873,8 @@
     "P3·Pompe: ΔU = 1.02 % (L = 50 m); cumulat = 1.42 + 1.02 = 2.44 % (limită 5 %)",
     "P3·Pompe: Ik3max la origine 14.8 kA, la capăt 5.68 kA; Ik1min la capăt 619.12 A; Ia(5 s) = 440.0 A",
     "P3·Pompe: N = 50 mm², PE = 16 mm² (separat); termic PE: S ≥ 9.7 mm² (t = 5 s la Ik1min)"
-   ]
+   ],
+   "nota_r7": "r7: In motor cu η/cosφ IE3, ks = 1 pe iluminat, TC primar ≥ 1,2·Ib — valori actualizate"
   },
   {
    "id": "T06",
@@ -3904,13 +3918,13 @@
    "implicite_aplicate": "cosφ 0,9 (motor 0,85); ks după IEC 61439-2 tab. 101; alimentare și plecări Al PVC D1 (Al→Cu sub 16 mm²), sub-plecări Cu PVC metoda C 30 °C; L implicit 50 m (plecări) / 25 m (sub-plecări); trasee separate (fără grupare) dacă nu se spune altfel; sursa: rețea publică prin BMPT cu RCCB 300 mA; Ik3max OD 25 kA, Zbuclă OD 0,18 + j0,09 Ω (implicite)",
    "asteptat": {
     "bilant": {
-     "Pi_kW": 432.04,
+     "Pi_kW": 432.0389,
      "ks": 0.6,
-     "Pc_kW": 259.22,
+     "Pc_kW": 263.214,
      "P_declarat_kW": 400
     },
     "Q1_C1": {
-     "Ib_A": 641.5,
+     "Ib_A": 641.5003,
      "protectie": {
       "tip": "MCCB",
       "In_A": 800,
@@ -3930,18 +3944,18 @@
      "k_total": 0.7,
      "Iz_corectat_A": 708.4,
      "cablu": "4 × (AC2XABY 4×240 mm² + FY 1×95 mm² (PE))",
-     "dU_ramura_pct": 0.75,
-     "dU_cumulat_pct": 0.75,
+     "dU_ramura_pct": 0.7463,
+     "dU_cumulat_pct": 0.7463,
      "dU_limita_pct": 3.0,
      "Ik3max_origine_kA": 25.0,
-     "Ik3max_capat_kA": 21.76,
-     "Ik1min_capat_A": 1048.0,
+     "Ik3max_capat_kA": 21.7619,
+     "Ik1min_capat_A": 1047.568,
      "Ia_A": 1224.0,
      "t_deconectare_s": 5.0
     },
     "bara_TG": {
-     "Ik3max_kA": 21.76,
-     "dU_pct": 0.75
+     "Ik3max_kA": 21.7619,
+     "dU_pct": 0.7463
     },
     "plecari": [
      {
@@ -3953,7 +3967,7 @@
        "In_A": 100,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 110.34,
+      "Iz_min_A": 110.3448,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 70.0,
@@ -3964,13 +3978,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 112.0,
       "cablu": "ACYABY 4×70 mm² + FY 1×25 mm² (PE)",
-      "dU_ramura_pct": 1.11,
-      "dU_cumulat_pct": 1.86,
+      "dU_ramura_pct": 1.1126,
+      "dU_cumulat_pct": 1.8589,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 8.66,
-      "Ik1min_capat_A": 764.0,
-      "Ia_A": 580.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 8.6563,
+      "Ik1min_capat_A": 764.1687,
+      "Ia_A": 580,
       "t_deconectare_s": 5.0
      },
      {
@@ -3982,7 +3996,7 @@
        "In_A": 100,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 110.34,
+      "Iz_min_A": 110.3448,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 70.0,
@@ -3993,13 +4007,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 112.0,
       "cablu": "ACYABY 4×70 mm² + FY 1×25 mm² (PE)",
-      "dU_ramura_pct": 1.11,
-      "dU_cumulat_pct": 1.86,
+      "dU_ramura_pct": 1.1126,
+      "dU_cumulat_pct": 1.8589,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 8.66,
-      "Ik1min_capat_A": 764.0,
-      "Ia_A": 580.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 8.6563,
+      "Ik1min_capat_A": 764.1687,
+      "Ia_A": 580,
       "t_deconectare_s": 5.0
      },
      {
@@ -4011,7 +4025,7 @@
        "In_A": 40,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 44.14,
+      "Iz_min_A": 44.1379,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 10.0,
@@ -4022,25 +4036,25 @@
       "k_total": 1.0,
       "Iz_corectat_A": 50.0,
       "cablu": "CYABY 5×10 mm²",
-      "dU_ramura_pct": 1.74,
-      "dU_cumulat_pct": 2.49,
+      "dU_ramura_pct": 1.7368,
+      "dU_cumulat_pct": 2.4831,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 2.66,
-      "Ik1min_capat_A": 485.0,
-      "Ia_A": 190.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 2.6567,
+      "Ik1min_capat_A": 484.6335,
+      "Ia_A": 190,
       "t_deconectare_s": 5.0
      },
      {
       "nume": "Pompe",
       "nivel": 0,
-      "Ib_A": 50.94,
+      "Ib_A": 53.7931,
       "protectie": {
        "tip": "MCCB",
        "In_A": 63,
        "Icu_kA": 25
       },
-      "Iz_min_A": 53.55,
+      "Iz_min_A": 56.7,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 25.0,
@@ -4051,10 +4065,10 @@
       "k_total": 1.0,
       "Iz_corectat_A": 64.0,
       "cablu": "ACYABY 4×25 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 1.3982,
-      "dU_cumulat_pct": 2.1444,
+      "dU_ramura_pct": 1.4917,
+      "dU_cumulat_pct": 2.2379,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 21.76,
+      "Ik3max_origine_kA": 21.7619,
       "Ik3max_capat_kA": 3.9249,
       "Ik1min_capat_A": 534.7628,
       "Ia_A": 756.0,
@@ -4063,13 +4077,13 @@
      {
       "nume": "Compresor",
       "nivel": 0,
-      "Ib_A": 76.41,
+      "Ib_A": 80.1757,
       "protectie": {
        "tip": "MCCB",
-       "In_A": 80,
+       "In_A": 100,
        "Icu_kA": 25
       },
-      "Iz_min_A": 80.0,
+      "Iz_min_A": 85.0,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 50.0,
@@ -4080,13 +4094,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 91.0,
       "cablu": "ACYABY 4×50 mm² + FY 1×16 mm² (PE)",
-      "dU_ramura_pct": 1.15,
-      "dU_cumulat_pct": 1.9,
+      "dU_ramura_pct": 1.2206,
+      "dU_cumulat_pct": 1.9669,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 6.66,
-      "Ik1min_capat_A": 669.0,
-      "Ia_A": 960.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 6.6599,
+      "Ik1min_capat_A": 669.4257,
+      "Ia_A": 1200.0,
       "t_deconectare_s": 5.0
      },
      {
@@ -4098,7 +4112,7 @@
        "In_A": 16,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 17.66,
+      "Iz_min_A": 17.6552,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 6.0,
@@ -4109,13 +4123,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 38.0,
       "cablu": "CYABY 5×6 mm²",
-      "dU_ramura_pct": 1.16,
-      "dU_cumulat_pct": 1.91,
+      "dU_ramura_pct": 1.161,
+      "dU_cumulat_pct": 1.9073,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 1.61,
-      "Ik1min_capat_A": 352.0,
-      "Ia_A": 107.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 1.6116,
+      "Ik1min_capat_A": 352.297,
+      "Ia_A": 107,
       "t_deconectare_s": 0.4
      },
      {
@@ -4127,7 +4141,7 @@
        "In_A": 32,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 35.31,
+      "Iz_min_A": 35.3103,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 6.0,
@@ -4138,54 +4152,54 @@
       "k_total": 1.0,
       "Iz_corectat_A": 38.0,
       "cablu": "CYABY 5×6 mm²",
-      "dU_ramura_pct": 2.32,
-      "dU_cumulat_pct": 3.07,
+      "dU_ramura_pct": 2.322,
+      "dU_cumulat_pct": 3.0683,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 1.61,
-      "Ik1min_capat_A": 352.0,
-      "Ia_A": 265.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 1.6116,
+      "Ik1min_capat_A": 352.297,
+      "Ia_A": 265,
       "t_deconectare_s": 0.4
      },
      {
       "nume": "Ventilație",
       "nivel": 0,
-      "Ib_A": 37.36,
+      "Ib_A": 40.1698,
       "protectie": {
        "tip": "MCCB",
-       "In_A": 40,
+       "In_A": 50,
        "Icu_kA": 25
       },
-      "Iz_min_A": 38.0,
+      "Iz_min_A": 42.5,
       "material": "Cu",
       "n_paralel": 1,
-      "S_faza_mm2": 6.0,
-      "S_N_mm2": 6.0,
-      "S_PE_mm2": 6.0,
+      "S_faza_mm2": 10.0,
+      "S_N_mm2": 10.0,
+      "S_PE_mm2": 10.0,
       "PE": "cablu",
-      "Iz_tabel_A": 38,
+      "Iz_tabel_A": 50,
       "k_total": 1.0,
-      "Iz_corectat_A": 38.0,
-      "cablu": "CYABY 5×6 mm²",
-      "dU_ramura_pct": 2.5677,
-      "dU_cumulat_pct": 3.314,
+      "Iz_corectat_A": 50.0,
+      "cablu": "CYABY 5×10 mm²",
+      "dU_ramura_pct": 1.6553,
+      "dU_cumulat_pct": 2.4016,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 1.6116,
-      "Ik1min_capat_A": 352.297,
-      "Ia_A": 480.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 2.6567,
+      "Ik1min_capat_A": 484.6335,
+      "Ia_A": 600.0,
       "t_deconectare_s": 0.4
      },
      {
       "nume": "HVAC",
       "nivel": 0,
-      "Ib_A": 96.23,
+      "Ib_A": 96.225,
       "protectie": {
        "tip": "gG",
        "In_A": 100,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 110.34,
+      "Iz_min_A": 110.3448,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 70.0,
@@ -4196,13 +4210,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 112.0,
       "cablu": "ACYABY 4×70 mm² + FY 1×25 mm² (PE)",
-      "dU_ramura_pct": 1.07,
-      "dU_cumulat_pct": 1.82,
+      "dU_ramura_pct": 1.0706,
+      "dU_cumulat_pct": 1.8169,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 8.66,
-      "Ik1min_capat_A": 764.0,
-      "Ia_A": 580.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 8.6563,
+      "Ik1min_capat_A": 764.1687,
+      "Ia_A": 580,
       "t_deconectare_s": 5.0
      },
      {
@@ -4214,7 +4228,7 @@
        "In_A": 50,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 55.17,
+      "Iz_min_A": 55.1724,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 25.0,
@@ -4225,13 +4239,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 64.0,
       "cablu": "ACYABY 4×25 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 1.44,
-      "dU_cumulat_pct": 2.19,
+      "dU_ramura_pct": 1.4425,
+      "dU_cumulat_pct": 2.1887,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 3.92,
-      "Ik1min_capat_A": 535.0,
-      "Ia_A": 260.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 3.9249,
+      "Ik1min_capat_A": 534.7628,
+      "Ia_A": 260,
       "t_deconectare_s": 5.0
      },
      {
@@ -4243,7 +4257,7 @@
        "In_A": 63,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 69.52,
+      "Iz_min_A": 69.5172,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 35.0,
@@ -4254,25 +4268,25 @@
       "k_total": 1.0,
       "Iz_corectat_A": 77.0,
       "cablu": "ACYABY 4×35 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 1.33,
-      "dU_cumulat_pct": 2.08,
+      "dU_ramura_pct": 1.3278,
+      "dU_cumulat_pct": 2.0741,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 5.21,
-      "Ik1min_capat_A": 565.0,
-      "Ia_A": 320.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 5.2107,
+      "Ik1min_capat_A": 565.4356,
+      "Ia_A": 320,
       "t_deconectare_s": 5.0
      },
      {
       "nume": "Atelier",
       "nivel": 0,
-      "Ib_A": 40.09,
+      "Ib_A": 40.0938,
       "protectie": {
        "tip": "gG",
        "In_A": 50,
        "Icu_kA": 120.0
       },
-      "Iz_min_A": 55.17,
+      "Iz_min_A": 55.1724,
       "material": "Al",
       "n_paralel": 1,
       "S_faza_mm2": 25.0,
@@ -4283,13 +4297,13 @@
       "k_total": 1.0,
       "Iz_corectat_A": 64.0,
       "cablu": "ACYABY 4×25 mm² + FY 1×10 mm² (PE)",
-      "dU_ramura_pct": 1.16,
-      "dU_cumulat_pct": 1.91,
+      "dU_ramura_pct": 1.1567,
+      "dU_cumulat_pct": 1.903,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 21.76,
-      "Ik3max_capat_kA": 3.92,
-      "Ik1min_capat_A": 535.0,
-      "Ia_A": 260.0,
+      "Ik3max_origine_kA": 21.7619,
+      "Ik3max_capat_kA": 3.9249,
+      "Ik1min_capat_A": 534.7628,
+      "Ia_A": 260,
       "t_deconectare_s": 5.0
      }
     ]
@@ -4299,133 +4313,133 @@
      "cod": "V45",
      "nivel": "AVERTISMENT",
      "obiect": "Q1/C1",
-     "mesaj": "Q1/C1: Al PVC nu ajunge la 4×240 mm² → s-a trecut pe Al XLPE"
+     "mesaj": "Al PVC nu ajunge la 4×240 mm² → s-a trecut pe Al XLPE"
     },
     {
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "Q1/C1",
-     "mesaj": "Q1/C1: Ik1min 1048 A < Ia 1224 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+     "mesaj": "Ik1min 1048 A < Ia 1224 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P1·Hală 1 vs amonte",
-     "mesaj": "P1·Hală 1 vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P2·Hală 2 vs amonte",
-     "mesaj": "P2·Hală 2 vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P3·Birouri vs amonte",
-     "mesaj": "P3·Birouri vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "P4·Pompe",
-     "mesaj": "P4·Pompe: Ik1min 535 A < Ia 756 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+     "mesaj": "Ik1min 535 A < Ia 756 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
     },
     {
      "cod": "V35",
      "nivel": "AVERTISMENT",
      "obiect": "P4·Pompe",
-     "mesaj": "P4·Pompe: fază 1×25 mm² < 40,5 mm² la Ik3max IMPLICIT 21,76 kA — introduceți Ik3 real sau I²t producător"
+     "mesaj": "fază 1×25 mm² < 40,5 mm² la Ik3max IMPLICIT 21,76 kA — introdu Ik3 real sau I²t producător"
     },
     {
      "cod": "V36",
      "nivel": "AVERTISMENT",
      "obiect": "P4·Pompe",
-     "mesaj": "P4·Pompe: PE 10 mm² < 21,5 mm² la Ik3max IMPLICIT — introduceți Ik3 real sau I²t producător"
+     "mesaj": "PE 10 mm² < 21,5 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P4·Pompe vs amonte",
-     "mesaj": "P4·Pompe vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "P5·Compresor",
-     "mesaj": "P5·Compresor: Ik1min 669 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+     "mesaj": "Ik1min 669 A < Ia 1200 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
     },
     {
      "cod": "V36",
      "nivel": "AVERTISMENT",
      "obiect": "P5·Compresor",
-     "mesaj": "P5·Compresor: PE 16 mm² < 21,5 mm² la Ik3max IMPLICIT — introduceți Ik3 real sau I²t producător"
+     "mesaj": "PE 16 mm² < 21,5 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P5·Compresor vs amonte",
-     "mesaj": "P5·Compresor vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P6·Iluminat vs amonte",
-     "mesaj": "P6·Iluminat vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P7·Prize vs amonte",
-     "mesaj": "P7·Prize vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "P8·Ventilație",
-     "mesaj": "P8·Ventilație: Ik1min 352 A < Ia 480 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)"
+     "mesaj": "Ik1min 485 A < Ia 600 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
     },
     {
      "cod": "V35",
      "nivel": "AVERTISMENT",
      "obiect": "P8·Ventilație",
-     "mesaj": "P8·Ventilație: fază 1×6 mm² < 26,8 mm² la Ik3max IMPLICIT 21,76 kA — introduceți Ik3 real sau I²t producător"
+     "mesaj": "fază 1×10 mm² < 26,8 mm² la Ik3max IMPLICIT 21,76 kA — introdu Ik3 real sau I²t producător"
     },
     {
      "cod": "V36",
      "nivel": "AVERTISMENT",
      "obiect": "P8·Ventilație",
-     "mesaj": "P8·Ventilație: PE 6 mm² < 26,8 mm² la Ik3max IMPLICIT — introduceți Ik3 real sau I²t producător"
+     "mesaj": "PE 10 mm² < 26,8 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P8·Ventilație vs amonte",
-     "mesaj": "P8·Ventilație vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P9·HVAC vs amonte",
-     "mesaj": "P9·HVAC vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P10·Cantină vs amonte",
-     "mesaj": "P10·Cantină vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P11·Depozit vs amonte",
-     "mesaj": "P11·Depozit vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P12·Atelier vs amonte",
-     "mesaj": "P12·Atelier vs amonte: selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 7,68 kA (Ik3max 21,76 kA) — confirmă cu tabelele producătorului"
     }
    ],
    "verificari_info": [
@@ -4534,7 +4548,8 @@
     "P12·Atelier: ΔU = 1.16 % (L = 50 m); cumulat = 0.75 + 1.16 = 1.91 % (limită 3 %)",
     "P12·Atelier: Ik3max la origine 21.76 kA, la capăt 3.92 kA; Ik1min la capăt 534.76 A; Ia(5 s) = 260.0 A",
     "P12·Atelier: N = 25 mm², PE = 10 mm² (separat); termic PE: S ≥ 2.4 mm² (t = 0,4 s la Ik1min)"
-   ]
+   ],
+   "nota_r7": "r7: In motor cu η/cosφ IE3, ks = 1 pe iluminat, TC primar ≥ 1,2·Ib — valori actualizate"
   },
   {
    "id": "K01",
@@ -5096,16 +5111,11 @@
      "nivel": "AVERTISMENT",
      "obiect": "INV-1",
      "mesaj": "INV-1: Ik1min 883.0 A < Ia 1200.0 A cu impedanța OD IMPLICITĂ — cereți valoarea reală"
-    },
-    {
-     "cod": "V41",
-     "nivel": "AVERTISMENT",
-     "obiect": "QG vs INV-1",
-     "mesaj": "QG vs INV-1: amonte = aval = 95 A — fără selectivitate"
     }
    ],
    "verificari_info": [
-    "V70"
+    "V70",
+    "V41"
    ],
    "blocheaza_export": false,
    "toleranta": "implicita",
@@ -6832,12 +6842,6 @@
      "mesaj": "INV-1: Ik1min 883.0 A < Ia 1200.0 A cu impedanța OD IMPLICITĂ — cereți valoarea reală"
     },
     {
-     "cod": "V41",
-     "nivel": "AVERTISMENT",
-     "obiect": "QG vs INV-1",
-     "mesaj": "QG vs INV-1: amonte = aval = 95 A — fără selectivitate"
-    },
-    {
      "cod": "V68",
      "nivel": "BLOCANT",
      "obiect": "schema",
@@ -6845,7 +6849,8 @@
     }
    ],
    "verificari_info": [
-    "V70"
+    "V70",
+    "V41"
    ],
    "blocheaza_export": true,
    "toleranta": "implicita",
@@ -6941,17 +6946,12 @@
      "nivel": "AVERTISMENT",
      "obiect": "INV-1",
      "mesaj": "INV-1: Ik1min 883.0 A < Ia 1200.0 A cu impedanța OD IMPLICITĂ — cereți valoarea reală"
-    },
-    {
-     "cod": "V41",
-     "nivel": "AVERTISMENT",
-     "obiect": "QG vs INV-1",
-     "mesaj": "QG vs INV-1: amonte = aval = 95 A — fără selectivitate"
     }
    ],
    "verificari_info": [
     "V68",
-    "V70"
+    "V70",
+    "V41"
    ],
    "blocheaza_export": false,
    "toleranta": "implicita",
@@ -7051,17 +7051,12 @@
      "nivel": "AVERTISMENT",
      "obiect": "INV-1",
      "mesaj": "INV-1: Ik1min 883.0 A < Ia 1200.0 A cu impedanța OD IMPLICITĂ — cereți valoarea reală"
-    },
-    {
-     "cod": "V41",
-     "nivel": "AVERTISMENT",
-     "obiect": "QG vs INV-1",
-     "mesaj": "QG vs INV-1: amonte = aval = 95 A — fără selectivitate"
     }
    ],
    "verificari_info": [
     "V68",
-    "V70"
+    "V70",
+    "V41"
    ],
    "blocheaza_export": false,
    "toleranta": "implicita",
@@ -10258,7 +10253,7 @@
   {
    "id": "R04",
    "categorie": "prosumator",
-   "descriere": "Prosumator 30 kW trifazat pe branșament existent Q 32 A → injecție peste Q (avertisment)",
+   "descriere": "Prosumator 30 kW trifazat pe branșament existent Q 32 A → injecție peste Q (avertisment); > 27 kW → TD-PV cu releu anti-insularizare (cerință OD)",
    "intrare": {
     "tip_schema": "prosumator",
     "retea": "tri",
@@ -10296,7 +10291,7 @@
      "Ia_A": 630.0,
      "t_deconectare_s": 0.4
     },
-    "PI": "protecție de interfață integrată în invertor, certificată (Ord. ANRE 228/2018), reglaje conform ATR",
+    "PI": "protecție de interfață externă (releu U/f, ROCOF) cu declanșare pe QG, certificată, reglaje conform ATR (Ord. ANRE 228/2018)",
     "contor": "bidirecțional, furnizat de OD"
    },
    "verificari": [
@@ -10315,7 +10310,8 @@
    ],
    "verificari_info": [
     "V30",
-    "V35"
+    "V35",
+    "V41"
    ],
    "blocheaza_export": false,
    "toleranta": "implicita",
@@ -10571,9 +10567,9 @@
      "poli": 4,
      "In_A": 200,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
-    "TC": "3 × 200/5 A, cl. 0,5, 5 VA",
+    "TC": "3 × 250/5 A, cl. 0,5, 5 VA",
     "TC_sarcina_VA": 2.7,
     "contor": "semidirect 3 × 230/400 V, 5 A (furnizat de OD)",
     "C2": {
@@ -10597,12 +10593,12 @@
      "k_total": 1.0,
      "Iz_corectat_A": 218.0,
      "cablu": "ACYABY 4×240 mm² + FY 1×70 mm² (PE)",
-     "dU_ramura_pct": 0.59,
-     "dU_cumulat_pct": 0.59,
+     "dU_ramura_pct": 0.589,
+     "dU_cumulat_pct": 0.589,
      "dU_limita_pct": 3.0,
      "Ik3max_origine_kA": 25.0,
-     "Ik3max_capat_kA": 17.39,
-     "Ik1min_capat_A": 977.0,
+     "Ik3max_capat_kA": 17.3933,
+     "Ik1min_capat_A": 977.423,
      "Ia_A": 2400.0,
      "t_deconectare_s": 5.0
     },
@@ -10636,7 +10632,8 @@
     "C2: Ik3max la origine 25.0 kA, la capăt 17.39 kA; Ik1min la capăt 977.42 A; Ia(5 s) = 2400.0 A",
     "C2: termic fază la Ik3max (t = 0,02 s): n·S ≥ 46.5 mm²",
     "C2: N = 240 mm², PE = 70 mm² (separat); termic PE: S ≥ 24.7 mm² (t = 0,3 s la Ik1min)"
-   ]
+   ],
+   "nota_r7": "r7: In motor cu η/cosφ IE3, ks = 1 pe iluminat, TC primar ≥ 1,2·Ib — valori actualizate"
   },
   {
    "id": "B24",
@@ -10667,7 +10664,7 @@
      "poli": 4,
      "In_A": 40,
      "IdN_mA": 300,
-     "tip": "AC"
+     "tip": "A"
     },
     "contor": "direct 3 × 230/400 V, 5(100) A (furnizat de OD)",
     "C2": {
@@ -10785,44 +10782,44 @@
    "implicite_aplicate": "cosφ 0,9 (motor 0,85); ks după IEC 61439-2 tab. 101; alimentare și plecări Al PVC D1 (Al→Cu sub 16 mm²), sub-plecări Cu PVC metoda C 30 °C; L implicit 50 m (plecări) / 25 m (sub-plecări); trasee separate (fără grupare) dacă nu se spune altfel; sursa: rețea publică prin BMPT cu RCCB 300 mA; Ik3max OD 25 kA, Zbuclă OD 0,18 + j0,09 Ω (implicite)",
    "asteptat": {
     "bilant": {
-     "Pi_kW": 99.77,
+     "Pi_kW": 99.7661,
      "ks": 0.7,
-     "Pc_kW": 69.84,
+     "Pc_kW": 84.8012,
      "P_declarat_kW": null
     },
     "Q1_C1": {
-     "Ib_A": 112.0,
+     "Ib_A": 136.0,
      "protectie": {
       "tip": "MCCB",
-      "In_A": 125,
-      "Ir_A": 112.5,
-      "Ir_multiplu": 0.9,
-      "Im_A": 1250.0,
+      "In_A": 160,
+      "Ir_A": 136.0,
+      "Ir_multiplu": 0.85,
+      "Im_A": 1600.0,
       "Icu_kA": 25
      },
-     "Iz_min_A": 112.5,
+     "Iz_min_A": 136.0,
      "material": "Cu",
      "n_paralel": 1,
-     "S_faza_mm2": 50.0,
-     "S_N_mm2": 50.0,
-     "S_PE_mm2": 25.0,
+     "S_faza_mm2": 70.0,
+     "S_N_mm2": 70.0,
+     "S_PE_mm2": 35.0,
      "PE": "separat",
-     "Iz_tabel_A": 116,
+     "Iz_tabel_A": 143,
      "k_total": 1.0,
-     "Iz_corectat_A": 116.0,
-     "cablu": "CYABY 4×50 mm² + FY 1×25 mm² (PE)",
-     "dU_ramura_pct": 1.1,
-     "dU_cumulat_pct": 1.1,
+     "Iz_corectat_A": 143.0,
+     "cablu": "CYABY 4×70 mm² + FY 1×35 mm² (PE)",
+     "dU_ramura_pct": 0.9524,
+     "dU_cumulat_pct": 0.9524,
      "dU_limita_pct": 3.0,
      "Ik3max_origine_kA": 25.0,
-     "Ik3max_capat_kA": 10.25,
-     "Ik1min_capat_A": 795.0,
-     "Ia_A": 1500.0,
+     "Ik3max_capat_kA": 12.5951,
+     "Ik1min_capat_A": 859.2533,
+     "Ia_A": 1920.0,
      "t_deconectare_s": 5.0
     },
     "bara_TG": {
-     "Ik3max_kA": 10.25,
-     "dU_pct": 1.1
+     "Ik3max_kA": 12.5951,
+     "dU_pct": 0.9524
     },
     "plecari": [
      {
@@ -10835,7 +10832,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 16.0,
+      "Iz_min_A": 16,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -10846,12 +10843,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.39,
-      "dU_cumulat_pct": 2.49,
+      "dU_ramura_pct": 1.3881,
+      "dU_cumulat_pct": 2.3406,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 80.0,
       "t_deconectare_s": 0.4
      },
@@ -10865,7 +10862,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 16.0,
+      "Iz_min_A": 16,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -10876,12 +10873,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.39,
-      "dU_cumulat_pct": 2.49,
+      "dU_ramura_pct": 1.3881,
+      "dU_cumulat_pct": 2.3406,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 80.0,
       "t_deconectare_s": 0.4
      },
@@ -10895,7 +10892,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 16.0,
+      "Iz_min_A": 16,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -10906,12 +10903,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.39,
-      "dU_cumulat_pct": 2.49,
+      "dU_ramura_pct": 1.3881,
+      "dU_cumulat_pct": 2.3406,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 80.0,
       "t_deconectare_s": 0.4
      },
@@ -10925,7 +10922,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 16.0,
+      "Iz_min_A": 16,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -10936,12 +10933,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.39,
-      "dU_cumulat_pct": 2.49,
+      "dU_ramura_pct": 1.3881,
+      "dU_cumulat_pct": 2.3406,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 80.0,
       "t_deconectare_s": 0.4
      },
@@ -10955,7 +10952,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 16.0,
+      "Iz_min_A": 16,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -10966,12 +10963,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.39,
-      "dU_cumulat_pct": 2.49,
+      "dU_ramura_pct": 1.3881,
+      "dU_cumulat_pct": 2.3406,
       "dU_limita_pct": 3.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 80.0,
       "t_deconectare_s": 0.4
      },
@@ -10985,7 +10982,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 20.0,
+      "Iz_min_A": 20,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -10996,12 +10993,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.74,
-      "dU_cumulat_pct": 2.84,
+      "dU_ramura_pct": 1.7352,
+      "dU_cumulat_pct": 2.6876,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 100.0,
       "t_deconectare_s": 0.4,
       "DDR": {
@@ -11019,7 +11016,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 20.0,
+      "Iz_min_A": 20,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -11030,12 +11027,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.74,
-      "dU_cumulat_pct": 2.84,
+      "dU_ramura_pct": 1.7352,
+      "dU_cumulat_pct": 2.6876,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 100.0,
       "t_deconectare_s": 0.4,
       "DDR": {
@@ -11053,7 +11050,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 20.0,
+      "Iz_min_A": 20,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -11064,12 +11061,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.74,
-      "dU_cumulat_pct": 2.84,
+      "dU_ramura_pct": 1.7352,
+      "dU_cumulat_pct": 2.6876,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 100.0,
       "t_deconectare_s": 0.4,
       "DDR": {
@@ -11087,7 +11084,7 @@
        "curba": "B",
        "Icu_kA": 15
       },
-      "Iz_min_A": 20.0,
+      "Iz_min_A": 20,
       "material": "Cu",
       "n_paralel": 1,
       "S_faza_mm2": 2.5,
@@ -11098,12 +11095,12 @@
       "k_total": 1.0,
       "Iz_corectat_A": 24.0,
       "cablu": "CYY-F 5×2,5 mm²",
-      "dU_ramura_pct": 1.74,
-      "dU_cumulat_pct": 2.84,
+      "dU_ramura_pct": 1.7352,
+      "dU_cumulat_pct": 2.6876,
       "dU_limita_pct": 5.0,
-      "Ik3max_origine_kA": 10.25,
-      "Ik3max_capat_kA": 1.23,
-      "Ik1min_capat_A": 282.0,
+      "Ik3max_origine_kA": 12.5951,
+      "Ik3max_capat_kA": 1.2682,
+      "Ik1min_capat_A": 290.2191,
       "Ia_A": 100.0,
       "t_deconectare_s": 0.4,
       "DDR": {
@@ -11118,61 +11115,61 @@
      "cod": "V31",
      "nivel": "AVERTISMENT",
      "obiect": "Q1/C1",
-     "mesaj": "Q1/C1: Ik1min 795.0 A < Ia 1500.0 A — deconectarea se bazează pe DDR din amonte"
+     "mesaj": "Ik1min 859 A < Ia 1920 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P1·Iluminat 1 vs amonte",
-     "mesaj": "P1·Iluminat 1 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P2·Iluminat 2 vs amonte",
-     "mesaj": "P2·Iluminat 2 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P3·Iluminat 3 vs amonte",
-     "mesaj": "P3·Iluminat 3 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P4·Iluminat 4 vs amonte",
-     "mesaj": "P4·Iluminat 4 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P5·Iluminat 5 vs amonte",
-     "mesaj": "P5·Iluminat 5 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P6·Prize 1 vs amonte",
-     "mesaj": "P6·Prize 1 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P7·Prize 2 vs amonte",
-     "mesaj": "P7·Prize 2 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P8·Prize 3 vs amonte",
-     "mesaj": "P8·Prize 3 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     },
     {
      "cod": "V42",
      "nivel": "AVERTISMENT",
      "obiect": "P9·Prize 4 vs amonte",
-     "mesaj": "P9·Prize 4 vs amonte: selectivitate parțială până la 1.0 kA (Ik3max 10.25 kA) — confirmați cu tabelele producătorului"
+     "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 12,6 kA) — confirmă cu tabelele producătorului"
     }
    ],
    "verificari_info": [
@@ -11259,7 +11256,8 @@
     "P9·Prize 4: ΔU = 1.74 % (L = 25 m); cumulat = 1.1 + 1.74 = 2.84 % (limită 5 %)",
     "P9·Prize 4: Ik3max la origine 10.25 kA, la capăt 1.23 kA; Ik1min la capăt 281.97 A; Ia(0,4 s) = 100.0 A",
     "P9·Prize 4: N = 2,5 mm², PE = 2,5 mm² (cablu); termic PE: S ≥ 0.8 mm² (t = 0,1 s la Ik1min)"
-   ]
+   ],
+   "nota_r7": "r7: In motor cu η/cosφ IE3, ks = 1 pe iluminat, TC primar ≥ 1,2·Ib — valori actualizate"
   },
   {
    "id": "T15",

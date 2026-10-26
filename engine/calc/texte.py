@@ -113,8 +113,15 @@ def _sabloane(tip, p):
         curba = _g(p, "curba", implicit="C")
         icn = _g(p, "Icn_kA", "Icu_kA", implicit=6)
         u = _g(p, "U_V", implicit=(230 if poli in ("1P", "2P", "1P+N") else 400))
+        bk = p.get("backup_SF_A")
+        bk_t = ""
+        if bk:
+            # r8 (#35): Icn < Ik3 la locul de montaj → back-up prin siguranțele SF gG din amonte (asociere declarată)
+            bk_t = (f"; Icn < Ik3 {_u(p.get('backup_Ik3_kA'), 'kA')} — protejat în back-up de SF gG"
+                    + (f" {_u(bk, 'A')}" if not isinstance(bk, bool) else "")
+                    + " (asociere ≥ Ik3 din tabelele de coordonare ale producătorului)")
         return (f"Întreruptor automat modular {poli}, curba {curba}, In {_u(In, 'A')}",
-                f"Icn {_u(icn, 'kA')}, {_u(u, 'V')} c.a., SR EN 60898-1",
+                f"Icn {_u(icn, 'kA')}, {_u(u, 'V')} c.a., SR EN 60898-1" + bk_t,
                 f"{poli} {PUNCT} {curba}{fmt_ro(In)} {PUNCT} {_u(icn, 'kA')}")
     if t in ("mccb", "acb"):
         poli = _poli(_g(p, "poli"), 4)
@@ -124,10 +131,16 @@ def _sabloane(tip, p):
         el = (t == "acb") or _mccb_decl(p) == "EL"
         if not el:
             im = _g(p, "Im_A", implicit=norme.IM_TM_MULTIPLU * In)
-            car = (f"Ir = {fmt_ro(k)}{PUNCT}In = {_u(ir, 'A')}, Im = 10{PUNCT}In = {_u(im, 'A')}, "
-                   f"Icu {_u(icu, 'kA')}, {_u(400, 'V')} c.a., SR EN 60947-2")
+            km = (float(im) / float(In)) if In else norme.IM_TM_MULTIPLU
+            car = (f"Ir = {fmt_ro(k)}{PUNCT}In = {_u(ir, 'A')}, Im = {fmt_ro(km, 0)}{PUNCT}In = {_u(im, 'A')}, "
+                   f"Icu {_u(icu, 'kA')}" + (f" la {_u(_g(p, 'U_V'), 'V')}" if _g(p, "U_V") else "")
+                   + f", {_u(_g(p, 'U_V', implicit=400), 'V')} c.a., SR EN 60947-2")
             if _g(p, "bd"):
                 car += ", bobină de declanșare BD"
+            if _g(p, "intrerupator_motor"):
+                return (f"Întreruptor-motor (MCCB, magnetic pentru pornirea motoarelor) {poli}, In {_u(In, 'A')}",
+                        car + ", coordonat tip 2 cu contactorul și releul termic (SR EN 60947-4-1)",
+                        f"{poli} {PUNCT} {_u(In, 'A')} {PUNCT} Ir {_u(ir, 'A')} {PUNCT} Im {_u(im, 'A')}")
             return (f"Întreruptor automat compact MCCB {poli}, In {_u(In, 'A')}, declanșator termomagnetic", car,
                     f"{poli} {PUNCT} {_u(In, 'A')} {PUNCT} Ir {_u(ir, 'A')} {PUNCT} {_u(icu, 'kA')}")
         nume = "ACB" if t == "acb" else "MCCB"
@@ -143,7 +156,9 @@ def _sabloane(tip, p):
         if ii is not None:
             parti.append(f"Ii = {_u(ii, 'A')}")
         if icu is not None:
-            parti.append(f"Icu {_u(icu, 'kA')}")
+            parti.append(f"Icu {_u(icu, 'kA')}" + (f" la {_u(_g(p, 'U_V'), 'V')}" if _g(p, "U_V") else ""))
+        if _g(p, "U_V"):
+            parti.append(f"Ue {_u(_g(p, 'U_V'), 'V')} c.a.")       # r7: aparataj pentru rețeaua de 800 V c.a.
         desen = f"{poli} {PUNCT} {_u(In, 'A')} {PUNCT} Ir {_u(ir, 'A')}"
         if isd is not None:
             desen += f" {PUNCT} Isd {_u(isd, 'A')}"
@@ -194,22 +209,28 @@ def _sabloane(tip, p):
         idn = _g(p, "IdN_mA", implicit=300)
         tipd = _g(p, "tip_ddr", implicit="AC")
         icn = _g(p, "Icn_kA", "Icu_kA", implicit=None)
-        return (f"Întreruptor automat cu protecție diferențială {poli}, curba {curba}, In {_u(In, 'A')}, IΔn {_u(idn, 'mA')}, tip {tipd}",
+        sel = bool(_g(p, "selectiv"))
+        return (f"Întreruptor automat cu protecție diferențială {poli}, curba {curba}, In {_u(In, 'A')}, IΔn {_u(idn, 'mA')}, tip {tipd}"
+                + (", selectiv (S)" if sel else ""),
                 (f"Icn {_u(icn, 'kA')}, SR EN 61009-1" if icn else "Icn ≥ 6" + NB + "kA (ST 3-JT)"),
-                f"{poli} {PUNCT} {curba}{fmt_ro(In)} {PUNCT} {_u(idn, 'mA')}" + (f" tip {tipd}" if tipd != "AC" else ""))
+                f"{poli} {PUNCT} {curba}{fmt_ro(In)} {PUNCT} {_u(idn, 'mA')}" + (f" tip {tipd}" if tipd != "AC" else "")
+                + (" S" if sel else ""))
     if t == "tc":
         prim = _g(p, "primar_A")
         cls = _g(p, "clasa", implicit="0,5")
         sn = _g(p, "Sn_VA", implicit=5)
         n = _g(p, "n", "buc", implicit=3)
+        um = 1.2 if float(_g(p, "U_V", implicit=400)) > 690 else 0.72       # r7: TC pentru rețeaua de 800 V
         return (f"Transformator de curent JT {fmt_ro(prim)}/5{NB}A, cl. {cls}, {_u(sn, 'VA')}, Fs 5",
-                f"{_u(0.72, 'kV')}, capac sigilabil, SR EN 61869-2 — {fmt_ro(n)} buc.",
-                f"3 {X} {fmt_ro(prim)}/5{NB}A {PUNCT} cl. {cls}")
+                f"{_u(um, 'kV')}, capac sigilabil, SR EN 61869-2 — {fmt_ro(n)} buc.",
+                f"{fmt_ro(n)} {X} {fmt_ro(prim)}/5{NB}A {PUNCT} cl. {cls}")
     if t == "contor":
         tri = _g(p, "retea", implicit="tri") == "tri"
         direct = _g(p, "masura", implicit="directa").startswith("dir")
         bidir = ", bidirecțional" if _g(p, "bidirectional") else ""
         u = f"3 {X} 230/400{NB}V" if tri else f"230{NB}V"
+        if tri and float(_g(p, "U_V", implicit=400)) > 400:
+            u = f"3 {X} {fmt_ro(_g(p, 'U_V'), 0)}{NB}V (3 fire)"        # r7: măsura semidirectă pe 800 V c.a.
         i = (f"5(100){NB}A" if tri else f"5(60){NB}A") if direct else f"5{NB}A"
         return (f"Contor electronic {'tri' if tri else 'mono'}fazat de energie activă și reactivă, "
                 f"{'direct' if direct else 'semidirect'}{bidir}",
@@ -226,6 +247,13 @@ def _sabloane(tip, p):
         ia = _g(p, "In_amonte_A", "In_A", implicit=63)
         prot = (f"{_u(ia, 'A')} gG" if pt.lower() == "gg" else
                 f"{pt} {_g(p, 'curba', implicit='')}{fmt_ro(ia)}{NB}A")
+        uv = _g(p, "U_V")
+        if uv and float(uv) > 400:
+            # r7 (P0-3): SPD pentru rețeaua de 800 V c.a. (TN, fără N): Uc ≥ 1,1·U0, Up ≤ 2,5 kV
+            uc = 1.1 * float(uv) / 3 ** 0.5
+            return (f"Descărcător SPD tip {tipd}, {poli}, pentru rețea 3 {X} {fmt_ro(uv, 0)}{NB}V c.a.",
+                    f"{car}, Uc ≥ 1,1{PUNCT}U0 = {_u(uc, 'V', 0)}, Up ≤ 2,5{NB}kV, protecție amonte {prot}",
+                    f"SPD {tipd} {PUNCT} {poli} {PUNCT} {fmt_ro(uv, 0)}{NB}V")
         return (f"Descărcător SPD tip {tipd}, {poli}",
                 f"{car}, Up ≤ 1,5{NB}kV, protecție amonte {prot}",
                 f"SPD {tipd} {PUNCT} {poli}")
@@ -240,6 +268,11 @@ def _sabloane(tip, p):
     if t == "gpv":
         u = _g(p, "U_V", implicit=1100)
         n = _g(p, "n", "buc", implicit=2)
+        if In is None or _g(p, "generic"):
+            # r6 (fotovoltaic P1-7): gPV necesare, calibrul din proiectul de c.c. (Isc al modulului necunoscut)
+            return (_cu_model(f"Siguranță fuzibilă gPV pe fiecare string, 10{X}38{NB}mm, {_u(u, 'V')} c.c., calibru "
+                              f"conform proiect DC (1,5…2,4·Isc ≤ Irev)", p),
+                    f"SR EN 60269-6 — {fmt_ro(n)} buc. (+ și −)", "gPV · conform proiect DC")
         return (_cu_model(f"Siguranță fuzibilă gPV {_u(In, 'A')}, 10{X}38{NB}mm, {_u(u, 'V')} c.c.", p),
                 f"SR EN 60269-6 — {fmt_ro(n)} buc. (+ și −)", f"gPV {_u(In, 'A')}")
     if t == "camp_pv":
@@ -281,31 +314,42 @@ def _sabloane(tip, p):
                 f"pozat lângă cablul {_g(p, 'ref', implicit='—')}, L ≈ {_u(_g(p, 'L_m', 'L'), 'm', 0)}", None)
     if t == "trafo":
         sn = _g(p, "Sn_kVA")
-        uk, pk, p0 = norme.TRAFO.get(int(sn), (None, None, None)) if sn is not None else (None, None, None)
+        izt = _g(p, "izolatie", implicit="ulei")
+        uk, pk, p0 = ((norme.TRAFO_USCAT if izt == "uscat" else norme.TRAFO).get(int(sn), (None, None, None))
+                      if sn is not None else (None, None, None))
         uk = _g(p, "uk_pct", implicit=uk)
         pk = _g(p, "Pk_W", implicit=pk)
         p0 = _g(p, "P0_W", implicit=p0)
         gr = _g(p, "grupa", implicit=norme.TRAFO_GRUPA_CONEXIUNI)
-        return (f"Transformator de putere {_u(sn, 'kVA')}, 20 ± 2{X}2,5{NB}% / 0,4{NB}kV, {gr}",
-                f"uk {_u(uk, '%')}, Pk ≤ {_u(pk, 'W')}, P0 ≤ {_u(p0, 'W')} (Reg. UE 548/2014 Tier 2), ulei",
-                f"{_u(sn, 'kVA')} {PUNCT} 20/0,4{NB}kV {PUNCT} {gr}")
+        umt = fmt_ro(_g(p, "U_MT_kV", implicit=20))
+        ujt = fmt_ro(_g(p, "U_JT_kV", implicit=0.4))          # r7: 0,8 kV la CEF cu invertoare de 800 V
+        return (f"Transformator de putere {_u(sn, 'kVA')}, {umt} ± 2{X}2,5{NB}% / {ujt}{NB}kV, {gr}",
+                f"uk {_u(uk, '%')}, Pk ≤ {_u(pk, 'W')}, P0 ≤ {_u(p0, 'W')} (Reg. UE 548/2014 Tier 2), "
+                + ("uscat, rășină epoxidică, clasă F, E2-C2-F1, protecție termică PT100" if izt == "uscat" else "ulei"),
+                f"{_u(sn, 'kVA')} {PUNCT} {umt}/{ujt}{NB}kV {PUNCT} {gr}" + (f" {PUNCT} uscat" if izt == "uscat" else ""))
     if t == "celula_sigurante":
+        um = _u(_g(p, "Um_kV", implicit=24), "kV")
         return (f"Celulă MT de transformator cu separator de sarcină și siguranțe MT {_u(In, 'A')}",
-                f"24{NB}kV, SR EN 62271-105, CLP", f"24{NB}kV {PUNCT} SF {_u(In, 'A')}")
+                f"{um}, SR EN 62271-105, CLP", f"{um} {PUNCT} SF {_u(In, 'A')}")
     if t == "celula_intreruptor":
-        return (f"Celulă MT de transformator cu întreruptor în vid 24{NB}kV, 630{NB}A, 16{NB}kA",
+        um = _u(_g(p, "Um_kV", implicit=24), "kV")
+        return (f"Celulă MT de transformator cu întreruptor în vid {um}, 630{NB}A, 16{NB}kA",
                 f"releu 50/51, 50N/51N, TC MT {_g(p, 'raport', 'raport_TC', implicit='—')}",
-                f"24{NB}kV {PUNCT} Q {PUNCT} F>")
+                f"{um} {PUNCT} Q {PUNCT} F>")
     if t == "invertor":
         pn = _g(p, "Pn_kW")
         cert = _g(p, "certificare", implicit="RfG")
         hib = "hibrid " if p.get("hibrid") else ""
         car = f"Iac,max {_u(_g(p, 'Iac_max_A', 'Iac_A'), 'A')}" + _car_fisa_invertor(p) + f", PI integrată, certificat conform {cert}"
         if _g(p, "retea", implicit="tri") == "mono":
-            return (_cu_model(f"Invertor monofazat {hib}{_u(pn, 'kW')} c.a., 1 {X} 230{NB}V, 50{NB}Hz", p), car,
-                    f"{_u(pn, 'kW')} {PUNCT} 1 {X} 230{NB}V")
-        return (_cu_model(f"Invertor trifazat {hib}{_u(pn, 'kW')} c.a., 3 {X} 400{NB}V, 50{NB}Hz", p), car,
-                f"{_u(pn, 'kW')} {PUNCT} 3 {X} 400{NB}V")
+            fz = p.get("faza")         # r8: invertor monofazat pe rețea trifazată — faza de racord (L1 / L2 / L3)
+            return (_cu_model(f"Invertor monofazat {hib}{_u(pn, 'kW')} c.a., 1 {X} 230{NB}V" + (f" ({fz} + N)" if fz else "")
+                              + f", 50{NB}Hz", p), car,
+                    f"{_u(pn, 'kW')} {PUNCT} " + (f"{fz} + N {PUNCT} 230{NB}V" if fz else f"1 {X} 230{NB}V"))
+        uca = fmt_ro(_g(p, "U_ca_V", implicit=400), 0)        # r7: 800 V c.a. (3 fire, fără N)
+        fn = ", fără N" if float(_g(p, "U_ca_V", implicit=400)) > 400 else ""
+        return (_cu_model(f"Invertor trifazat {hib}{_u(pn, 'kW')} c.a., 3 {X} {uca}{NB}V{fn}, 50{NB}Hz", p), car,
+                f"{_u(pn, 'kW')} {PUNCT} 3 {X} {uca}{NB}V")
     if t == "pcs":
         pn = _g(p, "Pn_kW", "P_kW")
         return (_cu_model(f"Convertor bidirecțional BESS {_u(pn, 'kW')}", p),
@@ -318,6 +362,11 @@ def _sabloane(tip, p):
                                     f"capacitate utilă {_u(p['kWh_util'], 'kWh')}" if p.get("kWh_util") is not None else "",
                                     f"Pmax {_u(p['P_kW'], 'kW')}" if p.get("P_kW") is not None and _model_text(p) else "") if x)
         return _cu_model(f"Baterie {chim} {_u(kwh, 'kWh')} cu BMS", p), car or "—", f"{_u(kwh, 'kWh')}"
+    if t == "inversor":
+        # r8 (#48): comutator manual de sursă I-0-II (inversor de sursă cu poziția 0), nu ATS automat
+        return (f"Comutator manual de sursă I-0-II (inversor) 4P, {_u(In, 'A')}, AC-23B",
+                "poziția 0 între rețea (I) și GE (II) — interblocaj mecanic intrinsec, acționare manuală, SR EN 60947-3",
+                f"I-0-II 4P {PUNCT} {_u(In, 'A')}")
     if t == "ats":
         return (f"Comutator automat de sursă (ATS) 4P, {_u(In, 'A')}, AC-33B",
                 "interblocaj mecanic + electric, SR EN 60947-6-1", f"ATS 4P {PUNCT} {_u(In, 'A')}")
@@ -425,13 +474,24 @@ def tip_cablu(material, izolatie, metoda):
 
 
 def text_cablu(material, izolatie, metoda, n_paralel, S_faza, S_N=None, S_PE=None, PE="cablu", retea="tri",
-               monopolar=False):
+               monopolar=False, fara_N=False):
     """Textul cablului pentru listă (SPEC §B.9, §B.10, §B.11, §E.3), de ex.
     „CYABY 5×6 mm²”, „ACYABY 3×185+95 mm² + FY 1×50 mm² (PE)”, „2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE))”."""
     monopolar = monopolar or str(metoda).startswith("F")
     tip = norme.TIP_CABLU[(material, izolatie, False)] if monopolar else tip_cablu(material, izolatie, metoda)
     S_N = S_faza if S_N is None else S_N
     s, sn = fmt_ro(S_faza), fmt_ro(S_N)
+    if fara_N and retea != "mono" and PE != "PEN":
+        # r7 (P0-3): rețea de 800 V c.a. (invertoare fără neutru) — 3 faze + PE: „4×S” cu PE în cablu, „3×S” + FY separat
+        if monopolar:
+            cond = f"3{X}1{X}{s}"
+        else:
+            cond = f"4{X}{s}" if PE == "cablu" else f"3{X}{s}"
+        txt = f"{tip} {cond}{NB}mm²" + (" (3 + PE)" if PE == "cablu" and not monopolar else "")
+        if PE not in ("cablu", "fara"):
+            txt += f" + {norme.TIP_CONDUCTOR_PE_SEPARAT} 1{X}{fmt_ro(S_PE)}{NB}mm² (PE)"
+        n = int(n_paralel or 1)
+        return f"{n} {X} ({txt})" if n > 1 else txt
     if monopolar:
         # v1.2 R2: sistem de cabluri monopolare (metoda F): „N2XY 4×1×300 mm²” sau „N2XY 3×1×300 + 1×150 mm²”
         cond = f"4{X}1{X}{s}" if S_N == S_faza else f"3{X}1{X}{s} + 1{X}{sn}"

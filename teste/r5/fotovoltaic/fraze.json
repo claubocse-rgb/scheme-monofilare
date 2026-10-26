@@ -1,0 +1,2477 @@
+[
+ {
+  "nr": 1,
+  "fraza": "CEF 100 kWp cu 2 invertoare Huawei SUN2000-50KTL-M3, module JA Solar 550 Wp, racord JT prin BMPT, cablu 60 m",
+  "actiune": "refuza",
+  "tip": "bransament",
+  "intrare": {
+   "tip_schema": "bransament",
+   "retea": "tri",
+   "L_coloana_m": 60
+  },
+  "presupus": [],
+  "intrebari": [
+   "Care este puterea aprobată (kW, din ATR) sau curentul maxim absorbit (A)?"
+  ],
+  "refuz": "Lipsește puterea (kW) sau curentul (A) branșamentului (I02).",
+  "avertismente": [],
+  "intelegere": "Am înțeles: branșament trifazat, coloana C2 60 m.\nNu pot genera schema: Lipsește puterea (kW) sau curentul (A) branșamentului (I02).\nÎntrebare: Care este puterea aprobată (kW, din ATR) sau curentul maxim absorbit (A)?",
+  "verdict": "gresit",
+  "observatie": "„racord JT prin BMPT” → tip branșament, refuz I02; CEF pierdut"
+ },
+ {
+  "nr": 2,
+  "fraza": "cef 120kwp, 1 invertor sungrow SG110CX, panouri longi 580W, racord in TG existent la 40m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 120,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 0.58
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 40
+  },
+  "presupus": [
+   "„580W” = 0,6 kW",
+   "0,6 kW = putere c.a. totală → 1 × 0,6 kW",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („40m” = 40 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 0,6 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (0,6 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 120 kWp, P c.a. = 0,6 kW, 1 × invertor 0,6 kW.\nAm presupus: „580W” = 0,6 kW; 0,6 kW = putere c.a. totală → 1 × 0,6 kW; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („40m” = 40 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 0,6 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (0,6 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V35 C0: fază 1×6 mm² < 30,7 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător",
+   "AV V36 C0: PE 6 mm² < 30,7 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 0,13 kA (Ik3max 2,03 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "„panouri 580W” luat ca invertor 0,58 kW (model SG110CX ignorat)"
+ },
+ {
+  "nr": 3,
+  "fraza": "Centrala fotovoltaica 250 kWp pe acoperis hala, 2 x Huawei SUN2000-100KTL-M2 (100 kW), JA 545Wp, racord in TG existent, L=90 m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 250,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 100
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 90,
+   "cablu_inv": {
+    "metoda": "E"
+   }
+  },
+  "presupus": [
+   "100 kW = putere c.a. totală → 1 × 100 kW",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („90 m” = 90 m) = C0, de la TGD-CF la tabloul existent",
+   "invertoare pe acoperiș → cablurile c.a. pozate pe pat de cabluri / în aer (metoda E)",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 110 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 250 kWp, P c.a. = 100 kW, 1 × invertor 100 kW.\nAm presupus: 100 kW = putere c.a. totală → 1 × 100 kW; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („90 m” = 90 m) = C0, de la TGD-CF la tabloul existent; invertoare pe acoperiș → cablurile c.a. pozate pe pat de cabluri / în aer (metoda E); Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 110 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V21 C0: ΔU cumulat 1,22 % > 1 %",
+   "AV V32 C0: Ik1min 811 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,88 % > 1 %",
+   "AV V32 INV-1: Ik1min 724 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 190 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "„2 x Huawei SUN2000-100KTL-M2 (100 kW)” → 1×100 kW"
+ },
+ {
+  "nr": 4,
+  "fraza": "CEF agricola 400 kWp la sol, 4 invertoare de 100 kW Sungrow SG110CX, module Trina Vertex 600 Wp, PT propriu 400 kVA",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 400,
+   "invertoare": [
+    {
+     "n": 4,
+     "Pn_kW": 100
+    }
+   ],
+   "pt_Sn_kVA": 400
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "PT propriu 400 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 25 A (orientativ, tabel producător)",
+   "categoria A RfG (400 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 400 kWp, 4 × invertor 100 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; PT propriu 400 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 25 A (orientativ, tabel producător); categoria A RfG (400 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": true,
+  "verificari": [
+   "BL V67 schema: Sn trafo 400 kVA < S invertoare+PCS 440 kVA",
+   "AV V60 schema: Ir QG 640 A > In_T 577,35 A — trafo neprotejat la suprasarcină",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 7,68 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 7,68 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 7,68 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 7,68 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 4,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 5,
+  "fraza": "fotovoltaic 80 kwp, 2 invertoare de 40kw fronius tauro, racord in tg, cablu cu 35m, retea TN-C-S",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 80,
+   "invertoare": [
+    {
+     "n": 2,
+     "Pn_kW": 40
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 35
+  },
+  "presupus": [
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („35m” = 35 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 88 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (80 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 80 kWp, 2 × invertor 40 kW.\nAm presupus: racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („35m” = 35 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 88 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (80 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 C0: Ik1min 952 A < Ia 1920 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,34 % > 1 %",
+   "AV V32 INV-1: Ik1min 707 A < Ia 960 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V36 INV-1: PE 16 mm² < 16,4 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "AV V21 INV-2: ΔU cumulat 1,34 % > 1 %",
+   "AV V32 INV-2: Ik1min 707 A < Ia 960 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V36 INV-2: PE 16 mm² < 16,4 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 1,28 kA (Ik3max 16,6 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 1,28 kA (Ik3max 16,6 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 2,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "TN-C-S ignorat"
+ },
+ {
+  "nr": 6,
+  "fraza": "CEF 50 kWp cu invertor SMA Sunny Tripower Core2 50 kW, module Jinko Tiger Neo 580 Wp, 18 module pe string, 5 stringuri, cablu Cu 25 m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 50,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 50
+    }
+   ],
+   "L_racord_m": 25
+  },
+  "presupus": [
+   "50 kW = putere c.a. totală → 1 × 50 kW",
+   "cablul descris („25 m” = 25 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 55 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (50 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 50 kWp, P c.a. = 50 kW, 1 × invertor 50 kW, material Cu.\nAm presupus: 50 kW = putere c.a. totală → 1 × 50 kW; cablul descris („25 m” = 25 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 55 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (50 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 C0: Ik1min 912 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,01 % > 1 %",
+   "AV V32 INV-1: Ik1min 763 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 95 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "Cu ignorat (C0 ACYABY), 18 module × 5 stringuri ignorate"
+ },
+ {
+  "nr": 7,
+  "fraza": "CEF 150 kWp, 3 invertoare a 50 kW (Solis S5-GC50K), stringuri 2 pe MPPT, racord JT cf ATR, coloana 120 m al",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 150,
+   "invertoare": [
+    {
+     "n": 3,
+     "Pn_kW": 16.6667
+    }
+   ],
+   "atr_jt": true,
+   "L_racord_m": 120
+  },
+  "presupus": [
+   "50 kW = putere c.a. totală → 3 × 16,7 kW",
+   "cablul descris („120 m” = 120 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 55 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (50 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 150 kWp, P c.a. = 50 kW, 3 × invertor 16,7 kW, material Al.\nAm presupus: 50 kW = putere c.a. totală → 3 × 16,7 kW; cablul descris („120 m” = 120 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 55 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (50 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V21 C0: ΔU cumulat 2,2 % > 1 %",
+   "AV V32 C0: Ik1min 561 A < Ia 960 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 2,95 % > 1 %",
+   "AV V21 INV-2: ΔU cumulat 2,95 % > 1 %",
+   "AV V21 INV-3: ΔU cumulat 2,95 % > 1 %",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 0,64 kA (Ik3max 4,41 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 0,64 kA (Ik3max 4,41 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 0,64 kA (Ik3max 4,41 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 3,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "„3 invertoare a 50 kW” → 3×16,7 kW"
+ },
+ {
+  "nr": 8,
+  "fraza": "cef 1 MWp, 8 invertoare Huawei SUN2000-115KTL de 115 kW, PT propriu 1000 kVA, cablu 200 m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 1000,
+   "invertoare": [
+    {
+     "n": 8,
+     "Pn_kW": 14.375
+    }
+   ],
+   "pt_Sn_kVA": 1000,
+   "L_racord_m": 200
+  },
+  "presupus": [
+   "„1 MWp” = 1000 kWp",
+   "115 kW = putere c.a. totală → 8 × 14,4 kW",
+   "cablul descris („200 m” = 200 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "PT propriu 1000 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător)",
+   "categoria A RfG (115 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 1000 kWp, P c.a. = 115 kW, 8 × invertor 14,4 kW.\nAm presupus: „1 MWp” = 1000 kWp; 115 kW = putere c.a. totală → 8 × 14,4 kW; cablul descris („200 m” = 200 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; PT propriu 1000 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător); categoria A RfG (115 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": true,
+  "verificari": [
+   "AV V21 C0: ΔU cumulat 2,37 % > 1 %",
+   "BL V30 C0: deconectare automată neîndeplinită: Ik1min 1861 A < Ia 2400 A",
+   "AV V21 INV-1: ΔU cumulat 2,8 % > 1 %",
+   "AV V21 INV-2: ΔU cumulat 2,8 % > 1 %",
+   "AV V21 INV-3: ΔU cumulat 2,8 % > 1 %",
+   "AV V21 INV-4: ΔU cumulat 2,8 % > 1 %",
+   "AV V21 INV-5: ΔU cumulat 2,8 % > 1 %",
+   "AV V21 INV-6: ΔU cumulat 2,8 % > 1 %",
+   "AV V21 INV-7: ΔU cumulat 2,8 % > 1 %",
+   "AV V21 INV-8: ΔU cumulat 2,8 % > 1 %",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-5: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-6: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-7: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-8: selectivitate parțială până la 1,6 kA (Ik3max 6,88 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 8,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "„8 invertoare … de 115 kW” → 8×14,4 kW (115 kW total la 1 MWp, fără alertă DC/AC)"
+ },
+ {
+  "nr": 9,
+  "fraza": "CEF 2,5 MWp agricola, 20 x 100 kW Sungrow, PT 2000 kVA",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 2500,
+   "invertoare": [
+    {
+     "n": 20,
+     "Pn_kW": 100
+    }
+   ],
+   "pt_Sn_kVA": 2000
+  },
+  "presupus": [
+   "„2,5 MWp”: 2,5 cu virgulă zecimală (virgula = separator zecimal)",
+   "„2,5 MWp” = 2500 kWp",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "PT propriu 2000 kVA (declarat); celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > 1000 kVA)",
+   "categoria B RfG (2000 kW ≥ 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 2500 kWp, 20 × invertor 100 kW.\nAm presupus: „2,5 MWp”: 2,5 cu virgulă zecimală (virgula = separator zecimal); „2,5 MWp” = 2500 kWp; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; PT propriu 2000 kVA (declarat); celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > 1000 kVA); categoria B RfG (2000 kW ≥ 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": true,
+  "verificari": [
+   "BL V67 schema: Sn trafo 2000 kVA < S invertoare+PCS 2200 kVA",
+   "AV V70 schema: modul generator categoria B (Pn = 2000 kW) — cerințe RfG tip B (Ord. ANRE 208/2018), PI conform ATR",
+   "AV V60 schema: Ir QG 3200 A > In_T 2886,75 A — trafo neprotejat la suprasarcină",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-5: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-6: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-7: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-8: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-9: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-10: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-11: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-12: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-13: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-14: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-15: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-16: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-17: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-18: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-19: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-20: selectivitate parțială până la 30,72 kA (Ik3max 48,9 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 20,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 10,
+  "fraza": "CEF 4 MWp cu 32 invertoare de 125 kW, BESS 2 MWh",
+  "actiune": "refuza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 4000,
+   "invertoare": [
+    {
+     "n": 32,
+     "Pn_kW": 125
+    }
+   ],
+   "bess": {
+    "P_kW": 1000,
+    "kWh": 2000
+   }
+  },
+  "presupus": [],
+  "intrebari": [
+   "Împărțiți centrala pe două posturi de transformare (ex. 2 × 2500 kVA)?"
+  ],
+  "refuz": "S = 5500 kVA > 2500 kVA (un singur trafo standard): în afara domeniului aplicației (SPEC §A.3).",
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 4000 kWp, 32 × invertor 125 kW, BESS 1000 kW / 2000 kWh.\nNu pot genera schema: S = 5500 kVA > 2500 kVA (un singur trafo standard): în afara domeniului aplicației (SPEC §A.3).\nÎntrebare: Împărțiți centrala pe două posturi de transformare (ex. 2 × 2500 kVA)?",
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 11,
+  "fraza": "CEF 200 kWp cu 1 invertor Huawei SUN2000-100KTL-M2 de 100 kW si 2 invertoare Sungrow SG50CX de 50 kW, racord in TG existent, cablu 70 m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 200,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 100
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 70
+  },
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "100 kW = putere c.a. totală → 1 × 100 kW",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („70 m” = 70 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 110 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 200 kWp, P c.a. = 100 kW, 1 × invertor 100 kW.\nAm presupus: „si” = „și” (fără diacritice); 100 kW = putere c.a. totală → 1 × 100 kW; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („70 m” = 70 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 110 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 C0: Ik1min 859 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,35 % > 1 %",
+   "AV V32 INV-1: Ik1min 788 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 190 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "invertoare mixte 1×100+2×50 → doar 1×100"
+ },
+ {
+  "nr": 12,
+  "fraza": "cef 180 kwp: invertor 1 = Fronius Tauro 100 kW, invertor 2 = SMA STP 50 kW, racord jt",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 180,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 100
+    }
+   ]
+  },
+  "presupus": [
+   "100 kW = putere c.a. totală → 1 × 100 kW",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 110 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 180 kWp, P c.a. = 100 kW, 1 × invertor 100 kW.\nAm presupus: 100 kW = putere c.a. totală → 1 × 100 kW; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 110 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 INV-1: Ik1min 976 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 190 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "„invertor 1 = 100 kW, invertor 2 = 50 kW” → doar 1×100"
+ },
+ {
+  "nr": 13,
+  "fraza": "CEF 300 kWp cu 2×110 kW + 1×60 kW, module LONGi Hi-MO 6 570 Wp, BESS Huawei LUNA2000 215 kWh / 100 kW, racord TG existent 50 m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 300,
+   "invertoare": [
+    {
+     "n": 2,
+     "Pn_kW": 110
+    },
+    {
+     "n": 1,
+     "Pn_kW": 60
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 50
+  },
+  "presupus": [
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („50 m” = 50 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT direct din PT OD, conform ATR (S = 308 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (280 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V66: S = 308 kVA > 173 kVA: racord JT direct din PT OD, conform ATR"
+  ],
+  "intelegere": "Am înțeles: CEF, P c.c. = 300 kWp, P c.a. = 100 kW, 2 × invertor 110 kW, 1 × invertor 60 kW.\nAm presupus: racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („50 m” = 50 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT direct din PT OD, conform ATR (S = 308 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (280 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V66: S = 308 kVA > 173 kVA: racord JT direct din PT OD, conform ATR.",
+  "blocant": false,
+  "verificari": [
+   "AV V66 schema: S = 308 kVA > 173 kVA: racord JT doar direct din PT OD conform ATR",
+   "AV V32 INV-1: Ik1min 961 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-2: Ik1min 961 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-3: Ik1min 894 A < Ia 1500 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 4,8 kA (Ik3max 22,04 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 4,8 kA (Ik3max 22,04 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 4,8 kA (Ik3max 22,04 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 3,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "BESS „Huawei LUNA2000 215 kWh / 100 kW” ignorat în tăcere"
+ },
+ {
+  "nr": 14,
+  "fraza": "CEF 90 kwp, invertoare growatt MAX 50KTL3 + MAX 30KTL3, total 80 kw, cablu 45 m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 90,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 80
+    }
+   ],
+   "L_racord_m": 45
+  },
+  "presupus": [
+   "80 kW = putere c.a. totală → 1 × 80 kW",
+   "cablul descris („45 m” = 45 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 88 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (80 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 90 kWp, P c.a. = 80 kW, 1 × invertor 80 kW.\nAm presupus: 80 kW = putere c.a. totală → 1 × 80 kW; cablul descris („45 m” = 45 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 88 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (80 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 C0: Ik1min 920 A < Ia 1920 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,02 % > 1 %",
+   "AV V32 INV-1: Ik1min 834 A < Ia 1920 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 152 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "2 invertoare (50+30) → 1×80"
+ },
+ {
+  "nr": 15,
+  "fraza": "fotovoltaic 60 kWp cu 2 invertoare diferite: Huawei 36 kW si Huawei 20 kW, racord in tablou existent",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 60,
+   "invertoare": [
+    {
+     "n": 2,
+     "Pn_kW": 18
+    }
+   ],
+   "racord": "tg_existent"
+  },
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "36 kW = putere c.a. totală → 2 × 18 kW",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 39,6 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (36 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 60 kWp, P c.a. = 36 kW, 2 × invertor 18 kW.\nAm presupus: „si” = „și” (fără diacritice); 36 kW = putere c.a. totală → 2 × 18 kW; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 39,6 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (36 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V41 QG vs INV-1: raport Ip amonte/aval 1,5 < 1,6 — selectivitate nesigură la suprasarcină",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 0,5 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V41 QG vs INV-2: raport Ip amonte/aval 1,5 < 1,6 — selectivitate nesigură la suprasarcină",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 0,5 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 2,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "36 kW + 20 kW → 2×18 kW"
+ },
+ {
+  "nr": 16,
+  "fraza": "CEF 350 kWp, 3 invertoare 100 kW + 1 invertor 50 kW, PT propriu 630 kVA, BESS Sungrow PowerStack 200 kW / 430 kWh",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 350,
+   "invertoare": [
+    {
+     "n": 3,
+     "Pn_kW": 100
+    },
+    {
+     "n": 1,
+     "Pn_kW": 50
+    }
+   ],
+   "pt_Sn_kVA": 630
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "PT propriu 630 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător)",
+   "categoria A RfG (350 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 350 kWp, P c.a. = 200 kW, 3 × invertor 100 kW, 1 × invertor 50 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; PT propriu 630 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător); categoria A RfG (350 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V42 QG vs INV-1: selectivitate parțială până la 6,05 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 6,05 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 6,05 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 6,05 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 4,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "BESS „Sungrow PowerStack 200 kW / 430 kWh” ignorat"
+ },
+ {
+  "nr": 17,
+  "fraza": "CEF 220 kWp cu invertoare: 2 x SUN2000-100KTL (100 kW), racord TG existent; BESS BYD Battery-Box 150 kWh",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 220,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 100
+    }
+   ],
+   "racord": "tg_existent"
+  },
+  "presupus": [
+   "100 kW = putere c.a. totală → 1 × 100 kW",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 110 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 220 kWp, P c.a. = 100 kW, 1 × invertor 100 kW.\nAm presupus: 100 kW = putere c.a. totală → 1 × 100 kW; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 110 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 INV-1: Ik1min 976 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 190 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "2×100 → 1×100; BESS BYD 150 kWh ignorat"
+ },
+ {
+  "nr": 18,
+  "fraza": "CEF 500 kWp, 4 invertoare Sungrow SG125CX 125 kW, racord JT conform ATR",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 500,
+   "invertoare": [
+    {
+     "n": 4,
+     "Pn_kW": 31.25
+    }
+   ],
+   "atr_jt": true
+  },
+  "presupus": [
+   "125 kW = putere c.a. totală → 4 × 31,2 kW",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 137,5 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (125 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 500 kWp, P c.a. = 125 kW, 4 × invertor 31,2 kW.\nAm presupus: 125 kW = putere c.a. totală → 4 × 31,2 kW; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 137,5 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (125 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V42 QG vs INV-1: selectivitate parțială până la 1,6 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 1,6 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 1,6 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 1,6 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 4,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "4×125 kW → 4×31,25 kW"
+ },
+ {
+  "nr": 19,
+  "fraza": "CEF 160kWp invertor Solis 125 kW, raport dc/ac 1.28, racord in TG existent, cablu 3x(4x150)Al 60m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 160,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 125
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 60
+  },
+  "presupus": [
+   "125 kW = putere c.a. totală → 1 × 125 kW",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („60m” = 60 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 137,5 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (125 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 160 kWp, P c.a. = 125 kW, 1 × invertor 125 kW, material Al.\nAm presupus: 125 kW = putere c.a. totală → 1 × 125 kW; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („60m” = 60 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 137,5 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (125 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 C0: Ik1min 940 A < Ia 3000 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,18 % > 1 %",
+   "AV V32 INV-1: Ik1min 881 A < Ia 3000 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 237,5 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "cablu impus 3×(4×150) Al ignorat"
+ },
+ {
+  "nr": 20,
+  "fraza": "centrala pv 75 kWp 1 invertor de 60 kW Huawei, 0,06 km pana la TG existent",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 75,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 60
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 60
+  },
+  "presupus": [
+   "„0,06 km”: 0,06 cu virgulă zecimală (virgula = separator zecimal)",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („0,06 km” = 60 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 66 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (60 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 75 kWp, 1 × invertor 60 kW.\nAm presupus: „0,06 km”: 0,06 cu virgulă zecimală (virgula = separator zecimal); racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („0,06 km” = 60 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 66 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (60 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 C0: Ik1min 812 A < Ia 1500 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,43 % > 1 %",
+   "AV V32 INV-1: Ik1min 720 A < Ia 1500 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 112,5 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 21,
+  "fraza": "prosumator comercial 100 kW trifazat, 2 invertoare Huawei SUN2000-50KTL, 120 kWp, racord in TG existent, limitare injectie 50 kW",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "retea": "tri",
+   "kWp": 120,
+   "Pn_inv_kW": 100
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, P c.c. = 120 kWp, 1 × invertor 100 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V31 INV: Ik1min 1025 A < Ia 2400 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "gresit",
+  "observatie": "2×50 → un invertor 100 kW; limitare injecție ignorată; DDR 30 mA pe 200 A; circuite casnice"
+ },
+ {
+  "nr": 22,
+  "fraza": "prosumator 30 kW trifazat, invertor Fronius Symo 20 kW + Fronius Symo 10 kW, module JA 450 Wp",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "retea": "tri",
+   "Pn_inv_kW": 30
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, 1 × invertor 30 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "gresit",
+  "observatie": "20+10 kW → un invertor 30 kW"
+ },
+ {
+  "nr": 23,
+  "fraza": "prosumator 400 kW, 4 invertoare de 100 kW, trifazat, autoconsum cu injectie zero",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "retea": "tri",
+   "Pn_inv_kW": 400
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, 4 × invertor 100 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V31 INV: Ik1min 1074 A < Ia 1368 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "gresit",
+  "observatie": "4×100 → un invertor 400 kW; injecție zero ignorată"
+ },
+ {
+  "nr": 24,
+  "fraza": "Prosumator 50 kWp, invertor hibrid Huawei SUN2000-50KTL? nu, hibrid Sungrow SH25T 25 kW, baterie 25 kWh, trifazat",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "retea": "tri",
+   "kWp": 50,
+   "Pn_inv_kW": 25,
+   "baterie_kWh": 25,
+   "hibrid": true
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "baterie cuplată în c.c. la invertorul hibrid (fără PCS separat)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, P c.c. = 50 kWp, baterie = 25 kWh, 1 × invertor 25 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; baterie cuplată în c.c. la invertorul hibrid (fără PCS separat); beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 25,
+  "fraza": "prosumator 150 kW cu 3 invertoare de 50 kW, BMPT existent 200 A, retea trifazata",
+  "actiune": "genereaza",
+  "tip": "bransament",
+  "intrare": {
+   "tip_schema": "bransament",
+   "retea": "tri",
+   "P_kW": 150
+  },
+  "presupus": [
+   "cosφ 0,9",
+   "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
+   "schema TN-C-S, separare PEN în BMPT",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea C2)",
+   "coloană L = 50 m (implicit, V11)",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: branșament trifazat, P = 150 kW.\nAm presupus: cosφ 0,9; coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²; schema TN-C-S, separare PEN în BMPT; Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea C2); coloană L = 50 m (implicit, V11); beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": false,
+   "separator_cc": true,
+   "cutie_jonctiune": false,
+   "SPD_ca": false,
+   "PI": false,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": true,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "gresit",
+  "observatie": "prosumator + „BMPT existent” → schemă branșament, prosumatorul dispare"
+ },
+ {
+  "nr": 26,
+  "fraza": "prosumator 60 kw, 2 invertoare de 30 kw growatt, racord in TG existent",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "Pn_inv_kW": 60,
+   "retea": "tri"
+  },
+  "presupus": [
+   "rețea nedeclarată, dar 60 kW nu încape în monofazat (BMPM max. 40 A) → trifazat 3 × 400 V",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, 2 × invertor 30 kW.\nAm presupus: rețea nedeclarată, dar 60 kW nu încape în monofazat (BMPM max. 40 A) → trifazat 3 × 400 V; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V31 INV: Ik1min 985 A < Ia 1500 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "gresit",
+  "observatie": "2×30 → un invertor 60 kW; „TG existent” ignorat"
+ },
+ {
+  "nr": 27,
+  "fraza": "prosumator comercial, invertor 100 kW SMA, 3f, limitare injectie la 30 kW (ATR), contor bidirectional",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "retea": "tri",
+   "Pn_inv_kW": 100
+  },
+  "presupus": [
+   "„invertor 100 kW” = 1 invertor de 100 kW",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, 1 × invertor 100 kW.\nAm presupus: „invertor 100 kW” = 1 invertor de 100 kW; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V31 INV: Ik1min 1025 A < Ia 2400 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)",
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "partial",
+  "observatie": "limitare injecție 30 kW ignorată"
+ },
+ {
+  "nr": 28,
+  "fraza": "prosumator 250 kW trifazat cu 2 invertoare de 125 kW si BESS 200 kWh / 100 kW, injectie limitata 150 kW",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "retea": "tri",
+   "Pn_inv_kW": 250,
+   "baterie_kWh": 200
+  },
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, baterie = 200 kWh, 2 × invertor 125 kW.\nAm presupus: „si” = „și” (fără diacritice); Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "gresit",
+  "observatie": "BESS 200 kWh/100 kW lipsește din planșă; 2×125 → 1×250; DDR 30 mA pe 500 A"
+ },
+ {
+  "nr": 29,
+  "fraza": "prosumator monofazat 10 kW invertor Huawei SUN2000-10KTL",
+  "actiune": "refuza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "retea": "mono",
+   "Pn_inv_kW": 10
+  },
+  "presupus": [],
+  "intrebari": [
+   "Treceți pe prosumator trifazat 10 kW, sau reduceți invertorul monofazat la cel mult 8 kW (Iac,max ≤ 40 A)?"
+  ],
+  "refuz": "Iac,max = 1,1·10000/230 = 47,8 A > 40 A (BMPM maxim, ST 3-JT) — V53.",
+  "avertismente": [],
+  "intelegere": "Am înțeles: prosumator monofazat, 1 × invertor 10 kW.\nNu pot genera schema: Iac,max = 1,1·10000/230 = 47,8 A > 40 A (BMPM maxim, ST 3-JT) — V53.\nÎntrebare: Treceți pe prosumator trifazat 10 kW, sau reduceți invertorul monofazat la cel mult 8 kW (Iac,max ≤ 40 A)?",
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 30,
+  "fraza": "prosumator 20 kW, invertor Solis 20K, cablu 30m",
+  "actiune": "genereaza",
+  "tip": "prosumator",
+  "intrare": {
+   "tip_schema": "prosumator",
+   "Pn_inv_kW": 20,
+   "retea": "tri"
+  },
+  "presupus": [
+   "rețea nedeclarată, dar 20 kW nu încape în monofazat (BMPM max. 40 A) → trifazat 3 × 400 V",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+   "DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă",
+   "PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului"
+  ],
+  "intelegere": "Am înțeles: prosumator trifazat, 1 × invertor 20 kW.\nAm presupus: rețea nedeclarată, dar 20 kW nu încape în monofazat (BMPM max. 40 A) → trifazat 3 × 400 V; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); invertor la 15 m de tabloul consumatorului, Cu PVC metoda C; DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenți de defect c.c.) — se confirmă; PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); contor bidirecțional furnizat de OD; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V73: DDR tip A/B pentru circuitul invertorului — se confirmă din fișa invertorului.",
+  "blocant": false,
+  "verificari": [
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": true,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 0,
+  "inv_text": [],
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 31,
+  "fraza": "CEF 300 kWp cu 3 invertoare de 100 kW si BESS 200 kWh, racord in TG existent, cablu 80 m",
+  "actiune": "genereaza_cu_intrebare",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 300,
+   "invertoare": [
+    {
+     "n": 3,
+     "Pn_kW": 100
+    }
+   ],
+   "bess": {
+    "P_kW": 100,
+    "kWh": 200
+   },
+   "racord": "tg_existent",
+   "L_racord_m": 80,
+   "pt_Sn_kVA": 630
+  },
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "PCS BESS = 100 kW (0,5C din 200 kWh) — presupus",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („80 m” = 80 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "S = 440 kVA > 400 kVA → PT propriu 20/0,4 kV 630 kVA adăugat (racord MT); celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător)",
+   "categoria A RfG (400 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [
+   "Confirmați PT propriu 630 kVA (celulă trafo cu separator de sarcină + siguranțe MT 40 A)? Alternativ, racord JT conform ATR. Indicați puterea PCS dacă diferă de 100 kW."
+  ],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 300 kWp, 3 × invertor 100 kW, BESS 100 kW / 200 kWh.\nAm presupus: „si” = „și” (fără diacritice); PCS BESS = 100 kW (0,5C din 200 kWh) — presupus; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („80 m” = 80 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; S = 440 kVA > 400 kVA → PT propriu 20/0,4 kV 630 kVA adăugat (racord MT); celulă trafo cu separator de sarcină + siguranțe MT 40 A (orientativ, tabel producător); categoria A RfG (400 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nÎntrebare: Confirmați PT propriu 630 kVA (celulă trafo cu separator de sarcină + siguranțe MT 40 A)? Alternativ, racord JT conform ATR. Indicați puterea PCS dacă diferă de 100 kW.",
+  "blocant": false,
+  "verificari": [
+   "AV V45 C0: Al PVC nu ajunge la 4×240 mm² → s-a trecut pe Cu PVC",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 7,68 kA (Ik3max 20,12 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 7,68 kA (Ik3max 20,12 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 7,68 kA (Ik3max 20,12 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs PCS: selectivitate parțială până la 7,68 kA (Ik3max 20,12 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 3,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "TG existent + PT 630 kVA adăugat → trafo desenat ÎN SERIE între TGD-CF și TG existent"
+ },
+ {
+  "nr": 32,
+  "fraza": "CEF 400 kWp cu 4x100kW, stocare 1 MWh / 500 kW, PT propriu 1000 kVA",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 400,
+   "invertoare": [
+    {
+     "n": 4,
+     "Pn_kW": 100
+    }
+   ],
+   "bess": {
+    "P_kW": 500,
+    "kWh": 1000
+   },
+   "pt_Sn_kVA": 1000
+  },
+  "presupus": [
+   "„1 MWh” = 1000 kWh",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "PT propriu 1000 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător)",
+   "categoria A RfG (900 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 400 kWp, 4 × invertor 100 kW, BESS 500 kW / 1000 kWh.\nAm presupus: „1 MWh” = 1000 kWh; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; PT propriu 1000 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător); categoria A RfG (900 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V45 PCS: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×185 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V41 QG vs PCS: raport Ip amonte/aval 1,52 < 1,6 — selectivitate nesigură la suprasarcină",
+   "AV V42 QG vs PCS: selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 4,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 33,
+  "fraza": "BESS 500 kW / 1000 kWh Sungrow PowerStack langa CEF existenta, racord in TG existent",
+  "actiune": "refuza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "bess": {
+    "P_kW": 500,
+    "kWh": 1000
+   },
+   "racord": "tg_existent"
+  },
+  "presupus": [],
+  "intrebari": [
+   "Câte invertoare și de ce putere (kW c.a.)?"
+  ],
+  "refuz": "Lipsesc invertoarele (număr și putere) (I02).",
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, BESS 500 kW / 1000 kWh.\nNu pot genera schema: Lipsesc invertoarele (număr și putere) (I02).\nÎntrebare: Câte invertoare și de ce putere (kW c.a.)?",
+  "verdict": "partial",
+  "observatie": "BESS standalone refuzat (cere invertoare PV)"
+ },
+ {
+  "nr": 34,
+  "fraza": "CEF 200 kWp cu 2 invertoare de 100 kVA, racord JT",
+  "actiune": "refuza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 200,
+   "pt_Sn_kVA": 100
+  },
+  "presupus": [],
+  "intrebari": [
+   "Câte invertoare și de ce putere (kW c.a.)?"
+  ],
+  "refuz": "Lipsesc invertoarele (număr și putere) (I02).",
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 200 kWp.\nNu pot genera schema: Lipsesc invertoarele (număr și putere) (I02).\nÎntrebare: Câte invertoare și de ce putere (kW c.a.)?",
+  "verdict": "partial",
+  "observatie": "„invertoare de 100 kVA” → PT 100 kVA + refuz"
+ },
+ {
+  "nr": 35,
+  "fraza": "CEF 100 kWp cu 2 invertoare de 50 kW, monofazat",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 100,
+   "invertoare": [
+    {
+     "n": 2,
+     "Pn_kW": 50
+    }
+   ]
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 110 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 100 kWp, 2 × invertor 50 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 110 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 INV-1: Ik1min 883 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-2: Ik1min 883 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 1,28 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 1,28 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 2,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "„monofazat” ignorat în tăcere, desenat 3×400 V (fără I08)"
+ },
+ {
+  "nr": 36,
+  "fraza": "CEF 120 kWp, 3 invertoare de 50 kW, total 100 kW",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 120,
+   "invertoare": [
+    {
+     "n": 3,
+     "Pn_kW": 50
+    }
+   ]
+  },
+  "presupus": [
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 165 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (150 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 120 kWp, P c.a. = 100 kW, 3 × invertor 50 kW.\nAm presupus: Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 165 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (150 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 INV-1: Ik1min 883 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-2: Ik1min 883 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-3: Ik1min 883 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 2 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 2 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 2 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 3,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "contradicție 3×50 vs total 100 kW neîntrebată"
+ },
+ {
+  "nr": 37,
+  "fraza": "CEF 250 kWp, 2 invertoare de 100 kW, racord in TG existent cu Q 250 A, Ik bara TG 15 kA, cablu 30 m Cu",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 250,
+   "invertoare": [
+    {
+     "n": 2,
+     "Pn_kW": 100
+    }
+   ],
+   "racord": "tg_existent",
+   "L_racord_m": 30
+  },
+  "presupus": [
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "cablul descris („30 m” = 30 m) = C0, de la TGD-CF la tabloul existent",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT direct din PT OD, conform ATR (S = 220 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (200 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V66: S = 220 kVA > 173 kVA: racord JT direct din PT OD, conform ATR"
+  ],
+  "intelegere": "Am înțeles: CEF, P c.c. = 250 kWp, 2 × invertor 100 kW, material Cu.\nAm presupus: racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; cablul descris („30 m” = 30 m) = C0, de la TGD-CF la tabloul existent; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT direct din PT OD, conform ATR (S = 220 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (200 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V66: S = 220 kVA > 173 kVA: racord JT direct din PT OD, conform ATR.",
+  "blocant": false,
+  "verificari": [
+   "AV V66 schema: S = 220 kVA > 173 kVA: racord JT doar direct din PT OD conform ATR",
+   "AV V32 INV-1: Ik1min 929 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-2: Ik1min 929 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 3,07 kA (Ik3max 21,47 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 3,07 kA (Ik3max 21,47 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 2,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "Q 250 A, Ik 15 kA, Cu ignorate"
+ },
+ {
+  "nr": 38,
+  "fraza": "CEF 300 kwp cu 3 invertoare 100kw, autoconsum fara injectie (injectie zero), racord in TG existent",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 300,
+   "invertoare": [
+    {
+     "n": 3,
+     "Pn_kW": 100
+    }
+   ],
+   "racord": "tg_existent"
+  },
+  "presupus": [
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT direct din PT OD, conform ATR (S = 330 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (300 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [
+   "V66: S = 330 kVA > 173 kVA: racord JT direct din PT OD, conform ATR"
+  ],
+  "intelegere": "Am înțeles: CEF, P c.c. = 300 kWp, 3 × invertor 100 kW.\nAm presupus: racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT direct din PT OD, conform ATR (S = 330 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (300 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).\nVerificări: V66: S = 330 kVA > 173 kVA: racord JT direct din PT OD, conform ATR.",
+  "blocant": false,
+  "verificari": [
+   "AV V66 schema: S = 330 kVA > 173 kVA: racord JT doar direct din PT OD conform ATR",
+   "AV V32 INV-1: Ik1min 976 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-2: Ik1min 976 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-3: Ik1min 976 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 4,8 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 4,8 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 4,8 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 3,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "injecție zero ignorată"
+ },
+ {
+  "nr": 39,
+  "fraza": "CEF 1,2 MWp cu 10 invertoare de 100 kW pe JT din PT propriu 1250 kVA, cablu 150 m, plansa E03, beneficiar SC Agro Solar SRL, in Ciumeghiu jud Bihor",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 1200,
+   "invertoare": [
+    {
+     "n": 10,
+     "Pn_kW": 100
+    }
+   ],
+   "pt_Sn_kVA": 1250,
+   "L_racord_m": 150
+  },
+  "presupus": [
+   "„1,2 MWp”: 1,2 cu virgulă zecimală (virgula = separator zecimal)",
+   "„1,2 MWp” = 1200 kWp",
+   "cablul descris („150 m” = 150 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "PT propriu 1250 kVA (declarat); celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > 1000 kVA)",
+   "categoria B RfG (1000 kW ≥ 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "localitatea „Ciumeghiu” se preia așa cum a fost scrisă (fără diacritice adăugate)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 1200 kWp, 10 × invertor 100 kW, beneficiar SC Agro Solar SRL, Ciumeghiu, jud. Bihor, planșa E03.\nAm presupus: „1,2 MWp”: 1,2 cu virgulă zecimală (virgula = separator zecimal); „1,2 MWp” = 1200 kWp; cablul descris („150 m” = 150 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; PT propriu 1250 kVA (declarat); celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > 1000 kVA); categoria B RfG (1000 kW ≥ 1 MW); PI conform Ord. ANRE 208/2018 și ATR; localitatea „Ciumeghiu” se preia așa cum a fost scrisă (fără diacritice adăugate).",
+  "blocant": false,
+  "verificari": [
+   "AV V70 schema: modul generator categoria B (Pn = 1000 kW) — cerințe RfG tip B (Ord. ANRE 208/2018), PI conform ATR",
+   "AV V45 C0: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 3 sisteme de cabluri monopolare Cu XLPE 1×300 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "AV V21 C0: ΔU cumulat 2,63 % > 1 %",
+   "AV V21 INV-1: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-2: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-3: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-4: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-5: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-6: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-7: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-8: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-9: ΔU cumulat 2,94 % > 1 %",
+   "AV V21 INV-10: ΔU cumulat 2,94 % > 1 %",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-5: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-6: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-7: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-8: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-9: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-10: selectivitate parțială până la 15,36 kA (Ik3max 20,02 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 10,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "corect",
+  "observatie": "putere/topologie corecte; modele de echipamente pierdute"
+ },
+ {
+  "nr": 40,
+  "fraza": "CEF 0,5 MWp cu 5 inv x 100kw, aprox 100 m pana la PT",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 500,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 100
+    }
+   ],
+   "L_racord_m": 100
+  },
+  "presupus": [
+   "„0,5 MWp”: 0,5 cu virgulă zecimală (virgula = separator zecimal)",
+   "„0,5 MWp” = 500 kWp",
+   "„aprox 100 m” = 100 m, aproximativ",
+   "100 kW = putere c.a. totală → 1 × 100 kW",
+   "cablul descris („aprox 100 m” = 100 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 110 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 500 kWp, P c.a. = 100 kW, 1 × invertor 100 kW.\nAm presupus: „0,5 MWp”: 0,5 cu virgulă zecimală (virgula = separator zecimal); „0,5 MWp” = 500 kWp; „aprox 100 m” = 100 m, aproximativ; 100 kW = putere c.a. totală → 1 × 100 kW; cablul descris („aprox 100 m” = 100 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 110 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V21 C0: ΔU cumulat 1,35 % > 1 %",
+   "AV V32 C0: Ik1min 788 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,76 % > 1 %",
+   "AV V32 INV-1: Ik1min 728 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: amonte = aval = 190 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "„5 inv x 100kw” → 1×100 kW"
+ },
+ {
+  "nr": 41,
+  "fraza": "cef 99,6 kWp, 2 invertoare de 50kW, 1.000 m cablu?? nu, 100 m",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 99.6,
+   "invertoare": [
+    {
+     "n": 2,
+     "Pn_kW": 50
+    }
+   ],
+   "L_racord_m": 1000
+  },
+  "presupus": [
+   "„99,6 kWp”: 99,6 cu virgulă zecimală (virgula = separator zecimal)",
+   "cablul descris („1.000 m” = 1000 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 110 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 99,6 kWp, 2 × invertor 50 kW.\nAm presupus: „99,6 kWp”: 99,6 cu virgulă zecimală (virgula = separator zecimal); cablul descris („1.000 m” = 1000 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 110 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (100 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V21 C0: ΔU cumulat 2,58 % > 1 %",
+   "AV V32 C0: Ik1min 640 A < Ia 1920 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 2,98 % > 1 %",
+   "AV V32 INV-1: Ik1min 582 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-2: ΔU cumulat 2,98 % > 1 %",
+   "AV V32 INV-2: Ik1min 582 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 1,28 kA (Ik3max 5,76 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 1,28 kA (Ik3max 5,76 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 2,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "„1.000 m … nu, 100 m” → 1000 m"
+ },
+ {
+  "nr": 42,
+  "fraza": "CEF 200 kWp cu 2 invertoare Huawei SUN2000-100KTL-M2, retea TT, priza de pamant 4 ohm",
+  "actiune": "refuza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 200
+  },
+  "presupus": [],
+  "intrebari": [
+   "Câte invertoare și de ce putere (kW c.a.)?"
+  ],
+  "refuz": "Lipsesc invertoarele (număr și putere) (I02).",
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 200 kWp, metoda D1.\nNu pot genera schema: Lipsesc invertoarele (număr și putere) (I02).\nÎntrebare: Câte invertoare și de ce putere (kW c.a.)?",
+  "verdict": "gresit",
+  "observatie": "refuz I02 din cauza modelului; TT + 4 Ω ignorate"
+ },
+ {
+  "nr": 43,
+  "fraza": "CEF 150 kWp cu 1 invertor 100 kW si 1 invertor 50 kW, cutie de jonctiune cu siguranta gPV 15 A pe string, SPD c.c. tip 2",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 150,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 100
+    },
+    {
+     "n": 1,
+     "Pn_kW": 50
+    }
+   ]
+  },
+  "presupus": [
+   "„si” = „și” (fără diacritice)",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 165 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (150 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 150 kWp, 1 × invertor 100 kW, 1 × invertor 50 kW.\nAm presupus: „si” = „și” (fără diacritice); Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 165 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (150 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 INV-1: Ik1min 976 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-2: Ik1min 883 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 QG vs INV-1: raport Ip amonte/aval 1,32 < 1,6 — selectivitate nesigură la suprasarcină",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 2 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 2 kA (Ik3max 25 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 2,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "gPV 15 A declarat, nedesenat"
+ },
+ {
+  "nr": 44,
+  "fraza": "CEF 30 kWp cu invertor 30 kW, BESS Huawei LUNA2000 30 kWh, racord in TG",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 30,
+   "invertoare": [
+    {
+     "n": 1,
+     "Pn_kW": 30
+    }
+   ],
+   "racord": "tg_existent"
+  },
+  "presupus": [
+   "„invertor 30 kW” = 1 invertor de 30 kW",
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 33 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (30 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 30 kWp, 1 × invertor 30 kW.\nAm presupus: „invertor 30 kW” = 1 invertor de 30 kW; racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 33 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (30 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V41 QG vs INV-1: amonte = aval = 63 A — fără selectivitate"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 1,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "BESS LUNA2000 30 kWh ignorat"
+ },
+ {
+  "nr": 45,
+  "fraza": "CEF 600 kWp, 5 invertoare de 110 kW, racord in TG existent al fabricii (PT propriu 1000 kVA existent)",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 600,
+   "invertoare": [
+    {
+     "n": 5,
+     "Pn_kW": 110
+    }
+   ],
+   "pt_Sn_kVA": 1000,
+   "racord": "tg_existent"
+  },
+  "presupus": [
+   "racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "PT propriu 1000 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător)",
+   "categoria A RfG (550 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 600 kWp, 5 × invertor 110 kW.\nAm presupus: racord în tabloul general existent (TG) — protecția din TG și Ik3 la bara TG se completează în Calcul, altfel se iau ca la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; PT propriu 1000 kVA (declarat); celulă trafo cu separator de sarcină + siguranțe MT 63 A (orientativ, tabel producător); categoria A RfG (550 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V42 QG vs INV-1: selectivitate parțială până la 9,6 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 9,6 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 9,6 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 9,6 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-5: selectivitate parțială până la 9,6 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": true,
+   "trafo": true,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 5,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "gresit",
+  "observatie": "PT propriu EXISTENT 1000 kVA desenat ca T1 nou în serie între TGD-CF și TG existent"
+ },
+ {
+  "nr": 46,
+  "fraza": "cef 100kwp 2 invertoare de 50 kw cablu 50m , BESS 100kwh/50kw, injectie limitata la 0",
+  "actiune": "genereaza",
+  "tip": "cef",
+  "intrare": {
+   "tip_schema": "cef",
+   "kWp": 100,
+   "invertoare": [
+    {
+     "n": 2,
+     "Pn_kW": 50
+    }
+   ],
+   "bess": {
+    "P_kW": 50,
+    "kWh": 100
+   },
+   "L_racord_m": 50
+  },
+  "presupus": [
+   "cablul descris („50m” = 50 m) = C0, de la TGD-CF la punctul de racord",
+   "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+   "cablu invertor Al PVC D1, L = 30 m",
+   "racord JT prin BMPT (S = 165 kVA ≤ 173 kVA)",
+   "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)",
+   "categoria A RfG (150 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR",
+   "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+  ],
+  "intrebari": [],
+  "refuz": null,
+  "avertismente": [],
+  "intelegere": "Am înțeles: CEF, P c.c. = 100 kWp, 2 × invertor 50 kW, BESS 50 kW / 100 kWh.\nAm presupus: cablul descris („50m” = 50 m) = C0, de la TGD-CF la punctul de racord; Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește); cablu invertor Al PVC D1, L = 30 m; racord JT prin BMPT (S = 165 kVA ≤ 173 kVA); Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR); categoria A RfG (150 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR; beneficiar și adresă necompletate (câmpuri goale în cartuș).",
+  "blocant": false,
+  "verificari": [
+   "AV V32 C0: Ik1min 962 A < Ia 3000 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-1: ΔU cumulat 1,33 % > 1 %",
+   "AV V32 INV-1: Ik1min 798 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-2: ΔU cumulat 1,33 % > 1 %",
+   "AV V32 INV-2: Ik1min 798 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 PCS: ΔU cumulat 1,33 % > 1 %",
+   "AV V32 PCS: Ik1min 798 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 2 kA (Ik3max 17,94 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 2 kA (Ik3max 17,94 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs PCS: selectivitate parțială până la 2 kA (Ik3max 17,94 kA) — confirmă cu tabelele producătorului"
+  ],
+  "planse_are": {
+   "gPV": false,
+   "SPD_cc": true,
+   "separator_cc": true,
+   "cutie_jonctiune": true,
+   "SPD_ca": true,
+   "PI": true,
+   "contor": true,
+   "DDR": false,
+   "TG_existent": false,
+   "trafo": false,
+   "BMPT": false,
+   "modele": false
+  },
+  "n_INV": 2,
+  "inv_text": [
+   "\n "
+  ],
+  "verdict": "partial",
+  "observatie": "injecție limitată la 0 ignorată"
+ }
+]

@@ -84,7 +84,8 @@ ETICHETE_RECEPTOR = {
     "plita": "Plită", "aer_conditionat": "Aer condiționat", "pompa_caldura": "Pompă de căldură",
     "centrala_termica": "Centrală termică", "incalzire_electrica": "Încălzire electrică",
     "vehicul_electric": "Încărcător vehicul electric", "pompa_apa": "Pompă apă / hidrofor",
-    "poarta_automata": "Poartă automată", "sauna": "Saună", "alt_circuit": "Alt circuit"}
+    "poarta_automata": "Poartă automată", "sauna": "Saună", "alt_circuit": "Alt circuit",
+    "tablou_secundar": "Tablou secundar"}
 # câmpurile globale (nivelul schemei) ale locuinței validate local (m-c4): valoarea invalidă se ignoră, nu oprește calculul
 CAMPURI_GLOBALE_IGNORABILE = {"Zb_OD_ohm": "Ω", "RA_ohm": "Ω", "Ik3_OD_kA": "kA"}
 
@@ -383,6 +384,12 @@ def _circuit(c, retea, j):
     if sf is None:
         # v1.7 (m-c6): mărirea pentru ΔU a circuitului final plafonată (peste — V20 cu remedierea „mărește coloana”)
         r["S_max_dU"] = norme.LOCUINTA_S_MAX_CIRCUIT_DU_MM2
+    if c["receptor"] == "tablou_secundar":
+        # r6: alimentarea TD consumă cel mult 1,5 % ΔU — restul limitei rămâne circuitelor din tabloul secundar
+        # r8 (P0 #46): bugetul e al RAMURII (relativ la ΔU de la origine), iar mărirea pentru ΔU e plafonată la 16 mm²
+        # (peste — problema e coloana / poziția tabloului: V20/V21 cu remedierea „mărește coloana”), fără cabluri în paralel
+        r["tinta_dU_ramura"] = 1.5
+        r["S_max_dU"] = norme.LOCUINTA_S_MAX_CIRCUIT_DU_MM2
     if c.get("In_A") is not None:
         r["In_fortat"] = c["In_A"]
         r.pop("In_minim")
@@ -532,39 +539,76 @@ def _grupeaza_si_repartizeaza(ramuri, retea, ks=1.0, ks_decl=False):
         grupe.append({"cheie": "fara", "membri": fara, "faza": None, "poli": None})
 
     # ---- fazele ----
-    sarc = {"L1": 0.0, "L2": 0.0, "L3": 0.0}
-    calc = {"L1": 0.0, "L2": 0.0, "L3": 0.0}
     w = lambda x: _pondere(x, ks, ks_decl)  # noqa: E731
 
-    def pune(x, f):
-        x["faza"] = f
-        for ff in (("L1", "L2", "L3") if f == "3F" else (f,)):
-            sarc[ff] += x["Ib"]
-            calc[ff] += w(x)
+    def repartizeaza():
+        """Repartizarea pe faze (greedy descrescător pe curentul de calcul, unitățile = grupele 2P întregi)."""
+        sarc = {"L1": 0.0, "L2": 0.0, "L3": 0.0}
+        calc = {"L1": 0.0, "L2": 0.0, "L3": 0.0}
+        for x in ramuri:
+            x.pop("faza", None)
+        for g in grupe:
+            if g.get("_libera"):
+                g["faza"] = None
 
-    for x in ramuri:
-        if x["tri"]:
-            pune(x, "3F")
-        elif retea == "mono":
-            pune(x, "L1")
-        elif x["c"]["faza"] in sarc:
-            pune(x, x["c"]["faza"])
-    if retea == "tri":
-        unitati = [(sum(w(x) for x in g["membri"]), n, g["membri"], g) for n, g in enumerate(grupe)
-                   if g["cheie"] != "fara" and g["poli"] == "2P" and g["faza"] is None]
-        n0 = len(unitati)
-        in_grupe = {id(x) for u in unitati for x in u[2]}
-        unitati += [(w(x), n0 + n, [x], None) for n, x in
-                    enumerate(x for x in ramuri if "faza" not in x and id(x) not in in_grupe)]
-        for _, _, mem, g in sorted(unitati, key=lambda u: (-u[0], u[1])):
-            f = min(("L1", "L2", "L3"), key=lambda k: (calc[k], k))
-            if g is not None:
-                g["faza"] = f
-            for x in mem:
-                pune(x, f)
+        def pune(x, f):
+            x["faza"] = f
+            for ff in (("L1", "L2", "L3") if f == "3F" else (f,)):
+                sarc[ff] += x["Ib"]
+                calc[ff] += w(x)
+
+        for x in ramuri:
+            if x["tri"]:
+                pune(x, "3F")
+            elif retea == "mono":
+                pune(x, "L1")
+            elif x["c"]["faza"] in sarc:
+                pune(x, x["c"]["faza"])
+        if retea == "tri":
+            unitati = [(sum(w(x) for x in g["membri"]), n, g["membri"], g) for n, g in enumerate(grupe)
+                       if g["cheie"] != "fara" and g["poli"] == "2P" and g["faza"] is None]
+            n0 = len(unitati)
+            in_grupe = {id(x) for u in unitati for x in u[2]}
+            unitati += [(w(x), n0 + n, [x], None) for n, x in
+                        enumerate(x for x in ramuri if "faza" not in x and id(x) not in in_grupe)]
+            for _, _, mem, g in sorted(unitati, key=lambda u: (-u[0], u[1])):
+                f = min(("L1", "L2", "L3"), key=lambda k: (calc[k], k))
+                if g is not None:
+                    g["faza"] = f
+                for x in mem:
+                    pune(x, f)
+        for g in grupe:
+            if g["cheie"] != "fara" and g["poli"] == "2P" and g["faza"] is None:
+                g["faza"] = g["membri"][0]["faza"]
+        return sarc
+
     for g in grupe:
         if g["cheie"] != "fara" and g["poli"] == "2P" and g["faza"] is None:
-            g["faza"] = g["membri"][0]["faza"]
+            g["_libera"] = True
+    sarc = repartizeaza()
+    # r6 (V47 38–60 %): o grupă DDR mare (ex. 5 circuite de prize pe L1) dezechilibrează fazele — se împarte cea mai
+    # încărcată grupă liberă în două (un DDR în plus) până când dezechilibrul ≤ limită sau nu mai are ce împărți
+    for _ in range(6):
+        if retea != "tri":
+            break
+        imed = sum(sarc.values()) / 3.0
+        if imed <= 0 or (max(sarc.values()) - imed) / imed * 100.0 <= norme.LOCUINTA_DEZECHILIBRU_MAX_PCT + 1e-9:
+            break
+        cand = [g for g in grupe if g.get("_libera") and len(g["membri"]) >= 2]
+        if not cand:
+            break
+        g = max(cand, key=lambda g_: sum(x["Ib"] for x in g_["membri"]))
+        mem = sorted(g["membri"], key=lambda x: -x["Ib"])
+        a_, b_ = [], []
+        for x in mem:
+            (a_ if sum(y["Ib"] for y in a_) <= sum(y["Ib"] for y in b_) else b_).append(x)
+        a_.sort(key=lambda y: y["c"]["idx"])
+        b_.sort(key=lambda y: y["c"]["idx"])
+        g["membri"] = a_
+        grupe.insert(grupe.index(g) + 1, dict(g, membri=b_))
+        sarc = repartizeaza()
+    for g in grupe:
+        g.pop("_libera", None)
     return grupe, sarc
 
 
@@ -652,12 +696,145 @@ def _umanizeaza(j, n_v, n_i, circ):
                 v["camp"] = tok
 
 
+def _tablouri_secundare(inp, retea, j):
+    """r6 (N08, N50): `tablouri_secundare` = [{nume, L_m, faza?, circuite: [{nume, P_kW | In_A, receptor?, pornire?,
+    retea?, L_m?}]}] — fiecare devine un circuit de alimentare din TE (receptor „tablou_secundar”, P = ks·Σ P) plus
+    tabloul secundar dimensionat ca tablou (circuitele lui, cu DDR 30 mA pe prize). Întoarce (inp, {idx: td})."""
+    tds = inp.get("tablouri_secundare")
+    if not tds:
+        return inp, {}
+    from .scheme import _pi
+    inp = dict(inp)
+    circ = list(inp.get("circuite") or [])
+    td_map = {}
+    if not isinstance(tds, list):
+        emite(j, "V07", BLOCANT, "tablouri_secundare", "param", camp="tablouri_secundare", x=repr(tds)[:60],
+              conditie="listă de tablouri {nume, L_m, circuite}")
+        return inp, {}
+    for k, td in enumerate(tds, 1):
+        nume = (td or {}).get("nume") or f"TD{k}"
+        cc = (td or {}).get("circuite") or []
+        if not isinstance(td, dict) or not isinstance(cc, list) or not cc or not all(isinstance(c, dict) for c in cc):
+            emite(j, "V07", BLOCANT, f"TD·{nume}", "param", camp="tablouri_secundare.circuite", x=repr(cc)[:60],
+                  conditie="cel puțin un circuit {nume, P_kW}")
+            continue
+        cc = [_p_implicit_td(c, nume, j) for c in cc]
+        td = dict(td, circuite=cc)
+        try:
+            pis = [_pi(dict(c, retea=c.get("retea", "tri" if retea == "tri" else "mono")), 1) for c in cc]
+        except (TypeError, ValueError):
+            emite(j, "V07", BLOCANT, f"TD·{nume}", "param", camp="tablouri_secundare.circuite.P_kW", x=repr(cc)[:60],
+                  conditie="P_kW / In_A numerice")
+            continue
+        ks = td.get("ks") or norme.ks_implicit(len(cc))
+        p = ks * sum(pis)
+        tri_c = any(c.get("retea") == "tri" or (c.get("pornire") is not None and c.get("retea") != "mono") for c in cc)
+        faza = td.get("faza")
+        if faza is None and retea == "tri" and (tri_c or p > 3.68):
+            faza = "3F"
+        f = {"nume": nume, "receptor": "tablou_secundar", "P_kW": round(max(p, 0.1), 3)}
+        if faza is not None:
+            f["faza"] = faza
+        if td.get("L_m") is not None:
+            f["L_m"] = td["L_m"]
+        if td.get("cablu") is not None:
+            f["cablu"] = td["cablu"]
+        # TN: alimentarea TD protejată prin MCB (deconectare la Ik1), DDR 30 mA în TD; TT: DDR 300 mA S pe alimentare
+        f["DDR"] = ({"IdN_mA": 300, "selectiv": True, "tip": "A"} if inp.get("schema_pamant") == "TT" else False)
+        circ.append(f)
+        td_map[len(circ)] = dict(td, nume=nume, ks=ks)
+        j.pas(f"Tablou secundar {nume}: {len(cc)} circuite, Σ Pi = {fmt_ro(sum(pis))} kW, ks = {fmt_ro(ks)} → P "
+              f"alimentare = {fmt_ro(p)} kW ({'3F' if faza == '3F' else 'monofazat'})")
+    inp["circuite"] = circ
+    return inp, td_map
+
+
+TD_S_MAX_ILUMINAT_MM2 = 50.0      # r8: plafonul alimentării unui TD cu iluminat (un singur cablu, fără paralel)
+TD_P_IMPLICIT_KW = {"iluminat": 1.0, "prize": 2.0, "motor": 2.2, "forta": 2.0}
+
+
+def _p_implicit_td(c, td_nume, j):
+    """r7 (#21, #64): circuit al unui tablou secundar dat doar prin nume — receptorul dedus din nume (iluminat / prize /
+    motor / forță) sau din tabelul receptoarelor locuinței, cu puterea implicită PRESUPUSĂ (declarată), nu V07."""
+    if not isinstance(c, dict) or c.get("P_kW") is not None or c.get("In_A") is not None:
+        return c
+    from .scheme import receptor_dupa_nume
+    rec = c.get("receptor")
+    d = norme.LOCUINTA_RECEPTORI.get(rec) if rec else None
+    if d is not None:
+        p, rec2 = float(d[0]), d[9] if len(d) > 9 else None
+    else:
+        rec2 = rec if rec in TD_P_IMPLICIT_KW else receptor_dupa_nume(c.get("nume", ""), 1)
+        p = TD_P_IMPLICIT_KW.get(rec2, 2.0)
+    out = dict(c, P_kW=p)
+    if rec2 in ("iluminat", "prize", "motor", "forta"):
+        out["receptor"] = rec2
+    elif "receptor" in out and out["receptor"] not in ("iluminat", "prize", "motor", "forta", "tablou"):
+        out.pop("receptor")
+    if out.get("receptor") == "prize":
+        out.setdefault("In_minim", 16)
+    j.presupune(f"tablou secundar {td_nume}: „{c.get('nume') or 'circuit'}” fără putere → {fmt_ro(p)} kW "
+                f"({out.get('receptor') or 'forță'}, valoare implicită) — de declarat")
+    return out
+
+
+def _circuite_td(td, ret, tt=False):
+    """Circuitele tabloului secundar pregătite pentru calcul: rețeaua fiecăruia, DDR 30 mA tip A (v1.5 M1: în locuință
+    toate circuitele finale au DDR ≤ 30 mA — și cele din tabloul secundar, r8 #46) și plafonul de 16 mm² al măririi
+    pentru ΔU (r8: nu 4 × 3×240 mm² pentru un circuit de iluminat)."""
+    from .scheme import expandeaza_plecari
+    pl = []
+    for c in expandeaza_plecari(td.get("circuite") or []):
+        c = dict(c)
+        if ret == "tri" and c.get("retea") is None:
+            # monofazate implicit: iluminat / prize / receptoare mici; motoarele și receptoarele mari — trifazate
+            from .scheme import receptor_dupa_nume
+            rec = c.get("receptor") or receptor_dupa_nume(c.get("nume", ""), 1)
+            mic = (c.get("P_kW") is not None and float(c["P_kW"]) <= 2.0) or (c.get("In_A") or 99) <= 16
+            c["retea"] = "mono" if rec in ("iluminat", "prize") or (mic and rec != "motor") else "tri"
+        if c.get("DDR") is None and c.get("ddr") is None:
+            c["DDR"] = {"IdN_mA": 30, "tip": "A", "_motor": True}
+        if (c.get("cablu") or {}).get("S_fortat") is None:
+            c["S_max_dU"] = norme.LOCUINTA_S_MAX_CIRCUIT_DU_MM2
+        pl.append(c)
+    return pl
+
+
+def _in_max_td(td, ret, j):
+    """Calibrul cel mai mare al circuitelor din tabloul secundar (selectivitatea alimentării TD față de ele)."""
+    from .scheme import _ip_preliminar, _pregateste_plecari
+    pl = _circuite_td(td, ret)
+    jt = Jurnal()
+    if not _pregateste_plecari(pl, ret, jt, "tmp."):
+        return None
+    ips = [x for x in (_ip_preliminar(c, 0, jt, final=True) for c in pl) if x is not None]
+    return max(ips) if ips else None
+
+
+def _calculeaza_td(td, x, rr, j):
+    """Circuitele tabloului secundar, dimensionate ca plecări finale de tablou (Cu, metoda C) din bara TD."""
+    from .scheme import _plecari, _pregateste_plecari
+    ret = "tri" if x["tri"] else "mono"
+    pl = _circuite_td(td, ret)
+    ob = x["c"]["obiect"]
+    if not _pregateste_plecari(pl, ret, j, f"{ob}."):
+        return {"nume": td["nume"], "plecari": []}
+    lista = _plecari(pl, rr["ctx_aval"], rr["prot"], j, prefix=f"{ob}.", final=True)
+    return {"nume": td["nume"], "retea": ret, "ks": td.get("ks"), "plecari": lista}
+
+
 def calculeaza_locuinta(inp, j):
     """SPEC §C.8: bilanț, branșament + coloană C2, Q general, SPD T2, grupe DDR, circuite și repartizarea pe faze."""
     n_v, n_i, n_p = len(j.verificari), len(j.info), len(j._presupus)
     cutie = {}
     try:
-        return _calculeaza(inp, j, cutie)
+        from .scheme import tensiune_jt_nesuportata
+        if tensiune_jt_nesuportata(inp, j):
+            return {}
+        rez = _calculeaza(inp, j, cutie)
+        if isinstance(inp.get("ge_rezerva"), dict) and rez.get("retea"):
+            _ge_rezerva(inp["ge_rezerva"], rez, j)
+        return rez
     finally:
         _umanizeaza(j, n_v, n_i, cutie.get("circ"))
         # v1.7 (m-c5 / UX C3): nicio cheie de receptor în mesaje, remedieri și presupuneri
@@ -674,6 +851,41 @@ def calculeaza_locuinta(inp, j):
             # Q presupus: câmpul de completat (m-n5 / N5)
             if v["cod"] == "V46" and "presupus" in v.get("mesaj", "") and "camp" not in v:
                 v["camp"] = "alimentare.In_Q_bransament_A" if "Q " in v["mesaj"] else "alimentare.P_aprobata_kW"
+
+
+COMUTATOR_IN_A = (25, 32, 40, 63, 80, 100, 125, 160, 200, 250)
+
+
+def _ge_rezerva(g, rez, j):
+    """r7 (#54): grup electrogen de REZERVĂ la locuință (`ge_rezerva: {Sn_kVA, comutare: "manual" | "ATS"}`) — sursă,
+    nu consumator: Q-GE (protecția cablului GE), comutator de sursă I (rețea) – 0 – II (GE) cu interblocaj, care comută
+    și N (2P / 4P), montat după Q general, înaintea barei TE. Suport minim: nu se verifică regimul GE (Ik1 GE)."""
+    sn = g.get("Sn_kVA")
+    com = str(g.get("comutare") or "manual").strip().lower()
+    com = {"manual": "manual", "inversor": "manual", "inversor_manual": "manual", "ats": "ATS", "automat": "ATS"}.get(com)
+    if not isinstance(sn, (int, float)) or isinstance(sn, bool) or sn <= 0 or com is None:
+        j.emite("V07", BLOCANT, "GE rezervă", f"ge_rezerva invalid: Sn_kVA {sn!r}, comutare {g.get('comutare')!r}",
+                "Sn_kVA > 0 și comutare „manual” (inversor de sursă) sau „ATS”")
+        return
+    mono = rez["retea"] == "mono"
+    u = norme.U_0_V if mono else SQRT3 * norme.U_N_V
+    in_g = float(sn) * 1000.0 / u
+    q_ge = prima_din_serie(norme.MCB_IN_A, in_g * 0.999) or round(in_g)
+    in_q = float(((rez.get("Q_general") or {}).get("In_A")) or in_g)
+    in_c = prima_din_serie(COMUTATOR_IN_A, max(in_q, q_ge)) or max(in_q, q_ge)
+    poli = "2P" if mono else "4P"
+    rez["ge_rezerva"] = {"Sn_kVA": float(sn), "In_G_A": in_g, "comutare": com, "Q_GE_In_A": q_ge,
+                         "comutator_In_A": in_c, "poli": poli}
+    j.pas(f"GE de rezervă {fmt_ro(sn)} kVA: In_G = {fmt_ro(in_g)} A → Q-GE C{q_ge} A; comutator de sursă "
+          f"{'manual I-0-II' if com == 'manual' else 'automat (ATS)'} {poli} {in_c} A (≥ Q general {fmt_ro(in_q, 0)} A), "
+          f"comută și N, interblocaj (rețea și GE niciodată în paralel)")
+    j.presupune("GE de rezervă: comutatorul de sursă după Q general, înaintea barei TE; neutrul GE comutat (comutator "
+                f"{poli}); regimul GE (Ik1 la bornele GE, deconectarea) se verifică cu fișa GE — nemodelat")
+    pc = float((rez.get("bilant") or {}).get("Pc_kW") or 0)
+    if pc and gt(pc, 0.8 * float(sn)):
+        j.emite("V86", AVERTISMENT, "GE rezervă", f"GE {fmt_ro(sn)} kVA < sarcina de calcul a casei Pc = {fmt_ro(pc)} kW "
+                f"— în regim GE se alimentează numai consumatorii selectați (sau GE mai mare)",
+                "declarați consumatorii alimentați pe GE (tablou rezervat) sau Sn GE ≥ Pc/0,8")
 
 
 def _verifica_ve_amonte(j, g, tip_av, am_nume, am_idn, am_tip, tt, declarat):
@@ -747,6 +959,7 @@ def _calculeaza(inp, j, cutie):
                 "alege monofazat 230 V (BMPM) sau trifazat 3 × 400 V (BMPT), conform ATR / branșamentului existent")
         return rez
     rez["retea"] = retea
+    inp, td_map = _tablouri_secundare(inp, retea, j)
     v = _valideaza(inp, j, retea)
     if v is None:
         return rez
@@ -759,6 +972,19 @@ def _calculeaza(inp, j, cutie):
     ramuri = []
     for c in circ:
         r, d, tri = _circuit(c, retea, j)
+        if c["receptor"] == "tablou_secundar" and c.get("idx") in td_map:
+            # r8 (#46): alimentarea TD cu calibru peste cel mai mare circuit din TD (amonte ≠ aval, selectivitate)
+            in_td = _in_max_td(td_map[c["idx"]], "tri" if tri else "mono", j)
+            if in_td and r.get("In_fortat") is None:
+                r["Ip_min_extra"] = in_td + 0.01
+            if any(x.get("receptor") == "iluminat" or (x.get("receptor") is None and "ilumin" in
+                                                      str(x.get("nume") or "").lower())
+                   for x in td_map[c["idx"]].get("circuite") or []) and "S_max_dU" in r:
+                # TD cu iluminat (limita 3 %): alimentarea lasă ≥ 0,5 % circuitului de iluminat — mărire până la 50 mm²
+                # (un singur cablu), nu cabluri în paralel
+                r["tinta_dU"] = norme.DU_MAX_PCT[("retea_publica", "iluminat")] - 0.5
+                r.pop("tinta_dU_ramura", None)
+                r["S_max_dU"] = TD_S_MAX_ILUMINAT_MM2
         u = SQRT3 * norme.U_N_V if tri else norme.U_0_V
         ramuri.append({"c": c, "r": r, "d": d, "tri": tri, "Ib": r["P_kW"] * 1000.0 / (u * r["cosfi"])})
 
@@ -801,11 +1027,35 @@ def _calculeaza(inp, j, cutie):
           f"{fmt_ro(ib_pc)} A" + (f"; Ib general din P aprobată = {fmt_ro(pa)}·1000/({uf}·"
                                   f"{fmt_ro(norme.LOCUINTA_COSFI)}) = {fmt_ro(ib_pa)} A (Pc informativ)"
                                   if pa is not None else ""))
-    if pa is not None and lt(pa, pc):
+    if pa is not None and lt(pa, pc) and al["tip"] == "bransament_nou":
+        # r5 (L04): branșament nou — Pc din bilanț peste puterea cerută: întrebare, nu „Ib se ia din puterea aprobată”
+        emite(j, "V46", AVERTISMENT, "schema", "pc_nou", Pc=pc, P=pa,
+              rem="puterea cerută în ATR ≥ Pc (sau ks = Pa/Pi justificat / gestionarea dinamică a sarcinii la VE)")
+    elif pa is not None and lt(pa, pc):
         emite(j, "V46", AVERTISMENT, "schema", "pc", Pc=pc, P=pa,
               rem="solicită ATR pentru mărirea puterii aprobate" + (" sau trecerea pe branșament trifazat"
                                                                      if retea == "mono" else "") +
               ", ori declară ks = Pa/Pi (simultaneitate justificată) / gestionarea dinamică a sarcinii (DLM la VE)")
+
+    # ---- 1b. r7 (#19, P0): un receptor singur peste puterea aprobată / peste ce poate da rețeaua → BLOCANT clar ----------
+    for x in ramuri:
+        p_r = float(x["r"]["P_kW"])
+        ob = x["c"].get("obiect") or x["c"].get("nume") or "circuit"
+        rec = x["c"].get("receptor") or ""
+        if retea == "mono" and rec == "vehicul_electric" and gt(p_r, norme.LOCUINTA_VE_MONO_MAX_KW):
+            j.emite("V46", BLOCANT, ob,
+                    f"încărcătorul VE de {fmt_ro(p_r)} kW nu se poate alimenta monofazat (max. "
+                    f"{fmt_ro(norme.LOCUINTA_VE_MONO_MAX_KW)} kW = 32 A la 230 V) — un wallbox de 11 / 22 kW e trifazat",
+                    "Treceți pe branșament trifazat (ATR pentru puterea necesară) sau alegeți un încărcător monofazat "
+                    f"de max. {fmt_ro(norme.LOCUINTA_VE_MONO_MAX_KW)} kW?")
+            j.verificari[-1]["intrebare"] = True
+        if pa is not None and gt(p_r, pa) and x["c"].get("P_kW") is not None and "priz" not in rec and "ilumin" not in rec:
+            j.emite("V46", BLOCANT, ob,
+                    f"receptorul „{x['c'].get('nume') or rec}” de {fmt_ro(p_r)} kW depășește singur puterea aprobată "
+                    f"{fmt_ro(pa)} kW (ATR) — branșamentul nu îl poate alimenta",
+                    "Solicitați ATR pentru mărirea puterii (eventual trifazat), reduceți puterea receptorului sau "
+                    "declarați gestionarea sarcinii (DLM)?")
+            j.verificari[-1]["intrebare"] = True
 
     # ---- 2. grupele DDR și repartizarea pe faze (pe curentul de calcul, v1.6 m-n3) ------------------------------
     grupe, sarc = _grupeaza_si_repartizeaza(ramuri, retea, ks, ks_decl)
@@ -843,6 +1093,10 @@ def _calculeaza(inp, j, cutie):
     bi = {"tip_schema": "bransament", "retea": retea, "cosfi": norme.LOCUINTA_COSFI,
           "_cosfi_eticheta": "coloana C2, cosφ mediu al locuinței",
           "L_coloana_m": al.get("L_coloana_m"), "cablu": dict(al.get("cablu") or {})}
+    if isinstance(al.get("DDR_bransament_selectiv"), bool):
+        bi["DDR_amonte_selectiv"] = al["DDR_bransament_selectiv"]
+    if al.get("DDR_bransament_tip"):
+        bi["DDR_bransament_tip"] = al["DDR_bransament_tip"]
     q_pres = None
     q_inv = al.get("_q_invalid")
     if q_inv is not None and q_decl is None and al["tip"] == "bransament_existent":
@@ -861,19 +1115,44 @@ def _calculeaza(inp, j, cutie):
             # P0-2: Q nedeclarat → calibrul standard ≥ Ib (nu mai mic decât sarcina), declarat ca presupus
             bloc_n, lim_b = LIMITA_BLOC[retea]
             serie = SERIE_Q_MONO if retea == "mono" else SERIE_Q_TRI
-            if gt(i_dim, lim_b):
-                emite(j, "V46", BLOCANT, "Q", "bloc", Ib=i_dim, bloc=bloc_n, lim=lim_b,
+            # r6: limita blocului se compară cu Ib din P aprobată în convenția ATR (Pa = U·In, cosφ 1) — 9 kW mono
+            # = 39,1 A încape în BMPM 40 A; Q-ul fiind PRESUPUS, depășirea e AVERTISMENT, nu BLOCANT
+            i_bloc = (pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI)) if pa is not None else i_dim
+            if gt(i_bloc, lim_b):
+                # P aprobată declarată peste limita blocului = date ATR incoerente (BLOCANT); fără P aprobată, Ib vine din
+                # bilanțul presupus → AVERTISMENT
+                emite(j, "V46", BLOCANT if pa is not None else AVERTISMENT, "Q", "bloc", Ib=i_bloc, bloc=bloc_n, lim=lim_b,
                       rem="declarați Q-ul de branșament existent (din ATR / certificatul de racordare) sau solicitați "
                           "ATR pentru " + ("trecerea pe branșament trifazat (BMPT)" if retea == "mono" else
                                            "un branșament cu măsură semidirectă (BMPTi)") + " / reduceți sarcina simultană")
                 j.verificari[-1]["camp"] = "alimentare.In_Q_bransament_A"
                 # v1.6 (UX 12): calculul continuă cu Q = limita blocului (exportul rămâne blocat)
                 q_pres = max(x for x in serie if x <= lim_b)
+            elif pa is not None:
+                # r5 (P1-9): Q-ul uzual din ATR pentru P aprobată (Pa = U·In, cosφ 1): 7 kW mono → 32 A, 25 kW tri → 40 A
+                # r6b (DECIZIE, de confirmat): perechile standard din ATR rămân (Pa = U·In, cosφ 1): 7 kW mono → 32 A, 11 kW tri → 16 A;
+                # Ib la cosφ 0,95 poate depăși ușor Q — e convenția ATR, nu o eroare (V04 avertizează)
+                q_pres = (prima_din_serie(serie, pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI) - 1e-6)
+                          or max(x for x in serie if x <= lim_b))
+                # r8 (#12, #18): perechea ATR rămâne, dar Q presupus nu coboară sub Ib cu mai mult de toleranța
+                # 1,13·In (curentul convențional de nedeclanșare) — altfel calibrul următor din serie (≤ limita blocului)
+                if gt(i_dim, norme.LOCUINTA_I_NEDECLANSARE * q_pres):
+                    q_up = prima_din_serie([x for x in serie if x <= lim_b], i_dim / norme.LOCUINTA_I_NEDECLANSARE)
+                    if q_up is not None:
+                        q_pres = q_up
             else:
                 q_pres = prima_din_serie(serie, i_dim)
             baza = " din P aprobată" if pa is not None else ""
-            j.presupune(f"Q branșament existent nedeclarat → Q presupus {q_pres} A (calibrul standard ≥ Ib "
-                        f"{fmt_ro(i_dim)} A{baza}) — introduceți Q-ul real din BMPM/BMPT (ATR / certificatul de racordare)")
+            if lt(q_pres, i_dim) and pa is not None and not gt(i_dim, norme.LOCUINTA_I_NEDECLANSARE * q_pres):
+                # r8 (#12): perechea ATR (Pa = U·In, cosφ 1) — Ib la cosφ de calcul peste In, dar ≤ 1,13·In
+                j.presupune(f"Q branșament existent nedeclarat → Q presupus {q_pres} A (perechea ATR Pa = U·In: "
+                            f"{fmt_ro(pa)} kW → {q_pres} A; Ib {fmt_ro(i_dim)} A{baza} ≤ 1,13·In = "
+                            f"{fmt_ro(norme.LOCUINTA_I_NEDECLANSARE * q_pres)} A, fără rezervă) — introduceți Q-ul real "
+                            f"din BMPM/BMPT (ATR / certificatul de racordare)")
+            else:
+                j.presupune(f"Q branșament existent nedeclarat → Q presupus {q_pres} A ("
+                            f"{'calibrul standard ≥' if not lt(q_pres, i_dim) else 'limita blocului;'} Ib "
+                            f"{fmt_ro(i_dim)} A{baza}) — introduceți Q-ul real din BMPM/BMPT (ATR / certificatul de racordare)")
             # v1.6 (N5): Q-ul unui branșament EXISTENT e o dată, nu se alege — AVERTISMENT vizibil (DECIZIE: nu BLOCANT,
             # spre deosebire de rețea; mesajele BLOCANTE calculate pe Q presupus o spun explicit, m-n5)
             if "In_Q_bransament_A" not in (al.get("_invalide") or []):
@@ -881,11 +1160,30 @@ def _calculeaza(inp, j, cutie):
                 emite(j, "V46", AVERTISMENT, "Q", "q_pres", Q=q_pres, Ib=i_dim, baza=baza,
                       rem="introduceți Q branșament real (calibrul RCBO / MCB din BMPM / BMPT, din ATR sau "
                           "certificatul de racordare)")
+                if lt(q_pres, i_dim):
+                    v_ = j.verificari[-1]
+                    if pa is not None and not gt(i_dim, norme.LOCUINTA_I_NEDECLANSARE * q_pres) and not gt(
+                            pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI), lim_b):
+                        v_["mesaj"] = v_["mesaj"].replace("(calibrul standard ≥ Ib", "(perechea ATR Pa = U·In; Ib") \
+                            + f" — Ib în toleranța de nedeclanșare a Q ({fmt_ro(norme.LOCUINTA_I_NEDECLANSARE * q_pres)} A), fără rezervă"
+                    else:
+                        v_["mesaj"] = v_["mesaj"].replace("(calibrul standard ≥ Ib", "(limita blocului; Ib")
     if al["tip"] == "bransament_existent":
         q_in = q_decl if q_decl is not None else q_pres
         bi["Q_In_A"] = q_in
         # v1.6 (m8): coloana poartă curentul fazei celei mai încărcate (nu Ib echilibrat din Pa), limitat la In Q
         bi["Ib_A"] = min(float(q_in), max(i_dim, i_calc_max))
+    elif pa is not None and q_decl is None:
+        # r5 (L04): branșament NOU cu puterea cerută declarată → Q din puterea cerută (convenția ATR, cosφ 1), nu din Pc;
+        # Pc > P cerută rămâne semnalat (V46 „pc”), Q-ul nu se mărește în tăcere
+        serie_n = SERIE_Q_MONO if retea == "mono" else SERIE_Q_TRI_TOATE
+        q_n = prima_din_serie(serie_n, pa * 1000.0 / (U * norme.LOCUINTA_Q_DIN_PA_COSFI))
+        if q_n is not None:
+            bi["Q_In_A"] = q_n
+            bi["Ib_A"] = min(float(q_n), max(i_dim, i_calc_max))
+            j.pas(f"Branșament nou: Q din puterea cerută {fmt_ro(pa)} kW (Pa = U·In) → {q_n} A")
+        else:
+            bi["Ib_A"] = max(i_dim, ib_pc, i_calc_max)
     else:
         bi["Ib_A"] = max(i_dim, ib_pc, i_calc_max)
     if pa is None and al["tip"] == "bransament_existent" and "P_aprobata_kW" not in (al.get("_invalide") or []):
@@ -1005,7 +1303,13 @@ def _calculeaza(inp, j, cutie):
                 niveluri.append((1, i_f, f, "av"))
         if niveluri:
             nv, i_f, f, var = max(niveluri)
-            emite(j, "V46", BLOCANT if nv == 2 else AVERTISMENT, "Q", var, Ib=i_f, In=in_q_br, lim=lim113,
+            nou_pa = al["tip"] == "bransament_nou" and pa is not None and al.get("In_Q_bransament_A") is None
+            if nou_pa:
+                # r5 (L04): branșament NOU — Q rezultă din puterea CERUTĂ, care încă se poate mări: întrebare (AV), nu blocaj
+                rem = "puterea cerută în ATR mărită la ≥ Pc (Q mai mare) sau gestionarea dinamică a sarcinii (DLM la VE)"
+            # r6: pe un Q PRESUPUS (nedeclarat) nu se blochează — AVERTISMENT + cererea Q-ului real
+            emite(j, "V46", BLOCANT if nv == 2 and not nou_pa and q_pres is None else AVERTISMENT, "Q", var, Ib=i_f,
+                  In=in_q_br, lim=lim113,
                   faza=f, cont=cont[f], rem=rem)
             if q_pres is not None:
                 # m-n5: mesajul spune că Q e presupus
@@ -1040,7 +1344,8 @@ def _calculeaza(inp, j, cutie):
         qg["Icu_kA"], ok = pr.alege_icu("MCB", ik3_te)
         rez["Q_general"] = {"tip": "MCB", "curba": "C", "In_A": In_g, "poli": poli, "Icu_kA": qg["Icu_kA"]}
         if in_q_br and gt(In_g, in_q_br):
-            emite(j, "V40", BLOCANT, "Q general", "loc", aparat=f"Q general MCB C{In_g}", a=in_q_br, b=In_g)
+            emite(j, "V40", AVERTISMENT if q_pres is not None else BLOCANT, "Q general", "loc",
+                  aparat=f"Q general MCB C{In_g}", a=in_q_br, b=In_g)
         if q_br is not None:
             pr.selectivitate(q_br, qg, ik3_te, "Q general vs Q branșament", j)
     # v1.6 (m-n2 / N4): protecția de rezervă a SPD-ului (F2) — MCB C25 (norme.LOCUINTA_SPD_REZERVA), nu peste
@@ -1071,21 +1376,34 @@ def _calculeaza(inp, j, cutie):
             x["Ip"] = x["r"].get("In_fortat") or x["r"].get("In_minim") or 16
             x["Ip_neales"] = True
     for x in (y for g in grupe if g["cheie"] == "fara" for y in g["membri"]):
+        if x["c"]["receptor"] == "tablou_secundar":
+            continue        # r6: alimentarea TD (TN) — protecție prin MCB, DDR 30 mA pe circuitele din TD
         if x["c"]["receptor"].startswith("prize"):
             emite(j, "V29", BLOCANT, x["c"]["obiect"], "B", In=x["r"].get("In_fortat") or x["r"]["In_minim"])
         else:
             # v1.5 (M1): în locuințe toate circuitele finale au DDR ≤ 30 mA
             emite(j, "V49", BLOCANT, x["c"]["obiect"], rec=eticheta_receptor(x["c"]["receptor"]))
     sus = None
+    impl = norme.LOCUINTA_DDR_BRANSAMENT_IMPLICIT
+    sel_decl = al.get("DDR_bransament_selectiv")
     if rb.get("RCCB"):
-        sus = ddr_mod.descriere(rb["RCCB"]["IdN_mA"], rb["RCCB"].get("selectiv", True), "RCCB BMPT")
+        sus = ddr_mod.descriere(rb["RCCB"]["IdN_mA"], sel_decl if isinstance(sel_decl, bool) else rb["RCCB"].get("selectiv", True),
+                                "RCCB BMPT")
     elif (rb.get("Q") or {}).get("IdN_mA"):
-        sus = ddr_mod.descriere(rb["Q"]["IdN_mA"], norme.BMPM_RCBO_SELECTIV, "RCBO BMPM")
+        # r5 (P1-14): RCBO-ul 300 mA din BMPM presupus selectiv (S) dacă nu e declarat altfel — altfel V43 la orice casă
+        sel = sel_decl if isinstance(sel_decl, bool) else impl["selectiv"]
+        sus = ddr_mod.descriere(rb["Q"]["IdN_mA"], sel, "RCBO BMPM")
+        rez["alimentare"]["DDR_bransament_selectiv"] = sel
+    if sus is not None:
+        nd = ([f"tip {impl['tip']}"] if al.get("DDR_bransament_tip") is None else []) + \
+             (["selectiv (S)"] if not isinstance(sel_decl, bool) and not rb.get("RCCB") else [])
+        if nd:
+            j.presupune(f"DDR-ul 300 mA din {'BMPT' if rb.get('RCCB') else 'BMPM'}: {', '.join(nd)} — presupus (echiparea "
+                        f"uzuală a blocurilor noi); branșamentul vechi cu DDR tip AC / instantaneu se declară")
     # v1.7 (M-c3): tipul DDR-ului 300 mA din branșament (declarat sau cel din ST 3-JT / ST 4-JT: AC)
     am_nume = "RCCB BMPT" if rb.get("RCCB") else "RCBO BMPM"
     am_idn = (rb.get("RCCB") or {}).get("IdN_mA") or (rb.get("Q") or {}).get("IdN_mA")
-    am_tip = al.get("DDR_bransament_tip") or ((rb.get("RCCB") or {}).get("tip") if rb.get("RCCB")
-                                              else norme.BMPM["rcd_tip"]) or "AC"
+    am_tip = al.get("DDR_bransament_tip") or norme.LOCUINTA_DDR_BRANSAMENT_IMPLICIT["tip"]
     rez["alimentare"]["DDR_bransament_tip"] = am_tip if sus is not None else None
     ra = None
     if tt:
@@ -1105,7 +1423,10 @@ def _calculeaza(inp, j, cutie):
             d0 = mem[0]["c"]["DDR"] if g["cheie"] in ("propriu", "VE") and isinstance(mem[0]["c"]["DDR"], dict) else None
             ve = g["cheie"] == "VE"
             idn = int(d0["IdN_mA"]) if d0 else 30
-            tip_d = d0.get("tip") if d0 and d0.get("tip") else ("B" if ve else "A")
+            tip_d = d0.get("tip") if d0 and d0.get("tip") else (norme.LOCUINTA_VE_DDR_IMPLICIT if ve else "A")
+            if ve and not (d0 and d0.get("tip")):
+                j.presupune("încărcarea VE: DDR 30 mA tip A + RDC-DD 6 mA c.c. în stație (SR HD 60364-7-722) — tip B se "
+                            "declară pe circuit dacă stația nu are RDC-DD")
             rcbo = len(mem) == 1 and not ve      # VE: RCCB tip B + MCB (RCBO tip B — aparat rar, DECIZIE)
             # In DDR: Σ In MCB pe faza cea mai încărcată a grupei
             pe_f = {}
@@ -1136,7 +1457,7 @@ def _calculeaza(inp, j, cutie):
                     _verifica_ve_amonte(j, g, tip_d, am_nume, am_idn, am_tip, tt, al.get("DDR_bransament_tip"))
             if d0 and d0.get("selectiv"):
                 g["DDR"].update({"selectiv": True, "temporizare": "S"})
-            if idn > 30:
+            if idn > 30 and not all(x["c"]["receptor"] == "tablou_secundar" for x in mem):
                 if any(x["c"]["receptor"].startswith("prize") for x in mem):
                     emite(j, "V29", BLOCANT, g["obiect"], "B", In=max(x["Ip"] for x in mem))
                 else:
@@ -1191,7 +1512,8 @@ def _calculeaza(inp, j, cutie):
                                         poli="1P+N" if g["poli"] == "2P" else "4P")
                 g["DDR"]["Icn_kA"] = prot.get("Icu_kA")
             if in_q_br and prot.get("In_A") and gt(prot["In_A"], in_q_br):
-                emite(j, "V40", BLOCANT, x["c"]["obiect"], "loc",
+                # r6: față de un Q de branșament PRESUPUS — AVERTISMENT (Q-ul real se cere), nu BLOCANT
+                emite(j, "V40", AVERTISMENT if q_pres is not None else BLOCANT, x["c"]["obiect"], "loc",
                       aparat=f"{'RCBO' if g['DDR'] and g['DDR']['aparat'] == 'RCBO' else 'MCB'} {prot.get('curba', '')}"
                              f"{prot['In_A']}", a=in_q_br, b=prot["In_A"])
             # protecția la defect (contact indirect), explicit pe fiecare circuit (P0-3)
@@ -1212,6 +1534,8 @@ def _calculeaza(inp, j, cutie):
                 out["protectie_defect"] = "neasigurată fără DDR"
             if x["c"]["receptor"] == "sauna":
                 out["cablu_nota"] = norme.LOCUINTA_SAUNA_CABLU
+            if x["c"]["idx"] in td_map and not rr["blocat"]:
+                out["tablou_secundar"] = _calculeaza_td(td_map[x["c"]["idx"]], x, rr, j)
             g["circuite"].append(out)
         if g["DDR"]:
             fz = sorted({x["faza"] for x in mem})

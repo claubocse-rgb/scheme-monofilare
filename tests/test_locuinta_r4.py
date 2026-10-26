@@ -96,7 +96,9 @@ def test_P0_2_q_nedeclarat_presupus_si_aceeasi_regula():
     # Q presupus = calibrul standard ≥ Ib din Pa (22,79 A) = 25 A, declarat; aceeași verificare V46 ca la Q declarat
     assert fara["rezultat"]["alimentare"]["Q"]["In_A"] == 25 and fara["rezultat"]["alimentare"]["Q_presupus"]
     assert any("Q presupus 25 A" in p for p in fara["presupus"])
-    assert ("V46", "Q") in _b(fara) and ("V46", "Q") in _b(cu)
+    # r6: pe Q PRESUPUS — AVERTISMENT (nu BLOCANT); cu Q declarat — BLOCANT
+    assert ("V46", "Q") not in _b(fara) and ("V46", "Q") in _b(cu)
+    assert any(v["obiect"] == "Q" and v["mesaj"].startswith("Q branșament presupus") for v in _v(fara, "V46", "AVERTISMENT"))
     # Q general nu depășește Q-ul dedus (IS 4P ≥ In Q, cea mai mică treaptă 32 A)
     assert fara["rezultat"]["Q_general"]["In_A"] == 32
 
@@ -104,7 +106,8 @@ def test_P0_2_q_nedeclarat_presupus_si_aceeasi_regula():
 def test_P0_2_fara_pa_si_fara_q_peste_limita_blocului():
     # mono fără Pa și fără Q: Ib(Pc) = (0,8·Σ general + VE + saună) > 40 A → nu există BMPM → V46 BLOCANT (bloc)
     r = calculeaza(_loc("mono", [L("Pr", "prize"), L("VE", "vehicul_electric"), L("Saună", "sauna")]))
-    b = [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
+    # r6: fără P aprobată (Ib din bilanțul presupus) → AVERTISMENT, nu BLOCANT
+    b = [v for v in _v(r, "V46", "AVERTISMENT") if v["obiect"] == "Q" and "limita blocului" in v["mesaj"]]
     assert b and "BMPM" in b[0]["mesaj"] and "trifazat" in b[0]["remediere"]
     # fără Pa, sarcină mică: Q presupus ≥ max(Ib(Pc), faza cea mai încărcată)
     r = calculeaza(_loc("mono", [L("Il", "iluminat"), L("Pr", "prize")]))
@@ -142,7 +145,9 @@ def test_M1_ddr_impus_peste_30mA_blocant(rec):
 
 
 def test_M1_toate_circuitele_au_ddr_obligatoriu():
-    assert all(v[12] == "obligatoriu" for v in norme.LOCUINTA_RECEPTORI.values())
+    # r6: alimentarea unui tablou secundar are DDR-urile în tabloul secundar („in_td”)
+    assert all(v[12] == "obligatoriu" for k, v in norme.LOCUINTA_RECEPTORI.items() if k != "tablou_secundar")
+    assert norme.LOCUINTA_RECEPTORI["tablou_secundar"][12] == "in_td"
     r = calculeaza(_loc("mono", [{"nume": "Boiler", "receptor": "boiler", "DDR": False}], In_Q_bransament_A=32))
     assert ("V49", "C1·Boiler") in _b(r)
 
@@ -276,7 +281,7 @@ def test_normalizari_nume_chei_sectiune():
 def test_capacitate_conditionata_ddr_si_is():
     inp = {"tip_schema": "locuinta", "retea": "tri", "Ik3_OD_kA": 25,
            "alimentare": {"In_Q_bransament_A": 63, "P_aprobata_kW": 30, "L_coloana_m": 3, "cablu": {"S_fortat": 25}},
-           "circuite": [L(f"P{i}", "prize") for i in range(3)]}
+           "circuite": [L(f"P{i}", "prize") for i in range(6)]}     # r6: 3 prize se împart pe 3 faze (RCBO)
     r = calculeaza(inp)
     z = r["rezultat"]
     g = [g for g in z["grupe_DDR"] if g["DDR"]["aparat"] == "RCCB"][0]

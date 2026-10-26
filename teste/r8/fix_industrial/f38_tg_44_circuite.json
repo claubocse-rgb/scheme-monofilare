@@ -1,0 +1,19 @@
+{
+ "tip_schema": "tablou",
+ "origine": "tg_existent",
+ "schema_pamant": "TN-S",
+ "plecari": [
+  {
+   "nume": "Iluminat",
+   "P_kW": 0.8,
+   "n_circuite": 20
+  },
+  {
+   "nume": "Prize",
+   "P_kW": 2,
+   "n_circuite": 24
+  }
+ ],
+ "circuite_finale": true,
+ "retea": "tri"
+}

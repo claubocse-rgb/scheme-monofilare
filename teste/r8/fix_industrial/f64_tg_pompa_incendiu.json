@@ -1,0 +1,21 @@
+{
+ "tip_schema": "tablou",
+ "origine": "pt_propriu",
+ "pt_Sn_kVA": 630,
+ "schema_pamant": "TN-S",
+ "plecari": [
+  {
+   "nume": "Pompa incendiu",
+   "P_kW": 45
+  },
+  {
+   "nume": "Pompa tehnologica",
+   "P_kW": 45
+  },
+  {
+   "nume": "Iluminat",
+   "P_kW": 10
+  }
+ ],
+ "retea": "tri"
+}

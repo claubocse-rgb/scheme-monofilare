@@ -1,0 +1,914 @@
+===== L01 casa parter monofazata, P aprobata 7 kW, Q bransament 32A, coloana 15 m
+ act: genereaza | tip: bransament | retea: mono | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   L_coloana_m 15
+   P_kW 7
+ Q?: []
+ pres: ['cablul descris („15 m” = 15 m) = coloana C2 dintre BMPT și tabloul con', 'cosφ 0,9', 'coloană Cu PVC (monofazat — secțiuni mici), metoda D1 (în tub în pămân', 'schema TN-C-S, separare PEN în BMPM', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPM-40', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 40, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 33.81642512077295, 'RCCB': None, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 40, 1.48), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L02 Casă P+1, trifazat, putere aprobată 15 kW, coloană CYABY 25 m, pompă de căldură 9 kW, plită inducție 7,2 kW, wallbox 11 kW
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 15, 'L_coloana_m': 25, 'cablu': {'material': 'Cu'}} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Pompă de căldură', 9, None, '3F'), ('Plită', 7.2, None, None), ('Încărcare VE', 11, None, '3F')]
+ Q?: []
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Ilumina', 'Pompă de căldură 9 kW > 7,4 kW → circuit trifazat (3F)', 'Încărcare VE 11 kW > 7,4 kW → circuit trifazat (3F)', '„25 m” = lungimea coloanei BMP → tabloul locuinței', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 25, 'Icn_kA': 6}, 'Ib_alim': 25.0, 'coloana': ('CYABY 5×6\xa0mm²', 25.0, 25, 0.95), 'bilant': {'Pi_kW': 34.2, 'Pc_kW': 28.520000000000003, 'ks': 0.6, 'Ib_A': 22.79014220485365, 'P_aprobata_kW': 15}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Pompă de căldură[3F] 9.0kW MCB C16 CYY-F 5×2,5 mm² L20.0 dU2.0 DDR30A
+     Prize[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Plită[3F] 7.2kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.2 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Încărcare VE[3F] 11.0kW MCB C20 CYY-F 5×4 mm² L25.0 dU1.9 DDR30B
+ BLOC: ['V46: Q branșament presupus 25 A (nedeclarat) — Ib de calcul pe L2 43,03 A > 1,13·In Q branșament = 28,25 A (In 25 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 28,52 kW > puterea aprobată (ATR) 15 kW — Pc din ks e informativ; Ib ge', 'V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,79 A din ', 'V43: circuitul VE (DDR5, DDR tip B) e în aval de RCCB BMPT 300 mA tip AC — un curent de de']
+===== L03 apartament bloc, mono, 5 kw aprobat, coloana 12m, plita, boiler 1.5kw, clima
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 5, 'L_coloana_m': 12} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Plită', None, None, None), ('Boiler', 1.5, None, None), ('Aer condiționat', None, None, None)]
+ Q?: []
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Ilumina', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-25', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 25, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 25.0, 'coloana': ('CYABY 3×6\xa0mm²', 12.0, 25, 0.92), 'bilant': {'Pi_kW': 18.2, 'Pc_kW': 7.28, 'ks': 0.4, 'Ib_A': 22.88329519450801, 'P_aprobata_kW': 5}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Prize[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Boiler[L1] 1.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Aer condiționat[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.2 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU2.4 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.9 DDR30A
+ BLOC: ['V46: Q branșament presupus 25 A (nedeclarat) — Ib de calcul pe L1 33,49 A > 1,13·In Q branșament = 28,25 A (In 25 A) — Q-ul de branșament declanșează la sarcina de c', 'V40: MCB C32 In 32 A > In Q branșament 25 A — aparatul nu poate fi selectiv, iar Q branșament declanșează înaintea lui'] 
+ AV: ['V46: Pc din bilanț 7,28 kW > puterea aprobată (ATR) 5 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,88 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR4 30 mA instant']
+===== L04 casa p+1 cu pdc 12kw si masina electrica 22 kW, bransament trifazat nou 25 kW
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'tip': 'bransament_nou', 'P_aprobata_kW': 25} | SP: None None | ks None
+ circ: [('Iluminat parter', None, None, None), ('Iluminat etaj', None, None, None), ('Iluminat exterior', None, None, None), ('Prize parter', None, None, None), ('Prize etaj', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie parter', None, None, None), ('Prize baie etaj', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Mașină de spălat vase', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Pompă de căldură', 12, None, '3F'), ('Încărcare VE', 22, None, '3F')]
+ Q?: []
+ pres: ['„si” = „și” (fără diacritice)', 'set tipic pentru casă P+1 + receptorii listați (Pompă de căldură, Încă', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'Pompă de căldură 12 kW > 7,4 kW → circuit trifazat (3F)', 'Încărcare VE 22 kW > 7,4 kW → circuit trifazat (3F)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloana BMPT → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-100', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 80, 'Icn_kA': 6}, 'Ib_alim': 68.1957021909904, 'coloana': ('CYABY 5×25\xa0mm²', 15.0, 80, 0.38), 'bilant': {'Pi_kW': 65.1, 'Pc_kW': 44.885, 'ks': 0.35, 'Ib_A': 37.98357034142275, 'P_aprobata_kW': 25}, 'schema_pamant': 'TN-C-S'}
+     Iluminat parter[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU0.9 DDR30A
+     Iluminat etaj[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU0.9 DDR30A
+     Iluminat exterior[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU0.9 DDR30A
+     Prize parter[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU1.7 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU0.5 DDR30A
+     Pompă de căldură[3F] 12.0kW MCB C20 CYY-F 5×2,5 mm² L20.0 dU1.7 DDR30A
+     Prize etaj[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU1.7 DDR30A
+     Boiler[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.4 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.0 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+     Cuptor[L2] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Mașină de spălat vase[L3] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.5 DDR30A
+     Prize baie parter[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.4 DDR30A
+     Prize baie etaj[L2] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.4 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU1.6 DDR30A
+     Încărcare VE[3F] 22.0kW MCB C32 CYY-F 5×6 mm² L25.0 dU1.6 DDR30B
+ BLOC: [] 
+ AV: ['V46: Pc din bilanț 44,88 kW > puterea aprobată (ATR) 25 kW — Pc din ks e informativ; Ib ge', 'V43: circuitul VE (DDR10, DDR tip B) e în aval de RCCB BMPT 300 mA tip AC — un curent de d']
+===== L05 casa parter, plita 7kw, cuptor 3,5 kw, boiler 2 kw, AC 2.5kw, P aprobat 10 kW
+ act: genereaza_cu_intrebare | tip: locuinta | retea: None | refuz: [None, None]
+ alim: {'P_aprobata_kW': 10} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Plită', 7, None, None), ('Cuptor', 3.5, None, None), ('Boiler', 2, None, None), ('Aer condiționat', 2.5, None, None)]
+ Q?: ['Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”.']
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Ilumina', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloana BMPT → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {}
+ BLOC: ['V07: rețeaua nu este specificată (monofazat sau trifazat)'] 
+ AV: []
+===== L06 tablou locuinta casa veche, schema TT, priza de pamant proprie RA 30 ohm, mono 230V, 6 kW
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 6} | SP: TT 30 | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloana BMPM → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TT (priză de pământ proprie): RA = 30 Ω, verificare RA·IΔn ≤ 50']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 2×6\xa0mm²', 15.0, 32, 1.47), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 27.45995423340961, 'P_aprobata_kW': 6}, 'schema_pamant': 'TT'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Q branșament presupus 32 A (nedeclarat) — Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 6 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 27,46 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== L07 casa la tara fara PEN, TT, Rp 80 ohmi, monofazat, putere 4 kw, coloana 40 m
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 4, 'L_coloana_m': 40} | SP: TT 80 | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TT (priză de pământ proprie): RA = 80 Ω, verificare RA·IΔn ≤ 50']
+ M: {'bloc': 'BMPM-20', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 20, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 20.0, 'coloana': ('CYABY 2×10\xa0mm²', 40.0, 20, 1.46), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 18.30663615560641, 'P_aprobata_kW': 4}, 'schema_pamant': 'TT'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Q branșament presupus 20 A (nedeclarat) — Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 22,6 A (In 20 A) — Q-ul de branșament declanșează la sarcina de ca', 'V40: MCB C32 In 32 A > In Q branșament 20 A — aparatul nu poate fi selectiv, iar Q branșament declanșează înaintea lui'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 4 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 20 A (calibrul standard ≥ Ib 18,31 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== L08 Casa P+M trifazata 3x400V, Paprobat 20kW, sauna 9 kW, pompa caldura 8 kW, VE 11kW, coloana cca 30 m Al
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 20, 'L_coloana_m': 30, 'cablu': {'material': 'Al'}} | SP: None None | ks None
+ circ: [('Iluminat parter', None, None, None), ('Iluminat etaj', None, None, None), ('Iluminat exterior', None, None, None), ('Prize parter', None, None, None), ('Prize etaj', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie parter', None, None, None), ('Prize baie etaj', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Mașină de spălat vase', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Saună', 9, None, '3F'), ('Încărcare VE', 11, None, '3F')]
+ Q?: []
+ pres: ['„cca 30 m” = 30 m, aproximativ', 'set tipic pentru casă P+1 + receptorii listați (Saună, Încărcare VE) =', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'Saună 9 kW > 7,4 kW → circuit trifazat (3F)', 'Încărcare VE 11 kW > 7,4 kW → circuit trifazat (3F)', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 32, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('ACYABY 4×16\xa0mm² + FY 1×10\xa0mm² (PE)', 30.0, 32, 0.92), 'bilant': {'Pi_kW': 51.1, 'Pc_kW': 30.884999999999998, 'ks': 0.35, 'Ib_A': 30.3868562731382, 'P_aprobata_kW': 20}, 'schema_pamant': 'TN-C-S'}
+     Iluminat parter[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Iluminat etaj[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Prize parter[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.0 DDR30A
+     Prize etaj[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Boiler[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.9 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.5 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.2 DDR30A
+     Cuptor[L3] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Mașină de spălat vase[L3] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Prize baie parter[L2] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.9 DDR30A
+     Prize baie etaj[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.9 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.2 DDR30A
+     Saună[3F] 9.0kW RCBO C16 CYY-F 5×2,5 mm² L15.0 dU1.7 DDR30A
+     Încărcare VE[3F] 11.0kW MCB C20 CYY-F 5×4 mm² L25.0 dU1.9 DDR30B
+ BLOC: ['V46: Q branșament presupus 32 A (nedeclarat) — Ib de calcul pe L1 45,64 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 30,88 kW > puterea aprobată (ATR) 20 kW — Pc din ks e informativ; Ib ge', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 30,39 A din ', 'V43: circuitul VE (DDR11, DDR tip B) e în aval de RCCB BMPT 300 mA tip AC — un curent de d']
+===== L09 garsoniera, 3 kW, monofazic, coloana 8 m
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 3, 'L_coloana_m': 8} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize camere', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru apartament: Iluminat, Pr', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-16', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 16, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 16.0, 'coloana': ('CYABY 3×6\xa0mm²', 8.0, 16, 0.39), 'bilant': {'Pi_kW': 9.2, 'Pc_kW': 5.52, 'ks': 0.6, 'Ib_A': 13.729977116704806, 'P_aprobata_kW': 3}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU0.9 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU1.7 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.5 DDR30A
+     Prize bucătărie[L1] 2.5kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.4 DDR30A
+ BLOC: ['V46: Q branșament presupus 16 A (nedeclarat) — Ib de calcul pe L1 26,03 A > 1,13·In Q branșament = 18,08 A (In 16 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 5,52 kW > puterea aprobată (ATR) 3 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 16 A (calibrul standard ≥ Ib 13,73 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR4 30 mA instant']
+===== L10 casa P+1, mono, 2 boilere de 2kW, 3 aparate AC 1,2 kW, plita 6 kW, aprobat 9 kW
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 9} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Boiler 1', 2, None, None), ('Boiler 2', 2, None, None), ('Aer condiționat', 1.2, None, None), ('Plită', 6, None, None)]
+ Q?: []
+ pres: ['„2 boilere de 2kW” = 2 circuite separate (Boiler 1…2)', 'receptorii listați + circuitele de bază ale oricărei locuințe (Ilumina', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloana BMPM → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-40', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 40, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 40.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 40, 1.84), 'bilant': {'Pi_kW': 18.2, 'Pc_kW': 7.28, 'ks': 0.4, 'Ib_A': 41.18993135011441, 'P_aprobata_kW': 9}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.4 DDR30A
+     Prize[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.2 DDR30A
+     Boiler 1[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Boiler 2[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Aer condiționat[L1] 1.2kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.1 DDR30A
+     Plită[L1] 6.0kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.1 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+ BLOC: ['V46: Q branșament nedeclarat — Ib 41,19 A cere un Q peste limita blocului BMPM (40 A)'] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 40 A (calibrul standard ≥ Ib 41,19 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR4 30 mA instant']
+===== L11 casa parter monofazat 7 kw, 25A in BMPM, cablu 20m pana la tablou
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 7, 'In_Q_bransament_A': 25, 'L_coloana_m': 20} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'alimentare din branșament existent (implicit)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-25', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 25, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 25.0, 'coloana': ('CYABY 3×6\xa0mm²', 20.0, 25, 1.53), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 32.036613272311214, 'P_aprobata_kW': 7}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.1 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.1 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.9 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.9 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.3 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.8 DDR30A
+ BLOC: ['V46: Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 28,25 A (In 25 A) — Q-ul de branșament declanșează la sarcina de calcul', 'V46: puterea aprobată 7 kW → Ib 32,04 A > 1,13·In Q branșament = 28,25 A — datele ATR (P aprobată / Q) sunt incoerente', 'V40: MCB C32 In 32 A > In Q branșament 25 A — aparatul nu poate fi selectiv, iar Q branșament declanșează înaintea lui'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 7 kW — Pc din ks e informativ; Ib gene', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== L12 casa trifazata 16 kW cu incalzire in pardoseala electrica 6 kW si boiler 3 kW, coloana 18m, intrerupator general 32A
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 16, 'In_Q_bransament_A': 32, 'L_coloana_m': 18} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', 3, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Încălzire electrică', 6, None, None)]
+ Q?: []
+ pres: ['„si” = „și” (fără diacritice)', 'set tipic pentru casă parter + receptorii listați (Încălzire electrică', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'alimentare din branșament existent (implicit)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 32, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 5×6\xa0mm²', 18.0, 32, 0.88), 'bilant': {'Pi_kW': 33.4, 'Pc_kW': 15.589999999999998, 'ks': 0.35, 'Ib_A': 24.30948501851056, 'P_aprobata_kW': 16}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.4 DDR30A
+     Iluminat exterior[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.4 DDR30A
+     Prize camere[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.2 DDR30A
+     Prize living[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.2 DDR30A
+     Mașină de spălat rufe[L2] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Boiler[L1] 3.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.4 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.0 DDR30A
+     Încălzire electrică[L1] 6.0kW MCB C32 CYY-F 3×6 mm² L20.0 dU2.6 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.5 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Cuptor[L3] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.9 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.1 DDR30A
+ BLOC: ['V46: Ib de calcul pe L1 34,78 A > In Q branșament 32 A, iar faza alimentează sarcini continue (26,09 A: VE / pompă de căldură / saună / încălzire) — curentul rămâne '] 
+ AV: []
+===== L13 casa P+1 tri 11kW, hidrofor 1,5 kW 30m, poarta automata 0.5 kW 25 m, iluminat exterior 40 m
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 11} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Pompă apă', 1.5, 30, None), ('Poartă automată', 0.5, 25, None), ('Iluminat exterior', None, 40, None)]
+ Q?: []
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Ilumina', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloana BMPT → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 20, 'Icn_kA': 6}, 'Ib_alim': 16.71277095022601, 'coloana': ('CYABY 5×6\xa0mm²', 15.0, 20, 0.38), 'bilant': {'Pi_kW': 9.5, 'Pc_kW': 3.8000000000000003, 'ks': 0.4, 'Ib_A': 16.71277095022601, 'P_aprobata_kW': 11}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU0.9 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L40.0 dU1.5 DDR30A
+     Prize[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L20.0 dU1.7 DDR30A
+     Prize bucătărie[L1] 2.5kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.4 DDR30A
+     Pompă apă[L2] 1.5kW MCB C16 CYY-F 3×2,5 mm² L30.0 dU1.9 DDR30A
+     Poartă automată[L2] 0.5kW MCB C10 CYY-F 3×1,5 mm² L25.0 dU1.1 DDR30A
+ BLOC: [] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 20 A (calibrul standard ≥ Ib 16,71 A din ']
+===== L14 apartament 2 camere, aprox 6 kw, plita inductie 7.4 kW, mono
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 6} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize camere', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Plită', 7.4, None, None)]
+ Q?: []
+ pres: ['„aprox 6 kw” = 6 kW, aproximativ', 'set tipic pentru apartament + receptorii listați (Plită) = 6 circuite ', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloana BMPM → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 30.22222222222222, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 32, 1.39), 'bilant': {'Pi_kW': 16.6, 'Pc_kW': 6.640000000000001, 'ks': 0.4, 'Ib_A': 27.45995423340961, 'P_aprobata_kW': 6}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.9 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.7 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.4kW MCB C40 CYY-F 3×10 mm² L15.0 dU2.3 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.4 DDR30A
+ BLOC: ['V40: MCB C40 In 40 A > In Q branșament 32 A — aparatul nu poate fi selectiv, iar Q branșament declanșează înaintea lui'] 
+ AV: ['V46: Pc din bilanț 6,64 kW > puterea aprobată (ATR) 6 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 27,46 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR4 30 mA instant']
+===== L15 casa monofazata cu pompa de caldura trifazata 10 kW
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Pompă de căldură', 10, None, '3F')]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Pompă de căldură) =', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'Pompă de căldură 10 kW > 7,4 kW → circuit trifazat (3F)', 'alimentare din branșament existent (implicit)', 'putere aprobată nedeclarată — se completează din ATR / certificatul de', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloana BMPT → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 32, 'Icn_kA': 6}, 'Ib_alim': 29.34702357764293, 'coloana': ('CYABY 5×6\xa0mm²', 15.0, 32, 0.67), 'bilant': {'Pi_kW': 36.4, 'Pc_kW': 19.24, 'ks': 0.35, 'Ib_A': 29.232155734758948, 'P_aprobata_kW': None}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Pompă de căldură[3F] 10.0kW MCB C16 CYY-F 5×2,5 mm² L20.0 dU1.8 DDR30A
+     Prize camere[L3] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Prize living[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Boiler[L3] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Centrală termică[L3] 0.2kW RCBO C10 CYY-F 3×1,5 mm² L10.0 dU0.8 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.3 DDR30A
+     Prize bucătărie[L2] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.9 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.4 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU1.9 DDR30A
+ BLOC: [] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 29,35 A); se', 'V46: puterea aprobată (ATR) nedeclarată — presupusă din bilanț, Pc 19,24 kW (Ib 29,23 A); ']
+===== L16 BMPM 32A existent, casa parter, tablou cu iluminat, prize, plita, boiler, 7kW aprobat, coloana 10 m
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'tip': 'bransament_existent', 'P_aprobata_kW': 7, 'In_Q_bransament_A': 32, 'L_coloana_m': 10} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Plită', None, None, None), ('Boiler', None, None, None)]
+ Q?: []
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Prize b', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 3×6\xa0mm²', 10.0, 32, 0.98), 'bilant': {'Pi_kW': 16.2, 'Pc_kW': 6.48, 'ks': 0.4, 'Ib_A': 32.036613272311214, 'P_aprobata_kW': 7}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Prize[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.2 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU2.5 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+ BLOC: [] 
+ AV: ['V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR4 30 mA instant']
+===== L17 bransament trifazat BMPTd 25 kW casa, coloana 35 m
+ act: genereaza | tip: bransament | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   L_coloana_m 35
+   P_kW 25
+ Q?: []
+ pres: ['cablul descris („35 m” = 35 m) = coloana C2 dintre BMPT și tabloul con', 'cosφ 0,9', 'coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al ', 'schema TN-C-S, separare PEN în BMPT', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPTd-100', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 50, 'Icn_kA': 6}, 'Ib_alim': 40.09376869372401, 'RCCB': {'poli': 4, 'In_A': 63, 'IdN_mA': 300, 'tip': 'AC', 'selectiv': True, 'aparat': 'RCCB'}, 'coloana': ('ACYABY 4×25\xa0mm² + FY 1×10\xa0mm² (PE)', 35.0, 50, 0.81), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L18 bransament monofazat nou BMPM 7 kW, L=20m
+ act: genereaza | tip: bransament | retea: mono | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   L_coloana_m 20
+   P_kW 7
+ Q?: []
+ pres: ['cablul descris („20m” = 20 m) = coloana C2 dintre BMPT și tabloul cons', 'cosφ 0,9', 'coloană Cu PVC (monofazat — secțiuni mici), metoda D1 (în tub în pămân', 'schema TN-C-S, separare PEN în BMPM', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPM-40', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 40, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 33.81642512077295, 'RCCB': None, 'coloana': ('CYABY 3×6\xa0mm²', 20.0, 40, 1.97), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L19 bransament 11 kW, coloana 30 m, firida pe zid
+ act: genereaza | tip: bransament | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   L_coloana_m 30
+   P_kW 11
+ Q?: []
+ pres: ['cablul descris („30 m” = 30 m) = coloana C2 dintre BMPT și tabloul con', 'rețea nedeclarată, dar 11 kW nu încape în monofazat (BMPM max. 40 A) →', 'cosφ 0,9', 'coloană Al PVC metoda C (aparent pe perete), cu trecere pe Cu dacă Al ', 'schema TN-C-S, separare PEN în BMPT', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 20, 'Icn_kA': 6}, 'Ib_alim': 17.641258225238566, 'RCCB': {'poli': 4, 'In_A': 25, 'IdN_mA': 300, 'tip': 'AC', 'selectiv': True, 'aparat': 'RCCB'}, 'coloana': ('CYY-F 5×4\xa0mm²', 30.0, 20, 1.15), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L20 bmpm 15 kw casa
+ act: refuza | tip: bransament | retea: mono | refuz: ['I09', 'Ib = 72,5 A > 40 A (BMPM, ST 3-JT) — V53.']
+ alim: None | SP: None None | ks None
+   P_kW 15
+ Q?: ['Generez branșament trifazat (BMPTd-40, Ib = 24,1 A)?']
+ pres: []
+ BLOC: None 
+ AV: []
+===== L21 BMPT 63A, trifazat, coloana 50m Al in tub
+ act: genereaza | tip: bransament | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   Ib_A 63
+   L_coloana_m 50
+ Q?: []
+ pres: ['63 A interpretat ca Ib (curent maxim absorbit); cosφ 0,9 folosit doar ', 'cablul descris („50m” = 50 m) = coloana C2 dintre BMPT și tabloul cons', 'cosφ 0,9', 'coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al ', 'schema TN-C-S, separare PEN în BMPT', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPTd-100', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 63, 'Icn_kA': 6}, 'Ib_alim': 63.0, 'RCCB': {'poli': 4, 'In_A': 63, 'IdN_mA': 300, 'tip': 'AC', 'selectiv': True, 'aparat': 'RCCB'}, 'coloana': ('ACYABY 4×25\xa0mm² + FY 1×10\xa0mm² (PE)', 50.0, 63, 1.82), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L22 bransament tri existent marire putere de la 10 la 20 kW, coloana 22 m
+ act: genereaza | tip: bransament | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   L_coloana_m 22
+   P_kW 20
+ Q?: []
+ pres: ['cablul descris („22 m” = 22 m) = coloana C2 dintre BMPT și tabloul con', 'cosφ 0,9', 'coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al ', 'schema TN-C-S, separare PEN în BMPT', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 40, 'Icn_kA': 6}, 'Ib_alim': 32.07501495497921, 'RCCB': {'poli': 4, 'In_A': 40, 'IdN_mA': 300, 'tip': 'AC', 'selectiv': True, 'aparat': 'RCCB'}, 'coloana': ('CYABY 5×10\xa0mm²', 22.0, 40, 0.61), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L23 BMPTi semidirect 150 A trifazat pentru vila mare, coloana 60m
+ act: genereaza | tip: bransament | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   Ib_A 150
+   L_coloana_m 60
+   masura_ceruta semidirecta
+ Q?: []
+ pres: ['150 A interpretat ca Ib (curent maxim absorbit); cosφ 0,9 folosit doar', 'cablul descris („60m” = 60 m) = coloana C2 dintre BMPT și tabloul cons', 'cosφ 0,9', 'coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al ', 'schema TN-C-S, separare PEN în BMPT', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPTi-250', 'Q': {'tip': 'MCCB', 'In_A': 160, 'Ir_multiplu': 0.95, 'Ir_A': 152.0, 'Icu_kA_min': 6, 'Icu_kA': 25, 'decl': 'TM', 'Im_A': 1600.0}, 'Ib_alim': 150.0, 'RCCB': {'poli': 4, 'In_A': 160, 'IdN_mA': 300, 'tip': 'AC', 'selectiv': True, 'aparat': 'bloc_diferential', 'asociat': 'Q'}, 'coloana': ('ACYABY 4×150\xa0mm² + FY 1×50\xa0mm² (PE)', 60.0, 160, 1.0), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L24 BMPTd 100A casa cu 3 apartamente, coloana 25 m
+ act: genereaza | tip: bransament | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   Ib_A 100
+   L_coloana_m 25
+ Q?: []
+ pres: ['100 A interpretat ca Ib (curent maxim absorbit); cosφ 0,9 folosit doar', 'cablul descris („25 m” = 25 m) = coloana C2 dintre BMPT și tabloul con', 'cosφ 0,9', 'coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al ', 'schema TN-C-S, separare PEN în BMPT', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPTd-100', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 100, 'Icn_kA': 6}, 'Ib_alim': 100.0, 'RCCB': {'poli': 4, 'In_A': 100, 'IdN_mA': 300, 'tip': 'AC', 'selectiv': True, 'aparat': 'RCCB'}, 'coloana': ('ACYABY 4×70\xa0mm² + FY 1×25\xa0mm² (PE)', 25.0, 100, 0.56), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L25 bransament monofazat 63A
+ act: refuza | tip: bransament | retea: mono | refuz: ['I09', 'Ib = 63 A > 40 A (BMPM, ST 3-JT) — V53.']
+ alim: None | SP: None None | ks None
+   Ib_A 63
+ Q?: ['Generez branșament trifazat (BMPTd-40, Ib = 20,9 A)?']
+ pres: []
+ BLOC: None 
+ AV: []
+===== L26 prosumator casa 5 kW invertor monofazat, bransament mono 7 kW, L=15m
+ act: genereaza | tip: bransament | retea: mono | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   L_coloana_m 15
+   P_kW 5
+ Q?: []
+ pres: ['cablul descris („15m” = 15 m) = coloana C2 dintre BMPT și tabloul cons', 'cosφ 0,9', 'coloană Cu PVC (monofazat — secțiuni mici), metoda D1 (în tub în pămân', 'schema TN-C-S, separare PEN în BMPM', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPM-25', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 25, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 24.154589371980677, 'RCCB': None, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 25, 1.06), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L27 prosumator 10 kWp, invertor hibrid 10 kW trifazat, baterie 10 kWh, P aprobata 15 kW, coloana 20m
+ act: genereaza | tip: prosumator | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+ Q?: []
+ pres: ['„invertor hibrid 10 kW” = 1 invertor de 10 kW', 'Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)', 'invertor la 15 m de tabloul consumatorului, Cu PVC metoda C', 'DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenț', 'PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); co', 'baterie cuplată în c.c. la invertorul hibrid (fără PCS separat)']
+ M: {'INV': ('CYY-F 5×2,5\xa0mm²', 15.0, {'tip': 'MCB', 'In_A': 20, 'curba': 'C', 'Icu_kA': 25}, {'IdN_mA': 30, 'tip': 'A', 'In_A': 25, 'poli': '4P', 'aparat': 'RCCB'}, 0.91), 'Iac': 15.87713240271471, 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V73: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți']
+===== L28 prosumator pe casa, 8 kW, cablu 25 m pana la BMPT
+ act: genereaza | tip: bransament | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   L_coloana_m 25
+   P_kW 8
+ Q?: []
+ pres: ['cablul descris („25 m” = 25 m) = coloana C2 dintre BMPT și tabloul con', 'cosφ 0,9', 'coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al ', 'schema TN-C-S, separare PEN în BMPT', 'limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea']
+ M: {'bloc': 'BMPTd-16', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 16, 'Icn_kA': 6}, 'Ib_alim': 12.830005981991683, 'RCCB': {'poli': 4, 'In_A': 16, 'IdN_mA': 300, 'tip': 'AC', 'selectiv': True, 'aparat': 'RCCB'}, 'coloana': ('CYABY 5×6\xa0mm²', 25.0, 16, 0.47), 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: []
+===== L29 prosumator 6kw hibrid cu acumulator 5 kWh, 230 V, aprobat 6 kw
+ act: genereaza | tip: prosumator | retea: mono | refuz: [None, None]
+ alim: None | SP: None None | ks None
+ Q?: []
+ pres: ['Iac,max = 1,1·Pn/230 (fișa invertorului lipsește)', 'invertor la 15 m de tabloul consumatorului, Cu PVC metoda C', 'DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenț', 'PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); co', 'baterie cuplată în c.c. la invertorul hibrid (fără PCS separat)']
+ M: {'INV': ('CYY-F 3×6\xa0mm²', 15.0, {'tip': 'MCB', 'In_A': 40, 'curba': 'C', 'Icu_kA': 25}, {'IdN_mA': 30, 'tip': 'A', 'In_A': 40, 'poli': '2P', 'aparat': 'RCCB'}, 1.38), 'Iac': 28.695652173913047, 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V71: invertor monofazat 6 kW > 3,68 kW — verifică cerința OD privind dezechilibrul', 'V21: ΔU cumulat 1,38 % > 1 %', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR INV 30 mA instantan', 'V73: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți']
+===== L30 panouri pe casa 3 kWp, invertor 3 kW mono
+ act: genereaza | tip: cef | retea: None | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   invertoare [{'n': 1, 'Pn_kW': 3}]
+ Q?: []
+ pres: ['„invertor 3 kW” = 1 invertor de 3 kW', 'Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)', 'cablu invertor Al PVC D1, L = 30 m', 'racord JT prin BMPT (S = 3,3 kVA ≤ 173 kVA)', 'categoria A RfG (3 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR']
+ M: {'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V42: selectivitate parțială până la 0,13 kA (Ik3max 25 kA) — confirmă cu tabelele producăt']
+===== L31 casa P+1 tri 15 kW + fotovoltaic 10 kW pe acoperis
+ act: genereaza | tip: cef | retea: None | refuz: [None, None]
+ alim: None | SP: None None | ks None
+   invertoare [{'n': 1, 'Pn_kW': 15}]
+ Q?: []
+ pres: ['15 kW = putere c.a. totală → 1 × 15 kW', 'invertoare pe acoperiș → cablurile c.a. pozate pe pat de cabluri / în ', 'kWp nedeclarat (raport c.c./c.a. necalculat)', 'Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)', 'cablu invertor Al PVC D1, L = 30 m', 'racord JT prin BMPT (S = 16,5 kVA ≤ 173 kVA)', 'categoria A RfG (15 kW < 1 MW); PI conform Ord. ANRE 208/2018 și ATR']
+ M: {'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V21: ΔU cumulat 1,71 % > 1 %', 'V41: amonte = aval = 32 A — fără selectivitate']
+===== L32 prosumator 15 kW trifazic hibrid, baterie 15kWh/7,5kW, Paprobat 15kW, coloana 35 m, beneficiar Pop Ion, Santandrei jud Bihor
+ act: genereaza | tip: prosumator | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+ Q?: []
+ pres: ['Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)', 'invertor la 15 m de tabloul consumatorului, Cu PVC metoda C', 'DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenț', 'PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); co', 'baterie cuplată în c.c. la invertorul hibrid (fără PCS separat)', 'localitatea „Santandrei” se preia așa cum a fost scrisă (fără diacriti']
+ M: {'INV': ('CYY-F 5×4\xa0mm²', 15.0, {'tip': 'MCB', 'In_A': 32, 'curba': 'C', 'Icu_kA': 25}, {'IdN_mA': 30, 'tip': 'A', 'In_A': 40, 'poli': '4P', 'aparat': 'RCCB'}, 0.85), 'Iac': 23.815698604072065, 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V73: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți']
+===== L33 prosumator 2 invertoare de 5 kW, tri, P evacuata 10 kW, coloana 18m
+ act: genereaza | tip: prosumator | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+ Q?: []
+ pres: ['Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)', 'invertor la 15 m de tabloul consumatorului, Cu PVC metoda C', 'DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenț', 'PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); co']
+ M: {'INV': ('CYY-F 5×2,5\xa0mm²', 15.0, {'tip': 'MCB', 'In_A': 20, 'curba': 'C', 'Icu_kA': 25}, {'IdN_mA': 30, 'tip': 'A', 'In_A': 25, 'poli': '4P', 'aparat': 'RCCB'}, 0.91), 'Iac': 15.87713240271471, 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V73: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți']
+===== L34 prosumator mono 8 kw invertor
+ act: genereaza | tip: prosumator | retea: mono | refuz: [None, None]
+ alim: None | SP: None None | ks None
+ Q?: []
+ pres: ['Iac,max = 1,1·Pn/230 (fișa invertorului lipsește)', 'invertor la 15 m de tabloul consumatorului, Cu PVC metoda C', 'DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenț', 'PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); co']
+ M: {'INV': ('CYY-F 3×10\xa0mm²', 15.0, {'tip': 'MCB', 'In_A': 50, 'curba': 'C', 'Icu_kA': 25}, {'IdN_mA': 30, 'tip': 'A', 'In_A': 63, 'poli': '2P', 'aparat': 'RCCB'}, 1.09), 'Iac': 38.26086956521739, 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V71: invertor monofazat 8 kW > 3,68 kW — verifică cerința OD privind dezechilibrul', 'V21: ΔU cumulat 1,09 % > 1 %', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR INV 30 mA instantan', 'V73: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți']
+===== L35 casa P+1, TN-C-S, tri 400 V, 12 kw, 20 m coloana, plita 7,5kW, cuptor 3kW, 2 bai cu boiler 2 kW fiecare
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 12, 'L_coloana_m': 20} | SP: TN-C-S None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Plită', 7.5, None, '3F'), ('Cuptor', 3, None, None), ('Boiler', 2, None, None)]
+ Q?: []
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Ilumina', 'Plită 7,5 kW > 7,4 kW → circuit trifazat (3F)', '„20 m” = lungimea coloanei BMP → tabloul locuinței', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 20, 'Icn_kA': 6}, 'Ib_alim': 18.23211376388292, 'coloana': ('CYABY 5×6\xa0mm²', 20.0, 20, 0.56), 'bilant': {'Pi_kW': 19.5, 'Pc_kW': 7.800000000000001, 'ks': 0.4, 'Ib_A': 18.23211376388292, 'P_aprobata_kW': 12}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.1 DDR30A
+     Prize[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU1.9 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.2 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Cuptor[L2] 3.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+ BLOC: [] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 20 A (calibrul standard ≥ Ib 18,23 A din ']
+===== L36 casa parter mono 6 kw, coloana 0,03 km
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 6, 'L_coloana_m': 30} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 3×16\xa0mm²', 30.0, 32, 1.11), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 27.45995423340961, 'P_aprobata_kW': 6}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.7 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.7 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.5 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.5 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.2 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.2 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.4 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU2.6 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.9 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.4 DDR30A
+ BLOC: ['V46: Q branșament presupus 32 A (nedeclarat) — Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 6 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 27,46 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== L37 Casa P+1 trifazat 22 kVA, coloana 30m
+ act: genereaza_cu_intrebare | tip: pt | retea: None | refuz: [None, None]
+ alim: None | SP: None None | ks None
+ Q?: ['Confirmați 100 kVA?', 'Care sunt plecările din TGJT (kW sau A)?']
+ pres: ['la PT, o lungime generală se aplică tuturor plecărilor („30m” = 30 m)', '22 kVA nu e putere standard în norme.TRAFO → 100 kVA (următoarea)', 'trafo ulei 20/0,4 kV Dyn5, uk 4 %, Pk 1250 W (Tier 2)', 'celulă trafo cu separator de sarcină + siguranțe MT 6,3 A (orientativ,', 'S"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)']
+ M: {'schema_pamant': 'TN-S'}
+ BLOC: ['V07: TGJT fără nicio plecare — nu există ce dimensiona'] 
+ AV: []
+===== L38 casa mono 32 A, coloana 15m, plita 7kW
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'In_Q_bransament_A': 32, 'L_coloana_m': 15} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', 7, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Plită) = 12 circuit', 'alimentare din branșament existent (implicit)', 'putere aprobată nedeclarată — se completează din ATR / certificatul de', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 32, 1.47), 'bilant': {'Pi_kW': 25.9, 'Pc_kW': 9.065, 'ks': 0.35, 'Ib_A': 41.48741418764302, 'P_aprobata_kW': None}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.0kW MCB C32 CYY-F 3×6 mm² L15.0 dU2.9 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Ib de calcul pe L1 41,31 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de calcul'] 
+ AV: ['V46: puterea aprobată (ATR) nedeclarată — presupusă din bilanț, Pc 9,06 kW (Ib 41,49 A); s', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== L39 casa parter, monofazat, 7kW, coloana 15 m, ks 0.6
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 7, 'L_coloana_m': 15} | SP: None None | ks 0.6
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-40', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 40, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 40.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 40, 1.84), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 15.66, 'ks': 0.6, 'Ib_A': 32.036613272311214, 'P_aprobata_kW': 7}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.4 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.4 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.2 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.2 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.9 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.9 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.1 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.3 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.6 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU3.1 DDR30A
+ BLOC: ['V46: Q branșament presupus 40 A (nedeclarat) — Ib de calcul pe L1 71,33 A > 1,13·In Q branșament = 45,2 A (In 40 A) — Q-ul de branșament declanșează la sarcina de ca'] 
+ AV: ['V46: Pc din bilanț 15,66 kW > puterea aprobată (ATR) 7 kW — Pc din ks e informativ; Ib gen', 'V46: Q branșament existent nedeclarat — presupus 40 A (calibrul standard ≥ Ib 32,04 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== L40 casa P+1 tri 20kW, 3 circuite prize de 16A, 2 circuite iluminat, plita 7 kW, cuptor, mas spalat vase, msr, uscator
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 20} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Plită', 7, None, None), ('Cuptor', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Uscător', None, None, None)]
+ Q?: []
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Prize b', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloana BMPT → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 32, 'Icn_kA': 6}, 'Ib_alim': 30.3868562731382, 'coloana': ('CYABY 5×6\xa0mm²', 15.0, 32, 0.7), 'bilant': {'Pi_kW': 22.2, 'Pc_kW': 8.88, 'ks': 0.4, 'Ib_A': 30.3868562731382, 'P_aprobata_kW': 20}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Prize[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Uscător[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Plită[3F] 7.0kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.3 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Cuptor[L2] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+ BLOC: [] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 30,39 A din ']
+===== L41 apartament nou bloc, coloana din firida de palier 30 m, 5 kW, monofazat, plita electrica 7 kw si cuptor 2,5 kw
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 5, 'L_coloana_m': 30} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize camere', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Plită', 7, None, None), ('Cuptor', 2.5, None, None)]
+ Q?: []
+ pres: ['„si” = „și” (fără diacritice)', 'set tipic pentru apartament + receptorii listați (Plită, Cuptor) = 7 c', '„30 m” = lungimea coloanei BMP → tabloul locuinței', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-25', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 25, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 25.0, 'coloana': ('CYABY 3×6\xa0mm²', 30.0, 25, 2.3), 'bilant': {'Pi_kW': 18.7, 'Pc_kW': 7.48, 'ks': 0.4, 'Ib_A': 22.88329519450801, 'P_aprobata_kW': 5}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.8 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.6 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.4 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.6 DDR30A
+     Plită[L1] 7.0kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.8 DDR30A
+     Cuptor[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.6 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU3.3 DDR30A
+ BLOC: ['V46: Q branșament presupus 25 A (nedeclarat) — Ib de calcul pe L1 33,87 A > 1,13·In Q branșament = 28,25 A (In 25 A) — Q-ul de branșament declanșează la sarcina de c', 'V40: MCB C32 In 32 A > In Q branșament 25 A — aparatul nu poate fi selectiv, iar Q branșament declanșează înaintea lui'] 
+ AV: ['V46: Pc din bilanț 7,48 kW > puterea aprobată (ATR) 5 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,88 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR4 30 mA instant']
+===== L42 casa tri, 15 kW, statie incarcare VE 7,4 kW monofazata, coloana 25 m
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 15, 'L_coloana_m': 25} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Încărcare VE', 7.4, None, None)]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Încărcare VE) = 13 ', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 25, 'Icn_kA': 6}, 'Ib_alim': 25.0, 'coloana': ('CYABY 5×6\xa0mm²', 25.0, 25, 0.95), 'bilant': {'Pi_kW': 33.8, 'Pc_kW': 16.64, 'ks': 0.35, 'Ib_A': 22.79014220485365, 'P_aprobata_kW': 15}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Iluminat exterior[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.1 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.6 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.2 DDR30A
+     Cuptor[L2] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.2 DDR30A
+     Încărcare VE[3F] 7.4kW MCB C20 CYY-F 5×4 mm² L25.0 dU1.6 DDR30B
+ BLOC: ['V46: Q branșament presupus 25 A (nedeclarat) — Ib de calcul pe L1 27,96 A > In Q branșament 25 A, iar faza alimentează sarcini continue (10,68 A: VE / pompă de căldu'] 
+ AV: ['V46: Pc din bilanț 16,64 kW > puterea aprobată (ATR) 15 kW — Pc din ks e informativ; Ib ge', 'V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,79 A din ', 'V43: circuitul VE (DDR7, DDR tip B) e în aval de RCCB BMPT 300 mA tip AC — un curent de de']
+===== L43 casa P+1 15kw trifazat, coloana 25m, sauna 6 kW pe 3F
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 15, 'L_coloana_m': 25} | SP: None None | ks None
+ circ: [('Iluminat parter', None, None, None), ('Iluminat etaj', None, None, None), ('Iluminat exterior', None, None, None), ('Prize parter', None, None, None), ('Prize etaj', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie parter', None, None, None), ('Prize baie etaj', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Mașină de spălat vase', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Saună', 6, None, '3F')]
+ Q?: []
+ pres: ['set tipic pentru casă P+1 + receptorii listați (Saună) = 16 circuite —', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'Saună 6 kW > 7,4 kW → circuit trifazat (3F)', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 25, 'Icn_kA': 6}, 'Ib_alim': 25.0, 'coloana': ('CYABY 5×6\xa0mm²', 25.0, 25, 0.95), 'bilant': {'Pi_kW': 37.1, 'Pc_kW': 16.884999999999998, 'ks': 0.35, 'Ib_A': 22.79014220485365, 'P_aprobata_kW': 15}, 'schema_pamant': 'TN-C-S'}
+     Iluminat parter[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Iluminat etaj[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.5 DDR30A
+     Prize parter[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.1 DDR30A
+     Prize etaj[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.3 DDR30A
+     Boiler[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.6 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.2 DDR30A
+     Cuptor[L3] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Mașină de spălat vase[L3] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.1 DDR30A
+     Prize baie parter[L2] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Prize baie etaj[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.2 DDR30A
+     Saună[3F] 6.0kW RCBO C16 CYY-F 5×2,5 mm² L15.0 dU1.5 DDR30A
+ BLOC: ['V46: Q branșament presupus 25 A (nedeclarat) — Ib de calcul pe L1 25,43 A > In Q branșament 25 A, iar faza alimentează sarcini continue (8,66 A: VE / pompă de căldur'] 
+ AV: ['V46: Pc din bilanț 16,88 kW > puterea aprobată (ATR) 15 kW — Pc din ks e informativ; Ib ge', 'V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,79 A din ']
+===== L44 casa mono 9 kw, coloana 15m cupru, plita 7 kw, boiler 2 kw, clima 2.6 kw, uscator 2.5 kw
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 9, 'L_coloana_m': 15, 'cablu': {'material': 'Cu'}} | SP: None None | ks None
+ circ: [('Iluminat', None, None, None), ('Prize', None, None, None), ('Prize bucătărie', None, None, None), ('Prize baie', None, None, None), ('Plită', 7, None, None), ('Boiler', 2, None, None), ('Aer condiționat', 2.6, None, None), ('Uscător', 2.5, None, None)]
+ Q?: []
+ pres: ['receptorii listați + circuitele de bază ale oricărei locuințe (Ilumina', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-40', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 40, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 40.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 40, 1.84), 'bilant': {'Pi_kW': 21.1, 'Pc_kW': 8.440000000000001, 'ks': 0.4, 'Ib_A': 41.18993135011441, 'P_aprobata_kW': 9}, 'schema_pamant': 'TN-C-S'}
+     Iluminat[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.4 DDR30A
+     Prize[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.2 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Aer condiționat[L1] 2.6kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.6 DDR30A
+     Uscător[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.1 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.1 DDR30A
+     Plită[L1] 7.0kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.3 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+ BLOC: ['V46: Q branșament nedeclarat — Ib 41,19 A cere un Q peste limita blocului BMPM (40 A)'] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 40 A (calibrul standard ≥ Ib 41,19 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR4 30 mA instant']
+===== L45 Casa parter, trifazat, putere aprobata 15kW, Q 25A, coloana 20 m, TT RA 20 Ω
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 15, 'In_Q_bransament_A': 25, 'L_coloana_m': 20} | SP: TT 20 | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'alimentare din branșament existent (implicit)', 'coloană și circuite Cu', 'schema TT (priză de pământ proprie): RA = 20 Ω, verificare RA·IΔn ≤ 50']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 25, 'Icn_kA': 6}, 'Ib_alim': 22.79014220485365, 'coloana': ('CYABY 4×6\xa0mm²', 20.0, 25, 0.7), 'bilant': {'Pi_kW': 26.4, 'Pc_kW': 9.239999999999998, 'ks': 0.35, 'Ib_A': 22.79014220485365, 'P_aprobata_kW': 15}, 'schema_pamant': 'TT'}
+     Iluminat interior[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Iluminat exterior[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU0.8 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.3 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Cuptor[L2] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.0 DDR30A
+ BLOC: [] 
+ AV: []
+===== L46 locuinta individuala P+1, mono, Pi 18 kW, Pa 8 kW, coloana 20m
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 18, 'L_coloana_m': 20} | SP: None None | ks None
+ circ: [('Iluminat parter', None, None, None), ('Iluminat etaj', None, None, None), ('Iluminat exterior', None, None, None), ('Prize parter', None, None, None), ('Prize etaj', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie parter', None, None, None), ('Prize baie etaj', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Mașină de spălat vase', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă P+1: Iluminat parte', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-40', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 40, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 40.0, 'coloana': ('CYABY 3×10\xa0mm²', 20.0, 40, 1.46), 'bilant': {'Pi_kW': 30.8, 'Pc_kW': 10.78, 'ks': 0.35, 'Ib_A': 82.37986270022883, 'P_aprobata_kW': 18}, 'schema_pamant': 'TN-C-S'}
+     Iluminat parter[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat etaj[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize parter[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize etaj[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Mașină de spălat vase[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Prize baie parter[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize baie etaj[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Q branșament nedeclarat — Ib 82,38 A cere un Q peste limita blocului BMPM (40 A)', 'V46: Q branșament presupus 40 A (nedeclarat) — Ib de calcul pe L1 49,19 A > 1,13·In Q branșament = 45,2 A (In 40 A) — Q-ul de branșament declanșează la sarcina de ca'] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 40 A (calibrul standard ≥ Ib 82,38 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR9 30 mA instant']
+===== L47 casa parter tri 10kw, pompa caldura 3 kW monofazata, coloana 25 m
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 10, 'L_coloana_m': 25} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-16', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 16, 'Icn_kA': 6}, 'Ib_alim': 16.0, 'coloana': ('CYABY 5×6\xa0mm²', 25.0, 16, 0.61), 'bilant': {'Pi_kW': 26.4, 'Pc_kW': 9.239999999999998, 'ks': 0.35, 'Ib_A': 15.1934281365691, 'P_aprobata_kW': 10}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Iluminat exterior[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU0.7 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.2 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.9 DDR30A
+     Cuptor[L2] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.4 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU1.9 DDR30A
+ BLOC: [] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 16 A (calibrul standard ≥ Ib 15,19 A din ', 'V46: Q branșament presupus 16 A (nedeclarat) — Ib de calcul pe L1 17,28 A > In Q branșamen']
+===== L48 casa, 7 kW, coloana 20 m
+ act: genereaza_cu_intrebare | tip: locuinta | retea: None | refuz: [None, None]
+ alim: {'P_aprobata_kW': 7, 'L_coloana_m': 20} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: ['Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”.']
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {}
+ BLOC: ['V07: rețeaua nu este specificată (monofazat sau trifazat)'] 
+ AV: []
+===== E01 casa parter mono, pompa caldura 6 kw, 7 kw aprobat
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 6} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloana BMPM → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 32, 1.47), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 27.45995423340961, 'P_aprobata_kW': 6}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Q branșament presupus 32 A (nedeclarat) — Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 6 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 27,46 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== E02 casa tri 15 kw, PC aer-apa 9kW, coloana 20m
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 15, 'L_coloana_m': 20} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă parter: Iluminat in', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 25, 'Icn_kA': 6}, 'Ib_alim': 22.79014220485365, 'coloana': ('CYABY 5×6\xa0mm²', 20.0, 25, 0.7), 'bilant': {'Pi_kW': 26.4, 'Pc_kW': 9.239999999999998, 'ks': 0.35, 'Ib_A': 22.79014220485365, 'P_aprobata_kW': 15}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Iluminat exterior[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU0.8 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.3 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Cuptor[L2] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.0 DDR30A
+ BLOC: [] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,79 A din ']
+===== E03 casa mono 6 kW, coloana 15 m, plita gaz
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 6, 'L_coloana_m': 15} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Plită) = 12 circuit', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 32, 1.47), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 27.45995423340961, 'P_aprobata_kW': 6}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Q branșament presupus 32 A (nedeclarat) — Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 6 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 27,46 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== E04 casa mono 6kW, fara plita electrica, fara cuptor
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 6} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Plită, Cuptor) = 12', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloana BMPM → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 32, 1.47), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 27.45995423340961, 'P_aprobata_kW': 6}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Q branșament presupus 32 A (nedeclarat) — Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 6 kW — Pc din ks e informativ; Ib gene', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 27,46 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== E05 casa mono, plita, 6 kW, Q 32 A, 5 circuite prize
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 6, 'In_Q_bransament_A': 32} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Plită, Prize) = 12 ', 'alimentare din branșament existent (implicit)', 'coloana BMPM → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-32', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 32, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 32, 1.47), 'bilant': {'Pi_kW': 26.1, 'Pc_kW': 9.135, 'ks': 0.35, 'Ib_A': 27.45995423340961, 'P_aprobata_kW': 6}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.0 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.8 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.6 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.6 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.7 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.0 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.2 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.7 DDR30A
+ BLOC: ['V46: Ib de calcul pe L1 41,61 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de calcul'] 
+ AV: ['V46: Pc din bilanț 9,13 kW > puterea aprobată (ATR) 6 kW — Pc din ks e informativ; Ib gene', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR6 30 mA instant']
+===== E06 casa tri 15 kw, heat pump 9 kW
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 15} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Pompă de căldură', 9, None, '3F')]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Pompă de căldură) =', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'Pompă de căldură 9 kW > 7,4 kW → circuit trifazat (3F)', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloana BMPT → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 25, 'Icn_kA': 6}, 'Ib_alim': 25.0, 'coloana': ('CYABY 5×6\xa0mm²', 15.0, 25, 0.57), 'bilant': {'Pi_kW': 35.4, 'Pc_kW': 18.24, 'ks': 0.35, 'Ib_A': 22.79014220485365, 'P_aprobata_kW': 15}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.1 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.1 DDR30A
+     Pompă de căldură[3F] 9.0kW MCB C16 CYY-F 5×2,5 mm² L20.0 dU1.6 DDR30A
+     Prize camere[L3] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU1.9 DDR30A
+     Prize living[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU1.9 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Boiler[L3] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+     Centrală termică[L3] 0.2kW RCBO C10 CYY-F 3×1,5 mm² L10.0 dU0.7 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.2 DDR30A
+     Prize bucătărie[L2] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.3 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.6 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU1.8 DDR30A
+ BLOC: ['V46: Q branșament presupus 25 A (nedeclarat) — Ib de calcul pe L1 27,83 A > In Q branșament 25 A, iar faza alimentează sarcini continue (13,67 A: VE / pompă de căldu'] 
+ AV: ['V46: Pc din bilanț 18,24 kW > puterea aprobată (ATR) 15 kW — Pc din ks e informativ; Ib ge', 'V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,79 A din ']
+===== E07 casa tri 20 kW, borna VE 22kW
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 20} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Încărcare VE', 22, None, '3F')]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Încărcare VE) = 13 ', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'Încărcare VE 22 kW > 7,4 kW → circuit trifazat (3F)', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloana BMPT → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 32, 'Icn_kA': 6}, 'Ib_alim': 32.0, 'coloana': ('CYABY 5×6\xa0mm²', 15.0, 32, 0.73), 'bilant': {'Pi_kW': 48.4, 'Pc_kW': 31.24, 'ks': 0.35, 'Ib_A': 30.3868562731382, 'P_aprobata_kW': 20}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L3] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.3 DDR30A
+     Iluminat exterior[L2] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.3 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.1 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.1 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU0.8 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.4 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Cuptor[L2] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Prize baie[L3] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.0 DDR30A
+     Încărcare VE[3F] 22.0kW MCB C32 CYY-F 5×6 mm² L25.0 dU2.0 DDR30B
+ BLOC: ['V46: Q branșament presupus 32 A (nedeclarat) — Ib de calcul pe L1 49,04 A > 1,13·In Q branșament = 36,16 A (In 32 A) — Q-ul de branșament declanșează la sarcina de c'] 
+ AV: ['V46: Pc din bilanț 31,24 kW > puterea aprobată (ATR) 20 kW — Pc din ks e informativ; Ib ge', 'V46: Q branșament existent nedeclarat — presupus 32 A (calibrul standard ≥ Ib 30,39 A din ', 'V43: circuitul VE (DDR7, DDR tip B) e în aval de RCCB BMPT 300 mA tip AC — un curent de de']
+===== E08 casa P+1 trifazat, beneficiar: Muresan Ana, loc. Sanmartin, jud. Bihor, 15 kW, coloana 20 m
+ act: genereaza | tip: locuinta | retea: tri | refuz: [None, None]
+ alim: {'P_aprobata_kW': 15, 'L_coloana_m': 20} | SP: None None | ks None
+ circ: [('Iluminat parter', None, None, None), ('Iluminat etaj', None, None, None), ('Iluminat exterior', None, None, None), ('Prize parter', None, None, None), ('Prize etaj', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, '3F'), ('Cuptor', None, None, None), ('Prize baie parter', None, None, None), ('Prize baie etaj', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Mașină de spălat vase', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None)]
+ Q?: []
+ pres: ['circuitele nu sunt listate → set tipic pentru casă P+1: Iluminat parte', 'Plită: receptor trifazat (3F) la rețeaua trifazată', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPT nedeclarat (valoare implicită a motorului)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPT', 'localitatea „Sanmartin” se preia așa cum a fost scrisă (fără diacritic']
+ M: {'bloc': 'BMPTd-40', 'Q': {'tip': 'MCB', 'curba': 'C', 'In_A': 25, 'Icn_kA': 6}, 'Ib_alim': 22.79014220485365, 'coloana': ('CYABY 5×6\xa0mm²', 20.0, 25, 0.7), 'bilant': {'Pi_kW': 31.1, 'Pc_kW': 10.885, 'ks': 0.35, 'Ib_A': 22.79014220485365, 'P_aprobata_kW': 15}, 'schema_pamant': 'TN-C-S'}
+     Iluminat parter[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Iluminat etaj[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU1.2 DDR30A
+     Prize parter[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU0.8 DDR30A
+     Prize etaj[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU2.0 DDR30A
+     Boiler[L2] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Plită[3F] 7.5kW MCB C16 CYY-F 5×2,5 mm² L15.0 dU1.3 DDR30A
+     Prize bucătărie[L3] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.0 DDR30A
+     Cuptor[L3] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.5 DDR30A
+     Mașină de spălat vase[L3] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU1.8 DDR30A
+     Prize baie parter[L2] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Prize baie etaj[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU1.7 DDR30A
+     Prize exterior[L2] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU2.0 DDR30A
+ BLOC: [] 
+ AV: ['V46: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,79 A din ']
+===== E09 casa mono 10 kw, pompa de caldura 9 kw
+ act: genereaza | tip: locuinta | retea: mono | refuz: [None, None]
+ alim: {'P_aprobata_kW': 10} | SP: None None | ks None
+ circ: [('Iluminat interior', None, None, None), ('Iluminat exterior', None, None, None), ('Prize camere', None, None, None), ('Prize living', None, None, None), ('Prize bucătărie', None, None, None), ('Plită', None, None, None), ('Cuptor', None, None, None), ('Prize baie', None, None, None), ('Mașină de spălat rufe', None, None, None), ('Boiler', None, None, None), ('Centrală termică', None, None, None), ('Prize exterior', None, None, None), ('Pompă de căldură', 9, None, None)]
+ Q?: []
+ pres: ['set tipic pentru casă parter + receptorii listați (Pompă de căldură) =', 'alimentare din branșament existent (implicit)', 'calibrul Q din BMPM nedeclarat (valoare implicită a motorului)', 'coloana BMPM → tabloul locuinței: lungime implicită (motor)', 'coloană și circuite Cu', 'schema TN-C-S, separare PEN în BMPM']
+ M: {'bloc': 'BMPM-40', 'Q': {'tip': 'RCBO 1P+N', 'curba': 'C', 'In_A': 40, 'IdN_mA': 300, 'Icn_kA': 6}, 'Ib_alim': 40.0, 'coloana': ('CYABY 3×6\xa0mm²', 15.0, 40, 1.84), 'bilant': {'Pi_kW': 35.1, 'Pc_kW': 18.134999999999998, 'ks': 0.35, 'Ib_A': 45.76659038901602, 'P_aprobata_kW': 10}, 'schema_pamant': 'TN-C-S'}
+     Iluminat interior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.4 DDR30A
+     Iluminat exterior[L1] 0.5kW RCBO B10 CYY-F 3×1,5 mm² L20.0 dU2.4 DDR30A
+     Prize camere[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.2 DDR30A
+     Prize living[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L20.0 dU3.2 DDR30A
+     Mașină de spălat rufe[L1] 2.2kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.9 DDR30A
+     Boiler[L1] 2.0kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Centrală termică[L1] 0.2kW MCB C10 CYY-F 3×1,5 mm² L10.0 dU1.9 DDR30A
+     Pompă de căldură[L1] 9.0kW MCB C50 CYY-F 3×10 mm² L20.0 dU3.3 DDR30A
+     Prize bucătărie[L1] 2.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.1 DDR30A
+     Plită[L1] 7.2kW MCB C32 CYY-F 3×6 mm² L15.0 dU3.3 DDR30A
+     Cuptor[L1] 3.5kW MCB C16 CYY-F 3×2,5 mm² L15.0 dU3.6 DDR30A
+     Prize baie[L1] 2.0kW RCBO C16 CYY-F 3×2,5 mm² L15.0 dU2.8 DDR30A
+     Prize exterior[L1] 1.5kW RCBO C16 CYY-F 3×2,5 mm² L25.0 dU3.1 DDR30A
+ BLOC: ['V46: Q branșament nedeclarat — Ib 45,77 A cere un Q peste limita blocului BMPM (40 A)', 'V46: Q branșament presupus 40 A (nedeclarat) — Ib de calcul pe L1 82,8 A > 1,13·In Q branșament = 45,2 A (In 40 A) — Q-ul de branșament declanșează la sarcina de cal', 'V40: MCB C50 In 50 A > In Q branșament 40 A — aparatul nu poate fi selectiv, iar Q branșament declanșează înaintea lui'] 
+ AV: ['V46: Pc din bilanț 18,13 kW > puterea aprobată (ATR) 10 kW — Pc din ks e informativ; Ib ge', 'V46: Q branșament existent nedeclarat — presupus 40 A (calibrul standard ≥ Ib 45,77 A din ', 'V43: selectivitate DDR nerealizată: RCBO BMPM 300 mA instantaneu → DDR1–DDR7 30 mA instant']
+===== E10 prosumator 15 kW trifazic, beneficiar Pop Ion, Santandrei jud Bihor
+ act: genereaza | tip: prosumator | retea: tri | refuz: [None, None]
+ alim: None | SP: None None | ks None
+ Q?: []
+ pres: ['Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)', 'invertor la 15 m de tabloul consumatorului, Cu PVC metoda C', 'DDR pe circuitul invertorului tip A (sau B dacă fișa nu exclude curenț', 'PI integrată în invertor, reglaje conform ATR (Ord. ANRE 228/2018); co', 'localitatea „Santandrei” se preia așa cum a fost scrisă (fără diacriti']
+ M: {'INV': ('CYY-F 5×4\xa0mm²', 15.0, {'tip': 'MCB', 'In_A': 32, 'curba': 'C', 'Icu_kA': 25}, {'IdN_mA': 30, 'tip': 'A', 'In_A': 40, 'poli': '4P', 'aparat': 'RCCB'}, 0.85), 'Iac': 23.815698604072065, 'schema_pamant': 'TN-C-S'}
+ BLOC: [] 
+ AV: ['V73: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți']

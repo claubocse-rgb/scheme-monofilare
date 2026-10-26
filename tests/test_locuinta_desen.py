@@ -79,7 +79,12 @@ def test_circuit_trifazat_are_mcb_4p_iar_cel_monofazat_1p_n():
 
 
 def test_ve_are_ddr_tip_b():
+    # r5: implicit DDR tip A + RDC-DD 6 mA în stație (compatibil cu DDR tip A în branșament); tip B când e declarat
     m, r = constructor.genereaza(CASA_TRI)
+    g = [b for b in m["plecari"] if b.get("grup") and any(c["sarcina"]["titlu"] == "Încărcător VE" for c in b["copii"])][0]
+    assert g["aparate"][0]["param"]["tip_ddr"] == "A"
+    circ = [dict(c, DDR={"IdN_mA": 30, "tip": "B"}) if c["receptor"] == "vehicul_electric" else c for c in CASA_TRI["circuite"]]
+    m, r = constructor.genereaza(dict(CASA_TRI, circuite=circ))
     g = [b for b in m["plecari"] if b.get("grup") and any(c["sarcina"]["titlu"] == "Încărcător VE" for c in b["copii"])][0]
     assert g["aparate"][0]["param"]["tip_ddr"] == "B"
 

@@ -1,0 +1,1867 @@
+{
+ "_nota": "SIMULARE — nu e un apel real la API. Ieșirile uneltei intrare_fizica au fost scrise de Claude (Opus 5.5, sesiunea de dezvoltare) în rolul modelului care primește DOAR promptul de sistem + schema + fraza, înainte de a citi rezultatele așteptate. Scorul obținut cu ele este o estimare.",
+ "raspunsuri": {
+  "fotovoltaic": {
+   "28": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "invertoare": [
+      {
+       "n": 2,
+       "Pn_kW": 110,
+       "producator": "Sungrow",
+       "model": "SG110CX"
+      },
+      {
+       "n": 2,
+       "Pn_kW": 50,
+       "producator": "Sungrow",
+       "model": "SG50CX"
+      }
+     ]
+    },
+    "intrebari": [
+     "Textul spune „300 kW cu 3 invertoare”, dar 2 × SG110CX + 2 × SG50CX = 4 invertoare / 320 kW. Care e configurația corectă?"
+    ],
+    "neinteles": []
+   },
+   "33": {
+    "intrare_fizica": {
+     "tip_schema": "prosumator",
+     "retea": "tri",
+     "schema_pamant": "TN-S",
+     "Pn_inv_kW": 24.6,
+     "invertoare": [
+      {
+       "n": 3,
+       "Pn_kW": 8.2,
+       "producator": "Fronius",
+       "model": "Primo 8.2-1"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "conectate câte unul pe fiecare fază"
+    ]
+   },
+   "51": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 100,
+     "racord": "tg_existent",
+     "schema_pamant": "TN-S",
+     "invertoare": [
+      {
+       "n": 2,
+       "Pn_kW": 50,
+       "producator": "Sungrow",
+       "model": "SG50CX"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "58": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "racord": "tg_existent",
+     "schema_pamant": "TN-S",
+     "invertoare": [
+      {
+       "n": 2,
+       "Pn_kW": 50,
+       "producator": "XYZ Solar",
+       "model": "SPX-50"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "61": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 700,
+     "schema_pamant": "TN-S",
+     "pt_Sn_kVA": 630,
+     "pt_existent": false,
+     "racord": "pt",
+     "invertoare": [
+      {
+       "n": 6,
+       "Pn_kW": 100,
+       "producator": "Huawei",
+       "model": "SUN2000-100KTL-M2"
+      }
+     ],
+     "modul": {
+      "producator": "Trina",
+      "model": "TSM-NEG21C.20",
+      "Pmax_W": 700
+     }
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "26": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "racord": "pt",
+     "pt_Sn_kVA": 800,
+     "pt_existent": true,
+     "schema_pamant": "TN-S",
+     "invertoare": [
+      {
+       "n": 3,
+       "Pn_kW": 100,
+       "producator": "Huawei",
+       "model": "SUN2000-100KTL-M2"
+      },
+      {
+       "n": 2,
+       "Pn_kW": 50,
+       "producator": "Huawei",
+       "model": "SUN2000-50KTL-M3"
+      }
+     ],
+     "bess": {
+      "P_kW": 100,
+      "kWh": 200,
+      "producator": "Huawei",
+      "model": "LUNA2000-200KWH-2H1"
+     }
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "34": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 199,
+     "racord": "tg_existent",
+     "schema_pamant": "TN-S",
+     "limitare_injectie_kW": 0,
+     "Ik3_TG_kA": 20,
+     "racord_In_Q_A": 400,
+     "invertoare": [
+      {
+       "n": 2,
+       "Pn_kW": 110,
+       "producator": "Sungrow",
+       "model": "SG110CX"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "45": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 2000,
+     "invertoare": [
+      {
+       "n": 20,
+       "Pn_kW": 100
+      }
+     ],
+     "bess": {
+      "P_kW": 2000,
+      "kWh": 4000
+     },
+     "pt_Sn_kVA": 2000,
+     "n_trafo": 2,
+     "pt_existent": false,
+     "masura": "MT",
+     "limitare_injectie_kW": 3000
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "53": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "racord": "pt",
+     "pt_Sn_kVA": 400,
+     "pt_existent": true,
+     "Ik3_TG_kA": 30,
+     "racord_In_Q_A": 63,
+     "invertoare": [
+      {
+       "n": 1,
+       "Pn_kW": 60,
+       "producator": "Huawei",
+       "model": "SUN2000-60KTL-M0"
+      }
+     ]
+    },
+    "intrebari": [
+     "Racordul e în PT-ul existent 400 kVA, dar e menționat și „întreruptor TG 63 A”: centrala se leagă în TG (pe întreruptorul de 63 A) sau direct pe bara JT a PT-ului?"
+    ],
+    "neinteles": []
+   },
+   "1": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "retea": "tri",
+     "kWp": 99.4,
+     "racord": "bmpt",
+     "In_Q_bransament_A": 250,
+     "P_aprobata_kW": 120,
+     "P_evacuata_kW": 80,
+     "limitare_injectie_kW": 80,
+     "masura_ceruta": "semidirecta",
+     "invertoare": [
+      {
+       "n": 1,
+       "Pn_kW": 100,
+       "producator": "Huawei",
+       "model": "SUN2000-100KTL-M2"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "7": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 2000,
+     "invertoare": [
+      {
+       "n": 8,
+       "Pn_kW": 330,
+       "producator": "Huawei",
+       "model": "SUN2000-330KTL-H1"
+      }
+     ],
+     "pt_Sn_kVA": 2500,
+     "pt_existent": false,
+     "U_MT_kV": 20,
+     "U_ca_V": 800,
+     "masura": "MT"
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "9": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 3600,
+     "invertoare": [
+      {
+       "n": 30,
+       "Pn_kW": 100,
+       "producator": "Sungrow",
+       "model": "SG100CX"
+      }
+     ],
+     "pt_Sn_kVA": 1600,
+     "n_trafo": 2,
+     "pt_existent": false,
+     "U_MT_kV": 20,
+     "masura": "MT"
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "13": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "bess": {
+      "P_kW": 1000,
+      "kWh": 2000
+     },
+     "pt_Sn_kVA": 1250,
+     "pt_existent": false,
+     "U_MT_kV": 20,
+     "masura": "MT"
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "15": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 250,
+     "invertoare": [
+      {
+       "n": 2,
+       "Pn_kW": 110,
+       "producator": "Sungrow",
+       "model": "SG110CX"
+      }
+     ],
+     "P_evacuata_kW": 100,
+     "limitare_injectie_kW": 100,
+     "racord": "tg_existent",
+     "schema_pamant": "TN-C-S"
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "16": {
+    "intrare_fizica": {
+     "tip_schema": "prosumator",
+     "retea": "tri",
+     "Pn_inv_kW": 20,
+     "invertor": {
+      "producator": "Huawei",
+      "model": "SUN2000-20KTL-M2",
+      "Pn_kW": 20
+     },
+     "P_evacuata_kW": 20,
+     "limitare_injectie_kW": 0
+    },
+    "intrebari": [
+     "Injecție zero (limitare 0 kW) sau injecție până la 20 kW, cât e aprobat pentru evacuare în ATR?"
+    ],
+    "neinteles": []
+   },
+   "24": {
+    "intrare_fizica": {
+     "tip_schema": "prosumator",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "Pn_inv_kW": 50,
+     "racord": "bmpt",
+     "In_Q_bransament_A": 40,
+     "invertor": {
+      "producator": "Huawei",
+      "model": "SUN2000-50KTL-M3",
+      "Pn_kW": 50
+     }
+    },
+    "intrebari": [
+     "Invertorul de 50 kW pe BMPT existent 3 × 40 A: branșamentul se mărește (ATR nou) sau se limitează puterea?"
+    ],
+    "neinteles": []
+   },
+   "25": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 1500,
+     "pt_Sn_kVA": 1600,
+     "pt_existent": false,
+     "invertoare": [
+      {
+       "n": 4,
+       "Pn_kW": 250,
+       "producator": "Sungrow",
+       "model": "SG250HX"
+      },
+      {
+       "n": 2,
+       "Pn_kW": 110,
+       "producator": "Sungrow",
+       "model": "SG110CX"
+      }
+     ]
+    },
+    "intrebari": [
+     "SG250HX are ieșirea la 800 V c.a., iar SG110CX la 400 V: trafo cu două înfășurări JT / două trafo, sau alt model pentru una din grupe?"
+    ],
+    "neinteles": []
+   },
+   "29": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 200,
+     "invertoare": [
+      {
+       "n": 2,
+       "Pn_kW": 100,
+       "producator": "Huawei",
+       "model": "SUN2000-100KTL-M2"
+      }
+     ],
+     "pt_Sn_kVA": 250,
+     "pt_existent": false
+    },
+    "intrebari": [
+     "Racordul: în BMPT-ul existent sau prin PT-ul nou de 250 kVA? (textul le menționează pe amândouă)"
+    ],
+    "neinteles": []
+   },
+   "35": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 1000,
+     "invertoare": [
+      {
+       "n": 10,
+       "Pn_kW": 100,
+       "producator": "Huawei",
+       "model": "SUN2000-100KTL-M2"
+      }
+     ],
+     "racord": "pt",
+     "pt_Sn_kVA": 1000,
+     "pt_existent": true,
+     "masura": "MT",
+     "U_MT_kV": 20
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "37": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 150,
+     "invertoare": [
+      {
+       "n": 1,
+       "Pn_kW": 110,
+       "producator": "Sungrow",
+       "model": "SG110CX"
+      }
+     ],
+     "racord": "tg_existent",
+     "schema_pamant": "TN-S"
+    },
+    "intrebari": [],
+    "neinteles": []
+   }
+  },
+  "industrial": {
+   "12": {
+    "intrare_fizica": {
+     "tip_schema": "ge_ats",
+     "Sn_GE_kVA": 125,
+     "sursa_retea": "tgd",
+     "schema_pamant": "TN-S",
+     "siguranta_tablou": true,
+     "titlu_tablou": "TDSI sprinklere",
+     "consumatori": [
+      {
+       "nume": "Electropompă sprinklere",
+       "P_kW": 55,
+       "pornire": "stea_triunghi",
+       "siguranta": true
+      },
+      {
+       "nume": "Pompă jockey",
+       "P_kW": 2.2,
+       "siguranta": true
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "14": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "tg_existent",
+     "schema_pamant": "TN-S",
+     "siguranta_tablou": true,
+     "titlu_tablou": "TE desfumare",
+     "plecari": [
+      {
+       "nume": "Ventilator desfumare 1",
+       "P_kW": 11,
+       "receptor": "motor",
+       "siguranta": true
+      },
+      {
+       "nume": "Ventilator desfumare 2",
+       "P_kW": 11,
+       "receptor": "motor",
+       "siguranta": true
+      },
+      {
+       "nume": "Clapete desfumare",
+       "P_kW": 0.1,
+       "n_circuite": 4,
+       "siguranta": true
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "64": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 630,
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "Pompă incendiu",
+       "P_kW": 45,
+       "receptor": "motor",
+       "siguranta": true
+      },
+      {
+       "nume": "Pompă tehnologică",
+       "P_kW": 45,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Iluminat",
+       "P_kW": 10,
+       "receptor": "iluminat"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "1": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 400,
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "Iluminat hală LED",
+       "P_kW": 3,
+       "n_circuite": 6,
+       "receptor": "iluminat"
+      },
+      {
+       "nume": "Iluminat exterior",
+       "P_kW": 2,
+       "receptor": "iluminat"
+      },
+      {
+       "nume": "Rampe de încărcare",
+       "P_kW": 1.1,
+       "n_circuite": 4,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Uși secționale",
+       "P_kW": 0.75,
+       "n_circuite": 4,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Centrală detecție incendiu",
+       "P_kW": 0.5,
+       "siguranta": true
+      },
+      {
+       "nume": "Prize de serviciu",
+       "In_A": 16,
+       "n_circuite": 6,
+       "receptor": "prize"
+      },
+      {
+       "nume": "TD birouri",
+       "P_kW": 40,
+       "receptor": "tablou"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "hala depozitare 2400 mp, P+0"
+    ]
+   },
+   "2": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "tg_existent",
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "Strung CNC 1",
+       "P_kW": 18.5,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Strung CNC 2",
+       "P_kW": 18.5,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Freză",
+       "P_kW": 11,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Compresor șurub",
+       "P_kW": 30,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Iluminat",
+       "P_kW": 6,
+       "receptor": "iluminat"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "4": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "tg_existent",
+     "titlu_tablou": "TE-Chiller",
+     "schema_pamant": "TN-S",
+     "L_alimentare_m": 60,
+     "cablu": {
+      "material": "Cu",
+      "S_fortat": 120,
+      "N_fortat": 70
+     },
+     "plecari": [
+      {
+       "nume": "Compresor 1",
+       "P_kW": 42,
+       "pornire": "soft",
+       "receptor": "motor"
+      },
+      {
+       "nume": "Compresor 2",
+       "P_kW": 42,
+       "pornire": "soft",
+       "receptor": "motor"
+      },
+      {
+       "nume": "Pompă de circulație",
+       "P_kW": 5.5,
+       "pornire": "convertizor",
+       "receptor": "motor"
+      },
+      {
+       "nume": "Ventilatoare condensator",
+       "P_kW": 1.5,
+       "n_circuite": 4,
+       "receptor": "motor"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "5": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 250,
+     "plecari": [
+      {
+       "nume": "Pompă 1",
+       "P_kW": 7.5,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Pompă 2",
+       "P_kW": 7.5,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Pompă 3",
+       "P_kW": 7.5,
+       "receptor": "motor"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "7": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 250,
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "Compresor",
+       "P_kW": 160,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Cuptor",
+       "P_kW": 120
+      },
+      {
+       "nume": "Iluminat",
+       "P_kW": 20,
+       "receptor": "iluminat"
+      }
+     ]
+    },
+    "intrebari": [
+     "Plecările însumează 300 kW, iar PT-ul are 250 kVA: ce coeficient de simultaneitate are tabloul, sau trafo-ul e mai mare?"
+    ],
+    "neinteles": []
+   },
+   "15": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 1000,
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "TD-A",
+       "In_A": 250,
+       "receptor": "tablou",
+       "copii": [
+        {
+         "nume": "TE-1",
+         "In_A": 63,
+         "copii": [
+          {
+           "nume": "Motor",
+           "P_kW": 4,
+           "n_circuite": 5,
+           "receptor": "motor"
+          }
+         ]
+        },
+        {
+         "nume": "TE-2",
+         "In_A": 40,
+         "copii": [
+          {
+           "nume": "Iluminat",
+           "P_kW": 8,
+           "receptor": "iluminat"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "nume": "TD-B",
+       "In_A": 160,
+       "receptor": "tablou",
+       "copii": [
+        {
+         "nume": "Compresor",
+         "P_kW": 45,
+         "receptor": "motor"
+        },
+        {
+         "nume": "Prize",
+         "n_circuite": 6,
+         "receptor": "prize"
+        }
+       ]
+      }
+     ]
+    },
+    "intrebari": [
+     "Ce calibru (A) sau putere au cele 6 circuite de prize din TD-B?"
+    ],
+    "neinteles": []
+   },
+   "16": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 400,
+     "schema_pamant": "TN-S",
+     "titlu_tablou": "TGD",
+     "plecari": [
+      {
+       "nume": "TD-Hala1",
+       "In_A": 125,
+       "receptor": "tablou",
+       "copii": [
+        {
+         "nume": "TE-Linie1",
+         "copii": [
+          {
+           "nume": "Motor 1",
+           "P_kW": 5.5,
+           "receptor": "motor"
+          },
+          {
+           "nume": "Motor 2",
+           "P_kW": 5.5,
+           "receptor": "motor"
+          },
+          {
+           "nume": "Motor 3",
+           "P_kW": 5.5,
+           "receptor": "motor"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "17": {
+    "intrare_fizica": {
+     "tip_schema": "pt",
+     "Sn_kVA": 1600,
+     "n_trafo": 2,
+     "trafo_izolatie": "uscat",
+     "U_MT_kV": 20,
+     "cupla": "deschisa",
+     "compensare_kvar": 300,
+     "plecari": [
+      {
+       "nume": "TD1",
+       "In_A": 800,
+       "sectie": 1
+      },
+      {
+       "nume": "TD2",
+       "In_A": 630,
+       "sectie": 1
+      },
+      {
+       "nume": "TD3",
+       "In_A": 800,
+       "sectie": 2
+      },
+      {
+       "nume": "TD4",
+       "In_A": 400,
+       "sectie": 2
+      },
+      {
+       "nume": "Chiller",
+       "P_kW": 250,
+       "receptor": "motor",
+       "sectie": 2
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "baterie 300 kvar pe semibara A"
+    ]
+   },
+   "18": {
+    "intrare_fizica": {
+     "tip_schema": "pt",
+     "Sn_kVA": 1000,
+     "trafo_izolatie": "ulei",
+     "U_MT_kV": 10,
+     "celule_mt": [
+      "linie_intrare",
+      "linie_iesire",
+      "masura",
+      "trafo"
+     ],
+     "masura": "MT",
+     "celula_trafo": "intreruptor",
+     "In_Q_JT_A": 1600,
+     "plecari": [
+      {
+       "nume": "TD-1",
+       "In_A": 250
+      },
+      {
+       "nume": "TD-2",
+       "In_A": 250
+      },
+      {
+       "nume": "TD-3",
+       "In_A": 250
+      },
+      {
+       "nume": "TD-4",
+       "In_A": 250
+      },
+      {
+       "nume": "TD-5",
+       "In_A": 250
+      },
+      {
+       "nume": "TD-6",
+       "In_A": 250
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "releu 50/51"
+    ]
+   },
+   "22": {
+    "intrare_fizica": {
+     "tip_schema": "pt",
+     "Sn_kVA": 2000,
+     "U_MT_kV": 6,
+     "trafo_izolatie": "uscat",
+     "celula_trafo": "intreruptor",
+     "In_Q_JT_A": 3200,
+     "plecari": [
+      {
+       "nume": "TD-1",
+       "In_A": 630
+      },
+      {
+       "nume": "TD-2",
+       "In_A": 630
+      },
+      {
+       "nume": "TD-3",
+       "In_A": 630
+      },
+      {
+       "nume": "TD-4",
+       "In_A": 630
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "stație 6 kV existentă"
+    ]
+   },
+   "25": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 800,
+     "schema_pamant": "TN-C-S",
+     "L_alimentare_m": 90,
+     "cablu": {
+      "material": "Al",
+      "izolatie": "XLPE",
+      "S_fortat": 240,
+      "N_fortat": 240,
+      "n_paralel": 2
+     },
+     "plecari": [
+      {
+       "nume": "TD1",
+       "In_A": 400
+      },
+      {
+       "nume": "TD2",
+       "In_A": 250
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "26": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "bmpt",
+     "In_Q_amonte_A": 100,
+     "schema_pamant": "TN-C-S",
+     "plecari": [
+      {
+       "nume": "Pompă",
+       "P_kW": 7.5,
+       "L_m": 80,
+       "receptor": "motor",
+       "cablu": {
+        "material": "Cu",
+        "S_fortat": 4
+       }
+      },
+      {
+       "nume": "Iluminat",
+       "P_kW": 3,
+       "L_m": 30,
+       "receptor": "iluminat",
+       "retea": "mono",
+       "cablu": {
+        "material": "Cu",
+        "S_fortat": 2.5
+       }
+      },
+      {
+       "nume": "Prize",
+       "n_circuite": 3,
+       "receptor": "prize"
+      }
+     ]
+    },
+    "intrebari": [
+     "Ce calibru au cele 3 circuite de prize (ex. 16 A)?"
+    ],
+    "neinteles": []
+   },
+   "27": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 1000,
+     "schema_pamant": "TN-S",
+     "compensare_kvar": 250,
+     "plecari": [
+      {
+       "nume": "TD1",
+       "In_A": 400
+      },
+      {
+       "nume": "TD2",
+       "In_A": 315
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "filtru 7%, 8 trepte"
+    ]
+   },
+   "28": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 630,
+     "P_kW": 400,
+     "cosfi": 0.78
+    },
+    "intrebari": [
+     "Puterea bateriei de compensare (cosφ 0,78 → 0,95) nu o aleg eu din text: indicați bateria (kvar) și plecările TG-ului, sau folosiți calculul de compensare al aplicației."
+    ],
+    "neinteles": []
+   },
+   "29": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "tg_existent",
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "Motor 1",
+       "P_kW": 7.46,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Motor 2",
+       "P_kW": 7.46,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Motor 3",
+       "P_kW": 18.64,
+       "pornire": "stea_triunghi",
+       "receptor": "motor"
+      },
+      {
+       "nume": "Macara 1",
+       "P_kW": 5.5,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Macara 2",
+       "P_kW": 5.5,
+       "receptor": "motor"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "30": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "pt_propriu",
+     "pt_Sn_kVA": 630,
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "Chiller",
+       "P_kW": 180,
+       "receptor": "motor"
+      },
+      {
+       "nume": "CTA 1",
+       "P_kW": 22,
+       "pornire": "convertizor",
+       "receptor": "motor"
+      },
+      {
+       "nume": "CTA 2",
+       "P_kW": 22,
+       "pornire": "convertizor",
+       "receptor": "motor"
+      },
+      {
+       "nume": "Pompă 1",
+       "P_kW": 3,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Pompă 2",
+       "P_kW": 3,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Pompă 3",
+       "P_kW": 3,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Pompă 4",
+       "P_kW": 3,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Iluminat",
+       "P_kW": 15,
+       "receptor": "iluminat"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "32": {
+    "intrare_fizica": {
+     "tip_schema": "tablou",
+     "origine": "tg_existent",
+     "schema_pamant": "TN-S",
+     "plecari": [
+      {
+       "nume": "Pompă",
+       "P_kW": 5.5,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Ventilator",
+       "P_kW": 3,
+       "receptor": "motor"
+      },
+      {
+       "nume": "Iluminat",
+       "P_kW": 2,
+       "receptor": "iluminat"
+      },
+      {
+       "nume": "Prize",
+       "In_A": 16,
+       "n_circuite": 4,
+       "receptor": "prize"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   }
+  },
+  "locuinte": {
+   "7": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "alimentare": {
+      "tip": "bransament_nou"
+     },
+     "circuite": [
+      {
+       "nume": "Încălzire pardoseală baie 1",
+       "receptor": "incalzire_electrica",
+       "P_kW": 1.5
+      },
+      {
+       "nume": "Încălzire pardoseală baie 2",
+       "receptor": "incalzire_electrica",
+       "P_kW": 1.5
+      },
+      {
+       "nume": "Pompă de căldură",
+       "receptor": "pompa_caldura"
+      },
+      {
+       "nume": "Aer condiționat etaj",
+       "receptor": "aer_conditionat"
+      }
+     ]
+    },
+    "intrebari": [
+     "Branșamentul va fi trifazat? Ce putere aprobată se cere în ATR (20 sau 25 kW)?"
+    ],
+    "neinteles": []
+   },
+   "17": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 20
+     },
+     "circuite": [
+      {
+       "nume": "Plită",
+       "receptor": "plita",
+       "P_kW": 7.4,
+       "faza": "3F"
+      },
+      {
+       "nume": "Cuptor",
+       "receptor": "cuptor",
+       "P_kW": 3.6
+      },
+      {
+       "nume": "Boiler",
+       "receptor": "boiler",
+       "P_kW": 2
+      },
+      {
+       "nume": "Pompă de căldură",
+       "receptor": "pompa_caldura",
+       "P_kW": 10,
+       "faza": "3F"
+      },
+      {
+       "nume": "AC living",
+       "receptor": "aer_conditionat",
+       "P_kW": 2.5
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "19": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 16
+     },
+     "circuite": [
+      {
+       "nume": "Iluminat",
+       "receptor": "iluminat",
+       "P_kW": 1
+      },
+      {
+       "nume": "Prize",
+       "receptor": "prize",
+       "P_kW": 2
+      },
+      {
+       "nume": "Plită",
+       "receptor": "plita",
+       "P_kW": 7
+      },
+      {
+       "nume": "Încărcare VE",
+       "receptor": "vehicul_electric",
+       "P_kW": 22,
+       "faza": "3F"
+      }
+     ]
+    },
+    "intrebari": [
+     "Stația VE de 22 kW depășește puterea aprobată de 16 kW: limitare la 11 kW / gestiune de sarcină, sau mărirea ATR?"
+    ],
+    "neinteles": []
+   },
+   "46": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "mono",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 9
+     },
+     "tablouri_secundare": [
+      {
+       "nume": "TD anexă (bucătărie de vară)",
+       "L_m": 30,
+       "circuite": [
+        {
+         "nume": "Prize",
+         "n_circuite": 3,
+         "receptor": "prize"
+        },
+        {
+         "nume": "Iluminat",
+         "receptor": "iluminat"
+        },
+        {
+         "nume": "Plită",
+         "P_kW": 3.5
+        }
+       ]
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "cu 3x6"
+    ]
+   },
+   "4": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TT",
+     "RA_ohm": 6,
+     "alimentare": {
+      "tip": "bransament_existent",
+      "P_aprobata_kW": 25,
+      "In_Q_bransament_A": 40
+     },
+     "circuite": [
+      {
+       "nume": "Wallbox garaj",
+       "receptor": "vehicul_electric",
+       "P_kW": 11,
+       "L_m": 35,
+       "faza": "3F"
+      },
+      {
+       "nume": "Ușă garaj",
+       "receptor": "poarta_automata"
+      }
+     ]
+    },
+    "intrebari": [
+     "Desenez doar circuitele noi (wallbox, ușă garaj) adăugate în tabloul existent, sau tot tabloul casei?"
+    ],
+    "neinteles": []
+   },
+   "6": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "Ik3_OD_kA": 4.2,
+     "Zb_OD_ohm": 0.45,
+     "alimentare": {
+      "P_aprobata_kW": 11,
+      "L_coloana_m": 28,
+      "cablu": {
+       "metoda": "D1"
+      }
+     },
+     "circuite": [
+      {
+       "nume": "Pompă de căldură",
+       "receptor": "pompa_caldura"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [],
+    "cartus": {
+     "judet": "Bihor"
+    }
+   },
+   "22": {
+    "intrare_fizica": {
+     "tip_schema": "prosumator",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "P_aprobata_kW": 14,
+     "P_evacuata_kW": 10,
+     "Pn_inv_kW": 10,
+     "Ik3_OD_kA": 6
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "37": {
+    "intrare_fizica": {
+     "tip_schema": "bransament",
+     "retea": "tri",
+     "P_kW": 15
+    },
+    "intrebari": [
+     "Desenez și tabloul de șantier: câte prize 400 V și 230 V, cu ce calibre?"
+    ],
+    "neinteles": []
+   },
+   "41": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 22
+     },
+     "circuite": [
+      {
+       "nume": "Stație încărcare VE 1",
+       "receptor": "vehicul_electric",
+       "P_kW": 11,
+       "faza": "3F"
+      },
+      {
+       "nume": "Stație încărcare VE 2",
+       "receptor": "vehicul_electric",
+       "P_kW": 11,
+       "faza": "3F"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "cu load balancing"
+    ]
+   },
+   "45": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 20
+     },
+     "tablouri_secundare": [
+      {
+       "nume": "TE etaj",
+       "L_m": 20,
+       "circuite": [
+        {
+         "nume": "Iluminat",
+         "n_circuite": 2,
+         "receptor": "iluminat"
+        },
+        {
+         "nume": "Prize",
+         "n_circuite": 4,
+         "receptor": "prize"
+        },
+        {
+         "nume": "Aer condiționat",
+         "n_circuite": 2
+        }
+       ]
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": [
+     "cablu 5x6"
+    ]
+   },
+   "5": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 20
+     },
+     "circuite": [
+      {
+       "nume": "Pompă de căldură",
+       "receptor": "pompa_caldura",
+       "P_kW": 12,
+       "faza": "3F"
+      },
+      {
+       "nume": "Plită inducție",
+       "receptor": "plita"
+      },
+      {
+       "nume": "Cuptor",
+       "receptor": "cuptor"
+      },
+      {
+       "nume": "Încărcare VE",
+       "receptor": "vehicul_electric",
+       "P_kW": 11
+      },
+      {
+       "nume": "Aer condiționat 1",
+       "receptor": "aer_conditionat"
+      },
+      {
+       "nume": "Aer condiționat 2",
+       "receptor": "aer_conditionat"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "30": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "mono",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "In_Q_bransament_A": 32
+     },
+     "circuite": [
+      {
+       "nume": "Iluminat",
+       "receptor": "iluminat"
+      },
+      {
+       "nume": "Prize",
+       "receptor": "prize"
+      },
+      {
+       "nume": "Boiler",
+       "receptor": "boiler"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "9": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TT",
+     "alimentare": {
+      "P_aprobata_kW": 15
+     }
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "12": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TT",
+     "RA_ohm": 10,
+     "alimentare": {
+      "P_aprobata_kW": 22
+     }
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "18": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "mono",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 9
+     },
+     "circuite": [
+      {
+       "nume": "Iluminat parter",
+       "receptor": "iluminat",
+       "P_kW": 0.8,
+       "L_m": 25
+      },
+      {
+       "nume": "Iluminat etaj",
+       "receptor": "iluminat",
+       "P_kW": 0.6,
+       "L_m": 30
+      },
+      {
+       "nume": "Prize bucătărie",
+       "receptor": "prize_bucatarie",
+       "P_kW": 3.5,
+       "L_m": 15
+      },
+      {
+       "nume": "Mașină de spălat",
+       "receptor": "masina_spalat_rufe",
+       "P_kW": 2.2,
+       "L_m": 12
+      },
+      {
+       "nume": "Boiler",
+       "receptor": "boiler",
+       "P_kW": 2,
+       "L_m": 18
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "21": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "mono",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 7
+     },
+     "circuite": [
+      {
+       "nume": "AC split 1",
+       "receptor": "aer_conditionat",
+       "P_kW": 1.2
+      },
+      {
+       "nume": "AC split 2",
+       "receptor": "aer_conditionat",
+       "P_kW": 1.2
+      },
+      {
+       "nume": "AC split 3",
+       "receptor": "aer_conditionat",
+       "P_kW": 1.2
+      },
+      {
+       "nume": "AC split 4",
+       "receptor": "aer_conditionat",
+       "P_kW": 1.2
+      },
+      {
+       "nume": "Prize cameră 1",
+       "receptor": "prize"
+      },
+      {
+       "nume": "Prize cameră 2",
+       "receptor": "prize"
+      },
+      {
+       "nume": "Prize cameră 3",
+       "receptor": "prize"
+      },
+      {
+       "nume": "Prize cameră 4",
+       "receptor": "prize"
+      },
+      {
+       "nume": "Prize cameră 5",
+       "receptor": "prize"
+      },
+      {
+       "nume": "Iluminat 1",
+       "receptor": "iluminat"
+      },
+      {
+       "nume": "Iluminat 2",
+       "receptor": "iluminat"
+      },
+      {
+       "nume": "Iluminat 3",
+       "receptor": "iluminat"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "24": {
+    "intrare_fizica": {
+     "tip_schema": "prosumator",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "P_aprobata_kW": 30,
+     "P_evacuata_kW": 30,
+     "In_Q_bransament_A": 50,
+     "racord": "bmpt",
+     "Pn_inv_kW": 30
+    },
+    "intrebari": [],
+    "neinteles": [],
+    "cartus": {
+     "localitate": "Oradea"
+    }
+   },
+   "27": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "tri",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 16
+     },
+     "circuite": [
+      {
+       "nume": "Pompă de căldură",
+       "receptor": "pompa_caldura",
+       "P_kW": 8
+      },
+      {
+       "nume": "Încărcare VE",
+       "receptor": "vehicul_electric",
+       "P_kW": 7.4,
+       "faza": "L1"
+      },
+      {
+       "nume": "Aer condiționat 1",
+       "receptor": "aer_conditionat"
+      },
+      {
+       "nume": "Aer condiționat 2",
+       "receptor": "aer_conditionat"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "34": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "mono",
+     "schema_pamant": "TT",
+     "alimentare": {
+      "P_aprobata_kW": 7
+     }
+    },
+    "intrebari": [
+     "Legarea PE la nul în tablou la o schemă TT nu e permisă (conductorul de protecție devine activ la o întrerupere a nulului). Declanșările DDR se rezolvă căutând defectul de izolație / verificând RA. Generez schema TT corectă?"
+    ],
+    "neinteles": []
+   },
+   "39": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "mono",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 10
+     },
+     "circuite": [
+      {
+       "nume": "Pompă de căldură",
+       "receptor": "pompa_caldura",
+       "P_kW": 16,
+       "faza": "L1"
+      }
+     ]
+    },
+    "intrebari": [
+     "Pompa de căldură monofazată de 16 kW depășește puterea aprobată de 10 kW și limita unui branșament monofazat: treceți pe trifazat (și pompă trifazată) sau o pompă mai mică?"
+    ],
+    "neinteles": []
+   }
+  }
+ },
+ "_nota_v2": "raspunsuri_v2: aceleași, cu frazele atinse de ajustarea promptului rescrise DUPĂ ce s-au văzut rezultatele așteptate (nu e o măsurătoare oarbă).",
+ "raspunsuri_v2": {
+  "fotovoltaic": {
+   "33": {
+    "intrare_fizica": {
+     "tip_schema": "prosumator",
+     "retea": "tri",
+     "schema_pamant": "TN-S",
+     "Pn_inv_kW": 24.6,
+     "invertoare": [
+      {
+       "n": 1,
+       "Pn_kW": 8.2,
+       "producator": "Fronius",
+       "model": "Primo 8.2-1",
+       "faza": "L1"
+      },
+      {
+       "n": 1,
+       "Pn_kW": 8.2,
+       "producator": "Fronius",
+       "model": "Primo 8.2-1",
+       "faza": "L2"
+      },
+      {
+       "n": 1,
+       "Pn_kW": 8.2,
+       "producator": "Fronius",
+       "model": "Primo 8.2-1",
+       "faza": "L3"
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "7": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 2000,
+     "invertoare": [
+      {
+       "n": 8,
+       "producator": "Huawei",
+       "model": "SUN2000-330KTL-H1"
+      }
+     ],
+     "pt_Sn_kVA": 2500,
+     "pt_existent": false,
+     "U_MT_kV": 20,
+     "U_ca_V": 800,
+     "masura": "MT"
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "13": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "bess": {
+      "P_kW": 1000,
+      "kWh": 2000,
+      "n_pcs": 4
+     },
+     "pt_Sn_kVA": 1250,
+     "pt_existent": false,
+     "U_MT_kV": 20,
+     "masura": "MT"
+    },
+    "intrebari": [],
+    "neinteles": []
+   },
+   "45": {
+    "intrare_fizica": {
+     "tip_schema": "cef",
+     "kWp": 2000,
+     "invertoare": [
+      {
+       "n": 20,
+       "Pn_kW": 100
+      }
+     ],
+     "bess": {
+      "P_kW": 2000,
+      "kWh": 4000,
+      "n_pcs": 8
+     },
+     "pt_Sn_kVA": 2000,
+     "n_trafo": 2,
+     "pt_existent": false,
+     "masura": "MT",
+     "limitare_injectie_kW": 3000
+    },
+    "intrebari": [],
+    "neinteles": []
+   }
+  },
+  "locuinte": {
+   "46": {
+    "intrare_fizica": {
+     "tip_schema": "locuinta",
+     "retea": "mono",
+     "schema_pamant": "TN-C-S",
+     "alimentare": {
+      "P_aprobata_kW": 9
+     },
+     "tablouri_secundare": [
+      {
+       "nume": "TD anexă (bucătărie de vară)",
+       "L_m": 30,
+       "cablu": {
+        "S_fortat": 6,
+        "material": "Cu"
+       },
+       "circuite": [
+        {
+         "nume": "Prize",
+         "n_circuite": 3,
+         "receptor": "prize"
+        },
+        {
+         "nume": "Iluminat",
+         "receptor": "iluminat"
+        },
+        {
+         "nume": "Plită",
+         "P_kW": 3.5
+        }
+       ]
+      }
+     ]
+    },
+    "intrebari": [],
+    "neinteles": []
+   }
+  }
+ }
+}

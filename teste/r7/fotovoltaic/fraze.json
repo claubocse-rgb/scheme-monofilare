@@ -1,0 +1,2435 @@
+[
+ {
+  "id": 1,
+  "t": "CEF 20 kW, un invertor Fronius Symo 20.0-3-M, 40 module JA Solar JAM54S30 500W, racord in TG existent, TN-S",
+  "asteptat": "genereaza: 1 inv Fronius 20 kW tri, 20 kWp, racord TG, TN-S; prot. c.c./c.a.; fara releu PI extern (CEF in TG existent: PI integrata conform ATR)",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-S",
+    "racord": "tg_existent",
+    "modul": {
+     "Pmax_W": 500,
+     "producator": "JA Solar",
+     "model": "JAM54S30"
+    },
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 20,
+      "producator": "Fronius",
+      "model": "Symo 20.0-3-M"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "P2",
+  "comentariu": "kWp nedeclarat desi 40x500 W = 20 kWp (nr. module x Pmax ignorat la raportul c.c./c.a.)"
+ },
+ {
+  "id": 2,
+  "t": "parc fotovoltaic 1 MW: 10 x Sungrow SG110CX, module Trina Vertex 580 Wp 1900 buc, PT nou 1250 kVA 20/0,4 kV",
+  "asteptat": "genereaza: 10 inv Sungrow 110 kW (1,1 MW c.a. > 1 MW declarat - poate semnala), 1102 kWp, PT nou 1250 kVA cu celule MT, categoria B RfG",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere: 10 × 110 kW (Σ 1100 kW) sau total 1000 kW?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1250,
+    "pt_existent": false,
+    "modul": {
+     "Pmax_W": 580,
+     "producator": "Trina Solar",
+     "model": "Vertex"
+    },
+    "invertoare": [
+     {
+      "n": 10,
+      "Pn_kW": 110,
+      "producator": "Sungrow",
+      "model": "SG110CX"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intrebare legitima 10x110=1100 kW vs 1 MW declarat"
+ },
+ {
+  "id": 3,
+  "t": "CEF 2 MW cu 20 invertoare Huawei SUN2000-100KTL-M2, 2 transformatoare 1250 kVA, PT nou in anvelopa de beton, racord LEA 20 kV",
+  "asteptat": "genereaza: 20x100 kW pe 2 trafo (10 pe fiecare), PT nou 2 trafo, celule MT",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Confirmați PT propriu 2500 kVA (celulă trafo cu întreruptor + releu 50/51, 50N/51N)? Alternativ, racord JT conform ATR.",
+    "Nu am folosit în schemă: „2 transformatoare 1250 kVA”; „PT nou in anvelopa de beton”; „racord LEA 20 kV”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+   ],
+   "neconsumat": [
+    "2 transformatoare 1250 kVA",
+    "PT nou in anvelopa de beton",
+    "racord LEA 20 kV"
+   ],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "invertoare": [
+     {
+      "n": 20,
+      "Pn_kW": 100,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2"
+     }
+    ],
+    "retea": "tri",
+    "pt_Sn_kVA": 2500
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "„2 transformatoare 1250 kVA” neconsumat -> PT unic 2500 kVA desenat; intreaba (plasa de siguranta functioneaza)"
+ },
+ {
+  "id": 4,
+  "t": "5 invertoare SMA Sunny Tripower CORE2 110 kW si 2 SMA STP 50-41, racord in PT existent 1000 kVA",
+  "asteptat": "genereaza: mixt 5x110 + 2x50 = 650 kW, PT existent 1000 kVA",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "racord": "pt",
+    "pt_Sn_kVA": 1000,
+    "pt_existent": true,
+    "invertoare": [
+     {
+      "n": 5,
+      "Pn_kW": 110,
+      "producator": "SMA",
+      "model": "Sunny Tripower CORE2"
+     },
+     {
+      "n": 2,
+      "Pn_kW": 50,
+      "producator": "SMA",
+      "model": "STP 50-41"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "P2",
+  "comentariu": "mixt 5x110+2x50 corect; planșa A1 cu ~45 % spatiu gol"
+ },
+ {
+  "id": 5,
+  "t": "centrala pv 300kWp: 3 inv Solis S5-GC100K + 1 Solis S5-GC50K, retea TN-C-S, racord in BMPT 500 A",
+  "asteptat": "genereaza: mixt 3x100+1x50=350 kW > 300 kWp (raport 0,86 - semnalare), BMPT 500 A (Iac 505 A ~ limita)",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Iac,max = 1,1·ΣPn/(√3·400) = 555,7 A > Q BMPT 500 A: limitați puterea invertoarelor / injecția, sau e nevoie de ATR nou (BMPT mai mare)?"
+   ],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "bmpt",
+    "In_Q_bransament_A": 500,
+    "kWp": 300,
+    "invertoare": [
+     {
+      "n": 3,
+      "Pn_kW": 100,
+      "producator": "Solis",
+      "model": "S5-GC100K"
+     },
+     {
+      "n": 1,
+      "Pn_kW": 50,
+      "producator": "Solis",
+      "model": "S5-GC50K"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intrebare corecta Iac 556 A > BMPT 500 A"
+ },
+ {
+  "id": 6,
+  "t": "cef 150 kw, 3 x growatt max 50ktl3 lv, stringuri 18 module Jinko Tiger Neo 580W, Voc 51.6 V, Isc 14.2 A, 2 stringuri pe MPPT",
+  "asteptat": "intreaba racordul (sau presupune + semnaleaza); Voc string 929 V OK",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "modul": {
+     "Pmax_W": 580,
+     "producator": "Jinko Solar",
+     "model": "Tiger Neo"
+    },
+    "string": {
+     "n_module": 18,
+     "n_stringuri_paralel": 2,
+     "Uoc_V": 51.6,
+     "Isc_A": 14.2
+    },
+    "invertoare": [
+     {
+      "n": 3,
+      "Pn_kW": 50,
+      "producator": "Growatt",
+      "model": "MAX 50KTL3 LV"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "racord nedeclarat -> BMPT presupus pentru 165 kVA, TN-C-S implicit, fara intrebare"
+ },
+ {
+  "id": 7,
+  "t": "CEF 400 kW: 4 x Huawei SUN2000-100KTL-M2, stringuri de 28 module LONGi Hi-MO 6 575 W cu Voc 50.9 V, racord PT existent 630 kVA",
+  "asteptat": "BLOCANT/intrebare: Voc string 1425 V > 1100 V Umax invertor",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 630,
+    "pt_existent": true,
+    "modul": {
+     "Pmax_W": 575,
+     "producator": "LONGi",
+     "model": "Hi-MO 6"
+    },
+    "string": {
+     "n_module": 28,
+     "Uoc_V": 50.9
+    },
+    "invertoare": [
+     {
+      "n": 4,
+      "Pn_kW": 100,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V68",
+     "Voc la Tmin 1617,6 V > Umax 1100 V"
+    ],
+    [
+     "BLOCANT",
+     "V74",
+     "SPD c.c. Ucpv 1500 V < Voc,max 1617,6 V"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "BLOCANT V68 Voc 1618 V > 1100 V"
+ },
+ {
+  "id": 8,
+  "t": "string de 22 module Canadian CS7N 665W Voc 45.6 V Isc 18.6A pe Sungrow SG125CX-P2 cu 8 MPPT, TG existent TN-C-S",
+  "asteptat": "genereaza 1 inv 125 kW; Voc 1003 V la STC (la -10 C ~1080 V, aproape de 1100) - avertisment",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "modul": {
+     "Pmax_W": 665
+    },
+    "string": {
+     "n_module": 22,
+     "n_MPPT": 8,
+     "Uoc_V": 45.6,
+     "Isc_A": 18.6
+    },
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 125,
+      "producator": "Sungrow",
+      "model": "SG125CX-P2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V68",
+     "Voc la Tmin 1138,6 V > Umax 1100 V"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "BLOCANT V68 1139 V la Tmin (22x45,6 V) - corect pentru -25 C"
+ },
+ {
+  "id": 9,
+  "t": "CEF 50 kW cu sigurante gPV 15 A pe fiecare string, 6 stringuri, invertor GoodWe GW50K-MT, racord in TG existent, TN-C-S",
+  "asteptat": "genereaza: gPV 15 A desenate pe stringuri (Isc nedeclarat -> confirmare)",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "gpv_In_A": 15,
+    "string": {
+     "n_stringuri_paralel": 6,
+     "gpv": true,
+     "gpv_In_A": 15
+    },
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 50,
+      "producator": "GoodWe",
+      "model": "GW50K-MT"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "gPV 15 A desenate (12 buc +/-), planșa curata"
+ },
+ {
+  "id": 10,
+  "t": "Deye SUN-50K-SG01HP3 x2, CEF 100 kW, TG existent, TN-C-S",
+  "asteptat": "genereaza 2 x Deye 50 kW hibrid fara baterie",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "invertoare": [
+     {
+      "n": 2,
+      "Pn_kW": 50,
+      "producator": "Deye",
+      "model": "SUN-50K-SG01HP3"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 11,
+  "t": "prosumator 10 kW cu Huawei SUN2000-10KTL-M1 si baterie LUNA2000-15-S0 cuplata in c.c., retea trifazata TN-C-S",
+  "asteptat": "genereaza: BESS c.c. pe portul baterie, 10 kW <= 27 -> fara releu extern",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "prosumator",
+   "intrebari": [
+    "Ce capacitate (kWh) și ce putere (kW) are sistemul de stocare (BESS)?"
+   ],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "retea": "tri",
+    "Pn_inv_kW": 10,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 10,
+      "producator": "Huawei",
+      "model": "SUN2000-10KTL-M1",
+      "hibrid": true
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 10,
+     "producator": "Huawei",
+     "model": "SUN2000-10KTL-M1"
+    },
+    "hibrid": true
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "intreaba kWh/kW desi LUNA2000-15-S0 = 15 kWh"
+ },
+ {
+  "id": 12,
+  "t": "CEF 100 kW + BESS 215 kWh Sungrow PowerStack 255CS cuplat in c.a. pe bara TG, racord PT existent 630 kVA, TN-S",
+  "asteptat": "genereaza: PCS c.a. cu protectie proprie pe bara",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Nu am folosit în schemă: „CEF 100 kW + BESS 215 kWh Sungrow PowerStack”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+   ],
+   "neconsumat": [
+    "CEF 100 kW + BESS 215 kWh Sungrow PowerStack"
+   ],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-S",
+    "pt_Sn_kVA": 630,
+    "pt_existent": true,
+    "bess": {
+     "kWh": 215,
+     "P_kW": 107.5,
+     "producator": "Sungrow",
+     "model": "PowerStack 255CS cuplat",
+     "cuplaj": "ca"
+    }
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "„CEF 100 kW” pierdut (neconsumat) -> planșa doar BESS; model „PowerStack 255CS cuplat”"
+ },
+ {
+  "id": 13,
+  "t": "BESS de 500 kW / 1 MWh singur, fara fotovoltaic, racord in PT nou 630 kVA",
+  "asteptat": "genereaza BESS standalone cu PT nou (sau intreaba schema pamant)",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "racord": "pt",
+    "pt_Sn_kVA": 630,
+    "pt_existent": false,
+    "bess": {
+     "kWh": 1000,
+     "P_kW": 500
+    }
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "P1",
+  "comentariu": "BESS standalone + PT nou corect; QB=QG=QJT 1000 A Ir 950 A > In trafo 909 A (V60/V41 proprii)"
+ },
+ {
+  "id": 14,
+  "t": "Fronius Primo GEN24 6.0 Plus monofazat cu BYD HVS 7.7, 14 module JA 435 W, TN-C-S",
+  "asteptat": "genereaza mono 6 kW, BESS c.c.",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": null,
+   "intrebari": [
+    "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {},
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "tip nedetectat fara cuvant-cheie (Fronius Primo GEN24 + BYD) -> intrebare generica"
+ },
+ {
+  "id": 15,
+  "t": "Deye SUN-12K-SG04LP3 cu 4 x Pylontech US5000, 24 panouri Canadian 450, schema TT",
+  "asteptat": "genereaza tri 12 kW, baterie 48 V c.c. 4x4,8 kWh, TT -> RCD",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TT",
+    "modul": {
+     "Pmax_W": 450
+    },
+    "invertoare": [
+     {
+      "n": 4,
+      "Pn_kW": 12,
+      "producator": "Deye",
+      "model": "SUN-12K-SG04LP3"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "gresit",
+  "prioritate": "P0",
+  "comentariu": "„4 x Pylontech” -> 4 invertoare Deye 12 kW = 48 kW; bateria lipseste; 10,8 kWp/48 kW nesemnalat"
+ },
+ {
+  "id": 16,
+  "t": "prosumator 8 kW, baterie cuplata in c.c. dar cu invertor de baterie separat SMA Sunny Island 6.0H, invertor PV SMA STP 8.0, TN-C-S",
+  "asteptat": "intrebare: contradictie (Sunny Island = cuplaj c.a.)",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "prosumator",
+   "intrebari": [
+    "Care este puterea invertorului (kW c.a.)?"
+   ],
+   "neconsumat": [
+    "baterie cuplata in c.c. dar cu invertor de baterie"
+   ],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "contradictia c.c. vs Sunny Island (c.a.) nedetectata; intreaba puterea desi „8 kW”/STP 8.0 date"
+ },
+ {
+  "id": 17,
+  "t": "prosumator 30 kW injectie zero, Solis S5-GR3P30K, smart meter, TN-C-S",
+  "asteptat": "genereaza 30 kW > 27 -> tablou cu releu PI, contor/smart meter injectie zero",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "limitare_injectie_kW": 0,
+    "Pn_inv_kW": 30,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 30,
+      "producator": "Solis",
+      "model": "S5-GR3P30K"
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 30,
+     "producator": "Solis",
+     "model": "S5-GR3P30K"
+    },
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "PI externa corecta (>27 kW); TC+analizor injectie zero desenate pe plecarea PV, nu la PCC"
+ },
+ {
+  "id": 18,
+  "t": "CEF 200 kW cu limitare injectie la 150 kW conform ATR, 2 x SG110CX, PT existent 400 kVA",
+  "asteptat": "genereaza: 220 kW (vs 200 declarat), limitare 150 kW cu EMS",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere: 2 × 110 kW (Σ 220 kW) sau total 200 kW?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "limitare_injectie_kW": 150,
+    "pt_Sn_kVA": 400,
+    "pt_existent": true,
+    "invertoare": [
+     {
+      "n": 2,
+      "Pn_kW": 110,
+      "producator": "Sungrow",
+      "model": "SG110CX"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intrebare legitima 220 vs 200 kW"
+ },
+ {
+  "id": 19,
+  "t": "fara injectie in retea, 8 kW, Growatt MOD 8KTL3-XH, contor Eastron SDM630, trifazat TN-C-S",
+  "asteptat": "genereaza 8 kW tri, injectie zero, SDM630",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": null,
+   "intrebari": [
+    "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {},
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "tip nedetectat (Growatt MOD 8KTL3-XH + SDM630)"
+ },
+ {
+  "id": 20,
+  "t": "prosumator 15 kW cu injectie zero si putere aprobata de injectare 15 kW in ATR, Huawei SUN2000-15KTL-M2, TN-C-S",
+  "asteptat": "intrebare: contradictie injectie zero vs 15 kW aprobat",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "limitare_injectie_kW": 0,
+    "Pn_inv_kW": 15,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 15,
+      "producator": "Huawei",
+      "model": "SUN2000-15KTL-M2"
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 15,
+     "producator": "Huawei",
+     "model": "SUN2000-15KTL-M2"
+    },
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "gresit",
+  "prioritate": "P1",
+  "comentariu": "contradictie injectie zero vs 15 kW aprobat rezolvata tacit ca zero"
+ },
+ {
+  "id": 21,
+  "t": "CEF 1,6 MW, 16 x Huawei SUN2000-100KTL-M2, PT nou cu 2 trafo 1000 kVA, celula de linie, celula de masura, 2 celule trafo",
+  "asteptat": "genereaza PT nou 2x1000, 8 inv pe trafo",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Sn PT 1000 kVA < S = 1,1·ΣPn = 1760 kVA (V67). Măriți trafo-ul la 2000 kVA?"
+   ],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1000,
+    "pt_existent": false,
+    "invertoare": [
+     {
+      "n": 16,
+      "Pn_kW": 100,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V67",
+     "Sn trafo 1000 kVA < S invertoare+PCS 1760 kVA"
+    ]
+   ]
+  },
+  "verdict": "gresit",
+  "prioritate": "P0",
+  "comentariu": "„PT nou cu 2 trafo 1000 kVA” -> 1 trafo; BLOCANT fals V67 + propunere „mariti la 2000 kVA”; 16 inv. pe un rand, scara 30 %"
+ },
+ {
+  "id": 22,
+  "t": "racord in BMPT existent 3x200A, invertor SMA STP 25000TL-30, 46 module Trina 545, TN-C-S",
+  "asteptat": "genereaza prosumator 25 kW (<=27) in BMPT",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Nu am folosit în schemă: „racord in BMPT existent 3x200A”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+   ],
+   "neconsumat": [
+    "racord in BMPT existent 3x200A"
+   ],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "bmpt",
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 25,
+      "producator": "SMA",
+      "model": "STP 25000TL-30"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "„BMPT existent 3x200A” neconsumat (In 200 A pierdut); intrebare inutila"
+ },
+ {
+  "id": 23,
+  "t": "CEF 60 kW in TG existent al halei, alimentat din PT 250 kVA, 1 x Huawei SUN2000-60KTL-M0, TN-C-S",
+  "asteptat": "genereaza in TG, PT 250 sursa",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "pt_Sn_kVA": 250,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 60,
+      "producator": "Huawei",
+      "model": "SUN2000-60KTL-M0"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "P2",
+  "comentariu": "presupusul mentioneaza celula trafo cu SF 16 A pentru PT existent (nedesenata)"
+ },
+ {
+  "id": 24,
+  "t": "prosumator monofazat 5 kW Huawei SUN2000-5KTL-L1, schema TT, priza de pamant 4 ohmi",
+  "asteptat": "genereaza mono TT, DDR",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TT",
+    "RA_ohm": 4,
+    "retea": "mono",
+    "Pn_inv_kW": 5,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 5,
+      "producator": "Huawei",
+      "model": "SUN2000-5KTL-L1",
+      "hibrid": true
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 5,
+     "producator": "Huawei",
+     "model": "SUN2000-5KTL-L1"
+    },
+    "hibrid": true
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "baterie BAT fantoma desenata (SUN2000-5KTL-L1, baterie nedeclarata)"
+ },
+ {
+  "id": 25,
+  "t": "6 kW mono, Growatt MIN 6000TL-X, retea TT",
+  "asteptat": "genereaza mono TT",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": null,
+   "intrebari": [
+    "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {},
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "tip nedetectat („6 kW mono, Growatt MIN 6000TL-X, retea TT”)"
+ },
+ {
+  "id": 26,
+  "t": "prosumator 20 kW monofazat, TN-C-S",
+  "asteptat": "intrebare/avertisment: 20 kW monofazat nerealist (OD: mono max ~ 7-10 kW)",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "prosumator",
+   "intrebari": [
+    "Treceți pe prosumator trifazat 20 kW, sau reduceți invertorul monofazat la cel mult 8 kW (Iac,max ≤ 40 A)?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "retea": "mono",
+    "Pn_inv_kW": 20
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intrebare corecta mono 20 kW"
+ },
+ {
+  "id": 27,
+  "t": "Fronius Symo 10.0-3-M pe bransament monofazat, TN-C-S",
+  "asteptat": "intrebare: invertor trifazat pe bransament mono",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Centrala e trifazată (3 × 400 V), sau invertoarele sunt monofazate de cel mult 8 kW în total?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "bmpt",
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 10,
+      "producator": "Fronius",
+      "model": "Symo 10.0-3-M"
+     }
+    ]
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intrebare corecta Symo trifazat pe bransament mono"
+ },
+ {
+  "id": 28,
+  "t": "cablu impus CYABY 5x16 de la invertor la TG, 45 m, Sungrow SG33CX, 60 module LONGi 550, TN-C-S",
+  "asteptat": "genereaza cu CYABY 5x16 45 m (Iac 53 A OK)",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "invertoare": [
+     {
+      "n": 5,
+      "Pn_kW": 33,
+      "producator": "Sungrow",
+      "model": "SG33CX"
+     }
+    ],
+    "cablu_C0": {
+     "material": "Cu",
+     "S_fortat": 16
+    },
+    "L_racord_m": 45,
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V02",
+     "Ip = 304 A > Iz' = 64 A (Ib ≤ In ≤ Iz' încălcat)"
+    ],
+    [
+     "BLOCANT",
+     "V03",
+     "I2 = 395,2 A > 1,45·Iz' = 92,8 A"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 7,02 % > 3 % cu secțiunea impusă — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V35",
+     "fază 1×16 mm² < 75,3 mm² la Ik3max"
+    ],
+    [
+     "BLOCANT",
+     "V36",
+     "PE 16 mm² < 75,3 mm² necesar la scurtcircuit (k²S² < I²t)"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 7,05 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 7,05 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 7,05 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 7,05 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 7,05 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ]
+   ]
+  },
+  "verdict": "gresit",
+  "prioritate": "P0",
+  "comentariu": "„CYABY 5x16 ... SG33CX” -> 5 x SG33CX = 165 kW; fiecare invertor primeste 4x(ACYABY 4x240) - 630 m Al pentru 165 kW"
+ },
+ {
+  "id": 29,
+  "t": "CEF 100kW, 2 x Huawei SUN2000-50KTL-M3, cablu NA2XY 4x50 Al 120 m pana la PT existent 400 kVA, TN-C-S",
+  "asteptat": "genereaza cu NA2XY 4x50 120 m, verificare dU",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "pt",
+    "pt_Sn_kVA": 400,
+    "pt_existent": true,
+    "invertoare": [
+     {
+      "n": 2,
+      "Pn_kW": 50,
+      "producator": "Huawei",
+      "model": "SUN2000-50KTL-M3"
+     }
+    ],
+    "cablu_C0": {
+     "material": "Al",
+     "izolatie": "XLPE",
+     "S_fortat": 50
+    },
+    "L_racord_m": 120,
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V02",
+     "Ip = 160 A > Iz' = 106 A (Ib ≤ In ≤ Iz' încălcat)"
+    ],
+    [
+     "BLOCANT",
+     "V03",
+     "I2 = 208 A > 1,45·Iz' = 153,7 A"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 6,78 % > 3 % cu secțiunea impusă — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V30",
+     "deconectare automată neîndeplinită: Ik1min 877 A < Ia 1920 A"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 6,82 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V30",
+     "deconectare automată neîndeplinită: Ik1min 862 A < Ia 1200 A"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 6,82 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V30",
+     "deconectare automată neîndeplinită: Ik1min 862 A < Ia 1200 A"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "P2",
+  "comentariu": "BLOCANT justificat (NA2XY 4x50, 120 m); mesaj V20 „chiar la 4x240” induce in eroare"
+ },
+ {
+  "id": 30,
+  "t": "invertor SMA STP 50-40 cu cablu CYY-F 5x6 30 m, TG existent, TN-C-S",
+  "asteptat": "BLOCANT: 6 mm2 Cu pentru ~73 A subdimensionat",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "invertoare": [
+     {
+      "n": 5,
+      "Pn_kW": 50,
+      "producator": "SMA",
+      "model": "STP 50-40"
+     }
+    ],
+    "cablu_C0": {
+     "material": "Cu",
+     "S_fortat": 6
+    },
+    "L_racord_m": 30,
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V02",
+     "Ip = 400 A > Iz' = 38 A (Ib ≤ In ≤ Iz' încălcat)"
+    ],
+    [
+     "BLOCANT",
+     "V03",
+     "I2 = 520 A > 1,45·Iz' = 55,1 A"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 19 % > 3 % cu secțiunea impusă — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V35",
+     "fază 1×6 mm² < 75,3 mm² la Ik3max"
+    ],
+    [
+     "BLOCANT",
+     "V36",
+     "PE 6 mm² < 75,3 mm² necesar la scurtcircuit (k²S² < I²t)"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 19,04 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 19,04 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 19,04 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 19,04 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ],
+    [
+     "BLOCANT",
+     "V20",
+     "ΔU pe cablul invertorului 19,04 % > 3 % chiar la secțiunea maximă (4 × 240 mm²) — invertorul declanșează la supratensiune"
+    ]
+   ]
+  },
+  "verdict": "gresit",
+  "prioritate": "P0",
+  "comentariu": "„STP 50-40 cu cablu CYY-F 5x6” -> 5 invertoare (250 kW); blocat pentru motivul gresit"
+ },
+ {
+  "id": 31,
+  "t": "prosumator 27 kW, Huawei SUN2000-20KTL-M2 + SUN2000-8KTL-M1, TN-C-S",
+  "asteptat": "contradictie 28 kW vs 27 declarat -> intrebare sau semnalare; 28 > 27 -> releu",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "prosumator",
+   "intrebari": [
+    "Câte invertoare și de ce putere: 1 × 20 + 1 × 8 kW (Σ 28 kW) sau total 27 kW?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "Pn_inv_kW": 28,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 20,
+      "producator": "Huawei",
+      "model": "SUN2000-20KTL-M2"
+     },
+     {
+      "n": 1,
+      "Pn_kW": 8,
+      "producator": "Huawei",
+      "model": "SUN2000-8KTL-M1",
+      "hibrid": true
+     }
+    ],
+    "hibrid": true,
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intrebare 28 vs 27 kW"
+ },
+ {
+  "id": 32,
+  "t": "prosumator 40 kW, 2 x Fronius Symo 20.0-3-M, TN-C-S",
+  "asteptat": "genereaza cu tablou + releu PI extern (>27 kW)",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "Pn_inv_kW": 40,
+    "invertoare": [
+     {
+      "n": 2,
+      "Pn_kW": 20,
+      "producator": "Fronius",
+      "model": "Symo 20.0-3-M"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "releu PI extern (>27 kW)"
+ },
+ {
+  "id": 33,
+  "t": "prosumator 3 x 10 kW Huawei SUN2000-10KTL-M1, TN-C-S",
+  "asteptat": "genereaza 30 kW cu releu PI",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "retea": "tri",
+    "Pn_inv_kW": 30,
+    "invertoare": [
+     {
+      "n": 3,
+      "Pn_kW": 10,
+      "producator": "Huawei",
+      "model": "SUN2000-10KTL-M1",
+      "hibrid": true
+     }
+    ],
+    "hibrid": true
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "BAT fantoma doar pe INV-1 din 3 identice; INV-1 „hibrid”, INV-2/3 nu"
+ },
+ {
+  "id": 34,
+  "t": "prosumator 25 kW, Solis S5-GC25K, TN-C-S",
+  "asteptat": "genereaza fara releu extern",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "Pn_inv_kW": 25,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 25,
+      "producator": "Solis",
+      "model": "S5-GC25K"
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 25,
+     "producator": "Solis",
+     "model": "S5-GC25K"
+    },
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "fara releu extern (25 kW)"
+ },
+ {
+  "id": 35,
+  "t": "prosumator 50 kW cu limitare injectie la 27 kW, Huawei SUN2000-50KTL-M3, TN-C-S",
+  "asteptat": "genereaza 50 kW cu releu PI (puterea instalata > 27) + limitare 27",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "limitare_injectie_kW": 27,
+    "Pn_inv_kW": 50,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 50,
+      "producator": "Huawei",
+      "model": "SUN2000-50KTL-M3"
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 50,
+     "producator": "Huawei",
+     "model": "SUN2000-50KTL-M3"
+    },
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "releu PI (50 kW instalat) + EMS 27 kW"
+ },
+ {
+  "id": 36,
+  "t": "casa, 12 panouri si un invertor de 5 kw",
+  "asteptat": "intrebare retea (mono/tri) + schema pamant",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "prosumator",
+   "intrebari": [
+    "Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”."
+   ],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "Pn_inv_kW": 5
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V07",
+     "rețeaua nu este specificată (monofazat sau trifazat)"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intreaba reteaua, nu o presupune"
+ },
+ {
+  "id": 37,
+  "t": "pv 8kw",
+  "asteptat": "intrebare retea/racord",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere (kW c.a.)?"
+   ],
+   "neconsumat": [
+    "pv 8kw"
+   ],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "„pv 8kw” -> intreaba puterea invertorului (data); ar trebui sa intrebe reteaua/racordul"
+ },
+ {
+  "id": 38,
+  "t": "fotovoltaice pe casa",
+  "asteptat": "intrebare putere/retea",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "prosumator",
+   "intrebari": [
+    "Care este puterea invertorului (kW c.a.)?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "prosumator"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 39,
+  "t": "vreau schema pentru 10 kWp",
+  "asteptat": "intrebare: retea, invertor",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere (kW c.a.)?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "kWp": 10
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 40,
+  "t": "CEF 1 MW cu un invertor de 100 kW, PT nou 1250 kVA",
+  "asteptat": "intrebare: 1 MW vs 100 kW",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere: 1 × 100 kW (Σ 100 kW) sau total 1000 kW?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1250,
+    "pt_existent": false,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 100
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 41,
+  "t": "10 invertoare Huawei SUN2000-100KTL-M2 dar puterea totala a centralei 500 kW, PT existent 1000 kVA",
+  "asteptat": "intrebare: 1000 kW vs 500 kW",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Invertorul este SUN2000-100KTL-M2 dar puterea totala (100 kW) sau un model de 500 kW?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1000,
+    "pt_existent": true,
+    "invertoare": [
+     {
+      "n": 10,
+      "Pn_kW": 500,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2 dar puterea totala"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "intrebare stalcita: model „SUN2000-100KTL-M2 dar puterea totala”, Pn 500 kW/buc"
+ },
+ {
+  "id": 42,
+  "t": "CEF 250 kW, 5 x Sungrow SG50CX, PT existent 160 kVA, TN-C-S",
+  "asteptat": "avertisment/blocant: 250 kW > Sn trafo 160 kVA",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "pt_Sn_kVA": 160,
+    "pt_existent": true,
+    "invertoare": [
+     {
+      "n": 5,
+      "Pn_kW": 50,
+      "producator": "Sungrow",
+      "model": "SG50CX"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V67",
+     "Sn trafo 160 kVA < S invertoare+PCS 275 kVA"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "BLOCANT V67 160 kVA < 275 kVA"
+ },
+ {
+  "id": 43,
+  "t": "CEF 300 kW, 3 x SMA STP 110-60, racord in TG existent si in PT nou 400 kVA",
+  "asteptat": "intrebare: doua puncte de racord",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere: 3 × 110 kW (Σ 330 kW) sau total 300 kW?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "racord": "tg_existent",
+    "pt_Sn_kVA": 400,
+    "pt_existent": false,
+    "invertoare": [
+     {
+      "n": 3,
+      "Pn_kW": 110,
+      "producator": "SMA",
+      "model": "STP 110-60"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "dublu racord (TG existent si PT nou) nesemnalat; intreaba doar 330 vs 300"
+ },
+ {
+  "id": 44,
+  "t": "prosumator 12 kW, Huawei SUN2000-12KTL-M2, retea TN-S si TT",
+  "asteptat": "intrebare: doua scheme de pamant",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "prosumator",
+   "intrebari": [
+    "Ce schemă de legare la pământ are instalația: TN-S sau TT? (TT = priză de pământ proprie, fără PEN; TN = PEN separat în BMPT/BMPM)"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "Pn_inv_kW": 12,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 12,
+      "producator": "Huawei",
+      "model": "SUN2000-12KTL-M2"
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 12,
+     "producator": "Huawei",
+     "model": "SUN2000-12KTL-M2"
+    },
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 45,
+  "t": "3 x Huawei SUN2000-330KTL-H1 in TG existent 400 V",
+  "asteptat": "BLOCANT/intrebare: invertor 800 V c.a. nu se leaga la 400 V; necesita trafo 0,8/20 kV",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "S = 1089 kVA > 400 kVA, racord în TG existent: TG-ul e alimentat dintr-un PT propriu? Indicați Sn-ul lui (ex. 1250 kVA, „PT propriu … kVA existent”) — trafo-ul NU se desenează între TGD-CF și TG."
+   ],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "racord": "tg_existent",
+    "invertoare": [
+     {
+      "n": 3,
+      "Pn_kW": 330,
+      "producator": "Huawei",
+      "model": "SUN2000-330KTL-H1"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V66",
+     "S = 1089 kVA > 400 kVA la 0,4 kV fără PT propriu și fără ATR pentru racord JT"
+    ]
+   ]
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "330KTL-H1 (800 V c.a.) tratat ca 400 V; intrebarea e doar despre Sn"
+ },
+ {
+  "id": 46,
+  "t": "CEF 1 MW, 4 x Sungrow SG250HX, PT nou 1250 kVA 20/0,8 kV",
+  "asteptat": "genereaza cu 800 V c.a.",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1250,
+    "pt_existent": false,
+    "invertoare": [
+     {
+      "n": 4,
+      "Pn_kW": 250,
+      "producator": "Sungrow",
+      "model": "SG250HX"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "gresit",
+  "prioritate": "P0",
+  "comentariu": "SG250HX (800 V c.a., fara N) desenat 3x400 V + N, trafo 20/0,4 desi „20/0,8 kV”; 3x(4x240) Al/inv.; SPD c.c. 1100 V pe sistem 1500 V"
+ },
+ {
+  "id": 47,
+  "t": "prosumator 40 kW, invertor Xyz 40K, TN-C-S",
+  "asteptat": "genereaza 40 kW model necunoscut (confirmare), releu PI",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "Pn_inv_kW": 40,
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 48,
+  "t": "PV plant 250 kWp, 2x Sungrow SG110CX, grid connection in existing substation 630 kVA, TN-C-S",
+  "asteptat": "genereaza (sau intreaba politicos); 220 kW, PT existent",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Nu am folosit în schemă: „grid connection in existing substation 630 kVA”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+   ],
+   "neconsumat": [
+    "grid connection in existing substation 630 kVA"
+   ],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "kWp": 250,
+    "invertoare": [
+     {
+      "n": 2,
+      "Pn_kW": 110,
+      "producator": "Sungrow",
+      "model": "SG110CX"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "„existing substation 630 kVA” neinteles -> intrebare"
+ },
+ {
+  "id": 49,
+  "t": "invertr huawey 20ktl , 40 panouri jinko 470w, tg exsitent, tncs",
+  "asteptat": "genereaza 20 kW tri TN-C-S (cu presupuneri) sau intreaba",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere (kW c.a.)?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "modul": {
+     "Pmax_W": 470,
+     "producator": "Jinko Solar"
+    }
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "„huawey 20ktl” nerecunoscut -> intreaba puterea"
+ },
+ {
+  "id": 50,
+  "t": "CEF 120 kWp cu un invertor Huawei SUN2000-100KTL-M2, TG existent, TN-C-S",
+  "asteptat": "genereaza, raport 1,2",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "kWp": 120,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 100,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 51,
+  "t": "200 kWp pe un singur invertor de 50 kW, TG existent, TN-C-S",
+  "asteptat": "avertisment: raport c.c./c.a. 4,0",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Raportul c.c./c.a. = 200/50 = 4 e în afara intervalului uzual 0,8 … 1,6. Confirmați puterea invertoarelor?"
+   ],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "kWp": 200,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 50
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "intrebare raport 4,0"
+ },
+ {
+  "id": 52,
+  "t": "invertor 50 kW Huawei SUN2000-50KTL-M3, 1 string de 30 module 550W Voc 49.5V, TG existent TN-C-S",
+  "asteptat": "BLOCANT: Voc 1485 V > 1100 V",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "modul": {
+     "Pmax_W": 550
+    },
+    "string": {
+     "n_module": 30,
+     "Uoc_V": 49.5
+    },
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 50,
+      "producator": "Huawei",
+      "model": "SUN2000-50KTL-M3"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V68",
+     "Voc la Tmin 1685,5 V > Umax 1100 V"
+    ],
+    [
+     "BLOCANT",
+     "V74",
+     "SPD c.c. Ucpv 1500 V < Voc,max 1685,5 V"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "BLOCANT V68 1686 V"
+ },
+ {
+  "id": 53,
+  "t": "CEF 100 kW, Huawei SUN2000-100KTL-M2, module Isc 18.4 A, 3 stringuri in paralel pe MPPT, TG existent TN-C-S",
+  "asteptat": "gPV obligatorii (3 stringuri paralel) sau avertisment curent MPPT",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "string": {
+     "n_stringuri_paralel": 3,
+     "Isc_A": 18.4
+    },
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 100,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "gPV 30 A automat (3 stringuri paralel, Isc 18,4)"
+ },
+ {
+  "id": 54,
+  "t": "CEF 60 kW, GoodWe GW60KN-MT, sigurante gPV 10 A pe stringuri, module cu Isc 13.9 A, TG existent TN-C-S",
+  "asteptat": "BLOCANT/avertisment: gPV 10 A < 1,5 x Isc = 20,9 A",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "gpv_In_A": 10,
+    "string": {
+     "Isc_A": 13.9,
+     "gpv": true,
+     "gpv_In_A": 10
+    },
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 60,
+      "producator": "GoodWe",
+      "model": "GW60KN-MT"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V69",
+     "nu există gPV în [20,85; 33,36] A"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "BLOCANT V69 gPV 10 A < 1,5xIsc"
+ },
+ {
+  "id": 55,
+  "t": "Huawei SUN2000-6KTL-L1 cu LUNA2000-10-S0, TT, monofazat, injectie zero",
+  "asteptat": "genereaza mono TT, BESS c.c., injectie zero",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TT",
+    "limitare_injectie_kW": 0,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 6,
+      "producator": "Huawei",
+      "model": "SUN2000-6KTL-L1",
+      "hibrid": true
+     }
+    ],
+    "retea": "mono"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "LUNA2000-10-S0 pierdut; „TCA 3x50/5 A” pe monofazat (lista: 1 buc); titlu „CEF 6 kW”; PI externa la 6 kW"
+ },
+ {
+  "id": 56,
+  "t": "CEF 5 MW, 50 x Huawei SUN2000-100KTL-M2, 4 trafo 1600 kVA, PT nou",
+  "asteptat": "genereaza 4 trafo (12-13 inv/trafo), categoria C RfG",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Împărțiți centrala pe două posturi de transformare (ex. 2 × 2500 kVA)?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1600,
+    "invertoare": [
+     {
+      "n": 50,
+      "Pn_kW": 100,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "„4 trafo 1600 kVA” ignorat -> propune 2 posturi x 2500"
+ },
+ {
+  "id": 57,
+  "t": "CEF agrivoltaic 900 kW cu 9 x SMA Sunny Highpower PEAK3 100, PT nou 1000 kVA",
+  "asteptat": "genereaza",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Invertoarele sunt de 100 kW fiecare (9 × 100 = 900 kW)? Indicați puterea fiecărui invertor."
+   ],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1000,
+    "pt_existent": false,
+    "invertoare": [
+     {
+      "n": 9,
+      "Pn_kW": 100,
+      "producator": "SMA",
+      "model": "Sunny Highpower PEAK3 100"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "intrebare inutila (9x100 = 900 kW)"
+ },
+ {
+  "id": 58,
+  "t": "trei invertoare: Sungrow SG50CX si SG33CX, TG existent TN-C-S",
+  "asteptat": "intrebare: 3 declarate vs 2 modele",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare are centrala: 3 sau 2?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "tg_existent",
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 50,
+      "producator": "Sungrow",
+      "model": "SG50CX"
+     },
+     {
+      "n": 1,
+      "Pn_kW": 33,
+      "producator": "Sungrow",
+      "model": "SG33CX"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 59,
+  "t": "Pylontech Force H2 10,65 kWh cu GoodWe GW10K-ET, 20 module Jinko 500 W, TN-C-S",
+  "asteptat": "genereaza 10 kW hibrid tri, BESS c.c.",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": null,
+   "intrebari": [
+    "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {},
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "tip nedetectat (GoodWe GW10K-ET + Pylontech)"
+ },
+ {
+  "id": 60,
+  "t": "BESS 2 MWh in c.a. cu PCS 1 MW, PT nou 2 x 630 kVA",
+  "asteptat": "genereaza BESS standalone cu 2 trafo",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Sn PT 630 kVA < S = 1,1·ΣPn = 1100 kVA (V67). Măriți trafo-ul la 1250 kVA?"
+   ],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 630,
+    "pt_existent": false,
+    "bess": {
+     "kWh": 2000,
+     "P_kW": 1000
+    }
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V67",
+     "Sn trafo 630 kVA < S invertoare+PCS 1100 kVA"
+    ]
+   ]
+  },
+  "verdict": "gresit",
+  "prioritate": "P0",
+  "comentariu": "„PT nou 2 x 630 kVA” -> 1 trafo 630; QG 2000 A in aval de QJT 1000 A"
+ },
+ {
+  "id": 61,
+  "t": "solar 10 kw tri tn-c-s TG",
+  "asteptat": "genereaza 10 kW tri TN-C-S racord TG",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "tablou",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "tablou",
+    "schema_pamant": "TN-C-S",
+    "P_kW": 10,
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V07",
+     "tabloul fără nicio plecare — nu există ce dimensiona"
+    ]
+   ]
+  },
+  "verdict": "gresit",
+  "prioritate": "P1",
+  "comentariu": "„solar 10 kw tri tn-c-s TG” -> tablou consumator fara plecari (BLOCANT V07)"
+ },
+ {
+  "id": 62,
+  "t": "prosumator 35 kW: Huawei SUN2000-30KTL-M3 + SUN2000-5KTL-M1, TN-C-S",
+  "asteptat": "genereaza mixt, releu PI",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "prosumator",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "Pn_inv_kW": 35,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 30,
+      "producator": "Huawei",
+      "model": "SUN2000-30KTL-M3"
+     },
+     {
+      "n": 1,
+      "Pn_kW": 5,
+      "producator": "Huawei",
+      "model": "SUN2000-5KTL-M1",
+      "hibrid": true
+     }
+    ],
+    "hibrid": true,
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "BAT fantoma pe SUN2000-5KTL-M1"
+ },
+ {
+  "id": 63,
+  "t": "invertor 20 kW Huawei SUN2000-20KTL-M2, limitare injectie 30 kW, TN-C-S",
+  "asteptat": "intrebare/avertisment: limitare > putere instalata",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "limitare_injectie_kW": 30,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 20,
+      "producator": "Huawei",
+      "model": "SUN2000-20KTL-M2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": "V92 limitare 30 > 20 kW"
+ },
+ {
+  "id": 64,
+  "t": "CEF 150 kW, 3 x Huawei SUN2000-50KTL-M3, racord in PT existent, nu stiu puterea trafo, TN-C-S",
+  "asteptat": "intrebare Sn trafo (sau presupune + semnaleaza)",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "cef",
+   "intrebari": [
+    "Nu am folosit în schemă: „racord in PT existent”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)"
+   ],
+   "neconsumat": [
+    "racord in PT existent"
+   ],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-C-S",
+    "racord": "pt",
+    "invertoare": [
+     {
+      "n": 3,
+      "Pn_kW": 50,
+      "producator": "Huawei",
+      "model": "SUN2000-50KTL-M3"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V07",
+     "pt_Sn_kVA = — — racord „pt” fără puterea PT"
+    ]
+   ]
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "„racord in PT existent” raportat ca neinteles; presupus „BMPT” contrazice racordul PT; BLOCANT V07 corect"
+ },
+ {
+  "id": 65,
+  "t": "CEF 800 kW, 8 x Huawei SUN2000-100KTL-M2, PT nou 1000 kVA 20/0,4 kV, masura pe MT in celula de masura",
+  "asteptat": "genereaza cu contor pe MT",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 1000,
+    "pt_existent": false,
+    "invertoare": [
+     {
+      "n": 8,
+      "Pn_kW": 100,
+      "producator": "Huawei",
+      "model": "SUN2000-100KTL-M2"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "„masura pe MT in celula de masura” ignorata TACIT (contor pe JT, neconsumat gol); scara 60 %"
+ },
+ {
+  "id": 66,
+  "t": "sistem off-grid 5 kW Deye SUN-5K-SG03LP1 cu 2 x Pylontech US3000C, fara retea",
+  "asteptat": "intrebare/refuz: off-grid nu e racord OD (nu PI/contor bidirectional)",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": null,
+   "intrebari": [
+    "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {},
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P2",
+  "comentariu": "off-grid nerecunoscut -> intrebare generica"
+ },
+ {
+  "id": 67,
+  "t": "prosumator 10 kW trifazat TN-C-S cu BESS cuplat in c.a.: Huawei SUN2000-10KTL-M1 pentru PV si SMA Sunny Boy Storage 6.0 cu BYD HVS 10.2",
+  "asteptat": "genereaza PV + BESS c.a. separat (Sunny Boy Storage e mono!) -> semnalare",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "prosumator",
+   "intrebari": [
+    "Ce capacitate (kWh) și ce putere (kW) are sistemul de stocare (BESS)?"
+   ],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "schema_pamant": "TN-C-S",
+    "retea": "tri",
+    "Pn_inv_kW": 10,
+    "invertoare": [
+     {
+      "n": 1,
+      "Pn_kW": 10,
+      "producator": "Huawei",
+      "model": "SUN2000-10KTL-M1",
+      "hibrid": true
+     }
+    ],
+    "invertor": {
+     "Pn_kW": 10,
+     "producator": "Huawei",
+     "model": "SUN2000-10KTL-M1"
+    },
+    "hibrid": true
+   },
+   "blocante": []
+  },
+  "verdict": "partial",
+  "prioritate": "P1",
+  "comentariu": "BESS c.a. SMA Sunny Boy Storage + BYD pierdut; intreaba kWh desi BYD HVS 10.2 dat"
+ },
+ {
+  "id": 68,
+  "t": "CEF 450 kW cu 3 x SG110CX si 2 x SG50CX si 1 x SG33CX, PT existent 630 kVA, TN-S, limitare injectie 400 kW",
+  "asteptat": "genereaza mixt 3 tipuri: 3x110+2x50+33 = 463 kW",
+  "obtinut": {
+   "actiune": "refuza",
+   "tip": "cef",
+   "intrebari": [
+    "Câte invertoare și de ce putere: 3 × 110 + 2 × 50 + 1 × 33 kW (Σ 463 kW) sau total 450 kW?"
+   ],
+   "neconsumat": [],
+   "blocant": null,
+   "intrare": {
+    "tip_schema": "cef",
+    "schema_pamant": "TN-S",
+    "limitare_injectie_kW": 400,
+    "pt_Sn_kVA": 630,
+    "pt_existent": true,
+    "invertoare": [
+     {
+      "n": 3,
+      "Pn_kW": 110,
+      "producator": "Sungrow",
+      "model": "SG110CX"
+     },
+     {
+      "n": 2,
+      "Pn_kW": 50,
+      "producator": "Sungrow",
+      "model": "SG50CX"
+     },
+     {
+      "n": 1,
+      "Pn_kW": 33,
+      "producator": "Sungrow",
+      "model": "SG33CX"
+     }
+    ],
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 69,
+  "t": "prosumator 5 kW",
+  "asteptat": "intrebare retea",
+  "obtinut": {
+   "actiune": "genereaza_cu_intrebare",
+   "tip": "prosumator",
+   "intrebari": [
+    "Branșamentul este monofazat (230 V, BMPM) sau trifazat (3 × 400 V, BMPT)? Rețeaua nu se presupune — alege-o în câmpul „Rețea”."
+   ],
+   "neconsumat": [],
+   "blocant": true,
+   "intrare": {
+    "tip_schema": "prosumator",
+    "Pn_inv_kW": 5
+   },
+   "blocante": [
+    [
+     "BLOCANT",
+     "V07",
+     "rețeaua nu este specificată (monofazat sau trifazat)"
+    ]
+   ]
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ },
+ {
+  "id": 70,
+  "t": "CEF 100 kW pe trafo dedicat existent 250 kVA, 4 x Fronius Tauro 25-3, cabluri Al, pozare in pamant",
+  "asteptat": "genereaza 4 x 25 kW, Al D1",
+  "obtinut": {
+   "actiune": "genereaza",
+   "tip": "cef",
+   "intrebari": [],
+   "neconsumat": [],
+   "blocant": false,
+   "intrare": {
+    "tip_schema": "cef",
+    "pt_Sn_kVA": 250,
+    "pt_existent": true,
+    "invertoare": [
+     {
+      "n": 4,
+      "Pn_kW": 25,
+      "producator": "Fronius",
+      "model": "Tauro 25-3"
+     }
+    ],
+    "cablu_C0": {
+     "material": "Al"
+    },
+    "retea": "tri"
+   },
+   "blocante": []
+  },
+  "verdict": "corect",
+  "prioritate": "-",
+  "comentariu": ""
+ }
+]

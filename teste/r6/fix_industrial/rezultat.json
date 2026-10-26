@@ -1,0 +1,84 @@
+{
+ "f1_tg_motoare_ge_incendiu": {
+  "blocheaza_export": false,
+  "blocante": [],
+  "avertismente": [
+   "V42 P1·Compresor vs amonte: selectivitate parțială până la 1,6 kA (Ik3max 11,29 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·Pompă vs amonte: selectivitate parțială până la 1,6 kA (Ik3max 11,29 kA) — confirmă cu tabelele producătorului",
+   "V41 P3·TD-1 vs amonte: raport Ip amonte/aval 1,25 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P3·TD-1 vs amonte: selectivitate parțială până la 1,6 kA (Ik3max 11,29 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·TD-1.1·Ventilator vs amonte: selectivitate parțială până la 1,45 kA (Ik3max 7,6 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·TD-1.2·Moară vs amonte: selectivitate parțială până la 1,45 kA (Ik3max 7,6 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·TD-1.3·Iluminat vs amonte: selectivitate parțială până la 1,45 kA (Ik3max 7,6 kA) — confirmă cu tabelele producătorului",
+   "V42 P4·Iluminat hală vs amonte: selectivitate parțială până la 1,6 kA (Ik3max 11,29 kA) — confirmă cu tabelele producătorului"
+  ]
+ },
+ "f1b_ge_pompe_incendiu": {
+  "blocheaza_export": false,
+  "blocante": [],
+  "avertismente": [
+   "V85 QG/C2: în regim GE Ik1 ≈ 288 A < Ia 518,4 A — fără DDR, deconectarea automată nu este asigurată",
+   "V97 schema: regim GE: Ik1 ≈ 279 A < Ia(Q_G) 518,4 A, iar circuitele de siguranță nu pot trece prin DDR — contactul indirect se asigură prin legături echipotențiale suplimentare (SR HD 60364-4-41 art. 415.2) și RCM cu alarmă; de confirmat (sau GE cu excitație susținută și Q_G electronic)"
+  ]
+ },
+ "f2_pt_2x630": {
+  "blocheaza_export": false,
+  "blocante": [],
+  "avertismente": [
+   "V45 P1·TG1: Al PVC nu ajunge la 4×240 mm² → s-a trecut pe Cu XLPE",
+   "V41 P1·TG1 vs amonte: raport Ip amonte/aval 1,19 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P1·TG1 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 45,88 kA) — confirmă cu tabelele producătorului",
+   "V45 P2·TG2: Al PVC nu ajunge la 4×240 mm² → s-a trecut pe Cu XLPE",
+   "V41 P2·TG2 vs amonte: raport Ip amonte/aval 1,19 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P2·TG2 vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 45,88 kA) — confirmă cu tabelele producătorului",
+   "V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 9,6 kA (Ik3max 45,88 kA) — confirmă cu tabelele producătorului"
+  ]
+ },
+ "f3_casa_atelier": {
+  "blocheaza_export": false,
+  "blocante": [],
+  "avertismente": [
+   "V46 schema: Pc din bilanț 16,59 kW > puterea aprobată (ATR) 15 kW — Pc din ks e informativ; Ib general se ia din puterea aprobată",
+   "V46 Q: Q branșament existent nedeclarat — presupus 25 A (calibrul standard ≥ Ib 22,79 A din P aprobată); se completează din ATR / certificatul de racordare",
+   "V46 Q: Q branșament presupus 25 A (nedeclarat) — Ib de calcul pe L1 26,99 A > In Q branșament 25 A, iar faza alimentează sarcini continue (10,68 A: VE / pompă de căldură / saună / încălzire) — curentul rămâne peste In ore în șir, Q declanșează",
+   "V42 C7·TD atelier.P1·Strung vs amonte: selectivitate parțială până la 0,12 kA (Ik3max 2,32 kA) — confirmă cu tabelele producătorului",
+   "V42 C7·TD atelier.P2·Compresor vs amonte: selectivitate parțială până la 0,12 kA (Ik3max 2,32 kA) — confirmă cu tabelele producătorului",
+   "V42 C7·TD atelier.P3·Iluminat atelier vs amonte: selectivitate parțială până la 0,12 kA (Ik3max 2,32 kA) — confirmă cu tabelele producătorului",
+   "V41 C7·TD atelier.P4·Prize atelier 1 vs amonte: raport Ip amonte/aval 1,56 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 C7·TD atelier.P4·Prize atelier 1 vs amonte: selectivitate parțială până la 0,12 kA (Ik3max 2,32 kA) — confirmă cu tabelele producătorului",
+   "V41 C7·TD atelier.P5·Prize atelier 2 vs amonte: raport Ip amonte/aval 1,56 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 C7·TD atelier.P5·Prize atelier 2 vs amonte: selectivitate parțială până la 0,12 kA (Ik3max 2,32 kA) — confirmă cu tabelele producătorului"
+  ]
+ },
+ "f4_bransament_bmpm32_7kw": {
+  "blocheaza_export": false,
+  "blocante": [],
+  "avertismente": [
+   "V04 Q: P = 7 kW cu Q 32 A — perechea ATR (Pa = U·In, cosφ 1: Ib = 30,43 A ≤ 32 A); la cosφ 0,9 Ib = 33,82 A > 32 A, dar ≤ 1,13·In = 36,16 A (nu declanșează convențional) — fără rezervă"
+  ]
+ },
+ "f5_tg_compensare": {
+  "blocheaza_export": false,
+  "blocante": [],
+  "avertismente": [
+   "V42 P1·TD-1 vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 19,91 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·TD-2 vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 19,91 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·Compresor vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 19,91 kA) — confirmă cu tabelele producătorului",
+   "V42 P4·Baterie condensatoare 120 kvar vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 19,91 kA) — confirmă cu tabelele producătorului"
+  ]
+ },
+ "f6_tg_sursa_nedeclarata": {
+  "blocheaza_export": false,
+  "blocante": [],
+  "avertismente": [
+   "V31 Q1/C1: Ik1min 765 A < Ia 960 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată",
+   "V42 P1·Iluminat vs amonte: selectivitate parțială până la 0,64 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului",
+   "V42 P2·Prize vs amonte: selectivitate parțială până la 0,64 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului",
+   "V42 P3·Centrală vs amonte: selectivitate parțială până la 0,64 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului",
+   "V22 P4·Pompă căldură: ΔU la pornire directă 13,48 % > 12 % (Ip = 6·Ib, cosφ 0,35)",
+   "V31 P4·Pompă căldură: Ik1min 489 A < Ia 630 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată",
+   "V41 P4·Pompă căldură vs amonte: raport Ip amonte/aval 1,02 < 1,6 — selectivitate nesigură la suprasarcină",
+   "V42 P4·Pompă căldură vs amonte: selectivitate parțială până la 0,64 kA (Ik3max 7,07 kA) — confirmă cu tabelele producătorului"
+  ]
+ }
+}

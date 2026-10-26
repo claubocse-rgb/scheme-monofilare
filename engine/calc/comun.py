@@ -66,7 +66,7 @@ def modul(z):
 
 def u_calcul(retea):
     """Tensiunea de calcul a curentului: √3·400 V la trifazat, 230 V la monofazat (SPEC §A.1, §B.2)."""
-    return SQRT3 * UN if retea == "tri" else U0
+    return SQRT3 * norme.u_n() if retea == "tri" else norme.u_0()
 
 
 class Jurnal:

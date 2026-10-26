@@ -1,0 +1,453 @@
+==========================================================================================
+#1 Tema de proiectare: hala depozitare 2400 mp, P+0. Alimentare din PT propriu 400 kVA (ulei, 20/0,4 kV), schema TN-S. Consumatori: iluminat hala LED 18 kW (6 circuite), iluminat exterior 2 kW, rampe de incarcare 4 buc x 1,1 kW, usi sectionale 4 x 0,75 kW, centrala detectie incendiu 0,5 kW, prize de se
+EXP: TG din PT 400 TN-S; il 6 circ, rampe 4 mot, usi 4 mot, CDI (siguranta, fara DDR), 6 prize DDR, TD birouri
+ACT: refuza TIP: pt REF: I02 Lipsește puterea transformatorului (kVA) (I02).
+IN: {"tip_schema": "pt", "schema_pamant": "TN-S", "U_MT_kV": 20, "trafo_izolatie": "ulei", "plecari": [{"nume": "P+0. Alimentare din PT propriu", "P_kW": 360, "copii": []}], "circuite_finale": true}
+ Q: Care este puterea trafo (kVA)?
+==========================================================================================
+#2 Nr	Denumire	P[kW]	Buc | 1	Strung CNC	18,5	2 | 2	Freza	11	1 | 3	Compresor surub	30	1 | 4	Iluminat	6	1 | TG din TG existent, TN-S
+EXP: 5 plecari (2 strunguri 18,5, freza 11, compresor 30, iluminat 6), origine TG existent
+ACT: refuza TIP: tablou REF: I02 Lipsesc puterile sau calibrele plecărilor și puterea tabloului (I02).
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S"}
+ Q: Care este puterea tabloului (kW) și care sunt plecările (kW sau A)?
+==========================================================================================
+#3 Bilant puteri: Pi = 320 kW, ku = 0,7, Pc = 224 kW, cos fi = 0,92. Sursa: PT 400 kVA propriu. TN-C-S. Plecari: TD productie 160 kW, TD HVAC 90 kW, TD birouri 45 kW, TD exterior 25 kW
+EXP: TG din PT 400, 4 TD; Pi/Pc nu devin plecari
+ACT: genereaza_cu_intrebare TIP: pt REF: None 
+IN: {"tip_schema": "pt", "cosfi": 0.92, "schema_pamant": "TN-C-S", "Sn_kVA": 400, "plecari": [{"nume": "TD productie", "P_kW": 160}, {"nume": "TD HVAC", "P_kW": 90}, {"nume": "TD birouri", "P_kW": 45}, {"nume": "TD exterior", "P_kW": 25}], "circuite_finale": true}
+ Q: Nu am folosit în schemă: „Pi = 320 kW”; „Pc = 224 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TD productie vs amonte", "mesaj": "selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·TD HVAC vs amonte", "mesaj": "selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului", "remediere": "confirmar
+==========================================================================================
+#4 Buna ziua, va rog sa ne trimiteti schema monofilara pentru tabloul TE-Chiller. Chillerul are 2 compresoare de 42 kW cu soft starter, pompa de circulatie 5,5 kW cu convertizor si ventilatoare condensator 4 x 1,5 kW. Se alimenteaza din TG cu cablu CYABY 3x120+70 pe 60 m. Schema TN-S. Multumesc, Ing. P
+EXP: TE din TG, cablu impus 3x120+70 L60, 2 comp SS 42, pompa VFD 5,5, 4 vent 1,5
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "P_kW": 5.5, "L_alimentare_m": 60, "cablu": {"material": "Cu"}, "plecari": [{"nume": "va rog sa ne trimiteti schema monofilara pentru tabloul TE-Chiller. Chillerul are 2 compresoare", "P_kW": 42, "receptor": "motor", "pornire": "soft", "cablu": {"material": "Cu"}}], "retea": "tri"}
+ Q: Compensarea energiei reactive „convertizor si ventilatoare condensator 4 x 1,5 kW” nu se dimensionează în această schemă (plecarea bateriei de condensatoare: calibru ≥ 1,43·In, conform fișei). O adaug ca plecare separată după ce indicați calibrul, sa
+ Q: Nu am folosit în schemă: „pompa de circulatie 5,5 kW cu convertizor”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V14", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "P declarată 5,5 kW < Pc din bilanț 42 kW — se folosește P declarată (Pa din ATR)", "remediere": "ATR nou sau ks justificat"}, {"cod": "V32", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 767 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V32", "nivel": "AVERTISMENT", "obie
+==========================================================================================
+#5 tg 3 pompe 7,5kw din pt 250
+EXP: TG din PT 250 kVA, 3 pompe motor; schema de legare la pamant: presupusa declarat TN-S sau intrebare
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "P_kW": 7.5}
+ Q: Care este puterea trafo (kVA)?
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Tabloul este monofazat (230 V) sau trifazat (3 × 400/230 V)? Rețeaua nu se presupune.
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#6 Main LV panel for warehouse, supply from own substation 630 kVA dry type 20/0.4 kV, TN-S, outgoing: 2 x chiller 110 kW, AHU 4 x 15 kW VFD, lighting 25 kW, sockets 12 circuits
+EXP: TG din PT 630 uscat; 2 chiller, 4 AHU VFD, iluminat, 12 prize (putere intrebata/presupusa)
+ACT: genereaza TIP: pt REF: None 
+IN: {"tip_schema": "pt", "schema_pamant": "TN-S", "Sn_kVA": 630, "U_MT_kV": 20, "plecari": [{"nume": "Chiller 1", "P_kW": 110}, {"nume": "Chiller 2", "P_kW": 110}, {"nume": "AHU 1", "P_kW": 15, "receptor": "motor", "pornire": "convertizor"}, {"nume": "AHU 2", "P_kW": 15, "receptor": "motor", "pornire": "convertizor"}, {"nume": "AHU 3", "P_kW": 15, "receptor": "motor", "pornire": "convertizor"}, {"nume": "AHU 4", "P_kW": 15, "receptor": "motor", "pornire": "convertizor"}, {"nume": "Lighting", "P_kW": 25}]}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Chiller 1 vs amonte", "mesaj": "selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·Chiller 2 vs amonte", "mesaj": "selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare c
+==========================================================================================
+#7 TG din PT 250 kVA, TN-S, plecari: compresor 160 kW, cuptor 120 kW, iluminat 20 kW
+EXP: avertisment/intrebare: 300 kW pe PT 250 kVA supraincarcat
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 250, "schema_pamant": "TN-S", "plecari": [{"nume": "Compresor", "P_kW": 160}, {"nume": "Cuptor", "P_kW": 120}, {"nume": "Iluminat", "P_kW": 20}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V22", "nivel": "AVERTISMENT", "obiect": "P1·Compresor", "mesaj": "ΔU la pornire directă 20,09 % > 12 % (Ip = 6·Ib, cosφ 0,35)", "remediere": "soft-starter / VFD / stea-triunghi, secțiune mai mare"}, {"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·Compresor vs amonte", "mesaj": "raport Ip amonte/aval 1,56 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·C
+==========================================================================================
+#8 tablou TN-S alimentat din retea TT, 2 pompe 4 kW
+EXP: contradictie TN-S vs TT -> intrebare
+ACT: refuza TIP: tablou REF: I08 Contradicție: schema de legare la pământ e descrisă și TN-S și TT (I08).
+IN: {"tip_schema": "tablou", "origine": "bmpt", "plecari": [{"nume": "Pompe 1", "P_kW": 4}, {"nume": "Pompe 2", "P_kW": 4}]}
+ Q: Ce schemă de legare la pământ are instalația: TN-S sau TT? (TT = priză de pământ proprie, fără PEN; TN = PEN separat în BMPT/BMPM)
+==========================================================================================
+#9 tablou atelier: flex 2 kW, bormasina 1 kW, iluminat 0,5 kW
+EXP: retea nedeclarata, sarcina mica -> intrebare mono/tri
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "plecari": [{"nume": "Flex", "P_kW": 2}, {"nume": "Bormasina", "P_kW": 1}, {"nume": "Iluminat", "P_kW": 0.5}]}
+ Q: Tabloul este monofazat (230 V) sau trifazat (3 × 400/230 V)? Rețeaua nu se presupune.
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·Flex vs amonte", "mesaj": "raport Ip amonte/aval 1,5 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Flex vs amonte", "mesaj": "selectivitate parțială până la 0,03 kA (Ik3max 1,63 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "
+==========================================================================================
+#10 tablou in schema IT cu controlul izolatiei, 3 pompe 4 kW, din trafo de separare
+EXP: IT -> refuz/intrebare, nu TN tacut
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "schema_pamant": "IT", "plecari": [{"nume": "Pompe 1", "P_kW": 4}, {"nume": "Pompe 2", "P_kW": 4}, {"nume": "Pompe 3", "P_kW": 4}], "retea": "tri"}
+ Q: Schema IT (neutru izolat / impedant, cu controlor permanent de izolație) nu e acoperită de dimensionare (V28). Instalația e într-adevăr IT? Dacă nu, ce schemă are: TN-C-S, TN-S sau TT?
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V28", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "schema de legare la pământ „IT” nu este acoperită pentru tablou (acceptate: TN-C-S, TN-S, TT, TN-C) — calculul nu se face", "remediere": "TN-C-S / TN-S (sau TT la branșament / tablou / prosumator / CEF fără PT)"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "i
+==========================================================================================
+#11 doua pompe de incendiu 1+1 de 37 kW si pompa jockey 1,5 kW, alimentate din PT 630 kVA si GE 160 kVA prin ATS, TN-S
+EXP: pompe incendiu siguranta, fara DDR, FE180, 1+1 nu insumat (~38,5 kW), GE+ATS
+ACT: genereaza_cu_intrebare TIP: ge_ats REF: None 
+IN: {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "Sn_GE_kVA": 160, "sursa_retea": "pt", "pt_Sn_kVA": 630, "P_sarcina_kW": 38.5, "consumatori": [{"nume": "De", "P_kW": 37, "siguranta": true}, {"nume": "Pompa jockey", "P_kW": 1.5}]}
+ Q: Nu am folosit în schemă: „doua pompe de incendiu 1+1 de 37 kW si pompa jockey 1,5 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ W: consumatori de incendiu pe GE: alimentare fără DDR în amonte (P118/3, I7) — verificați ramura ATS → pompe de incendiu
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V85", "nivel": "AVERTISMENT", "obiect": "QG/C2", "mesaj": "în regim GE Ik1 ≈ 231 A < Ia 3000 A — fără DDR, deconectarea automată nu este asigurată", "remediere": "DDR, protecție 51V"}, {"cod": "V86", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "GE 160 kVA față de sarcina 38,5 kW (GE minim 50 kVA): QR 63 A pe sarcină, ATS 250 A pe GE — sarcina vitală e completă (toți consumatorii, pornirea motoarelor)?", "remediere": "sarcina vitală completă (
+==========================================================================================
+#12 tablou TDSI sprinklere: electropompa 55 kW stea-triunghi, jockey 2,2 kW, alimentare normala din TG si de rezerva din GE 125 kVA, TN-S
+EXP: siguranta din context TDSI/sprinklere: fara DDR, Y/D, FE180
+ACT: genereaza TIP: ge_ats REF: None 
+IN: {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "Sn_GE_kVA": 125, "sursa_retea": "tgd", "P_sarcina_kW": 57.2, "consumatori": [{"nume": "Electropompa", "P_kW": 55, "pornire": "stea_triunghi"}, {"nume": "Jockey", "P_kW": 2.2}]}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "QR/C1", "mesaj": "Ik1min 784 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V32", "nivel": "AVERTISMENT", "obiect": "C3", "mesaj": "Ik1min 689 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}], "info": [{"cod":
+==========================================================================================
+#13 statie hidranti interiori: 2 pompe 15 kW (una activa una rezerva), sursa TGD + GE, TN-S
+EXP: siguranta, fara DDR; intrebare kVA GE
+ACT: refuza TIP: ge_ats REF: I02 Lipsește puterea grupului electrogen (kVA) (I02).
+IN: {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "sursa_retea": "tgd", "P_sarcina_kW": 15}
+ Q: Care este puterea GE (kVA)?
+==========================================================================================
+#14 TE desfumare: 2 ventilatoare desfumare 11 kW si 4 clapete 0,1 kW, din TG pe circuit separat, cablu rezistent la foc, TN-S
+EXP: siguranta, fara DDR, FE180; termic doar semnalizare
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "plecari": [{"nume": "Ventilatoare desfumare 1", "P_kW": 11}, {"nume": "Ventilatoare desfumare 2", "P_kW": 11}, {"nume": "Clapete 1", "P_kW": 0.1}, {"nume": "Clapete 2", "P_kW": 0.1}, {"nume": "Clapete 3", "P_kW": 0.1}, {"nume": "Clapete 4", "P_kW": 0.1}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "P1·Ventilatoare desfumare 1", "mesaj": "Ik1min 211 A < Ia 300 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·Ventilatoare desfumare 1 vs amonte", "mesaj": "raport Ip amonte/aval 1,51 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {
+==========================================================================================
+#15 TG (din PT 1000 kVA, TN-S) alimenteaza TD-A 250A si TD-B 160A. Din TD-A pleaca TE-1 63A (5 motoare 4 kW) si TE-2 40A (iluminat 8 kW). TD-B are compresor 45 kW si 6 circuite prize.
+EXP: cascada 3 niveluri TG->TD-A->TE-1/TE-2, TD-B cu copii
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 1000, "schema_pamant": "TN-S", "plecari": [{"nume": "alimenteaza TD-A", "In_A": 250}, {"nume": "TD-B 160A. Din TD-A pleaca TE-1 63A", "copii": [{"nume": "Motoare 1", "P_kW": 4}, {"nume": "Motoare 2", "P_kW": 4}, {"nume": "Motoare 3", "P_kW": 4}, {"nume": "Motoare 4", "P_kW": 4}, {"nume": "Motoare 5", "P_kW": 4}]}, {"nume": "TE-2", "In_A": 40, "copii": [{"nume": "Iluminat", "P_kW": 8}]}, {"nume": ". TD-B are compresor", "P_kW": 45}], "circuite_finale": true, "retea": "tri"}
+ Q: Nu am folosit în schemă: „TD-B are compresor 45 kW si 6 circuite prize”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·alimenteaza TD-A vs amonte", "mesaj": "raport Ip amonte/aval 1,28 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·alimenteaza TD-A vs amonte", "mesaj": "selectivitate parțială până la 3,07 kA (Ik3max 19,38 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producăt
+==========================================================================================
+#16 TGD -> TD-Hala1 125A -> TE-Linie1 (3 motoare 5,5 kW), retea TN-S, TGD din PT 400 kVA
+EXP: cascada TG->TD->TE
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 400, "schema_pamant": "TN-S", "plecari": [{"nume": "TD-Hala1", "In_A": 125, "copii": []}, {"nume": "TE-Linie1", "copii": [{"nume": "Motoare 1", "P_kW": 5.5}, {"nume": "Motoare 2", "P_kW": 5.5}, {"nume": "Motoare 3", "P_kW": 5.5}]}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·TD-Hala1 vs amonte", "mesaj": "raport Ip amonte/aval 1,09 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TD-Hala1 vs amonte", "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 9,81 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod":
+==========================================================================================
+#17 PT 2 x 1600 kVA uscat 20/0,4 kV, cupla longitudinala JT normal deschisa, semibara A: TD1 800A, TD2 630A, baterie 300 kvar; semibara B: TD3 800A, TD4 400A, chiller 250 kW
+EXP: 2 trafo, 2 semibare, cupla NO, 6 plecari repartizate
+ACT: refuza TIP: cef REF: I02 Lipsesc invertoarele (număr și putere) (I02).
+IN: {"tip_schema": "cef", "n_trafo": 2, "pt_Sn_kVA": 1600}
+ Q: Câte invertoare și de ce putere (kW c.a.)?
+==========================================================================================
+#18 PT 1000 kVA ulei 10/0,4 kV, celule MT: intrare linie, iesire linie, masura MT, protectie trafo cu intreruptor si releu 50/51; JT: ACB 1600A, 6 plecari 250A
+EXP: PT 10 kV, 2L+M+T intreruptor, ACB 1600, 6x250
+ACT: genereaza TIP: pt REF: None 
+IN: {"tip_schema": "pt", "Sn_kVA": 1000, "U_MT_kV": 10, "celula_trafo": "intreruptor", "trafo_izolatie": "ulei", "masura": "MT", "celule_mt": ["masura"], "plecari": [{"nume": "ACB", "In_A": 1600}, {"nume": "TD-2", "In_A": 250}, {"nume": "TD-3", "In_A": 250}, {"nume": "TD-4", "In_A": 250}, {"nume": "TD-5", "In_A": 250}, {"nume": "TD-6", "In_A": 250}, {"nume": "TD-7", "In_A": 250}]}
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V62", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "Sc = 1503,42 kVA > Sn = 1000 kVA", "remediere": "trafo mai mare / ks justificat"}, {"cod": "V45", "nivel": "AVERTISMENT", "obiect": "P1·ACB", "mesaj": "cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 3 sisteme de cabluri monopolare Cu XLPE 1×240 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat", "remediere": ""}, {"cod": "V40", "nivel": "BLOCANT", "obiec
+==========================================================================================
+#19 post de transformare 800 kVA 20/0,4 uk 6%, Scc 250 MVA, uscat, plecari TG 1250A 10m
+EXP: uk 6% si Scc 250 MVA folosite; TG 1250 A
+ACT: genereaza TIP: pt REF: None 
+IN: {"tip_schema": "pt", "Sn_kVA": 800, "SkQ_MVA": 250, "trafo_izolatie": "uscat", "plecari": [{"nume": "TG", "In_A": 1250, "L_m": 10}]}
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V62", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "Sc = 866,03 kVA > Sn = 800 kVA", "remediere": "trafo mai mare / ks justificat"}, {"cod": "V45", "nivel": "AVERTISMENT", "obiect": "P1·TG", "mesaj": "cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×300 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat", "remediere": ""}, {"cod": "V40", "nivel": "BLOCANT", "obiect":
+==========================================================================================
+#20 PT 630 kVA 20/0,4 cu masura semidirecta pe JT, TC 1000/5, plecari 4 x 160A
+EXP: masura JT cu TC 1000/5; 4 plecari
+ACT: genereaza TIP: pt REF: None 
+IN: {"tip_schema": "pt", "Sn_kVA": 630, "plecari": [{"nume": "TD-1", "In_A": 160}, {"nume": "TD-2", "In_A": 160}, {"nume": "TD-3", "In_A": 160}, {"nume": "TD-4", "In_A": 160}]}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TD-1 vs amonte", "mesaj": "selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·TD-2 vs amonte", "mesaj": "selectivitate parțială până la 9,6 kA (Ik3max 23,69 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele
+==========================================================================================
+#21 PTA 250 kVA pe stalp 20/0,4 kV, plecari 3 x 125A
+EXP: PTA aerian: separator + sigurante MT pe stalp, fara celule de interior; 3 plecari
+ACT: genereaza TIP: pt REF: None 
+IN: {"tip_schema": "pt", "Sn_kVA": 250, "U_MT_kV": 20, "pt_aerian": true, "plecari": [{"nume": "TD-1", "In_A": 125}, {"nume": "TD-2", "In_A": 125}, {"nume": "TD-3", "In_A": 125}]}
+ W: PTA pe stâlp: separatorul și siguranțele MT (MPR) sunt pe stâlp, fără celule MT de interior — verificați partea MT a planșei
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TD-1 vs amonte", "mesaj": "selectivitate parțială până la 3,84 kA (Ik3max 9,59 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·TD-2 vs amonte", "mesaj": "selectivitate parțială până la 3,84 kA (Ik3max 9,59 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele
+==========================================================================================
+#22 statie 6 kV existenta, trafo nou 2000 kVA 6/0,4 kV uscat, celula cu intreruptor in vid, ACB 3200A, 4 plecari 630A
+EXP: PT 6 kV, aparate 7,2 kV, ACB 3200, 4x630
+ACT: genereaza TIP: pt REF: None 
+IN: {"tip_schema": "pt", "Sn_kVA": 2000, "U_MT_kV": 6, "celula_trafo": "intreruptor", "trafo_izolatie": "uscat", "plecari": [{"nume": "ACB", "In_A": 3200}, {"nume": "TD-2", "In_A": 630}, {"nume": "TD-3", "In_A": 630}, {"nume": "TD-4", "In_A": 630}, {"nume": "TD-5", "In_A": 630}]}
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V62", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "Sc = 3170,35 kVA > Sn = 2000 kVA", "remediere": "trafo mai mare / ks justificat"}, {"cod": "V45", "nivel": "AVERTISMENT", "obiect": "P1·ACB", "mesaj": "cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 5 sisteme de cabluri monopolare Cu XLPE 1×300 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat", "remediere": ""}, {"cod": "V40", "nivel": "BLOCANT", "obiec
+==========================================================================================
+#23 PT 400 kVA 20/0,4 kV cu trafo 630 kVA, plecari 3 x 250A
+EXP: contradictie 400 vs 630 kVA -> intrebare
+ACT: genereaza_cu_intrebare TIP: pt REF: None 
+IN: {"tip_schema": "pt", "Sn_kVA": 400, "U_MT_kV": 20, "plecari": [{"nume": "TD-1", "In_A": 250}, {"nume": "TD-2", "In_A": 250}, {"nume": "TD-3", "In_A": 250}]}
+ Q: Nu am folosit în schemă: „PT 400 kVA 20/0,4 kV cu trafo 630 kVA”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V62", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "Sc = 467,65 kVA > Sn = 400 kVA", "remediere": "trafo mai mare / ks justificat"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TD-1 vs amonte", "mesaj": "selectivitate parțială până la 6,05 kA (Ik3max 15,22 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·TD-2 vs 
+==========================================================================================
+#24 TG cu intreruptor general 100A pentru 120 kW, din PT 400, TN-S, plecari: TD1 60 kW, TD2 60 kW
+EXP: contradictie 100 A < ~200 A -> intrebare/blocant
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "schema_pamant": "TN-S", "P_kW": 120, "In_Q1_A": 100, "plecari": [{"nume": "TD1", "P_kW": 60}, {"nume": "TD2", "P_kW": 60}], "retea": "tri"}
+ Q: Care este puterea trafo (kVA)?
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V04", "nivel": "BLOCANT", "obiect": "Q1/C1", "mesaj": "Ib = 192,45 A > protecție 100 A", "remediere": "calibru mai mare"}], "info": [{"cod": "V11", "nivel": "INFO", "obiect": "schema", "mesaj": "Am presupus: ks = 0,9 (IEC 61439-2 tab. 101, 2 plecări); Ik3max OD la punctul de delimitare 25 kA (valoare implicită presupusă — se confirmă cu OD / ATR); Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω, valoare implicită presupusă — se confirmă cu OD / ATR); sursa: PT
+==========================================================================================
+#25 TG din PT 800 kVA, alimentare 2 x NA2XY 4x240 in paralel, 90 m, TN-C-S, plecari TD1 400A, TD2 250A
+EXP: 2 cabluri in paralel impuse (Al 240)
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 800, "schema_pamant": "TN-C-S", "L_alimentare_m": 90, "cablu": {"material": "Al", "izolatie": "XLPE", "S_fortat": 240}, "plecari": [{"nume": "TD1", "In_A": 400, "cablu": {"material": "Al", "izolatie": "XLPE"}}, {"nume": "TD2", "In_A": 250, "cablu": {"material": "Al", "izolatie": "XLPE"}}], "retea": "tri"}
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V02", "nivel": "BLOCANT", "obiect": "Q1/C1", "mesaj": "Ip = 598,5 A > Iz' = 253 A (Ib ≤ In ≤ Iz' încălcat)", "remediere": "mărirea secțiunii sau reducerea calibrului"}, {"cod": "V03", "nivel": "BLOCANT", "obiect": "Q1/C1", "mesaj": "I2 = 778,05 A > 1,45·Iz' = 366,85 A", "remediere": "mărirea secțiunii sau reducerea calibrului"}, {"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·TD1 vs amonte", "mesaj": "raport Ip amonte/aval 1,5 < 1,6 — selectivitat
+==========================================================================================
+#26 TG din BMPT 100A TN-C-S: pompa 7,5 kW cu CYABY 4x4 la 80 m, iluminat 3 kW CYY-F 3x2,5 la 30 m, prize 3 circuite
+EXP: cabluri impuse per plecare + L per plecare; prize putere intrebata
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "bmpt", "schema_pamant": "TN-C-S", "P_kW": 7.5, "In_Q1_A": 100, "L_alimentare_m": 80, "cablu": {"material": "Cu"}, "retea": "tri"}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Nu am folosit în schemă: „pompa 7,5 kW cu CYABY 4x4 la 80 m”; „iluminat 3 kW CYY-F 3x2,5 la 30 m”; „prize 3 circuite”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#27 baterie automata 250 kvar cu filtru 7%, 8 trepte, in TG din PT 1000 kVA, TN-S, plus plecari TD1 400A si TD2 315A
+EXP: TG cu plecare compensare 250 kvar + 2 TD
+ACT: refuza TIP: cef REF: I02 Lipsesc invertoarele (număr și putere) (I02).
+IN: {"tip_schema": "cef", "schema_pamant": "TN-S", "racord": "tg_existent", "pt_Sn_kVA": 1000}
+ Q: Câte invertoare și de ce putere (kW c.a.)?
+==========================================================================================
+#28 factor de putere actual 0,78, se doreste 0,95, P = 400 kW, ce baterie imi trebuie in TG din PT 630?
+EXP: Qc ~190 kvar; plecare compensare sau raspuns calcul
+ACT: refuza TIP: cef REF: I02 Lipsesc invertoarele (număr și putere) (I02).
+IN: {"tip_schema": "cef", "racord": "tg_existent"}
+ Q: Câte invertoare și de ce putere (kW c.a.)?
+==========================================================================================
+#29 TG atelier din TG existent TN-S: 2 motoare de 10 HP, unul de 25 HP stea-triunghi, macara 2 x 5,5 kW
+EXP: 2x7,46 kW, 18,6 kW Y/D, 2x5,5
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "plecari": [{"nume": "Macara 1", "P_kW": 5.5}, {"nume": "Macara 2", "P_kW": 5.5}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Macara 1 vs amonte", "mesaj": "selectivitate parțială până la 0,1 kA (Ik3max 1,63 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·Macara 2 vs amonte", "mesaj": "selectivitate parțială până la 0,1 kA (Ik3max 1,63 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu ta
+==========================================================================================
+#30 • chiller 180 kW | • CTA 2 x 22 kW (VFD) | • pompe 4 x 3 kW | • iluminat 15 kW | alimentare PT propriu 630 kVA, TN-S
+EXP: TG din PT 630, 8 plecari
+ACT: refuza TIP: pt REF: I02 Lipsește puterea transformatorului (kVA) (I02).
+IN: {"tip_schema": "pt", "schema_pamant": "TN-S", "plecari": [{"nume": "• chiller", "P_kW": 180}, {"nume": "CTA 1", "P_kW": 22, "receptor": "motor", "pornire": "convertizor"}, {"nume": "CTA 2", "P_kW": 22, "receptor": "motor", "pornire": "convertizor"}, {"nume": "Pompe 1", "P_kW": 3}, {"nume": "Pompe 2", "P_kW": 3}, {"nume": "Pompe 3", "P_kW": 3}, {"nume": "Pompe 4", "P_kW": 3}, {"nume": "Iluminat", "P_kW": 15}, {"nume": "alimentare PT propriu", "P_kW": 567}]}
+ Q: Care este puterea trafo (kVA)?
+==========================================================================================
+#31 TG brutarie, din BMPT 63A trifazat, TN-C-S: a) cuptor 27 kW b) malaxor 4 kW c) dospitor 6 kW d) frigider 1,5 kW mono e) iluminat 1,5 kW
+EXP: 5 plecari, Q1 63, malaxor motor, frigider/iluminat 1P+N
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "bmpt", "schema_pamant": "TN-C-S", "In_Q1_A": 63, "plecari": [{"nume": "Cuptor", "P_kW": 27}, {"nume": "Malaxor", "P_kW": 4}, {"nume": "Dospitor", "P_kW": 6}, {"nume": "Frigider", "P_kW": 1.5, "retea": "mono"}, {"nume": "Iluminat", "P_kW": 1.5}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V31", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 545 A < Ia 630 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)", "remediere": "DDR pe plecare"}, {"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·Cuptor vs amonte", "mesaj": "raport Ip amonte/aval 1,26 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "ob
+==========================================================================================
+#32 TG: pompa 5,5kW / vent 3kW / iluminat 2kW / prize 4x16A, din TGD, TN-S
+EXP: 4+ plecari (prize 4 circ 16A)
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "P_kW": 5.5, "In_Q1_A": 16}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Tabloul este monofazat (230 V) sau trifazat (3 × 400/230 V)? Rețeaua nu se presupune.
+ Q: Nu am folosit în schemă: „pompa 5,5kW / vent 3kW / iluminat 2kW / prize 4x16A”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#33 3 aparate de sudura 20 kVA fiecare + polizor 2,2 kW, TG din PT 400, TN-S
+EXP: 3 sudura (S 20 kVA), polizor motor
+ACT: refuza TIP: tablou REF: I03 Valoarea 400 din listă nu are unitate (A sau kW).
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "schema_pamant": "TN-S", "plecari": [{"nume": "Aparate de sudura 1", "P_kW": 18}, {"nume": "Aparate de sudura 2", "P_kW": 18}, {"nume": "Aparate de sudura 3", "P_kW": 18}, {"nume": "Polizor", "P_kW": 2.2, "receptor": "motor"}, {"nume": "TG", "P_kW": 400}], "retea": "tri"}
+ Q: Valorile din listă sunt în A (calibre) sau în kW (puteri)?
+==========================================================================================
+#34 cuptor electric tratament termic 250 kW rezistiv, din PT 400 kVA, TN-S, cablu 2x (3x240+120) Al
+EXP: TG/plecare cuptor 250 kW, 2 cabluri paralel impuse
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 400, "schema_pamant": "TN-S", "P_kW": 250, "cablu": {"material": "Al", "S_fortat": 240, "N_fortat": 120, "n_fortat": 2}, "retea": "tri"}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Nu am folosit în schemă: „cuptor electric tratament termic 250 kW rezistiv”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#35 tablou lift: motor lift 15 kW, iluminat put 0,5 kW, priza camera masini, din TG cladire, TN-S
+EXP: TD lift 3 plecari; priza putere presupusa/intrebata; NU locuinta
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "plecari": [{"nume": "Motor lift", "P_kW": 15}, {"nume": "Iluminat put", "P_kW": 0.5}], "retea": "tri"}
+ Q: Nu am folosit în schemă: „priza camera masini”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "P1·Motor lift", "mesaj": "Ik1min 253 A < Ia 384 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·Motor lift vs amonte", "mesaj": "raport Ip amonte/aval 1,39 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVER
+==========================================================================================
+#36 TE apartament de serviciu 230V din TG, 3 circuite iluminat 10A, 5 circuite prize 16A, aer conditionat 2,5 kW, boiler 2 kW, TN-S
+EXP: tablou mono 10 circuite
+ACT: genereaza TIP: locuinta REF: None 
+IN: {"tip_schema": "locuinta", "retea": "mono", "circuite": [{"nume": "Prize bucătărie", "receptor": "prize_bucatarie"}, {"nume": "Prize baie", "receptor": "prize_baie"}, {"nume": "Iluminat 1", "receptor": "iluminat"}, {"nume": "Iluminat 2", "receptor": "iluminat"}, {"nume": "Iluminat 3", "receptor": "iluminat"}, {"nume": "Prize 1", "receptor": "prize"}, {"nume": "Prize 2", "receptor": "prize"}, {"nume": "Prize 3", "receptor": "prize"}, {"nume": "Prize 4", "receptor": "prize"}, {"nume": "Prize 5", "receptor": "prize"}, {"nume": "Aer condiționat", "receptor": "aer_conditionat", "P_kW": 2.5}, {"nume": "Boiler", "receptor": "boiler", "P_kW": 2}], "alimentare": {}, "schema_pamant": "TN-C-S"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V46", "nivel": "AVERTISMENT", "obiect": "Q", "mesaj": "Q branșament existent nedeclarat — presupus 40 A (calibrul standard ≥ Ib 34,32 A); se completează din ATR / certificatul de racordare", "remediere": "introdu Q branșament real (calibrul RCBO / MCB din BMPM / BMPT, din ATR sau certificatul de racordare)", "camp": "alimentare.In_Q_bransament_A"}, {"cod": "V46", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "puterea aprobată (ATR) nedeclarată 
+==========================================================================================
+#37 iluminat hala 24 corpuri x 150 W pe 3 circuite monofazate, din TD existent, TN-S, trifazat
+EXP: 3 x 1P+N 1,2 kW, Q1 tri
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "schema_pamant": "TN-S", "P_kW": 0.15, "retea": "tri"}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Nu am folosit în schemă: „iluminat hala 24 corpuri x 150 W pe 3 circuite monofazate”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#38 TD birouri din TG, TN-S, trifazat: 20 de circuite iluminat a 0,8 kW si 24 circuite prize 2 kW
+EXP: 44 circuite mono
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "plecari": [{"nume": "Iluminat", "P_kW": 0.8, "n_circuite": 20}, {"nume": "Prize", "P_kW": 2, "n_circuite": 24}], "circuite_finale": true, "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 576 A < Ia 960 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V35", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "fază 1×35 mm² < 46,5 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător", "remediere": "secțiune mai mare sau I²t din fișa producătorului"}, {"cod": "V36", 
+==========================================================================================
+#39 TD hala din TG, TN-S: 6 prize industriale CEE 3P+N+PE 32A si 4 prize CEE 16A, cu DDR 30mA
+EXP: 10 circuite CEE cu DDR 30 mA
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "plecari": [{"nume": "prize industriale CEE 3P+N+PE", "In_A": 32, "n_circuite": 6}, {"nume": "prize CEE", "In_A": 16, "n_circuite": 4}], "circuite_finale": true, "retea": "tri"}
+ Q: Nu am folosit în schemă: „cu DDR 30mA”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 904 A < Ia 1920 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·prize industriale CEE 3P+N+PE 1 vs amonte", "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 14,05 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelel
+==========================================================================================
+#40 TG cu motor 315 kW la 690 V cu convertizor, din PT 1000 kVA
+EXP: 690 V -> intrebare/refuz
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 1000, "U_V": 690, "plecari": [{"nume": "Motor", "P_kW": 315, "pornire": "convertizor"}], "retea": "tri"}
+ Q: „la 690 V”: tensiunea de 690 V nu e acoperită (aparataj și cabluri dimensionate pentru 400/230 V). Instalația e într-adevăr la 690 V (atunci proiect de specialitate), sau 400 V?
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V96", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "nesuportat: tensiune 690 V — motorul dimensionează doar rețele JT 230 V (monofazat) / 3 × 400 V (trifazat): cablurile, aparatele (Ue, Icu), ΔU și curenții de motor la altă tensiune (ex. 690 V) nu sunt modelate", "remediere": "rețea 400/230 V sau proiect de specialitate la tensiunea respectivă (aparataj Ue ≥ 690 V, trafo dedicat)"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mes
+==========================================================================================
+#41 motor MT 6 kV 800 kW alimentat din celula de motor
+EXP: MT motor in afara domeniului -> refuz
+ACT: refuza TIP: None REF: I01 Tipul schemei nu poate fi determinat (I01).
+IN: {}
+ Q: Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea? (Pentru tabloul unei case / al unui apartament: locuință.)
+==========================================================================================
+#42 pompa 110 kW pornire directa din PT 250 kVA, TN-S
+EXP: avertizare pornire DOL vs trafo 250 (In_p ~1,3 kA)
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 250, "schema_pamant": "TN-S", "plecari": [{"nume": "Pompa", "P_kW": 110, "pornire": "directa"}], "retea": "tri"}
+ Q: Pompa 110 kW cu pornire directă din PT 250 kVA: curentul de pornire (≈ 6–7·In) dă o cădere de tensiune mare la bara TG. Confirmați pornirea directă, sau soft-starter / convertizor?
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V22", "nivel": "AVERTISMENT", "obiect": "P1·Pompa", "mesaj": "ΔU la pornire directă 17,36 % > 12 % (Ip = 6·Ib, cosφ 0,35)", "remediere": "soft-starter / VFD / stea-triunghi, secțiune mai mare"}, {"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·Pompa vs amonte", "mesaj": "raport Ip amonte/aval 1,06 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Pompa vs 
+==========================================================================================
+#43 hala 250 kW din BMPT trifazat, TN-C-S, plecari: TD1 125 kW, TD2 125 kW
+EXP: BMPT > 250 A -> refuz/intrebare
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "bmpt", "schema_pamant": "TN-C-S", "P_kW": 250, "plecari": [{"nume": "TD1", "P_kW": 125}, {"nume": "TD2", "P_kW": 125}], "retea": "tri"}
+ Q: „din BMPT” cu Ib ≈ 401 A > 250 A: în ST 4-JT nu există BMPT peste BMPTi-250 (V50). Tabloul se alimentează dintr-un PT (propriu / al OD)? Indicați Sn-ul PT-ului.
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V31", "nivel": "AVERTISMENT", "obiect": "P1·TD1", "mesaj": "Ik1min 934 A < Ia 1650 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)", "remediere": "DDR pe plecare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TD1 vs amonte", "mesaj": "selectivitate parțială până la 4,8 kA (Ik3max 21,1 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producă
+==========================================================================================
+#44 tg pt hala: 2 motoare 11 kW, din retea trifazata TN-S
+EXP: pt = pentru, nu PT; sursa presupusa declarat sau intrebare
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "bmpt", "schema_pamant": "TN-S", "P_kW": 11, "retea": "tri"}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#45 in TG existent (In 400A, TN-S) se adauga 2 plecari noi: chiller 90 kW si CTA 18,5 kW
+EXP: TG existent cu 2 plecari noi
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "P_kW": 90, "In_Q1_A": 400, "retea": "tri"}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Nu am folosit în schemă: „chiller 90 kW si CTA 18,5 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#46 PT 630 kVA, TN-S. TG-normal: productie 300 kW. TG-vital cu GE 250 kVA si ATS: server room 30 kW, iluminat siguranta 5 kW, pompe incendiu 2x30 kW (1+1), lift pompieri 18 kW
+EXP: PT->TGN+TGV; GE pe vitale; PI fara DDR, 1+1
+ACT: refuza TIP: ge_ats REF: V86 Sarcina 566,1 A > In GE 360,8 A — V86.
+IN: {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "Sn_GE_kVA": 250, "sursa_retea": "pt", "pt_Sn_kVA": 630, "P_sarcina_kW": 353, "consumatori": [{"nume": "Productie", "P_kW": 300}, {"nume": "Server room", "P_kW": 30}, {"nume": "Iluminat siguranta", "P_kW": 5}, {"nume": "Pompe incendiu", "P_kW": 30, "n": 2, "siguranta": true, "rezerva": true}, {"nume": "Lift pompieri", "P_kW": 18}]}
+ Q: Măriți GE la cel puțin 400 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 392,2 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?
+ W: consumatori de incendiu pe GE: alimentare fără DDR în amonte (P118/3, I7) — verificați ramura ATS → pompe de incendiu
+==========================================================================================
+#47 GE 50 kVA cu ATS pentru consumatori vitali 120 kW, din PT 400, TN-S
+EXP: contradictie GE subdimensionat -> avertisment/intrebare
+ACT: refuza TIP: ge_ats REF: V86 Sarcina 192,5 A > In GE 72,2 A — V86.
+IN: {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "Sn_GE_kVA": 50, "sursa_retea": "pt", "P_sarcina_kW": 120}
+ Q: Măriți GE la cel puțin 150 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 133,3 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?
+==========================================================================================
+#48 comutator manual retea/GE 3 pozitii (I-0-II) pentru ferma, GE 40 kVA, consumatori: muls 7,5 kW, racire lapte 11 kW, iluminat 2 kW, din BMPT 63A, TN-C-S
+EXP: comutator manual (nu ATS), 3 plecari
+ACT: genereaza TIP: ge_ats REF: None 
+IN: {"tip_schema": "ge_ats", "schema_pamant": "TN-C-S", "Sn_GE_kVA": 40, "In_Q_retea_A": 63, "sursa_retea": "bmpt", "comutare": "manual", "P_sarcina_kW": 20.5, "consumatori": [{"nume": "Muls", "P_kW": 7.5}, {"nume": "Racire lapte", "P_kW": 11}, {"nume": "Iluminat", "P_kW": 2}]}
+ W: comutare manuală a surselor (inversor 0-I-II, interblocat mecanic) — NU ATS automat; verificați simbolul pe planșă
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V31", "nivel": "AVERTISMENT", "obiect": "QR/C1", "mesaj": "Ik1min 493 A < Ia 756 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația)", "remediere": "DDR pe plecare"}, {"cod": "V35", "nivel": "AVERTISMENT", "obiect": "QR/C1", "mesaj": "fază 1×10 mm² < 30,7 mm² la Ik3max IMPLICIT 25 kA — introdu Ik3 real sau I²t producător", "remediere": "secțiune mai mare sau I²t din fișa producătorului"}, {"cod": "V36", "
+==========================================================================================
+#49 TG cu doua intrari din PT1 si PT2, fiecare 1000 kVA, cupla cu interblocaj 2 din 3, TN-S, plecari TD1 630A, TD2 630A
+EXP: 2 intrari + cupla sau intrebare
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "schema_pamant": "TN-S", "plecari": [{"nume": "TD1", "In_A": 630}, {"nume": "TD2", "In_A": 630}], "retea": "tri"}
+ Q: Nu am folosit în schemă: „fiecare 1000 kVA”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V45", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×240 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat", "remediere": ""}, {"cod": "V31", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 1038 A < Ia 2137,5 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) 
+==========================================================================================
+#50 TG din PT 400, schema TN-S, alimentare cablu 4x240 Cu
+EXP: TN-S cu 4 conductoare -> avertisment; plecari lipsa -> intrebare
+ACT: refuza TIP: tablou REF: I02 Lipsesc puterile sau calibrele plecărilor și puterea tabloului (I02).
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "schema_pamant": "TN-S", "cablu": {"material": "Cu", "S_fortat": 240}}
+ Q: Care este puterea tabloului (kW) și care sunt plecările (kW sau A)?
+==========================================================================================
+#51 tg hla prdctie din pt 630kva tns plec: mot 22kw x3, comp 37kw vfd, ilum 8kw
+EXP: prescurtari: 3 mot 22, comp VFD 37, il 8
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 630, "schema_pamant": "TN-S", "P_kW": 22, "retea": "tri"}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Nu am folosit în schemă: „comp 37kw vfd”; „ilum 8kw”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#52 iluminat 4500 W, prize 3600 W, motor 2200 W, trifazat, din TGD, TN-S
+EXP: 3 plecari W->kW
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "plecari": [{"nume": "Iluminat", "P_kW": 4.5}, {"nume": "Prize", "P_kW": 3.6}, {"nume": "Motor", "P_kW": 2.2}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Iluminat vs amonte", "mesaj": "selectivitate parțială până la 0,1 kA (Ik3max 1,63 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·Prize vs amonte", "mesaj": "selectivitate parțială până la 0,1 kA (Ik3max 1,63 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabel
+==========================================================================================
+#53 TD service auto din TG 100A, TN-S: elevator 2 coloane 3 kW, compresor 5,5 kW, prize 230V 6 circ, prize 400V 2x32A, iluminat 2 kW
+EXP: elevator motor, compresor, 6 prize mono, 2 CEE 32A, iluminat
+ACT: refuza TIP: tablou REF: I08 Contradicție: tabloul e descris și monofazat, și trifazat (I08).
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "P_kW": 2, "In_Q1_A": 100, "plecari": [{"nume": "Elevator 2 coloane", "P_kW": 3, "receptor": "motor"}, {"nume": "Compresor", "P_kW": 5.5}], "circuite_finale": true}
+ Q: Tabloul este monofazat (230 V, aparate 2P) sau trifazat (3 × 400/230 V)?
+==========================================================================================
+#54 calculeaza-mi pretul unui TG cu 10 plecari
+EXP: in afara scopului / nu am inteles
+ACT: refuza TIP: tablou REF: I02 Lipsesc puterile sau calibrele plecărilor și puterea tabloului (I02).
+IN: {"tip_schema": "tablou"}
+ Q: Care sunt puterile (kW) sau calibrele (A) celor 10 plecări?
+==========================================================================================
+#55 TG cu chiller 200 kW si 3 CTA 30 kW
+EXP: sursa/schema nedeclarate -> intrebare; nu BMPT presupus
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "plecari": [{"nume": "Chiller", "P_kW": 200}, {"nume": "CTA 1", "P_kW": 30}, {"nume": "CTA 2", "P_kW": 30}, {"nume": "CTA 3", "P_kW": 30}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V31", "nivel": "AVERTISMENT", "obiect": "P1·Chiller", "mesaj": "Ik1min 979 A < Ia 2840 A — deconectarea se bazează pe DDR din amonte (un defect pe plecare deconectează toată instalația) — ATENȚIE: DDR-ul din amonte (RCCB 300 mA BMPT) este PRESUPUS, originea tabloului nu e declarată; fără el deconectarea NU este asigurată", "remediere": "originea tabloului declarată (BMPT / tablou existent cu IdN_amonte_mA / PT propriu) sau DDR pe plecare"}, {"cod": "V
+==========================================================================================
+#56 TD din TG, TN-S: pompa 15 kW, 10 A
+EXP: contradictie 15 kW vs 10 A -> intrebare
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "plecari": [{"nume": "Pompa", "P_kW": 15}, {"nume": "Circuit 2", "In_A": 10}], "circuite_finale": true, "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·Pompa vs amonte", "mesaj": "raport Ip amonte/aval 1,25 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Pompa vs amonte", "mesaj": "selectivitate parțială până la 0,25 kA (Ik3max 4,06 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42"
+==========================================================================================
+#57 TD 80 kW alimentat cu CYABY 5x16 pe 150 m din TG, TN-S, plecari: TE1 40 kW, TE2 40 kW
+EXP: cablu impus insuficient -> blocant vizibil
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "P_kW": 80, "L_alimentare_m": 150, "cablu": {"material": "Cu"}, "plecari": [{"nume": "TE1", "P_kW": 40, "cablu": {"material": "Cu"}}, {"nume": "TE2", "P_kW": 40, "cablu": {"material": "Cu"}}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 603 A < Ia 1920 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TE1 vs amonte", "mesaj": "selectivitate parțială până la 1,28 kA (Ik3max 5,43 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale produc
+==========================================================================================
+#58 VRV exterior 3 unitati x 28 kW si 12 unitati interioare de 0,1 kW alimentate monofazat, din TG, TN-S
+EXP: 3 plecari tri + circuit(e) mono UI
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "P_kW": 28, "retea": "mono"}
+ Q: Care sunt plecările (circuitele) tabloului — nume și putere (kW) sau calibru (A)? Fără ele tabloul se desenează doar cu alimentarea, blocat la export (V07).
+ Q: Nu am folosit în schemă: „12 unitati interioare de 0,1 kW alimentate monofazat”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V07", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "tabloul fără nicio plecare — nu există ce dimensiona", "remediere": "introdu puterea / valori numerice plauzibile"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite ΔU: 3/5 % de la punctul de delimitare"], "calcula
+==========================================================================================
+#59 PTAB 1x630 kVA, 20 kV, celule L+L+M+T (sigurante), JT: 8 plecari NH 250A
+EXP: PT 630 cu 2L+M+T sig., 8 plecari
+ACT: refuza TIP: pt REF: I05 S-au cerut 8 plecări, dar s-au găsit 1 (I05).
+IN: {"tip_schema": "pt", "Sn_kVA": 630, "U_MT_kV": 20, "plecari": [{"nume": "NH", "In_A": 250}]}
+ Q: Care sunt celelalte 7 plecări?
+==========================================================================================
+#60 PT 1,6 MVA uscat 20/0,4, plecari TG1 1600A, TG2 800A
+EXP: 1600 kVA; TG1 1600 + TG2 800 > In trafo 2309? ok
+ACT: genereaza TIP: pt REF: None 
+IN: {"tip_schema": "pt", "Sn_kVA": 1600, "trafo_izolatie": "uscat", "plecari": [{"nume": "TG1", "In_A": 1600}, {"nume": "TG2", "In_A": 800}]}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V45", "nivel": "AVERTISMENT", "obiect": "P1·TG1", "mesaj": "cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 3 sisteme de cabluri monopolare Cu XLPE 1×240 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat", "remediere": ""}, {"cod": "V41", "nivel": "AVERTISMENT", "obiect": "P1·TG1 vs amonte", "mesaj": "raport Ip amonte/aval 1,48 < 1,6 — selectivitate nesigură la suprasarcină", "remediere": "calibru amonte mai mare
+==========================================================================================
+#61 putere instalata 1.250 kW, PT 2 x 1.000 kVA, TN-S, plecari TD1 1000A, TD2 800A, TD3 630A
+EXP: 2 x 1000 kVA, Pi nu e plecare
+ACT: genereaza_cu_intrebare TIP: pt REF: None 
+IN: {"tip_schema": "pt", "schema_pamant": "TN-S", "Sn_kVA": 1000, "n_trafo": 2, "plecari": [{"nume": "TD1", "In_A": 1000}, {"nume": "TD2", "In_A": 800}, {"nume": "TD3", "In_A": 630}]}
+ Q: Nu am folosit în schemă: „putere instalata 1.250 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V62", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "secția 1: Sc = 1122,37 kVA > Sn T1 = 1000 kVA (cupla normal deschisă — fiecare trafo își poartă secția)", "remediere": "trafo mai mare / ks justificat"}, {"cod": "V45", "nivel": "AVERTISMENT", "obiect": "P1·TD1", "mesaj": "cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×240 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de
+==========================================================================================
+#62 TG cladire birouri din PT 630, TN-S: TE-P 80A, TE-E1 63A, TE-E2 63A, din care TE-E2 alimenteaza TE-Server 32A
+EXP: cascada: TE-Server sub TE-E2
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "schema_pamant": "TN-S", "plecari": [{"nume": "TE-P", "In_A": 80}, {"nume": "TE-E1", "In_A": 63}, {"nume": "TE-E2", "In_A": 63, "copii": [{"nume": "TE-E2 alimenteaza TE-Server", "In_A": 32}]}], "retea": "tri"}
+ Q: Care este puterea trafo (kVA)?
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 914 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·TE-P vs amonte", "mesaj": "selectivitate parțială până la 1,6 kA (Ik3max 15,08 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale produ
+==========================================================================================
+#63 Salut, | Am nevoie de schema pt tabloul compresoarelor: 2 compresoare de 55 kW cu VFD si un uscator 3 kW. | Alimentare din TG hala (TN-S), cablu 70 m. | Tel 0745 123 456 | Mersi, Dan
+EXP: TD din TG L70, 2 comp VFD 55, uscator 3; telefon ignorat
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "tg_existent", "schema_pamant": "TN-S", "P_kW": 3, "L_alimentare_m": 70, "plecari": [{"nume": "Compresoare 1", "P_kW": 55, "receptor": "motor", "pornire": "convertizor"}, {"nume": "Compresoare 2", "P_kW": 55, "receptor": "motor", "pornire": "convertizor"}], "retea": "tri"}
+ Q: Nu am folosit în schemă: „2 compresoare de 55 kW cu VFD si un uscator 3 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V14", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "P declarată 3 kW < Pc din bilanț 99 kW — se folosește P declarată (Pa din ATR)", "remediere": "ATR nou sau ks justificat"}, {"cod": "V32", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 705 A < Ia 1500 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V32", "nivel": "AVERTISMENT", "obiect
+==========================================================================================
+#64 TG hala din PT 630 TN-S: pompa incendiu 45 kW, pompa tehnologica 45 kW, iluminat 10 kW
+EXP: PI siguranta fara DDR, inainte de general/separat; tehnologica motor normal
+ACT: genereaza_cu_intrebare TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "pt_propriu", "schema_pamant": "TN-S", "plecari": [{"nume": "Pompa incendiu", "P_kW": 45}, {"nume": "Pompa tehnologica", "P_kW": 45}, {"nume": "Iluminat", "P_kW": 10}], "retea": "tri"}
+ Q: Care este puterea trafo (kVA)?
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V32", "nivel": "AVERTISMENT", "obiect": "Q1/C1", "mesaj": "Ik1min 904 A < Ia 1920 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"cod": "V32", "nivel": "AVERTISMENT", "obiect": "P1·Pompa incendiu", "mesaj": "Ik1min 606 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală", "remediere": "cerere către OD pentru impedanța buclei la punctul de delimitare"}, {"
+==========================================================================================
+#65 cuptor pizza 12 kW, friteuza 2 x 9 kW, plita inductie 14 kW, hota 1,5 kW, din BMPT 80A TN-C-S
+EXP: 5 plecari, Q1 80
+ACT: genereaza_cu_intrebare TIP: locuinta REF: None 
+IN: {"tip_schema": "locuinta", "retea": "tri", "circuite": [{"nume": "Iluminat interior", "receptor": "iluminat"}, {"nume": "Iluminat exterior", "receptor": "iluminat"}, {"nume": "Prize camere", "receptor": "prize"}, {"nume": "Prize living", "receptor": "prize"}, {"nume": "Prize bucătărie", "receptor": "prize_bucatarie"}, {"nume": "Prize baie", "receptor": "prize_baie"}, {"nume": "Mașină de spălat rufe", "receptor": "masina_spalat_rufe"}, {"nume": "Boiler", "receptor": "boiler"}, {"nume": "Centrală termică", "receptor": "centrala_termica"}, {"nume": "Prize exterior", "receptor": "prize_exterior"}, {"nume": "Cuptor", "receptor": "cuptor", "P_kW": 12}, {"nume": "Plită", "receptor": "plita", "P_kW": 14, "faza": "3F"}], "alimentare": {"In_Q_bransament_A": 80}, "schema_pamant": "TN-C-S"}
+ Q: Nu am folosit în schemă: „friteuza 2 x 9 kW”; „hota 1,5 kW”. Ce reprezintă și unde se aplică? (până atunci nu apar pe planșă)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V46", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "puterea aprobată (ATR) nedeclarată — presupusă din bilanț, Pc 14,49 kW (Ib 22,02 A); se completează din ATR / certificatul de racordare", "remediere": "introdu puterea aprobată din ATR / certificatul de racordare", "camp": "alimentare.P_aprobata_kW"}, {"cod": "V56", "nivel": "AVERTISMENT", "obiect": "schema", "mesaj": "locuință trifazată cu Ib = 25,33 A > 80 A: contorul direct 5(100) A lucrea
+==========================================================================================
+#66 TG TT din BMPT 100A, RA 30 ohm: pompa 11 kW, 2 ventilatoare 4 kW, prize 4 circuite 16A
+EXP: TT, DDR pe toate, RA*Idn
+ACT: genereaza TIP: tablou REF: None 
+IN: {"tip_schema": "tablou", "origine": "bmpt", "schema_pamant": "TT", "RA_ohm": 30, "In_Q1_A": 100, "plecari": [{"nume": "Pompa", "P_kW": 11}, {"nume": "Ventilatoare 1", "P_kW": 4}, {"nume": "Ventilatoare 2", "P_kW": 4}, {"nume": "Prize", "In_A": 16, "n_circuite": 4}], "retea": "tri"}
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V35", "nivel": "AVERTISMENT", "obiect": "P1·Pompa", "mesaj": "fază 1×6 mm² < 11,5 mm² la Ik3max IMPLICIT 9,37 kA — introdu Ik3 real sau I²t producător", "remediere": "secțiune mai mare sau I²t din fișa producătorului"}, {"cod": "V36", "nivel": "AVERTISMENT", "obiect": "P1·Pompa", "mesaj": "PE 6 mm² < 11,5 mm² la Ik3max IMPLICIT — introdu Ik3 real sau I²t producător", "remediere": "PE mai mare"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Pom
+==========================================================================================
+#67 GE 10 kVA monofazat cu ATS pentru centrala termica 0,2 kW si pompa circulatie 0,1 kW si frigidere 1 kW, din BMPT monofazat, TN-C-S
+EXP: GE mono + ATS 2P, 3 circuite mono
+ACT: genereaza_cu_intrebare TIP: ge_ats REF: None 
+IN: {"tip_schema": "ge_ats", "schema_pamant": "TN-C-S", "retea": "mono", "Sn_GE_kVA": 10, "sursa_retea": "bmpt", "P_sarcina_kW": 1.3, "consumatori": [{"nume": "Centrala termica", "P_kW": 0.2}, {"nume": "Pompa circulatie", "P_kW": 0.1}, {"nume": "Frigidere", "P_kW": 1}]}
+ Q: GE monofazat: schema GE + ATS se dimensionează doar trifazat (ATS 4P). Grupul e trifazat (3 × 400/230 V)?
+ VAL: {"blocheaza": true, "verificari": [{"cod": "V96", "nivel": "BLOCANT", "obiect": "schema", "mesaj": "nesuportat: GE monofazat — motorul calculează doar GE trifazat 3P+N cu ATS 4P", "remediere": "GE trifazat sau schemă de specialitate pentru GE monofazat (ATS 2P)"}], "info": [{"cod": "V90", "nivel": "INFO", "obiect": "schema", "mesaj": "Ipoteze de calcul: c_max = 1,10, c_min = 0,95; limite ΔU: 3/5 % de la punctul de delimitare"}], "presupus": [], "ipoteze": ["c_max = 1,10, c_min = 0,95", "limite Δ
+==========================================================================================
+#68 TG productie, sursa PT 1000 kVA 20/0,4 kV, TN-S. Utilaje: linie extrudare 160 kW (VFD), 2 granulatoare 37 kW soft-starter, turn racire 2 x 11 kW, compresor 75 kW Y/D, macara 10 t (3 motoare 7,5 + 2,2 + 1,5 kW), iluminat 12 kW, prize 8 circ.
+EXP: ~12 plecari corecte cu demaroare
+ACT: genereaza_cu_intrebare TIP: pt REF: None 
+IN: {"tip_schema": "pt", "schema_pamant": "TN-S", "Sn_kVA": 1000, "U_MT_kV": 20, "plecari": [{"nume": "Linie extrudare", "P_kW": 160, "receptor": "motor", "pornire": "convertizor"}, {"nume": "Granulatoare 1", "P_kW": 37, "receptor": "motor", "pornire": "soft"}, {"nume": "Granulatoare 2", "P_kW": 37, "receptor": "motor", "pornire": "soft"}, {"nume": "Turn racire 1", "P_kW": 11}, {"nume": "Turn racire 2", "P_kW": 11}, {"nume": "Compresor", "P_kW": 75, "pornire": "stea_triunghi"}, {"nume": "Macara 10 t", "copii": [{"nume": "Motoare 1", "P_kW": 7.5}, {"nume": "Motoare 2", "P_kW": 7.5}, {"nume": "Motoare 3", "P_kW": 7.5}, {"nume": "Circuit 4", "P_kW": 2.2}, {"nume": "Circuit 5", "P_kW": 1.5}]}, {"nume": "Iluminat", "P_kW": 12}]}
+ Q: Lipsesc puterea (kW) sau calibrul (A) pentru: „prize 8 circ”. Care sunt? (până atunci nu sunt desenate)
+ VAL: {"blocheaza": false, "verificari": [{"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P1·Linie extrudare vs amonte", "mesaj": "selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului", "remediere": "confirmare cu tabelele de selectivitate ale producătorului"}, {"cod": "V42", "nivel": "AVERTISMENT", "obiect": "P2·Granulatoare 1 vs amonte", "mesaj": "selectivitate parțială până la 15,36 kA (Ik3max 25,31 kA) — confirmă cu tabelele producătorului", "remediere"

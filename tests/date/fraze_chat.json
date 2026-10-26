@@ -1,2045 +1,2048 @@
 {
- "_schema": {
-  "descriere": "Fraze de test pentru interpretorul de text liber (SPEC_TEHNIC.md §F). Interpretorul întoarce un rezultat STRUCTURAL; dimensionarea se verifică separat cu cazuri_golden.json.",
-  "campuri_asteptat": {
-   "actiune": "genereaza | genereaza_cu_intrebare (generează cu presupuneri și pune întrebarea) | refuza (nu generează schemă, pune întrebarea)",
-   "tip_schema": "bransament | tablou | cef | pt | prosumator | ge_ats",
-   "retea": "tri | mono (implicit tri)",
-   "puteri": "valorile numerice extrase, normalizate: kW, kWp, kVA (MW→×1000, W→÷1000)",
-   "plecari": "listă ordonată {nume, valoare, unitate (A|kW), copii?, receptor?, L_m?}; numele se păstrează cum a fost scris (prima literă majusculă dacă tot cuvântul era minuscul; „TD-1”, „HVAC” neschimbate)",
-   "nr_plecari": "numărul cerut explicit în text (dacă există) — trebuie să fie egal cu len(plecari), altfel refuz I05",
-   "lungimi_m": "lungimi în metri, cu ținta lor (C2, alimentare, plecari)",
-   "material/izolatie/metoda/grupare": "doar dacă textul le specifică; altfel null și implicitul se declară în 'presupus'",
-   "beneficiar/adresa/plansa/faza": "câmpuri de cartuș extrase",
-   "presupus": "ce TREBUIE să apară în răspuns ca „Am presupus: …” (conținut, nu formulare exactă)",
-   "avertismente": "verificări care trebuie raportate în răspuns",
-   "intrebari": "întrebarea (întrebările) puse utilizatorului",
-   "refuz_motiv": "motivul refuzului (când actiune = refuza)",
-   "rezultat_cheie": "câteva rezultate de dimensionare utile pentru testul cap-coadă (vezi și cazuri_golden.json)",
-   "intrare_motor": "opțional: subset de câmpuri care TREBUIE să apară identic în intrare_fizica (contractul motorului, SPEC §B.1.1)"
+  "_schema": {
+    "descriere": "Fraze de test pentru interpretorul de text liber (SPEC_TEHNIC.md §F). Interpretorul întoarce un rezultat STRUCTURAL; dimensionarea se verifică separat cu cazuri_golden.json.",
+    "campuri_asteptat": {
+      "actiune": "genereaza | genereaza_cu_intrebare (generează cu presupuneri și pune întrebarea) | refuza (nu generează schemă, pune întrebarea)",
+      "tip_schema": "bransament | tablou | cef | pt | prosumator | ge_ats",
+      "retea": "tri | mono (implicit tri)",
+      "puteri": "valorile numerice extrase, normalizate: kW, kWp, kVA (MW→×1000, W→÷1000)",
+      "plecari": "listă ordonată {nume, valoare, unitate (A|kW), copii?, receptor?, L_m?}; numele se păstrează cum a fost scris (prima literă majusculă dacă tot cuvântul era minuscul; „TD-1”, „HVAC” neschimbate)",
+      "nr_plecari": "numărul cerut explicit în text (dacă există) — trebuie să fie egal cu len(plecari), altfel refuz I05",
+      "lungimi_m": "lungimi în metri, cu ținta lor (C2, alimentare, plecari)",
+      "material/izolatie/metoda/grupare": "doar dacă textul le specifică; altfel null și implicitul se declară în 'presupus'",
+      "beneficiar/adresa/plansa/faza": "câmpuri de cartuș extrase",
+      "presupus": "ce TREBUIE să apară în răspuns ca „Am presupus: …” (conținut, nu formulare exactă)",
+      "avertismente": "verificări care trebuie raportate în răspuns",
+      "intrebari": "întrebarea (întrebările) puse utilizatorului",
+      "refuz_motiv": "motivul refuzului (când actiune = refuza)",
+      "rezultat_cheie": "câteva rezultate de dimensionare utile pentru testul cap-coadă (vezi și cazuri_golden.json)",
+      "intrare_motor": "opțional: subset de câmpuri care TREBUIE să apară identic în intrare_fizica (contractul motorului, SPEC §B.1.1)"
+    },
+    "regula_comparare": "Se compară exact: actiune, tip_schema, retea, puteri, plecari (nume normalizate fără diacritice/majuscule, valoare, unitate, ordine), nr_plecari, lungimi_m, material, beneficiar, adresa. 'presupus' și 'intrebari': fiecare element trebuie să fie acoperit de răspuns (verificare manuală sau prin cuvinte-cheie).",
+    "istoric": [
+      {
+        "data": "2026-10-12",
+        "fraza": "F07",
+        "motiv": "ARBITRAJ: orice generare însoțită de întrebare = genereaza_cu_intrebare (SPEC §F.7, regula R1)"
+      },
+      {
+        "data": "2026-10-12",
+        "fraza": "F05",
+        "motiv": "ARBITRAJ: rezultatul de dimensionare mutat din „presupus” în rezultat_cheie"
+      },
+      {
+        "data": "2026-10-12",
+        "fraza": "F29",
+        "motiv": "ARBITRAJ: cod I13 (tip BMPT impus inexistent)"
+      },
+      {
+        "data": "2026-10-12",
+        "fraza": "F33, F43, F53, F59",
+        "motiv": "ARBITRAJ: câmpuri noi de contract circuite_finale, origine, Ib_A, S_kVA (intrare_motor)"
+      },
+      {
+        "data": "2026-10-12",
+        "fraza": "F42",
+        "motiv": "ARBITRAJ: seria GE_SN_KVA; minimul pentru 60 kW = 80 kVA (nu 100)"
+      }
+    ]
   },
-  "regula_comparare": "Se compară exact: actiune, tip_schema, retea, puteri, plecari (nume normalizate fără diacritice/majuscule, valoare, unitate, ordine), nr_plecari, lungimi_m, material, beneficiar, adresa. 'presupus' și 'intrebari': fiecare element trebuie să fie acoperit de răspuns (verificare manuală sau prin cuvinte-cheie).",
-  "istoric": [
-   {
-    "data": "2026-10-12",
-    "fraza": "F07",
-    "motiv": "ARBITRAJ: orice generare însoțită de întrebare = genereaza_cu_intrebare (SPEC §F.7, regula R1)"
-   },
-   {
-    "data": "2026-10-12",
-    "fraza": "F05",
-    "motiv": "ARBITRAJ: rezultatul de dimensionare mutat din „presupus” în rezultat_cheie"
-   },
-   {
-    "data": "2026-10-12",
-    "fraza": "F29",
-    "motiv": "ARBITRAJ: cod I13 (tip BMPT impus inexistent)"
-   },
-   {
-    "data": "2026-10-12",
-    "fraza": "F33, F43, F53, F59",
-    "motiv": "ARBITRAJ: câmpuri noi de contract circuite_finale, origine, Ib_A, S_kVA (intrare_motor)"
-   },
-   {
-    "data": "2026-10-12",
-    "fraza": "F42",
-    "motiv": "ARBITRAJ: seria GE_SN_KVA; minimul pentru 60 kW = 80 kVA (nu 100)"
-   }
+  "fraze": [
+    {
+      "id": "F01",
+      "sursa": "cases.json:bmpt_15",
+      "text": "branșament BMPT 15 kW, cablu 20 m, beneficiar SC Test SRL, în Ciumeghiu, jud. Bihor",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 15
+        },
+        "lungimi_m": {
+          "C2": 20
+        },
+        "material": null,
+        "beneficiar": "SC Test SRL",
+        "adresa": {
+          "localitate": "Ciumeghiu",
+          "judet": "Bihor"
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
+          "schema TN-C-S, separare PEN în BMPT",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "rezultat_cheie": {
+          "bloc": "BMPTd-40",
+          "Q": "MCB C25"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F02",
+      "sursa": "cases.json:bmpt_60",
+      "text": "branșament trifazat 60 kW, cablu 50 m",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 60
+        },
+        "lungimi_m": {
+          "C2": 50
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
+          "schema TN-C-S, separare PEN în BMPT",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)",
+          "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
+        ],
+        "rezultat_cheie": {
+          "bloc": "BMPTd-100",
+          "Q": "MCB C100"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F03",
+      "sursa": "cases.json:bmpt_150",
+      "text": "BMPTi 150 kW, cablu 80 m, beneficiar SC Agro Vest SRL, în Ciumeghiu, jud. Bihor, planșa E02",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 150
+        },
+        "masura_ceruta": "semidirecta",
+        "lungimi_m": {
+          "C2": 80
+        },
+        "beneficiar": "SC Agro Vest SRL",
+        "adresa": {
+          "localitate": "Ciumeghiu",
+          "judet": "Bihor"
+        },
+        "plansa": "E02",
+        "presupus": [
+          "cosφ 0,9",
+          "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
+          "schema TN-C-S, separare PEN în BMPT",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "rezultat_cheie": {
+          "bloc": "BMPTi-250",
+          "TC": "250/5 A"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F04",
+      "sursa": "cases.json:bmpt_300",
+      "text": "branșament 300 kW, cablu 120 m aluminiu",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 300
+        },
+        "lungimi_m": {
+          "C2": 120
+        },
+        "material": "Al",
+        "refuz_motiv": "Ib = 481 A > 250 A: în ST 4-JT nu există BMPT peste BMPTi-250 (V50).",
+        "intrebari": [
+          "Racordul se face din PT-ul OD cu măsură în PT, sau prin PT propriu? Pot genera schema „Post de transformare” (ex. 400 kVA)."
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F05",
+      "sursa": "cases.json:bmpt_60_300m",
+      "text": "branșament 60 kW, cablu 300 m",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 60
+        },
+        "lungimi_m": {
+          "C2": 300
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
+          "schema TN-C-S, separare PEN în BMPT",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)",
+          "limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea C2)"
+        ],
+        "rezultat_cheie": {
+          "C2": "ACYABY 4×185 mm² + FY 1×50 mm² (PE)",
+          "nota": "secțiunea C2 mărită de motor pentru ΔU (rezultat de dimensionare, nu presupunere)"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F06",
+      "sursa": "cases.json:bmpt_60_cu",
+      "text": "branșament 60 kW, cablu cupru 30 m",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 60
+        },
+        "lungimi_m": {
+          "C2": 30
+        },
+        "material": "Cu",
+        "presupus": [
+          "cosφ 0,9",
+          "schema TN-C-S, separare PEN în BMPT",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F07",
+      "sursa": "cases.json:bmpt_45_tc",
+      "text": "BMPTi 45 kW cu măsură semidirectă, cablu 40 m",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 45
+        },
+        "masura_ceruta": "semidirecta",
+        "lungimi_m": {
+          "C2": 40
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
+          "schema TN-C-S, separare PEN în BMPT",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "avertismente": [
+          "V51: la 72,2 A ST 4-JT prevede BMPTd-100 (măsură directă); s-a generat BMPTd-100"
+        ],
+        "intrebari": [
+          "Confirmați BMPTd-100? Măsura semidirectă (BMPTi-250) se folosește doar între 100 și 250 A."
+        ],
+        "actiune": "genereaza_cu_intrebare"
+      }
+    },
+    {
+      "id": "F08",
+      "sursa": "cases.json:tg_2",
+      "text": "tablou general 80 kW cu plecări: hală 63 A, birouri 32 A, lungime 40 m",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 80
+        },
+        "plecari": [
+          {
+            "nume": "Hală",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "Birouri",
+            "valoare": 32,
+            "unitate": "A"
+          }
+        ],
+        "lungimi_m": {
+          "alimentare": 40
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "ks = 0,9 (2 plecări)",
+          "plecări: L = 50 m, Al PVC D1",
+          "sursa: rețea publică prin BMPT cu RCCB 300 mA",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F09",
+      "sursa": "cases.json:tg_12",
+      "text": "tablou general 400 kW cu plecări: hală 1 100 A, hală 2 100 A, birouri 40 A, pompe 30 kW, compresor 45 kW, iluminat 16 A, prize 32 A, ventilație 22 kW, HVAC 60 kW, cantină 50 A, depozit 63 A, atelier 25 kW, lungime 60 m",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 400
+        },
+        "plecari": [
+          {
+            "nume": "Hală 1",
+            "valoare": 100,
+            "unitate": "A"
+          },
+          {
+            "nume": "Hală 2",
+            "valoare": 100,
+            "unitate": "A"
+          },
+          {
+            "nume": "Birouri",
+            "valoare": 40,
+            "unitate": "A"
+          },
+          {
+            "nume": "Pompe",
+            "valoare": 30,
+            "unitate": "kW"
+          },
+          {
+            "nume": "Compresor",
+            "valoare": 45,
+            "unitate": "kW"
+          },
+          {
+            "nume": "Iluminat",
+            "valoare": 16,
+            "unitate": "A"
+          },
+          {
+            "nume": "Prize",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "Ventilație",
+            "valoare": 22,
+            "unitate": "kW"
+          },
+          {
+            "nume": "HVAC",
+            "valoare": 60,
+            "unitate": "kW"
+          },
+          {
+            "nume": "Cantină",
+            "valoare": 50,
+            "unitate": "A"
+          },
+          {
+            "nume": "Depozit",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "Atelier",
+            "valoare": 25,
+            "unitate": "kW"
+          }
+        ],
+        "lungimi_m": {
+          "alimentare": 60
+        },
+        "nr_plecari": 12,
+        "presupus": [
+          "cosφ 0,9",
+          "ks = 0,6 (12 plecări), dar P declarată 400 kW are prioritate",
+          "„hală 1 100 A” = numele „Hală 1” + 100 A (separatorul de mii prin spațiu NU se acceptă în liste)",
+          "plecări L = 50 m, trasee separate",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "avertismente": [
+          "V45: coloana trece pe AC2XABY (Al PVC nu ajunge la 4×240 mm²)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F10",
+      "sursa": "cases.json:tg_mix",
+      "text": "tablou general 200 kW cu plecări: hală 63 A, birouri 32 A, pompe 40 kW, lungime 120 m",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 200
+        },
+        "plecari": [
+          {
+            "nume": "Hală",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "Birouri",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "Pompe",
+            "valoare": 40,
+            "unitate": "kW"
+          }
+        ],
+        "lungimi_m": {
+          "alimentare": 120
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "pompe: receptor motor, cosφ 0,85",
+          "lungimea de 120 m se aplică DOAR alimentării; plecări L = 50 m",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F11",
+      "sursa": "cases.json:tg_cu_aer",
+      "text": "TG 120 kW cu 4 plecări de 63 A, cablu cupru pe pat de cabluri 35 m",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 120
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-4",
+            "valoare": 63,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 4,
+        "lungimi_m": {
+          "alimentare": 35
+        },
+        "material": "Cu",
+        "metoda": "E",
+        "grupare": {
+          "plecari": 4,
+          "aranjament": "pat_perforat"
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "plecări pe același pat de cabluri (grupare 4 circuite, B.52.17: 0,77)",
+          "plecări L = 50 m",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F12",
+      "sursa": "cases.json:tg_100a",
+      "text": "tablou 250 A cu plecări de 160, 63 și 40 A",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "In_Q1_A": 250
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 40,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 3,
+        "presupus": [
+          "unitatea „A” se aplică tuturor numerelor din listă",
+          "alimentare L = 50 m",
+          "plecări L = 50 m",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F13",
+      "sursa": "cases.json:cef_50",
+      "text": "CEF 50 kWp cu 1 invertor de 50 kW",
+      "asteptat": {
+        "tip_schema": "cef",
+        "puteri": {
+          "kWp": 50,
+          "invertoare": [
+            {
+              "n": 1,
+              "Pn_kW": 50
+            }
+          ]
+        },
+        "presupus": [
+          "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
+          "cablu invertor Al PVC D1, L = 30 m",
+          "racord JT (S = 55 kVA)",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F14",
+      "sursa": "cases.json:cef_300",
+      "text": "CEF 300 kWp cu 3 invertoare de 100 kW și BESS 200 kWh",
+      "asteptat": {
+        "actiune": "genereaza_cu_intrebare",
+        "tip_schema": "cef",
+        "puteri": {
+          "kWp": 300,
+          "invertoare": [
+            {
+              "n": 3,
+              "Pn_kW": 100
+            }
+          ],
+          "bess": {
+            "kWh": 200,
+            "P_kW": 100
+          }
+        },
+        "presupus": [
+          "PCS BESS = 100 kW (0,5C din 200 kWh)",
+          "S = 440 kVA > 400 kVA → PT propriu 20/0,4 kV 630 kVA adăugat"
+        ],
+        "intrebari": [
+          "Racordul este prin PT propriu (630 kVA presupus) sau JT conform ATR? Indicați puterea PCS dacă diferă de 100 kW."
+        ]
+      }
+    },
+    {
+      "id": "F15",
+      "sursa": "cases.json:cef_1mw",
+      "text": "centrală fotovoltaică 1000 kWp cu 8 invertoare de 110 kW",
+      "asteptat": {
+        "actiune": "genereaza_cu_intrebare",
+        "tip_schema": "cef",
+        "puteri": {
+          "kWp": 1000,
+          "invertoare": [
+            {
+              "n": 8,
+              "Pn_kW": 110
+            }
+          ]
+        },
+        "presupus": [
+          "S = 968 kVA → PT propriu 1000 kVA adăugat (racord MT)",
+          "categoria A RfG (880 kW < 1 MW)"
+        ],
+        "intrebari": [
+          "Confirmați PT propriu 1000 kVA (celulă trafo cu separator de sarcină + siguranțe MT)?"
+        ]
+      }
+    },
+    {
+      "id": "F16",
+      "sursa": "cases.json:cef_1mw_bess",
+      "text": "CEF 1 MWp, 8 invertoare 110 kW, stocare 500 kW / 1000 kWh",
+      "asteptat": {
+        "actiune": "genereaza_cu_intrebare",
+        "tip_schema": "cef",
+        "puteri": {
+          "kWp": 1000,
+          "invertoare": [
+            {
+              "n": 8,
+              "Pn_kW": 110
+            }
+          ],
+          "bess": {
+            "P_kW": 500,
+            "kWh": 1000
+          }
+        },
+        "presupus": [
+          "1 MWp = 1000 kWp",
+          "S = 1518 kVA → PT propriu 1600 kVA, celulă trafo cu întreruptor + releu",
+          "categoria B RfG (1380 kW ≥ 1 MW)"
+        ],
+        "intrebari": [
+          "Confirmați PT propriu 1600 kVA?"
+        ]
+      }
+    },
+    {
+      "id": "F17",
+      "sursa": "cases.json:pt_250_3",
+      "text": "post trafo 250 kVA cu plecări de 160, 100 și 63 A",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 250
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 100,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 63,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 3,
+        "presupus": [
+          "trafo ulei 20/0,4 kV Dyn5, uk 4 %",
+          "S\"kQ = 500 MVA",
+          "celulă trafo cu separator de sarcină + siguranțe MT 16 A",
+          "plecări L = 50 m, Al PVC D1"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F18",
+      "sursa": "cases.json:pt_630_3",
+      "text": "post trafo 630 kVA cu plecări de 250, 160 și 100 A",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 630
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 100,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 3,
+        "presupus": [
+          "uk 4 %",
+          "S\"kQ = 500 MVA",
+          "plecări L = 50 m"
+        ],
+        "rezultat_cheie": {
+          "Q_JT": "MCCB 1000 A, Ir 950 A"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F19",
+      "sursa": "cases.json:pt_1000_8",
+      "text": "post de transformare 1000 kVA cu plecări de 400, 250, 250, 160, 160, 100, 100 și 63 A",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 1000
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 400,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-4",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-5",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-6",
+            "valoare": 100,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-7",
+            "valoare": 100,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-8",
+            "valoare": 63,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 8,
+        "presupus": [
+          "uk 6 %",
+          "plecări L = 50 m"
+        ],
+        "rezultat_cheie": {
+          "Q_JT": "MCCB 1600 A, Ir 1520 A"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F20",
+      "sursa": "cases.json:pt_1600_8",
+      "text": "PT 1600 kVA cu plecări de 630, 400, 400, 250, 250, 160, 160 și 100 A",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 1600
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 630,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 400,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 400,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-4",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-5",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-6",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-7",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-8",
+            "valoare": 100,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 8,
+        "presupus": [
+          "uk 6 %",
+          "celulă trafo cu întreruptor (Sn > 1000 kVA)"
+        ],
+        "rezultat_cheie": {
+          "Q_JT": "ACB 2500 A, Ir 2375 A"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F21",
+      "sursa": "cases.json:nat_1",
+      "text": "fa-mi te rog un bransament pt o hala de 90kw, cam 35m de cablu pana la firida, cupru",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 90
+        },
+        "lungimi_m": {
+          "C2": 35
+        },
+        "material": "Cu",
+        "presupus": [
+          "„pt” minuscul = „pentru” (nu post de transformare)",
+          "„cam 35 m” = 35 m, aproximativ",
+          "cablul descris = coloana C2 dintre BMPT și tabloul consumatorului; racordul C1 aparține OD",
+          "cosφ 0,9",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "rezultat_cheie": {
+          "bloc": "BMPTi-250",
+          "Q": "MCCB 160 A, Ir 152 A"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F22",
+      "sursa": "cases.json:nat_2",
+      "text": "TG nou la ferma, 3 plecari: grajd 25kw, moara 30 kw, iluminat 5 kw, ~70m",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {},
+        "plecari": [
+          {
+            "nume": "Grajd",
+            "valoare": 25,
+            "unitate": "kW"
+          },
+          {
+            "nume": "Moară",
+            "valoare": 30,
+            "unitate": "kW"
+          },
+          {
+            "nume": "Iluminat",
+            "valoare": 5,
+            "unitate": "kW"
+          }
+        ],
+        "nr_plecari": 3,
+        "lungimi_m": {
+          "alimentare": 70
+        },
+        "presupus": [
+          "P tablou din bilanț: Σ = 60 kW, ks = 0,9 → Pc = 54 kW (NU prima valoare din text)",
+          "„~70m” se aplică alimentării TG",
+          "moară = receptor motor (cosφ 0,85)",
+          "iluminat = receptor iluminat (ΔU ≤ 3 %)",
+          "plecări L = 50 m",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F23",
+      "sursa": "cases.json:nat_3",
+      "text": "PT 400kVA pt fabrica, 4 plecari de 250A, beneficiar Mobila Lux SRL, Beius jud Bihor",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 400
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 250,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-4",
+            "valoare": 250,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 4,
+        "beneficiar": "Mobila Lux SRL",
+        "adresa": {
+          "localitate": "Beius",
+          "judet": "Bihor"
+        },
+        "presupus": [
+          "„PT” majuscul = post de transformare; „pt” minuscul = „pentru”",
+          "localitatea se preia așa cum a fost scrisă (fără diacritice adăugate)",
+          "plecări L = 50 m"
+        ],
+        "avertismente": [
+          "V62: bilanț 554 kVA > Sn 400 kVA"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F24",
+      "sursa": "cases.json:nat_4",
+      "text": "prosumator 10 kW monofazat cu invertor hibrid",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "prosumator",
+        "retea": "mono",
+        "puteri": {
+          "invertoare": [
+            {
+              "n": 1,
+              "Pn_kW": 10
+            }
+          ]
+        },
+        "hibrid": true,
+        "refuz_motiv": "Iac,max = 1,1·10 000/230 = 47,8 A > 40 A (BMPM maxim, ST 3-JT) — V53.",
+        "intrebari": [
+          "Treceți pe prosumator trifazat 10 kW, sau reduceți invertorul monofazat la cel mult 8 kW (Iac,max ≤ 40 A)?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F25",
+      "sursa": "cases.json:nat_5",
+      "text": "tablou cu 2 plecări: TD-1 cu sub-plecări hală 32 A și birouri 16 A, TD-2 40 A",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {},
+        "nr_plecari": 2,
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": null,
+            "unitate": null,
+            "copii": [
+              {
+                "nume": "Hală",
+                "valoare": 32,
+                "unitate": "A"
+              },
+              {
+                "nume": "Birouri",
+                "valoare": 16,
+                "unitate": "A"
+              }
+            ]
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 40,
+            "unitate": "A"
+          }
+        ],
+        "presupus": [
+          "„cu 2 plecări” = număr de plecări, NU material Cu",
+          "„TD-1” păstrat cu majuscule",
+          "P TD-1 din bilanțul sub-plecărilor (ks 0,9)",
+          "sub-plecări: circuite finale Cu PVC metoda C, L = 25 m",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F26",
+      "sursa": "nou",
+      "text": "bmpt 40kw 25m al",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 40
+        },
+        "lungimi_m": {
+          "C2": 25
+        },
+        "material": "Al",
+        "presupus": [
+          "cosφ 0,9",
+          "schema TN-C-S, separare PEN în BMPT",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F27",
+      "sursa": "nou",
+      "text": "bransament monofazat 6 kW, 15 m, client Pop Ioan, Sântandrei, jud. Bihor",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "mono",
+        "puteri": {
+          "P_kW": 6
+        },
+        "lungimi_m": {
+          "C2": 15
+        },
+        "beneficiar": "Pop Ioan",
+        "adresa": {
+          "localitate": "Sântandrei",
+          "judet": "Bihor"
+        },
+        "presupus": [
+          "cosφ 0,9",
+          "coloană Cu (monofazat)",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "rezultat_cheie": {
+          "bloc": "BMPM-32"
+        },
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F28",
+      "sursa": "nou",
+      "text": "branșament monofazat 12 kW",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "bransament",
+        "retea": "mono",
+        "puteri": {
+          "P_kW": 12
+        },
+        "refuz_motiv": "Ib = 58 A > 40 A (BMPM) — V53.",
+        "intrebari": [
+          "Generez branșament trifazat (BMPTd-40, Ib = 19,2 A)?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F29",
+      "sursa": "nou",
+      "text": "BMPTd-63 pentru 35 kW, coloana 30 m",
+      "asteptat": {
+        "actiune": "genereaza_cu_intrebare",
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 35
+        },
+        "bmpt_cerut": "BMPTd-63",
+        "lungimi_m": {
+          "C2": 30
+        },
+        "presupus": [
+          "I13: tipul BMPTd-63 nu există în ST 4-JT Rev. 3/2024 → nu se transmite motorului; s-a folosit BMPTd-100 (Ib = 56,1 A)"
+        ],
+        "intrebari": [
+          "Confirmați BMPTd-100?"
+        ]
+      }
+    },
+    {
+      "id": "F30",
+      "sursa": "nou",
+      "text": "tablou cu 3 plecări",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "tablou",
+        "nr_plecari": 3,
+        "refuz_motiv": "Lipsesc puterile sau calibrele plecărilor și puterea tabloului.",
+        "intrebari": [
+          "Care sunt puterile (kW) sau calibrele (A) celor 3 plecări?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F31",
+      "sursa": "nou",
+      "text": "TG 150 kW, 6 plecări de 32 A pe același traseu, 0,3 km",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 150
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-4",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-5",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-6",
+            "valoare": 32,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 6,
+        "lungimi_m": {
+          "alimentare": 300
+        },
+        "grupare": {
+          "plecari": 6,
+          "aranjament": "D1 atingere"
+        },
+        "presupus": [
+          "0,3 km = 300 m, aplicat alimentării",
+          "plecările în același șanț, tuburi alăturate: k grupare B.52.19 pentru 6 circuite = 0,60",
+          "plecări L = 50 m"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F32",
+      "sursa": "nou",
+      "text": "TG 100 kW cu plecări 3×63 A și 2×32 A",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 100
+        },
+        "nr_plecari": 5,
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-4",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-5",
+            "valoare": 32,
+            "unitate": "A"
+          }
+        ],
+        "presupus": [
+          "„3×63 A” = 3 plecări de 63 A (nu 189 A)",
+          "alimentare L = 50 m"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F33",
+      "sursa": "nou",
+      "text": "TD hală: 5 circuite de 16 A iluminat și 4 circuite de 20 A prize, cablu Cu",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {},
+        "nr_plecari": 9,
+        "material": "Cu",
+        "plecari": [
+          {
+            "nume": "Iluminat 1",
+            "valoare": 16,
+            "unitate": "A",
+            "receptor": "iluminat"
+          },
+          {
+            "nume": "Iluminat 2",
+            "valoare": 16,
+            "unitate": "A",
+            "receptor": "iluminat"
+          },
+          {
+            "nume": "Iluminat 3",
+            "valoare": 16,
+            "unitate": "A",
+            "receptor": "iluminat"
+          },
+          {
+            "nume": "Iluminat 4",
+            "valoare": 16,
+            "unitate": "A",
+            "receptor": "iluminat"
+          },
+          {
+            "nume": "Iluminat 5",
+            "valoare": 16,
+            "unitate": "A",
+            "receptor": "iluminat"
+          },
+          {
+            "nume": "Prize 1",
+            "valoare": 20,
+            "unitate": "A",
+            "receptor": "prize"
+          },
+          {
+            "nume": "Prize 2",
+            "valoare": 20,
+            "unitate": "A",
+            "receptor": "prize"
+          },
+          {
+            "nume": "Prize 3",
+            "valoare": 20,
+            "unitate": "A",
+            "receptor": "prize"
+          },
+          {
+            "nume": "Prize 4",
+            "valoare": 20,
+            "unitate": "A",
+            "receptor": "prize"
+          }
+        ],
+        "presupus": [
+          "tablou cu circuite finale (circuite_finale): MCB curba B pentru iluminat/prize, DDR 30 mA tip A pe circuitele de prize",
+          "circuite Cu PVC metoda C, L = 25 m",
+          "alimentare TD L = 50 m"
+        ],
+        "actiune": "genereaza",
+        "intrebari": [],
+        "intrare_motor": {
+          "tip_schema": "tablou",
+          "circuite_finale": true
+        }
+      }
+    },
+    {
+      "id": "F34",
+      "sursa": "nou",
+      "text": "PT 630 kVA cu 2 plecări de 400 A, pentru SC Agro Vest SRL, în Salonta, jud. Bihor",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 630
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 400,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 400,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 2,
+        "beneficiar": "SC Agro Vest SRL",
+        "adresa": {
+          "localitate": "Salonta",
+          "judet": "Bihor"
+        },
+        "presupus": [
+          "plecări L = 50 m"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F35",
+      "sursa": "nou",
+      "text": "post trafo 1,6 MVA cu plecări de 1000 și 630 A",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 1600
+        },
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 1000,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 630,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 2,
+        "presupus": [
+          "1,6 MVA = 1600 kVA",
+          "plecarea de 1000 A: MCCB (gG doar până la 630 A pe plecări)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F36",
+      "sursa": "nou",
+      "text": "PT 500 kVA cu 3 plecări de 160 A",
+      "asteptat": {
+        "actiune": "genereaza_cu_intrebare",
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 630,
+          "Sn_cerut_kVA": 500
+        },
+        "nr_plecari": 3,
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 160,
+            "unitate": "A"
+          }
+        ],
+        "presupus": [
+          "500 kVA nu e putere standard în norme.TRAFO → 630 kVA (următoarea)"
+        ],
+        "intrebari": [
+          "Confirmați 630 kVA (sau 400 kVA)?"
+        ]
+      }
+    },
+    {
+      "id": "F37",
+      "sursa": "nou",
+      "text": "CEF 99,9 kWp cu 1 invertor 100 kW",
+      "asteptat": {
+        "tip_schema": "cef",
+        "puteri": {
+          "kWp": 99.9,
+          "invertoare": [
+            {
+              "n": 1,
+              "Pn_kW": 100
+            }
+          ]
+        },
+        "presupus": [
+          "virgula = separator zecimal",
+          "Iac,max = 1,1·Pn/(√3·400)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F38",
+      "sursa": "nou",
+      "text": "fotovoltaic 2,5 MWp, 20 invertoare de 125 kW",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "cef",
+        "puteri": {
+          "kWp": 2500,
+          "invertoare": [
+            {
+              "n": 20,
+              "Pn_kW": 125
+            }
+          ]
+        },
+        "refuz_motiv": "S = 20 × 137,5 = 2750 kVA > 2500 kVA (un singur trafo standard): în afara domeniului aplicației (vezi SPEC §A.3).",
+        "intrebari": [
+          "Împărțiți centrala pe două posturi de transformare (ex. 2 × 1600 kVA)?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F39",
+      "sursa": "nou",
+      "text": "prosumator 5 kW monofazat cu invertor hibrid si baterie 10 kWh, beneficiar Ionescu Maria, Oradea",
+      "asteptat": {
+        "tip_schema": "prosumator",
+        "retea": "mono",
+        "puteri": {
+          "invertoare": [
+            {
+              "n": 1,
+              "Pn_kW": 5
+            }
+          ],
+          "baterie_kWh": 10
+        },
+        "hibrid": true,
+        "beneficiar": "Ionescu Maria",
+        "adresa": {
+          "localitate": "Oradea",
+          "judet": null
+        },
+        "presupus": [
+          "baterie cuplată în c.c. la invertorul hibrid (fără PCS separat)",
+          "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
+          "județ necompletat (câmp gol în cartuș)"
+        ],
+        "avertismente": [
+          "V71: invertor monofazat > 3,68 kW",
+          "V73: DDR tip A/B pentru invertor"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F40",
+      "sursa": "nou",
+      "text": "prosumator trifazat 15 kWp, invertor 12 kW",
+      "asteptat": {
+        "tip_schema": "prosumator",
+        "retea": "tri",
+        "puteri": {
+          "kWp": 15,
+          "invertoare": [
+            {
+              "n": 1,
+              "Pn_kW": 12
+            }
+          ]
+        },
+        "presupus": [
+          "„invertor 12 kW” = 1 invertor de 12 kW"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F41",
+      "sursa": "nou",
+      "text": "grup electrogen 100 kVA cu ATS pentru tabloul de 60 kW",
+      "asteptat": {
+        "tip_schema": "ge_ats",
+        "puteri": {
+          "Sn_GE_kVA": 100,
+          "P_kW": 60
+        },
+        "presupus": [
+          "x\"d = 0,12",
+          "ATS 4 poli cu interblocaj mecanic + electric",
+          "fără excitație susținută declarată"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F42",
+      "sursa": "nou",
+      "text": "generator 50 kVA pentru 60 kW",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "ge_ats",
+        "puteri": {
+          "Sn_GE_kVA": 50,
+          "P_kW": 60
+        },
+        "refuz_motiv": "Sarcina 96,2 A > In GE 72,2 A — V86.",
+        "intrebari": [
+          "Măriți GE la cel puțin 80 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 66,7 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F43",
+      "sursa": "nou",
+      "text": "TG 80 kW din PT propriu, plecări 2 × 63 A, ~120 m",
+      "asteptat": {
+        "actiune": "genereaza_cu_intrebare",
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 80
+        },
+        "sursa_alimentare": "pt_propriu",
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 63,
+            "unitate": "A"
+          }
+        ],
+        "nr_plecari": 2,
+        "lungimi_m": {
+          "alimentare": 120
+        },
+        "presupus": [
+          "limite ΔU pentru PT propriu: 6 % iluminat / 8 % altele",
+          "Sn necunoscut: Ik3max 25 kA și impedanța buclei implicite la bara PT (avertismente V32)"
+        ],
+        "intrebari": [
+          "Care este puterea trafo (kVA)?"
+        ],
+        "intrare_motor": {
+          "tip_schema": "tablou",
+          "origine": "pt_propriu"
+        }
+      }
+    },
+    {
+      "id": "F44",
+      "sursa": "nou",
+      "text": "branșament 100 kW, cablu XLPE în tub, 60 m",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 100
+        },
+        "lungimi_m": {
+          "C2": 60
+        },
+        "izolatie": "XLPE",
+        "metoda": "D1",
+        "presupus": [
+          "cosφ 0,9",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F45",
+      "sursa": "nou",
+      "text": "bmpt 30 kw, cablu direct in pamant 45m, sol umed",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "P_kW": 30
+        },
+        "lungimi_m": {
+          "C2": 45
+        },
+        "metoda": "D2",
+        "presupus": [
+          "„sol umed” nu se convertește automat: rezistivitatea termică rămâne 2,5 K·m/W (conservator); se poate introduce numeric",
+          "cosφ 0,9",
+          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F46",
+      "sursa": "nou",
+      "text": "tablou 63A, plecari 32, 25 si 16 A, cupru, aparent pe perete",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "In_Q1_A": 63
+        },
+        "nr_plecari": 3,
+        "material": "Cu",
+        "metoda": "C",
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 32,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 25,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 16,
+            "unitate": "A"
+          }
+        ],
+        "presupus": [
+          "„si” = „și” (fără diacritice)",
+          "unitatea A comună"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F47",
+      "sursa": "nou",
+      "text": "PT 1000 kVA cu celula cu sigurante, 4 plecari 400A",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 1000
+        },
+        "celula_trafo": "sigurante",
+        "nr_plecari": 4,
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 400,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 400,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 400,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-4",
+            "valoare": 400,
+            "unitate": "A"
+          }
+        ],
+        "presupus": [
+          "siguranțe MT 63 A (orientativ, tabel producător)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F48",
+      "sursa": "nou",
+      "text": "CEF 400 kWp cu 4 invertoare de 100 kW, racord JT conform ATR",
+      "asteptat": {
+        "tip_schema": "cef",
+        "puteri": {
+          "kWp": 400,
+          "invertoare": [
+            {
+              "n": 4,
+              "Pn_kW": 100
+            }
+          ]
+        },
+        "atr_jt": true,
+        "avertismente": [
+          "V66: S = 440 kVA > 400 kVA, racord JT acceptat doar conform ATR"
+        ],
+        "actiune": "genereaza",
+        "presupus": [],
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F49",
+      "sursa": "nou",
+      "text": "vreau o schema",
+      "asteptat": {
+        "actiune": "refuza",
+        "refuz_motiv": "Tipul schemei nu poate fi determinat.",
+        "intrebari": [
+          "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F50",
+      "sursa": "nou",
+      "text": "branșament 25 kW la 0 m",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "bransament",
+        "puteri": {
+          "P_kW": 25
+        },
+        "refuz_motiv": "Lungimea coloanei trebuie să fie > 0 m (V09).",
+        "intrebari": [
+          "Care este lungimea coloanei BMPT → tablou?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F51",
+      "sursa": "nou",
+      "text": "tablou 40 kW cosfi 1,3",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 40
+        },
+        "refuz_motiv": "cosφ = 1,3 în afara intervalului (0; 1] (V08).",
+        "intrebari": [
+          "Care este factorul de putere (ex. 0,9)?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F52",
+      "sursa": "nou",
+      "text": "tablou general 120 kW cu plecări: pompă 30 kW, compresor 22 kW, iluminat 8 kW, prize 16 A, lungime 80m, aluminiu, faza DTAC, planșa E03",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {
+          "P_kW": 120
+        },
+        "nr_plecari": 4,
+        "material": "Al",
+        "faza": "DTAC",
+        "plansa": "E03",
+        "lungimi_m": {
+          "alimentare": 80
+        },
+        "plecari": [
+          {
+            "nume": "Pompă",
+            "valoare": 30,
+            "unitate": "kW",
+            "receptor": "motor"
+          },
+          {
+            "nume": "Compresor",
+            "valoare": 22,
+            "unitate": "kW",
+            "receptor": "motor"
+          },
+          {
+            "nume": "Iluminat",
+            "valoare": 8,
+            "unitate": "kW",
+            "receptor": "iluminat"
+          },
+          {
+            "nume": "Prize",
+            "valoare": 16,
+            "unitate": "A",
+            "receptor": "prize"
+          }
+        ],
+        "actiune": "genereaza",
+        "presupus": [],
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F53",
+      "sursa": "nou",
+      "text": "BMPT 200A, coloana 40 m",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "Ib_A": 200
+        },
+        "lungimi_m": {
+          "C2": 40
+        },
+        "presupus": [
+          "200 A interpretat ca Ib (curent maxim absorbit); cosφ 0,9 folosit doar pentru ΔU"
+        ],
+        "rezultat_cheie": {
+          "bloc": "BMPTi-250",
+          "Q": "MCCB 200 A, Ir 200 A",
+          "TC": "200/5 A"
+        },
+        "actiune": "genereaza",
+        "intrebari": [],
+        "intrare_motor": {
+          "tip_schema": "bransament",
+          "Ib_A": 200,
+          "L_coloana_m": 40
+        }
+      }
+    },
+    {
+      "id": "F54",
+      "sursa": "nou",
+      "text": "CEF 50 kW, 2 invertoare",
+      "asteptat": {
+        "tip_schema": "cef",
+        "puteri": {
+          "P_ca_kW": 50,
+          "invertoare": [
+            {
+              "n": 2,
+              "Pn_kW": 25
+            }
+          ]
+        },
+        "presupus": [
+          "50 kW = putere c.a. totală → 2 × 25 kW",
+          "kWp nedeclarat (raport c.c./c.a. necalculat)"
+        ],
+        "actiune": "genereaza_cu_intrebare",
+        "intrebari": [
+          "Invertoarele sunt de 25 kW fiecare (2 × 25 = 50 kW)? Indicați puterea fiecărui invertor."
+        ],
+        "_r5": "runda 5 (P0-1 PV): un kW nu se împarte la n fără întrebare"
+      }
+    },
+    {
+      "id": "F55",
+      "sursa": "nou",
+      "text": "TG cu 2 plecări: TD-1 cu sub-plecări iluminat 10 A și prize 16 A, TD-2 cu sub-plecări motor 7,5 kW",
+      "asteptat": {
+        "tip_schema": "tablou",
+        "puteri": {},
+        "nr_plecari": 2,
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": null,
+            "unitate": null,
+            "copii": [
+              {
+                "nume": "Iluminat",
+                "valoare": 10,
+                "unitate": "A"
+              },
+              {
+                "nume": "Prize",
+                "valoare": 16,
+                "unitate": "A"
+              }
+            ]
+          },
+          {
+            "nume": "TD-2",
+            "valoare": null,
+            "unitate": null,
+            "copii": [
+              {
+                "nume": "Motor",
+                "valoare": 7.5,
+                "unitate": "kW"
+              }
+            ]
+          }
+        ],
+        "presupus": [
+          "7,5 kW cu virgulă zecimală",
+          "P TD din bilanțul sub-plecărilor"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F56",
+      "sursa": "nou",
+      "text": "PT 250 kVA, plecări de 160, 100 și 63 A, cablu 0,2 km",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 250
+        },
+        "nr_plecari": 3,
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 160,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 100,
+            "unitate": "A"
+          },
+          {
+            "nume": "TD-3",
+            "valoare": 63,
+            "unitate": "A"
+          }
+        ],
+        "lungimi_m": {
+          "plecari": 200
+        },
+        "presupus": [
+          "la PT, o lungime generală se aplică tuturor plecărilor (0,2 km = 200 m)"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    },
+    {
+      "id": "F57",
+      "sursa": "nou",
+      "text": "tablou cu 3 plecări: hală 63 A, birouri 32 A",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "tablou",
+        "nr_plecari": 3,
+        "plecari": [
+          {
+            "nume": "Hală",
+            "valoare": 63,
+            "unitate": "A"
+          },
+          {
+            "nume": "Birouri",
+            "valoare": 32,
+            "unitate": "A"
+          }
+        ],
+        "refuz_motiv": "S-au cerut 3 plecări, dar s-au găsit 2 (I05).",
+        "intrebari": [
+          "Care este a treia plecare?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F58",
+      "sursa": "nou",
+      "text": "branșament monofazat 3×63 A",
+      "asteptat": {
+        "actiune": "refuza",
+        "tip_schema": "bransament",
+        "retea": "mono",
+        "refuz_motiv": "Contradicție: „monofazat” și „3×63 A” (I08).",
+        "intrebari": [
+          "Branșament monofazat (max. 40 A) sau trifazat 63 A?"
+        ],
+        "presupus": []
+      }
+    },
+    {
+      "id": "F59",
+      "sursa": "nou",
+      "text": "BMPT 25 kVA",
+      "asteptat": {
+        "tip_schema": "bransament",
+        "retea": "tri",
+        "puteri": {
+          "S_kVA": 25
+        },
+        "presupus": [
+          "25 kVA la un branșament = putere aparentă: Ib = 25 000/(√3·400) = 36,1 A; cosφ 0,9 folosit doar pentru ΔU",
+          "coloană L = 50 m"
+        ],
+        "rezultat_cheie": {
+          "bloc": "BMPTd-40",
+          "Q": "MCB C40"
+        },
+        "actiune": "genereaza",
+        "intrebari": [],
+        "intrare_motor": {
+          "tip_schema": "bransament",
+          "S_kVA": 25
+        }
+      }
+    },
+    {
+      "id": "F60",
+      "sursa": "nou",
+      "text": "post de transformare 400 kVA cu 2 plecari: TD-1 250A 120m, TD-2 160 A 80 m",
+      "asteptat": {
+        "tip_schema": "pt",
+        "puteri": {
+          "Sn_kVA": 400
+        },
+        "nr_plecari": 2,
+        "plecari": [
+          {
+            "nume": "TD-1",
+            "valoare": 250,
+            "unitate": "A",
+            "L_m": 120
+          },
+          {
+            "nume": "TD-2",
+            "valoare": 160,
+            "unitate": "A",
+            "L_m": 80
+          }
+        ],
+        "presupus": [
+          "lungimea scrisă după calibrul unei plecări aparține acelei plecări"
+        ],
+        "actiune": "genereaza",
+        "intrebari": []
+      }
+    }
   ]
- },
- "fraze": [
-  {
-   "id": "F01",
-   "sursa": "cases.json:bmpt_15",
-   "text": "branșament BMPT 15 kW, cablu 20 m, beneficiar SC Test SRL, în Ciumeghiu, jud. Bihor",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 15
-    },
-    "lungimi_m": {
-     "C2": 20
-    },
-    "material": null,
-    "beneficiar": "SC Test SRL",
-    "adresa": {
-     "localitate": "Ciumeghiu",
-     "judet": "Bihor"
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
-     "schema TN-C-S, separare PEN în BMPT",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "rezultat_cheie": {
-     "bloc": "BMPTd-40",
-     "Q": "MCB C25"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F02",
-   "sursa": "cases.json:bmpt_60",
-   "text": "branșament trifazat 60 kW, cablu 50 m",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 60
-    },
-    "lungimi_m": {
-     "C2": 50
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
-     "schema TN-C-S, separare PEN în BMPT",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)",
-     "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
-    ],
-    "rezultat_cheie": {
-     "bloc": "BMPTd-100",
-     "Q": "MCB C100"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F03",
-   "sursa": "cases.json:bmpt_150",
-   "text": "BMPTi 150 kW, cablu 80 m, beneficiar SC Agro Vest SRL, în Ciumeghiu, jud. Bihor, planșa E02",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 150
-    },
-    "masura_ceruta": "semidirecta",
-    "lungimi_m": {
-     "C2": 80
-    },
-    "beneficiar": "SC Agro Vest SRL",
-    "adresa": {
-     "localitate": "Ciumeghiu",
-     "judet": "Bihor"
-    },
-    "plansa": "E02",
-    "presupus": [
-     "cosφ 0,9",
-     "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
-     "schema TN-C-S, separare PEN în BMPT",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "rezultat_cheie": {
-     "bloc": "BMPTi-250",
-     "TC": "250/5 A"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F04",
-   "sursa": "cases.json:bmpt_300",
-   "text": "branșament 300 kW, cablu 120 m aluminiu",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 300
-    },
-    "lungimi_m": {
-     "C2": 120
-    },
-    "material": "Al",
-    "refuz_motiv": "Ib = 481 A > 250 A: în ST 4-JT nu există BMPT peste BMPTi-250 (V50).",
-    "intrebari": [
-     "Racordul se face din PT-ul OD cu măsură în PT, sau prin PT propriu? Pot genera schema „Post de transformare” (ex. 400 kVA)."
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F05",
-   "sursa": "cases.json:bmpt_60_300m",
-   "text": "branșament 60 kW, cablu 300 m",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 60
-    },
-    "lungimi_m": {
-     "C2": 300
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
-     "schema TN-C-S, separare PEN în BMPT",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)",
-     "limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea C2)"
-    ],
-    "rezultat_cheie": {
-     "C2": "ACYABY 4×185 mm² + FY 1×50 mm² (PE)",
-     "nota": "secțiunea C2 mărită de motor pentru ΔU (rezultat de dimensionare, nu presupunere)"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F06",
-   "sursa": "cases.json:bmpt_60_cu",
-   "text": "branșament 60 kW, cablu cupru 30 m",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 60
-    },
-    "lungimi_m": {
-     "C2": 30
-    },
-    "material": "Cu",
-    "presupus": [
-     "cosφ 0,9",
-     "schema TN-C-S, separare PEN în BMPT",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F07",
-   "sursa": "cases.json:bmpt_45_tc",
-   "text": "BMPTi 45 kW cu măsură semidirectă, cablu 40 m",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 45
-    },
-    "masura_ceruta": "semidirecta",
-    "lungimi_m": {
-     "C2": 40
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
-     "schema TN-C-S, separare PEN în BMPT",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "avertismente": [
-     "V51: la 72,2 A ST 4-JT prevede BMPTd-100 (măsură directă); s-a generat BMPTd-100"
-    ],
-    "intrebari": [
-     "Confirmați BMPTd-100? Măsura semidirectă (BMPTi-250) se folosește doar între 100 și 250 A."
-    ],
-    "actiune": "genereaza_cu_intrebare"
-   }
-  },
-  {
-   "id": "F08",
-   "sursa": "cases.json:tg_2",
-   "text": "tablou general 80 kW cu plecări: hală 63 A, birouri 32 A, lungime 40 m",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 80
-    },
-    "plecari": [
-     {
-      "nume": "Hală",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "Birouri",
-      "valoare": 32,
-      "unitate": "A"
-     }
-    ],
-    "lungimi_m": {
-     "alimentare": 40
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "ks = 0,9 (2 plecări)",
-     "plecări: L = 50 m, Al PVC D1",
-     "sursa: rețea publică prin BMPT cu RCCB 300 mA",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F09",
-   "sursa": "cases.json:tg_12",
-   "text": "tablou general 400 kW cu plecări: hală 1 100 A, hală 2 100 A, birouri 40 A, pompe 30 kW, compresor 45 kW, iluminat 16 A, prize 32 A, ventilație 22 kW, HVAC 60 kW, cantină 50 A, depozit 63 A, atelier 25 kW, lungime 60 m",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 400
-    },
-    "plecari": [
-     {
-      "nume": "Hală 1",
-      "valoare": 100,
-      "unitate": "A"
-     },
-     {
-      "nume": "Hală 2",
-      "valoare": 100,
-      "unitate": "A"
-     },
-     {
-      "nume": "Birouri",
-      "valoare": 40,
-      "unitate": "A"
-     },
-     {
-      "nume": "Pompe",
-      "valoare": 30,
-      "unitate": "kW"
-     },
-     {
-      "nume": "Compresor",
-      "valoare": 45,
-      "unitate": "kW"
-     },
-     {
-      "nume": "Iluminat",
-      "valoare": 16,
-      "unitate": "A"
-     },
-     {
-      "nume": "Prize",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "Ventilație",
-      "valoare": 22,
-      "unitate": "kW"
-     },
-     {
-      "nume": "HVAC",
-      "valoare": 60,
-      "unitate": "kW"
-     },
-     {
-      "nume": "Cantină",
-      "valoare": 50,
-      "unitate": "A"
-     },
-     {
-      "nume": "Depozit",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "Atelier",
-      "valoare": 25,
-      "unitate": "kW"
-     }
-    ],
-    "lungimi_m": {
-     "alimentare": 60
-    },
-    "nr_plecari": 12,
-    "presupus": [
-     "cosφ 0,9",
-     "ks = 0,6 (12 plecări), dar P declarată 400 kW are prioritate",
-     "„hală 1 100 A” = numele „Hală 1” + 100 A (separatorul de mii prin spațiu NU se acceptă în liste)",
-     "plecări L = 50 m, trasee separate",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "avertismente": [
-     "V45: coloana trece pe AC2XABY (Al PVC nu ajunge la 4×240 mm²)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F10",
-   "sursa": "cases.json:tg_mix",
-   "text": "tablou general 200 kW cu plecări: hală 63 A, birouri 32 A, pompe 40 kW, lungime 120 m",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 200
-    },
-    "plecari": [
-     {
-      "nume": "Hală",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "Birouri",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "Pompe",
-      "valoare": 40,
-      "unitate": "kW"
-     }
-    ],
-    "lungimi_m": {
-     "alimentare": 120
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "pompe: receptor motor, cosφ 0,85",
-     "lungimea de 120 m se aplică DOAR alimentării; plecări L = 50 m",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F11",
-   "sursa": "cases.json:tg_cu_aer",
-   "text": "TG 120 kW cu 4 plecări de 63 A, cablu cupru pe pat de cabluri 35 m",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 120
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-4",
-      "valoare": 63,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 4,
-    "lungimi_m": {
-     "alimentare": 35
-    },
-    "material": "Cu",
-    "metoda": "E",
-    "grupare": {
-     "plecari": 4,
-     "aranjament": "pat_perforat"
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "plecări pe același pat de cabluri (grupare 4 circuite, B.52.17: 0,77)",
-     "plecări L = 50 m",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F12",
-   "sursa": "cases.json:tg_100a",
-   "text": "tablou 250 A cu plecări de 160, 63 și 40 A",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "In_Q1_A": 250
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 40,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 3,
-    "presupus": [
-     "unitatea „A” se aplică tuturor numerelor din listă",
-     "alimentare L = 50 m",
-     "plecări L = 50 m",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F13",
-   "sursa": "cases.json:cef_50",
-   "text": "CEF 50 kWp cu 1 invertor de 50 kW",
-   "asteptat": {
-    "tip_schema": "cef",
-    "puteri": {
-     "kWp": 50,
-     "invertoare": [
-      {
-       "n": 1,
-       "Pn_kW": 50
-      }
-     ]
-    },
-    "presupus": [
-     "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
-     "cablu invertor Al PVC D1, L = 30 m",
-     "racord JT (S = 55 kVA)",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F14",
-   "sursa": "cases.json:cef_300",
-   "text": "CEF 300 kWp cu 3 invertoare de 100 kW și BESS 200 kWh",
-   "asteptat": {
-    "actiune": "genereaza_cu_intrebare",
-    "tip_schema": "cef",
-    "puteri": {
-     "kWp": 300,
-     "invertoare": [
-      {
-       "n": 3,
-       "Pn_kW": 100
-      }
-     ],
-     "bess": {
-      "kWh": 200,
-      "P_kW": 100
-     }
-    },
-    "presupus": [
-     "PCS BESS = 100 kW (0,5C din 200 kWh)",
-     "S = 440 kVA > 400 kVA → PT propriu 20/0,4 kV 630 kVA adăugat"
-    ],
-    "intrebari": [
-     "Racordul este prin PT propriu (630 kVA presupus) sau JT conform ATR? Indicați puterea PCS dacă diferă de 100 kW."
-    ]
-   }
-  },
-  {
-   "id": "F15",
-   "sursa": "cases.json:cef_1mw",
-   "text": "centrală fotovoltaică 1000 kWp cu 8 invertoare de 110 kW",
-   "asteptat": {
-    "actiune": "genereaza_cu_intrebare",
-    "tip_schema": "cef",
-    "puteri": {
-     "kWp": 1000,
-     "invertoare": [
-      {
-       "n": 8,
-       "Pn_kW": 110
-      }
-     ]
-    },
-    "presupus": [
-     "S = 968 kVA → PT propriu 1000 kVA adăugat (racord MT)",
-     "categoria A RfG (880 kW < 1 MW)"
-    ],
-    "intrebari": [
-     "Confirmați PT propriu 1000 kVA (celulă trafo cu separator de sarcină + siguranțe MT)?"
-    ]
-   }
-  },
-  {
-   "id": "F16",
-   "sursa": "cases.json:cef_1mw_bess",
-   "text": "CEF 1 MWp, 8 invertoare 110 kW, stocare 500 kW / 1000 kWh",
-   "asteptat": {
-    "actiune": "genereaza_cu_intrebare",
-    "tip_schema": "cef",
-    "puteri": {
-     "kWp": 1000,
-     "invertoare": [
-      {
-       "n": 8,
-       "Pn_kW": 110
-      }
-     ],
-     "bess": {
-      "P_kW": 500,
-      "kWh": 1000
-     }
-    },
-    "presupus": [
-     "1 MWp = 1000 kWp",
-     "S = 1518 kVA → PT propriu 1600 kVA, celulă trafo cu întreruptor + releu",
-     "categoria B RfG (1380 kW ≥ 1 MW)"
-    ],
-    "intrebari": [
-     "Confirmați PT propriu 1600 kVA?"
-    ]
-   }
-  },
-  {
-   "id": "F17",
-   "sursa": "cases.json:pt_250_3",
-   "text": "post trafo 250 kVA cu plecări de 160, 100 și 63 A",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 250
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 100,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 63,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 3,
-    "presupus": [
-     "trafo ulei 20/0,4 kV Dyn5, uk 4 %",
-     "S\"kQ = 500 MVA",
-     "celulă trafo cu separator de sarcină + siguranțe MT 16 A",
-     "plecări L = 50 m, Al PVC D1"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F18",
-   "sursa": "cases.json:pt_630_3",
-   "text": "post trafo 630 kVA cu plecări de 250, 160 și 100 A",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 630
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 100,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 3,
-    "presupus": [
-     "uk 4 %",
-     "S\"kQ = 500 MVA",
-     "plecări L = 50 m"
-    ],
-    "rezultat_cheie": {
-     "Q_JT": "MCCB 1000 A, Ir 950 A"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F19",
-   "sursa": "cases.json:pt_1000_8",
-   "text": "post de transformare 1000 kVA cu plecări de 400, 250, 250, 160, 160, 100, 100 și 63 A",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 1000
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 400,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-4",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-5",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-6",
-      "valoare": 100,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-7",
-      "valoare": 100,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-8",
-      "valoare": 63,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 8,
-    "presupus": [
-     "uk 6 %",
-     "plecări L = 50 m"
-    ],
-    "rezultat_cheie": {
-     "Q_JT": "MCCB 1600 A, Ir 1520 A"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F20",
-   "sursa": "cases.json:pt_1600_8",
-   "text": "PT 1600 kVA cu plecări de 630, 400, 400, 250, 250, 160, 160 și 100 A",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 1600
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 630,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 400,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 400,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-4",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-5",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-6",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-7",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-8",
-      "valoare": 100,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 8,
-    "presupus": [
-     "uk 6 %",
-     "celulă trafo cu întreruptor (Sn > 1000 kVA)"
-    ],
-    "rezultat_cheie": {
-     "Q_JT": "ACB 2500 A, Ir 2375 A"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F21",
-   "sursa": "cases.json:nat_1",
-   "text": "fa-mi te rog un bransament pt o hala de 90kw, cam 35m de cablu pana la firida, cupru",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 90
-    },
-    "lungimi_m": {
-     "C2": 35
-    },
-    "material": "Cu",
-    "presupus": [
-     "„pt” minuscul = „pentru” (nu post de transformare)",
-     "„cam 35 m” = 35 m, aproximativ",
-     "cablul descris = coloana C2 dintre BMPT și tabloul consumatorului; racordul C1 aparține OD",
-     "cosφ 0,9",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "rezultat_cheie": {
-     "bloc": "BMPTi-250",
-     "Q": "MCCB 160 A, Ir 152 A"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F22",
-   "sursa": "cases.json:nat_2",
-   "text": "TG nou la ferma, 3 plecari: grajd 25kw, moara 30 kw, iluminat 5 kw, ~70m",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {},
-    "plecari": [
-     {
-      "nume": "Grajd",
-      "valoare": 25,
-      "unitate": "kW"
-     },
-     {
-      "nume": "Moară",
-      "valoare": 30,
-      "unitate": "kW"
-     },
-     {
-      "nume": "Iluminat",
-      "valoare": 5,
-      "unitate": "kW"
-     }
-    ],
-    "nr_plecari": 3,
-    "lungimi_m": {
-     "alimentare": 70
-    },
-    "presupus": [
-     "P tablou din bilanț: Σ = 60 kW, ks = 0,9 → Pc = 54 kW (NU prima valoare din text)",
-     "„~70m” se aplică alimentării TG",
-     "moară = receptor motor (cosφ 0,85)",
-     "iluminat = receptor iluminat (ΔU ≤ 3 %)",
-     "plecări L = 50 m",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F23",
-   "sursa": "cases.json:nat_3",
-   "text": "PT 400kVA pt fabrica, 4 plecari de 250A, beneficiar Mobila Lux SRL, Beius jud Bihor",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 400
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 250,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-4",
-      "valoare": 250,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 4,
-    "beneficiar": "Mobila Lux SRL",
-    "adresa": {
-     "localitate": "Beius",
-     "judet": "Bihor"
-    },
-    "presupus": [
-     "„PT” majuscul = post de transformare; „pt” minuscul = „pentru”",
-     "localitatea se preia așa cum a fost scrisă (fără diacritice adăugate)",
-     "plecări L = 50 m"
-    ],
-    "avertismente": [
-     "V62: bilanț 554 kVA > Sn 400 kVA"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F24",
-   "sursa": "cases.json:nat_4",
-   "text": "prosumator 10 kW monofazat cu invertor hibrid",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "prosumator",
-    "retea": "mono",
-    "puteri": {
-     "invertoare": [
-      {
-       "n": 1,
-       "Pn_kW": 10
-      }
-     ]
-    },
-    "hibrid": true,
-    "refuz_motiv": "Iac,max = 1,1·10 000/230 = 47,8 A > 40 A (BMPM maxim, ST 3-JT) — V53.",
-    "intrebari": [
-     "Treceți pe prosumator trifazat 10 kW, sau reduceți invertorul monofazat la cel mult 8 kW (Iac,max ≤ 40 A)?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F25",
-   "sursa": "cases.json:nat_5",
-   "text": "tablou cu 2 plecări: TD-1 cu sub-plecări hală 32 A și birouri 16 A, TD-2 40 A",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {},
-    "nr_plecari": 2,
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": null,
-      "unitate": null,
-      "copii": [
-       {
-        "nume": "Hală",
-        "valoare": 32,
-        "unitate": "A"
-       },
-       {
-        "nume": "Birouri",
-        "valoare": 16,
-        "unitate": "A"
-       }
-      ]
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 40,
-      "unitate": "A"
-     }
-    ],
-    "presupus": [
-     "„cu 2 plecări” = număr de plecări, NU material Cu",
-     "„TD-1” păstrat cu majuscule",
-     "P TD-1 din bilanțul sub-plecărilor (ks 0,9)",
-     "sub-plecări: circuite finale Cu PVC metoda C, L = 25 m",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F26",
-   "sursa": "nou",
-   "text": "bmpt 40kw 25m al",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 40
-    },
-    "lungimi_m": {
-     "C2": 25
-    },
-    "material": "Al",
-    "presupus": [
-     "cosφ 0,9",
-     "schema TN-C-S, separare PEN în BMPT",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F27",
-   "sursa": "nou",
-   "text": "bransament monofazat 6 kW, 15 m, client Pop Ioan, Sântandrei, jud. Bihor",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "mono",
-    "puteri": {
-     "P_kW": 6
-    },
-    "lungimi_m": {
-     "C2": 15
-    },
-    "beneficiar": "Pop Ioan",
-    "adresa": {
-     "localitate": "Sântandrei",
-     "judet": "Bihor"
-    },
-    "presupus": [
-     "cosφ 0,9",
-     "coloană Cu (monofazat)",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "rezultat_cheie": {
-     "bloc": "BMPM-32"
-    },
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F28",
-   "sursa": "nou",
-   "text": "branșament monofazat 12 kW",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "bransament",
-    "retea": "mono",
-    "puteri": {
-     "P_kW": 12
-    },
-    "refuz_motiv": "Ib = 58 A > 40 A (BMPM) — V53.",
-    "intrebari": [
-     "Generez branșament trifazat (BMPTd-40, Ib = 19,2 A)?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F29",
-   "sursa": "nou",
-   "text": "BMPTd-63 pentru 35 kW, coloana 30 m",
-   "asteptat": {
-    "actiune": "genereaza_cu_intrebare",
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 35
-    },
-    "bmpt_cerut": "BMPTd-63",
-    "lungimi_m": {
-     "C2": 30
-    },
-    "presupus": [
-     "I13: tipul BMPTd-63 nu există în ST 4-JT Rev. 3/2024 → nu se transmite motorului; s-a folosit BMPTd-100 (Ib = 56,1 A)"
-    ],
-    "intrebari": [
-     "Confirmați BMPTd-100?"
-    ]
-   }
-  },
-  {
-   "id": "F30",
-   "sursa": "nou",
-   "text": "tablou cu 3 plecări",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "tablou",
-    "nr_plecari": 3,
-    "refuz_motiv": "Lipsesc puterile sau calibrele plecărilor și puterea tabloului.",
-    "intrebari": [
-     "Care sunt puterile (kW) sau calibrele (A) celor 3 plecări?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F31",
-   "sursa": "nou",
-   "text": "TG 150 kW, 6 plecări de 32 A pe același traseu, 0,3 km",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 150
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-4",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-5",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-6",
-      "valoare": 32,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 6,
-    "lungimi_m": {
-     "alimentare": 300
-    },
-    "grupare": {
-     "plecari": 6,
-     "aranjament": "D1 atingere"
-    },
-    "presupus": [
-     "0,3 km = 300 m, aplicat alimentării",
-     "plecările în același șanț, tuburi alăturate: k grupare B.52.19 pentru 6 circuite = 0,60",
-     "plecări L = 50 m"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F32",
-   "sursa": "nou",
-   "text": "TG 100 kW cu plecări 3×63 A și 2×32 A",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 100
-    },
-    "nr_plecari": 5,
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-4",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-5",
-      "valoare": 32,
-      "unitate": "A"
-     }
-    ],
-    "presupus": [
-     "„3×63 A” = 3 plecări de 63 A (nu 189 A)",
-     "alimentare L = 50 m"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F33",
-   "sursa": "nou",
-   "text": "TD hală: 5 circuite de 16 A iluminat și 4 circuite de 20 A prize, cablu Cu",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {},
-    "nr_plecari": 9,
-    "material": "Cu",
-    "plecari": [
-     {
-      "nume": "Iluminat 1",
-      "valoare": 16,
-      "unitate": "A",
-      "receptor": "iluminat"
-     },
-     {
-      "nume": "Iluminat 2",
-      "valoare": 16,
-      "unitate": "A",
-      "receptor": "iluminat"
-     },
-     {
-      "nume": "Iluminat 3",
-      "valoare": 16,
-      "unitate": "A",
-      "receptor": "iluminat"
-     },
-     {
-      "nume": "Iluminat 4",
-      "valoare": 16,
-      "unitate": "A",
-      "receptor": "iluminat"
-     },
-     {
-      "nume": "Iluminat 5",
-      "valoare": 16,
-      "unitate": "A",
-      "receptor": "iluminat"
-     },
-     {
-      "nume": "Prize 1",
-      "valoare": 20,
-      "unitate": "A",
-      "receptor": "prize"
-     },
-     {
-      "nume": "Prize 2",
-      "valoare": 20,
-      "unitate": "A",
-      "receptor": "prize"
-     },
-     {
-      "nume": "Prize 3",
-      "valoare": 20,
-      "unitate": "A",
-      "receptor": "prize"
-     },
-     {
-      "nume": "Prize 4",
-      "valoare": 20,
-      "unitate": "A",
-      "receptor": "prize"
-     }
-    ],
-    "presupus": [
-     "tablou cu circuite finale (circuite_finale): MCB curba B pentru iluminat/prize, DDR 30 mA tip A pe circuitele de prize",
-     "circuite Cu PVC metoda C, L = 25 m",
-     "alimentare TD L = 50 m"
-    ],
-    "actiune": "genereaza",
-    "intrebari": [],
-    "intrare_motor": {
-     "tip_schema": "tablou",
-     "circuite_finale": true
-    }
-   }
-  },
-  {
-   "id": "F34",
-   "sursa": "nou",
-   "text": "PT 630 kVA cu 2 plecări de 400 A, pentru SC Agro Vest SRL, în Salonta, jud. Bihor",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 630
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 400,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 400,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 2,
-    "beneficiar": "SC Agro Vest SRL",
-    "adresa": {
-     "localitate": "Salonta",
-     "judet": "Bihor"
-    },
-    "presupus": [
-     "plecări L = 50 m"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F35",
-   "sursa": "nou",
-   "text": "post trafo 1,6 MVA cu plecări de 1000 și 630 A",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 1600
-    },
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 1000,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 630,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 2,
-    "presupus": [
-     "1,6 MVA = 1600 kVA",
-     "plecarea de 1000 A: MCCB (gG doar până la 630 A pe plecări)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F36",
-   "sursa": "nou",
-   "text": "PT 500 kVA cu 3 plecări de 160 A",
-   "asteptat": {
-    "actiune": "genereaza_cu_intrebare",
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 630,
-     "Sn_cerut_kVA": 500
-    },
-    "nr_plecari": 3,
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 160,
-      "unitate": "A"
-     }
-    ],
-    "presupus": [
-     "500 kVA nu e putere standard în norme.TRAFO → 630 kVA (următoarea)"
-    ],
-    "intrebari": [
-     "Confirmați 630 kVA (sau 400 kVA)?"
-    ]
-   }
-  },
-  {
-   "id": "F37",
-   "sursa": "nou",
-   "text": "CEF 99,9 kWp cu 1 invertor 100 kW",
-   "asteptat": {
-    "tip_schema": "cef",
-    "puteri": {
-     "kWp": 99.9,
-     "invertoare": [
-      {
-       "n": 1,
-       "Pn_kW": 100
-      }
-     ]
-    },
-    "presupus": [
-     "virgula = separator zecimal",
-     "Iac,max = 1,1·Pn/(√3·400)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F38",
-   "sursa": "nou",
-   "text": "fotovoltaic 2,5 MWp, 20 invertoare de 125 kW",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "cef",
-    "puteri": {
-     "kWp": 2500,
-     "invertoare": [
-      {
-       "n": 20,
-       "Pn_kW": 125
-      }
-     ]
-    },
-    "refuz_motiv": "S = 20 × 137,5 = 2750 kVA > 2500 kVA (un singur trafo standard): în afara domeniului aplicației (vezi SPEC §A.3).",
-    "intrebari": [
-     "Împărțiți centrala pe două posturi de transformare (ex. 2 × 1600 kVA)?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F39",
-   "sursa": "nou",
-   "text": "prosumator 5 kW monofazat cu invertor hibrid si baterie 10 kWh, beneficiar Ionescu Maria, Oradea",
-   "asteptat": {
-    "tip_schema": "prosumator",
-    "retea": "mono",
-    "puteri": {
-     "invertoare": [
-      {
-       "n": 1,
-       "Pn_kW": 5
-      }
-     ],
-     "baterie_kWh": 10
-    },
-    "hibrid": true,
-    "beneficiar": "Ionescu Maria",
-    "adresa": {
-     "localitate": "Oradea",
-     "judet": null
-    },
-    "presupus": [
-     "baterie cuplată în c.c. la invertorul hibrid (fără PCS separat)",
-     "invertor la 15 m de tabloul consumatorului, Cu PVC metoda C",
-     "județ necompletat (câmp gol în cartuș)"
-    ],
-    "avertismente": [
-     "V71: invertor monofazat > 3,68 kW",
-     "V73: DDR tip A/B pentru invertor"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F40",
-   "sursa": "nou",
-   "text": "prosumator trifazat 15 kWp, invertor 12 kW",
-   "asteptat": {
-    "tip_schema": "prosumator",
-    "retea": "tri",
-    "puteri": {
-     "kWp": 15,
-     "invertoare": [
-      {
-       "n": 1,
-       "Pn_kW": 12
-      }
-     ]
-    },
-    "presupus": [
-     "„invertor 12 kW” = 1 invertor de 12 kW"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F41",
-   "sursa": "nou",
-   "text": "grup electrogen 100 kVA cu ATS pentru tabloul de 60 kW",
-   "asteptat": {
-    "tip_schema": "ge_ats",
-    "puteri": {
-     "Sn_GE_kVA": 100,
-     "P_kW": 60
-    },
-    "presupus": [
-     "x\"d = 0,12",
-     "ATS 4 poli cu interblocaj mecanic + electric",
-     "fără excitație susținută declarată"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F42",
-   "sursa": "nou",
-   "text": "generator 50 kVA pentru 60 kW",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "ge_ats",
-    "puteri": {
-     "Sn_GE_kVA": 50,
-     "P_kW": 60
-    },
-    "refuz_motiv": "Sarcina 96,2 A > In GE 72,2 A — V86.",
-    "intrebari": [
-     "Măriți GE la cel puțin 80 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 66,7 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F43",
-   "sursa": "nou",
-   "text": "TG 80 kW din PT propriu, plecări 2 × 63 A, ~120 m",
-   "asteptat": {
-    "actiune": "genereaza_cu_intrebare",
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 80
-    },
-    "sursa_alimentare": "pt_propriu",
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 63,
-      "unitate": "A"
-     }
-    ],
-    "nr_plecari": 2,
-    "lungimi_m": {
-     "alimentare": 120
-    },
-    "presupus": [
-     "limite ΔU pentru PT propriu: 6 % iluminat / 8 % altele",
-     "Sn necunoscut: Ik3max 25 kA și impedanța buclei implicite la bara PT (avertismente V32)"
-    ],
-    "intrebari": [
-     "Care este puterea trafo (kVA)?"
-    ],
-    "intrare_motor": {
-     "tip_schema": "tablou",
-     "origine": "pt_propriu"
-    }
-   }
-  },
-  {
-   "id": "F44",
-   "sursa": "nou",
-   "text": "branșament 100 kW, cablu XLPE în tub, 60 m",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 100
-    },
-    "lungimi_m": {
-     "C2": 60
-    },
-    "izolatie": "XLPE",
-    "metoda": "D1",
-    "presupus": [
-     "cosφ 0,9",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F45",
-   "sursa": "nou",
-   "text": "bmpt 30 kw, cablu direct in pamant 45m, sol umed",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "P_kW": 30
-    },
-    "lungimi_m": {
-     "C2": 45
-    },
-    "metoda": "D2",
-    "presupus": [
-     "„sol umed” nu se convertește automat: rezistivitatea termică rămâne 2,5 K·m/W (conservator); se poate introduce numeric",
-     "cosφ 0,9",
-     "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F46",
-   "sursa": "nou",
-   "text": "tablou 63A, plecari 32, 25 si 16 A, cupru, aparent pe perete",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "In_Q1_A": 63
-    },
-    "nr_plecari": 3,
-    "material": "Cu",
-    "metoda": "C",
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 32,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 25,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 16,
-      "unitate": "A"
-     }
-    ],
-    "presupus": [
-     "„si” = „și” (fără diacritice)",
-     "unitatea A comună"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F47",
-   "sursa": "nou",
-   "text": "PT 1000 kVA cu celula cu sigurante, 4 plecari 400A",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 1000
-    },
-    "celula_trafo": "sigurante",
-    "nr_plecari": 4,
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 400,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 400,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 400,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-4",
-      "valoare": 400,
-      "unitate": "A"
-     }
-    ],
-    "presupus": [
-     "siguranțe MT 63 A (orientativ, tabel producător)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F48",
-   "sursa": "nou",
-   "text": "CEF 400 kWp cu 4 invertoare de 100 kW, racord JT conform ATR",
-   "asteptat": {
-    "tip_schema": "cef",
-    "puteri": {
-     "kWp": 400,
-     "invertoare": [
-      {
-       "n": 4,
-       "Pn_kW": 100
-      }
-     ]
-    },
-    "atr_jt": true,
-    "avertismente": [
-     "V66: S = 440 kVA > 400 kVA, racord JT acceptat doar conform ATR"
-    ],
-    "actiune": "genereaza",
-    "presupus": [],
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F49",
-   "sursa": "nou",
-   "text": "vreau o schema",
-   "asteptat": {
-    "actiune": "refuza",
-    "refuz_motiv": "Tipul schemei nu poate fi determinat.",
-    "intrebari": [
-     "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F50",
-   "sursa": "nou",
-   "text": "branșament 25 kW la 0 m",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "bransament",
-    "puteri": {
-     "P_kW": 25
-    },
-    "refuz_motiv": "Lungimea coloanei trebuie să fie > 0 m (V09).",
-    "intrebari": [
-     "Care este lungimea coloanei BMPT → tablou?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F51",
-   "sursa": "nou",
-   "text": "tablou 40 kW cosfi 1,3",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 40
-    },
-    "refuz_motiv": "cosφ = 1,3 în afara intervalului (0; 1] (V08).",
-    "intrebari": [
-     "Care este factorul de putere (ex. 0,9)?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F52",
-   "sursa": "nou",
-   "text": "tablou general 120 kW cu plecări: pompă 30 kW, compresor 22 kW, iluminat 8 kW, prize 16 A, lungime 80m, aluminiu, faza DTAC, planșa E03",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {
-     "P_kW": 120
-    },
-    "nr_plecari": 4,
-    "material": "Al",
-    "faza": "DTAC",
-    "plansa": "E03",
-    "lungimi_m": {
-     "alimentare": 80
-    },
-    "plecari": [
-     {
-      "nume": "Pompă",
-      "valoare": 30,
-      "unitate": "kW",
-      "receptor": "motor"
-     },
-     {
-      "nume": "Compresor",
-      "valoare": 22,
-      "unitate": "kW",
-      "receptor": "motor"
-     },
-     {
-      "nume": "Iluminat",
-      "valoare": 8,
-      "unitate": "kW",
-      "receptor": "iluminat"
-     },
-     {
-      "nume": "Prize",
-      "valoare": 16,
-      "unitate": "A",
-      "receptor": "prize"
-     }
-    ],
-    "actiune": "genereaza",
-    "presupus": [],
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F53",
-   "sursa": "nou",
-   "text": "BMPT 200A, coloana 40 m",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "Ib_A": 200
-    },
-    "lungimi_m": {
-     "C2": 40
-    },
-    "presupus": [
-     "200 A interpretat ca Ib (curent maxim absorbit); cosφ 0,9 folosit doar pentru ΔU"
-    ],
-    "rezultat_cheie": {
-     "bloc": "BMPTi-250",
-     "Q": "MCCB 200 A, Ir 200 A",
-     "TC": "200/5 A"
-    },
-    "actiune": "genereaza",
-    "intrebari": [],
-    "intrare_motor": {
-     "tip_schema": "bransament",
-     "Ib_A": 200,
-     "L_coloana_m": 40
-    }
-   }
-  },
-  {
-   "id": "F54",
-   "sursa": "nou",
-   "text": "CEF 50 kW, 2 invertoare",
-   "asteptat": {
-    "tip_schema": "cef",
-    "puteri": {
-     "P_ca_kW": 50,
-     "invertoare": [
-      {
-       "n": 2,
-       "Pn_kW": 25
-      }
-     ]
-    },
-    "presupus": [
-     "50 kW = putere c.a. totală → 2 × 25 kW",
-     "kWp nedeclarat (raport c.c./c.a. necalculat)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F55",
-   "sursa": "nou",
-   "text": "TG cu 2 plecări: TD-1 cu sub-plecări iluminat 10 A și prize 16 A, TD-2 cu sub-plecări motor 7,5 kW",
-   "asteptat": {
-    "tip_schema": "tablou",
-    "puteri": {},
-    "nr_plecari": 2,
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": null,
-      "unitate": null,
-      "copii": [
-       {
-        "nume": "Iluminat",
-        "valoare": 10,
-        "unitate": "A"
-       },
-       {
-        "nume": "Prize",
-        "valoare": 16,
-        "unitate": "A"
-       }
-      ]
-     },
-     {
-      "nume": "TD-2",
-      "valoare": null,
-      "unitate": null,
-      "copii": [
-       {
-        "nume": "Motor",
-        "valoare": 7.5,
-        "unitate": "kW"
-       }
-      ]
-     }
-    ],
-    "presupus": [
-     "7,5 kW cu virgulă zecimală",
-     "P TD din bilanțul sub-plecărilor"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F56",
-   "sursa": "nou",
-   "text": "PT 250 kVA, plecări de 160, 100 și 63 A, cablu 0,2 km",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 250
-    },
-    "nr_plecari": 3,
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 160,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 100,
-      "unitate": "A"
-     },
-     {
-      "nume": "TD-3",
-      "valoare": 63,
-      "unitate": "A"
-     }
-    ],
-    "lungimi_m": {
-     "plecari": 200
-    },
-    "presupus": [
-     "la PT, o lungime generală se aplică tuturor plecărilor (0,2 km = 200 m)"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  },
-  {
-   "id": "F57",
-   "sursa": "nou",
-   "text": "tablou cu 3 plecări: hală 63 A, birouri 32 A",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "tablou",
-    "nr_plecari": 3,
-    "plecari": [
-     {
-      "nume": "Hală",
-      "valoare": 63,
-      "unitate": "A"
-     },
-     {
-      "nume": "Birouri",
-      "valoare": 32,
-      "unitate": "A"
-     }
-    ],
-    "refuz_motiv": "S-au cerut 3 plecări, dar s-au găsit 2 (I05).",
-    "intrebari": [
-     "Care este a treia plecare?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F58",
-   "sursa": "nou",
-   "text": "branșament monofazat 3×63 A",
-   "asteptat": {
-    "actiune": "refuza",
-    "tip_schema": "bransament",
-    "retea": "mono",
-    "refuz_motiv": "Contradicție: „monofazat” și „3×63 A” (I08).",
-    "intrebari": [
-     "Branșament monofazat (max. 40 A) sau trifazat 63 A?"
-    ],
-    "presupus": []
-   }
-  },
-  {
-   "id": "F59",
-   "sursa": "nou",
-   "text": "BMPT 25 kVA",
-   "asteptat": {
-    "tip_schema": "bransament",
-    "retea": "tri",
-    "puteri": {
-     "S_kVA": 25
-    },
-    "presupus": [
-     "25 kVA la un branșament = putere aparentă: Ib = 25 000/(√3·400) = 36,1 A; cosφ 0,9 folosit doar pentru ΔU",
-     "coloană L = 50 m"
-    ],
-    "rezultat_cheie": {
-     "bloc": "BMPTd-40",
-     "Q": "MCB C40"
-    },
-    "actiune": "genereaza",
-    "intrebari": [],
-    "intrare_motor": {
-     "tip_schema": "bransament",
-     "S_kVA": 25
-    }
-   }
-  },
-  {
-   "id": "F60",
-   "sursa": "nou",
-   "text": "post de transformare 400 kVA cu 2 plecari: TD-1 250A 120m, TD-2 160 A 80 m",
-   "asteptat": {
-    "tip_schema": "pt",
-    "puteri": {
-     "Sn_kVA": 400
-    },
-    "nr_plecari": 2,
-    "plecari": [
-     {
-      "nume": "TD-1",
-      "valoare": 250,
-      "unitate": "A",
-      "L_m": 120
-     },
-     {
-      "nume": "TD-2",
-      "valoare": 160,
-      "unitate": "A",
-      "L_m": 80
-     }
-    ],
-    "presupus": [
-     "lungimea scrisă după calibrul unei plecări aparține acelei plecări"
-    ],
-    "actiune": "genereaza",
-    "intrebari": []
-   }
-  }
- ]
 }

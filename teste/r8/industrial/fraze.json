@@ -1,0 +1,546 @@
+[
+ {
+  "id": 1,
+  "text": "Tema de proiectare: hala depozitare 2400 mp, P+0. Alimentare din PT propriu 400 kVA (ulei, 20/0,4 kV), schema TN-S. Consumatori: iluminat hala LED 18 kW (6 circuite), iluminat exterior 2 kW, rampe de incarcare 4 buc x 1,1 kW, usi sectionale 4 x 0,75 kW, centrala detectie incendiu 0,5 kW, prize de serviciu 6 circuite 16A, TD birouri 40 kW.",
+  "asteptat": "TG din PT 400 TN-S; il 6 circ, rampe 4 mot, usi 4 mot, CDI (siguranta, fara DDR), 6 prize DDR, TD birouri",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Refuz I02 „lipsește kVA” deși PT 400 kVA e declarat; plecare fantomă „P+0. Alimentare din PT propriu” 360 kW; toți consumatorii pierduți"
+ },
+ {
+  "id": 2,
+  "text": "Nr\tDenumire\tP[kW]\tBuc\n1\tStrung CNC\t18,5\t2\n2\tFreza\t11\t1\n3\tCompresor surub\t30\t1\n4\tIluminat\t6\t1\nTG din TG existent, TN-S",
+  "asteptat": "5 plecari (2 strunguri 18,5, freza 11, compresor 30, iluminat 6), origine TG existent",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Tabel Excel cu tab-uri: refuz I02, nicio plecare citită"
+ },
+ {
+  "id": 3,
+  "text": "Bilant puteri: Pi = 320 kW, ku = 0,7, Pc = 224 kW, cos fi = 0,92. Sursa: PT 400 kVA propriu. TN-C-S. Plecari: TD productie 160 kW, TD HVAC 90 kW, TD birouri 45 kW, TD exterior 25 kW",
+  "asteptat": "TG din PT 400, 4 TD; Pi/Pc nu devin plecari",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "PT 400 + 4 TD corecte; Pi/Pc întrebate (inutil); nota 3 spune TN-S deși TN-C-S declarat"
+ },
+ {
+  "id": 4,
+  "text": "Buna ziua, va rog sa ne trimiteti schema monofilara pentru tabloul TE-Chiller. Chillerul are 2 compresoare de 42 kW cu soft starter, pompa de circulatie 5,5 kW cu convertizor si ventilatoare condensator 4 x 1,5 kW. Se alimenteaza din TG cu cablu CYABY 3x120+70 pe 60 m. Schema TN-S. Multumesc, Ing. Popescu",
+  "asteptat": "TE din TG, cablu impus 3x120+70 L60, 2 comp SS 42, pompa VFD 5,5, 4 vent 1,5",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Plecare numită cu textul emailului; „ventilatoare condensator” tratate drept compensare; pompa VFD pierdută; cablul impus 3x120+70 → CYABY 5×35; P tablou = 5,5 kW; titlu TG"
+ },
+ {
+  "id": 5,
+  "text": "tg 3 pompe 7,5kw din pt 250",
+  "asteptat": "TG din PT 250 kVA, 3 pompe motor; schema de legare la pamant: presupusa declarat TN-S sau intrebare",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„pt 250” nerecunoscut ca kVA; cele 3 pompe pierdute (P tablou 7,5 kW); întreabă mono/tri deși sursa e PT; V07"
+ },
+ {
+  "id": 6,
+  "text": "Main LV panel for warehouse, supply from own substation 630 kVA dry type 20/0.4 kV, TN-S, outgoing: 2 x chiller 110 kW, AHU 4 x 15 kW VFD, lighting 25 kW, sockets 12 circuits",
+  "asteptat": "TG din PT 630 uscat; 2 chiller, 4 AHU VFD, iluminat, 12 prize (putere intrebata/presupusa)",
+  "verdict": "P",
+  "severitate": "P1",
+  "obtinut": "PT 630 + chillere + 4 AHU VFD corecte; „12 sockets circuits” aruncate fără mesaj; „dry type” ignorat (ulei presupus)"
+ },
+ {
+  "id": 7,
+  "text": "TG din PT 250 kVA, TN-S, plecari: compresor 160 kW, cuptor 120 kW, iluminat 20 kW",
+  "asteptat": "avertisment/intrebare: 300 kW pe PT 250 kVA supraincarcat",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "300 kW pe PT 250 kVA: Q1 500 A Ir 450 A > In_T 361 A, fără V62/BLOCANT; compresor 160 kW DOL; planșa exportabilă"
+ },
+ {
+  "id": 8,
+  "text": "tablou TN-S alimentat din retea TT, 2 pompe 4 kW",
+  "asteptat": "contradictie TN-S vs TT -> intrebare",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "Contradicție TN-S/TT → întrebare"
+ },
+ {
+  "id": 9,
+  "text": "tablou atelier: flex 2 kW, bormasina 1 kW, iluminat 0,5 kW",
+  "asteptat": "retea nedeclarata, sarcina mica -> intrebare mono/tri",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "Întreabă mono/tri; desenează între timp tri cu 3×4 A gG pe flex 2 kW"
+ },
+ {
+  "id": 10,
+  "text": "tablou in schema IT cu controlul izolatiei, 3 pompe 4 kW, din trafo de separare",
+  "asteptat": "IT -> refuz/intrebare, nu TN tacut",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "IT → întrebare + V28 BLOCANT"
+ },
+ {
+  "id": 11,
+  "text": "doua pompe de incendiu 1+1 de 37 kW si pompa jockey 1,5 kW, alimentate din PT 630 kVA si GE 160 kVA prin ATS, TN-S",
+  "asteptat": "pompe incendiu siguranta, fara DDR, FE180, 1+1 nu insumat (~38,5 kW), GE+ATS",
+  "verdict": "P",
+  "severitate": "P1",
+  "obtinut": "Pompa de incendiu corectă (fără DDR, FE180) dar numită „De”; 1+1 → o singură plecare; jockey pe DDR 300 mA etichetat „Consumatori normali”; gG 63 A < In real 37 kW; QR 63 A la limită"
+ },
+ {
+  "id": 12,
+  "text": "tablou TDSI sprinklere: electropompa 55 kW stea-triunghi, jockey 2,2 kW, alimentare normala din TG si de rezerva din GE 125 kVA, TN-S",
+  "asteptat": "siguranta din context TDSI/sprinklere: fara DDR, Y/D, FE180",
+  "verdict": "G",
+  "severitate": "P0",
+  "obtinut": "TDSI sprinklere pe GE+ATS: DDR-G 300 mA pe ramura GE, consumatori nemarcați siguranță, un singur „Consumatori” 57,2 kW, Y/Δ pierdut, cablu ACYABY (nu FE180); planșa nu e blocată"
+ },
+ {
+  "id": 13,
+  "text": "statie hidranti interiori: 2 pompe 15 kW (una activa una rezerva), sursa TGD + GE, TN-S",
+  "asteptat": "siguranta, fara DDR; intrebare kVA GE",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "Hidranți: cere kVA GE (refuz cu întrebare corectă)"
+ },
+ {
+  "id": 14,
+  "text": "TE desfumare: 2 ventilatoare desfumare 11 kW si 4 clapete 0,1 kW, din TG pe circuit separat, cablu rezistent la foc, TN-S",
+  "asteptat": "siguranta, fara DDR, FE180; termic doar semnalizare",
+  "verdict": "G",
+  "severitate": "P0",
+  "obtinut": "Desfumare: ventilatoarele pe MCCB+KM+releu termic de declanșare, cablu CYABY (nu FE180), „cablu rezistent la foc” ignorat; ks 0,7 → Q1 C32 < 2×20,7 A; titlu TG"
+ },
+ {
+  "id": 15,
+  "text": "TG (din PT 1000 kVA, TN-S) alimenteaza TD-A 250A si TD-B 160A. Din TD-A pleaca TE-1 63A (5 motoare 4 kW) si TE-2 40A (iluminat 8 kW). TD-B are compresor 45 kW si 6 circuite prize.",
+  "asteptat": "cascada 3 niveluri TG->TD-A->TE-1/TE-2, TD-B cu copii",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Cascadă distrusă: nume „TD-B 160A. Din TD-A pleaca TE-1 63A”, „. TD-B are compresor”, TD-A gol, TE-1 contopit; 6 prize pierdute; Q1 320 A ≈ Q2 250 A"
+ },
+ {
+  "id": 16,
+  "text": "TGD -> TD-Hala1 125A -> TE-Linie1 (3 motoare 5,5 kW), retea TN-S, TGD din PT 400 kVA",
+  "asteptat": "cascada TG->TD->TE",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Lanțul „->” recunoscut ca cascadă în presupus, dar TD-Hala1 și TE-Linie1 desenate frați sub TG"
+ },
+ {
+  "id": 17,
+  "text": "PT 2 x 1600 kVA uscat 20/0,4 kV, cupla longitudinala JT normal deschisa, semibara A: TD1 800A, TD2 630A, baterie 300 kvar; semibara B: TD3 800A, TD4 400A, chiller 250 kW",
+  "asteptat": "2 trafo, 2 semibare, cupla NO, 6 plecari repartizate",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "PT 2×1600 cu semibare + baterie 300 kvar → tip CEF, refuz „lipsesc invertoarele”"
+ },
+ {
+  "id": 18,
+  "text": "PT 1000 kVA ulei 10/0,4 kV, celule MT: intrare linie, iesire linie, masura MT, protectie trafo cu intreruptor si releu 50/51; JT: ACB 1600A, 6 plecari 250A",
+  "asteptat": "PT 10 kV, 2L+M+T intreruptor, ACB 1600, 6x250",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„ACB 1600A” = plecare fantomă „ACB” 1600 A (V40 BLOCANT, ștampila NEVERIFICAT vizibilă); celula de ieșire lipsește; Q general MCCB, nu ACB; presupus „20/0,4 kV, 500 MVA rețea 20 kV” la 10 kV"
+ },
+ {
+  "id": 19,
+  "text": "post de transformare 800 kVA 20/0,4 uk 6%, Scc 250 MVA, uscat, plecari TG 1250A 10m",
+  "asteptat": "uk 6% si Scc 250 MVA folosite; TG 1250 A",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "Scc 250 MVA declarată, dar presupus listează și „500 MVA implicit” (contradictoriu); TG 1250 A pe Q 1250 Ir 1187 → V40 BLOCANT corect"
+ },
+ {
+  "id": 20,
+  "text": "PT 630 kVA 20/0,4 cu masura semidirecta pe JT, TC 1000/5, plecari 4 x 160A",
+  "asteptat": "masura JT cu TC 1000/5; 4 plecari",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "Măsură JT TC 1000/5, 4 plecări"
+ },
+ {
+  "id": 21,
+  "text": "PTA 250 kVA pe stalp 20/0,4 kV, plecari 3 x 125A",
+  "asteptat": "PTA aerian: separator + sigurante MT pe stalp, fara celule de interior; 3 plecari",
+  "verdict": "P",
+  "severitate": "P1",
+  "obtinut": "PTA pe stâlp desenat cu LES + celulă de linie + CLP + anvelopă beton în listă; doar avertisment text"
+ },
+ {
+  "id": 22,
+  "text": "statie 6 kV existenta, trafo nou 2000 kVA 6/0,4 kV uscat, celula cu intreruptor in vid, ACB 3200A, 4 plecari 630A",
+  "asteptat": "PT 6 kV, aparate 7,2 kV, ACB 3200, 4x630",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„ACB 3200A” = plecare fantomă (V40 BLOCANT); 6 kV corect (7,2 kV)"
+ },
+ {
+  "id": 23,
+  "text": "PT 400 kVA 20/0,4 kV cu trafo 630 kVA, plecari 3 x 250A",
+  "asteptat": "contradictie 400 vs 630 kVA -> intrebare",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "400 vs 630 kVA: „Nu am folosit…” generic, desenează 400 kVA (ar trebui întrebare de contradicție)"
+ },
+ {
+  "id": 24,
+  "text": "TG cu intreruptor general 100A pentru 120 kW, din PT 400, TN-S, plecari: TD1 60 kW, TD2 60 kW",
+  "asteptat": "contradictie 100 A < ~200 A -> intrebare/blocant",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "V04 BLOCANT corect (100 A < 192 A), dar cere kVA deși „din PT 400”"
+ },
+ {
+  "id": 25,
+  "text": "TG din PT 800 kVA, alimentare 2 x NA2XY 4x240 in paralel, 90 m, TN-C-S, plecari TD1 400A, TD2 250A",
+  "asteptat": "2 cabluri in paralel impuse (Al 240)",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "2×NA2XY 4x240 în paralel → un singur AC2XABY 4×240 → V02/V03 BLOCANT (vizibil pe planșă); NA2XY → armat"
+ },
+ {
+  "id": 26,
+  "text": "TG din BMPT 100A TN-C-S: pompa 7,5 kW cu CYABY 4x4 la 80 m, iluminat 3 kW CYY-F 3x2,5 la 30 m, prize 3 circuite",
+  "asteptat": "cabluri impuse per plecare + L per plecare; prize putere intrebata",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Plecările cu cablu impus și L pe plecare pierdute toate; tablou gol"
+ },
+ {
+  "id": 27,
+  "text": "baterie automata 250 kvar cu filtru 7%, 8 trepte, in TG din PT 1000 kVA, TN-S, plus plecari TD1 400A si TD2 315A",
+  "asteptat": "TG cu plecare compensare 250 kvar + 2 TD",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Baterie 250 kvar în TG → tip CEF, refuz „invertoare”"
+ },
+ {
+  "id": 28,
+  "text": "factor de putere actual 0,78, se doreste 0,95, P = 400 kW, ce baterie imi trebuie in TG din PT 630?",
+  "asteptat": "Qc ~190 kvar; plecare compensare sau raspuns calcul",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Calcul Qc (cosφ 0,78→0,95) → tip CEF, refuz „invertoare”"
+ },
+ {
+  "id": 29,
+  "text": "TG atelier din TG existent TN-S: 2 motoare de 10 HP, unul de 25 HP stea-triunghi, macara 2 x 5,5 kW",
+  "asteptat": "2x7,46 kW, 18,6 kW Y/D, 2x5,5",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Motoarele în HP (2×10 HP, 25 HP Y/Δ) pierdute FĂRĂ mesaj; doar macaraua desenată; Q1 C20"
+ },
+ {
+  "id": 30,
+  "text": "• chiller 180 kW\n• CTA 2 x 22 kW (VFD)\n• pompe 4 x 3 kW\n• iluminat 15 kW\nalimentare PT propriu 630 kVA, TN-S",
+  "asteptat": "TG din PT 630, 8 plecari",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Listă cu „•”: plecare fantomă „alimentare PT propriu” 567 kW; refuz „lipsește kVA” deși 630 declarat"
+ },
+ {
+  "id": 31,
+  "text": "TG brutarie, din BMPT 63A trifazat, TN-C-S: a) cuptor 27 kW b) malaxor 4 kW c) dospitor 6 kW d) frigider 1,5 kW mono e) iluminat 1,5 kW",
+  "asteptat": "5 plecari, Q1 63, malaxor motor, frigider/iluminat 1P+N",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "Enumerare a) b) … corectă, Q1 63 A, frigider mono; iluminat 1,5 kW pe 3×4 A gG 5 conductoare"
+ },
+ {
+  "id": 32,
+  "text": "TG: pompa 5,5kW / vent 3kW / iluminat 2kW / prize 4x16A, din TGD, TN-S",
+  "asteptat": "4+ plecari (prize 4 circ 16A)",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Separator „/”: nimic citit; Q1 16 A din „4x16A”"
+ },
+ {
+  "id": 33,
+  "text": "3 aparate de sudura 20 kVA fiecare + polizor 2,2 kW, TG din PT 400, TN-S",
+  "asteptat": "3 sudura (S 20 kVA), polizor motor",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„TG din PT 400” → plecare fantomă „TG” 400 kW → refuz I03 „400 fără unitate”; sudura 3×20 kVA → 18 kW OK"
+ },
+ {
+  "id": 34,
+  "text": "cuptor electric tratament termic 250 kW rezistiv, din PT 400 kVA, TN-S, cablu 2x (3x240+120) Al",
+  "asteptat": "TG/plecare cuptor 250 kW, 2 cabluri paralel impuse",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Cuptor 250 kW pierdut; tablou gol (cablul 2×(3x240+120) citit corect)"
+ },
+ {
+  "id": 35,
+  "text": "tablou lift: motor lift 15 kW, iluminat put 0,5 kW, priza camera masini, din TG cladire, TN-S",
+  "asteptat": "TD lift 3 plecari; priza putere presupusa/intrebata; NU locuinta",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "Tablou lift corect; priză întrebată; iluminat puț 0,5 kW pe 3×2 A gG + CYABY 5×6"
+ },
+ {
+  "id": 36,
+  "text": "TE apartament de serviciu 230V din TG, 3 circuite iluminat 10A, 5 circuite prize 16A, aer conditionat 2,5 kW, boiler 2 kW, TN-S",
+  "asteptat": "tablou mono 10 circuite",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "TE „din TG” → locuință cu BMPM-40, contor 5(60) A, RCCB 300 mA; circuite inventate (prize bucătărie/baie); TN-S → TN-C-S"
+ },
+ {
+  "id": 37,
+  "text": "iluminat hala 24 corpuri x 150 W pe 3 circuite monofazate, din TD existent, TN-S, trifazat",
+  "asteptat": "3 x 1P+N 1,2 kW, Q1 tri",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„24 corpuri x 150 W pe 3 circuite” nefolosit; P tablou 0,15 kW; tablou gol"
+ },
+ {
+  "id": 38,
+  "text": "TD birouri din TG, TN-S, trifazat: 20 de circuite iluminat a 0,8 kW si 24 circuite prize 2 kW",
+  "asteptat": "44 circuite mono",
+  "verdict": "P",
+  "severitate": "P1",
+  "obtinut": "44 circuite citite corect, dar toate 4P (iluminat 0,8 kW, prize 2 kW pe B6 4P); ks 0,6 pe planșă → Q1 80 A pentru ~92 A; planșă ilizibilă (31 % pe A1, V95)"
+ },
+ {
+  "id": 39,
+  "text": "TD hala din TG, TN-S: 6 prize industriale CEE 3P+N+PE 32A si 4 prize CEE 16A, cu DDR 30mA",
+  "asteptat": "10 circuite CEE cu DDR 30 mA",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "CEE 6×32 A + 4×16 A cu DDR 30 mA corecte (reparat din r7); întrebare inutilă „cu DDR 30mA”; curba B la CEE"
+ },
+ {
+  "id": 40,
+  "text": "TG cu motor 315 kW la 690 V cu convertizor, din PT 1000 kVA",
+  "asteptat": "690 V -> intrebare/refuz",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "690 V → întrebare + V96 BLOCANT"
+ },
+ {
+  "id": 41,
+  "text": "motor MT 6 kV 800 kW alimentat din celula de motor",
+  "asteptat": "MT motor in afara domeniului -> refuz",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "Motor MT 6 kV → I01 generic, nu „în afara domeniului”"
+ },
+ {
+  "id": 42,
+  "text": "pompa 110 kW pornire directa din PT 250 kVA, TN-S",
+  "asteptat": "avertizare pornire DOL vs trafo 250 (In_p ~1,3 kA)",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "Întrebare corectă DOL 110 kW pe PT 250 + V22"
+ },
+ {
+  "id": 43,
+  "text": "hala 250 kW din BMPT trifazat, TN-C-S, plecari: TD1 125 kW, TD2 125 kW",
+  "asteptat": "BMPT > 250 A -> refuz/intrebare",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "Întrebare BMPT > 250 A corectă; planșa provizorie cu Q1 500 A"
+ },
+ {
+  "id": 44,
+  "text": "tg pt hala: 2 motoare 11 kW, din retea trifazata TN-S",
+  "asteptat": "pt = pentru, nu PT; sursa presupusa declarat sau intrebare",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„2 motoare 11 kW” pierdut; „pt”=„pentru” corect; tablou gol"
+ },
+ {
+  "id": 45,
+  "text": "in TG existent (In 400A, TN-S) se adauga 2 plecari noi: chiller 90 kW si CTA 18,5 kW",
+  "asteptat": "TG existent cu 2 plecari noi",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Chiller 90 + CTA 18,5 pierdute; P tablou 90 kW; tablou gol"
+ },
+ {
+  "id": 46,
+  "text": "PT 630 kVA, TN-S. TG-normal: productie 300 kW. TG-vital cu GE 250 kVA si ATS: server room 30 kW, iluminat siguranta 5 kW, pompe incendiu 2x30 kW (1+1), lift pompieri 18 kW",
+  "asteptat": "PT->TGN+TGV; GE pe vitale; PI fara DDR, 1+1",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "TG-normal 300 kW pus pe GE → refuz V86 cu sugestie greșită „GE ≥ 400 kVA”; structura TGN/TGV ignorată"
+ },
+ {
+  "id": 47,
+  "text": "GE 50 kVA cu ATS pentru consumatori vitali 120 kW, din PT 400, TN-S",
+  "asteptat": "contradictie GE subdimensionat -> avertisment/intrebare",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "GE 50 kVA < 120 kW → refuz V86 cu întrebare corectă"
+ },
+ {
+  "id": 48,
+  "text": "comutator manual retea/GE 3 pozitii (I-0-II) pentru ferma, GE 40 kVA, consumatori: muls 7,5 kW, racire lapte 11 kW, iluminat 2 kW, din BMPT 63A, TN-C-S",
+  "asteptat": "comutator manual (nu ATS), 3 plecari",
+  "verdict": "P",
+  "severitate": "P1",
+  "obtinut": "Avertisment „comutare manuală — verificați simbolul”, dar planșa are ATS 4P AC-33B + TAR „anclanșare automată”; consumatori comasați"
+ },
+ {
+  "id": 49,
+  "text": "TG cu doua intrari din PT1 si PT2, fiecare 1000 kVA, cupla cu interblocaj 2 din 3, TN-S, plecari TD1 630A, TD2 630A",
+  "asteptat": "2 intrari + cupla sau intrebare",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "2 intrări PT1/PT2 + cuplă ignorate: o singură intrare, sursă nedeclarată; „fiecare 1000 kVA” nefolosit"
+ },
+ {
+  "id": 50,
+  "text": "TG din PT 400, schema TN-S, alimentare cablu 4x240 Cu",
+  "asteptat": "TN-S cu 4 conductoare -> avertisment; plecari lipsa -> intrebare",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "Cere plecările; TN-S cu cablu 4x240 (fără PE separat) nesemnalat"
+ },
+ {
+  "id": 51,
+  "text": "tg hla prdctie din pt 630kva tns plec: mot 22kw x3, comp 37kw vfd, ilum 8kw",
+  "asteptat": "prescurtari: 3 mot 22, comp VFD 37, il 8",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Prescurtări (mot, comp, ilum, plec): doar 22 kW ca P tablou, nimic desenat"
+ },
+ {
+  "id": 52,
+  "text": "iluminat 4500 W, prize 3600 W, motor 2200 W, trifazat, din TGD, TN-S",
+  "asteptat": "3 plecari W->kW",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "W → kW corect; releu termic Ir 4,5 A pentru 2,2 kW (In real ≈ 4,8 A)"
+ },
+ {
+  "id": 53,
+  "text": "TD service auto din TG 100A, TN-S: elevator 2 coloane 3 kW, compresor 5,5 kW, prize 230V 6 circ, prize 400V 2x32A, iluminat 2 kW",
+  "asteptat": "elevator motor, compresor, 6 prize mono, 2 CEE 32A, iluminat",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„prize 230V” + „prize 400V” → contradicție mono/tri falsă (I08), refuz"
+ },
+ {
+  "id": 54,
+  "text": "calculeaza-mi pretul unui TG cu 10 plecari",
+  "asteptat": "in afara scopului / nu am inteles",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "Preț → cere puterile celor 10 plecări (ar trebui „în afara scopului”)"
+ },
+ {
+  "id": 55,
+  "text": "TG cu chiller 200 kW si 3 CTA 30 kW",
+  "asteptat": "sursa/schema nedeclarate -> intrebare; nu BMPT presupus",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Sursă nedeclarată la 290 kW → BMPT presupus cu Q1 500 A, fără întrebare (BMPT max 250 A)"
+ },
+ {
+  "id": 56,
+  "text": "TD din TG, TN-S: pompa 15 kW, 10 A",
+  "asteptat": "contradictie 15 kW vs 10 A -> intrebare",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„pompa 15 kW, 10 A” → plecare fantomă „Circuit 2” 10 A, fără contradicție"
+ },
+ {
+  "id": 57,
+  "text": "TD 80 kW alimentat cu CYABY 5x16 pe 150 m din TG, TN-S, plecari: TE1 40 kW, TE2 40 kW",
+  "asteptat": "cablu impus insuficient -> blocant vizibil",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Cablu impus CYABY 5x16 / 150 m pierdut (doar material Cu) — nicio verificare"
+ },
+ {
+  "id": 58,
+  "text": "VRV exterior 3 unitati x 28 kW si 12 unitati interioare de 0,1 kW alimentate monofazat, din TG, TN-S",
+  "asteptat": "3 plecari tri + circuit(e) mono UI",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "VRV 3×28 kW + UI mono → tot tabloul monofazat, P 28 kW, gol"
+ },
+ {
+  "id": 59,
+  "text": "PTAB 1x630 kVA, 20 kV, celule L+L+M+T (sigurante), JT: 8 plecari NH 250A",
+  "asteptat": "PT 630 cu 2L+M+T sig., 8 plecari",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "„8 plecari NH 250A” → refuz I05 „găsit 1” (NH luat drept nume)"
+ },
+ {
+  "id": 60,
+  "text": "PT 1,6 MVA uscat 20/0,4, plecari TG1 1600A, TG2 800A",
+  "asteptat": "1600 kVA; TG1 1600 + TG2 800 > In trafo 2309? ok",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "1,6 MVA → 1600 kVA, celulă cu întreruptor, Q 2500 A"
+ },
+ {
+  "id": 61,
+  "text": "putere instalata 1.250 kW, PT 2 x 1.000 kVA, TN-S, plecari TD1 1000A, TD2 800A, TD3 630A",
+  "asteptat": "2 x 1000 kVA, Pi nu e plecare",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "2×1000 kVA, secții + cuplă NO interblocaj 2/3 (reparat din r7); presupus „în paralel pe barele JT” contrazice cupla NO; Pi întrebat"
+ },
+ {
+  "id": 62,
+  "text": "TG cladire birouri din PT 630, TN-S: TE-P 80A, TE-E1 63A, TE-E2 63A, din care TE-E2 alimenteaza TE-Server 32A",
+  "asteptat": "cascada: TE-Server sub TE-E2",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "Cascada TE-Server sub TE-E2 corectă, nume „TE-E2 alimenteaza TE-Server”; „PT 630” pierdut → întreabă kVA"
+ },
+ {
+  "id": 63,
+  "text": "Salut,\nAm nevoie de schema pt tabloul compresoarelor: 2 compresoare de 55 kW cu VFD si un uscator 3 kW.\nAlimentare din TG hala (TN-S), cablu 70 m.\nTel 0745 123 456\nMersi, Dan",
+  "asteptat": "TD din TG L70, 2 comp VFD 55, uscator 3; telefon ignorat",
+  "verdict": "P",
+  "severitate": "P1",
+  "obtinut": "Email: telefon ignorat, „pt”=pentru, 2 comp VFD OK; uscătorul 3 kW devine P tablou → Q1 125 A Ir 106 A pentru Pc 99 kW (doar V14, nu BLOCANT)"
+ },
+ {
+  "id": 64,
+  "text": "TG hala din PT 630 TN-S: pompa incendiu 45 kW, pompa tehnologica 45 kW, iluminat 10 kW",
+  "asteptat": "PI siguranta fara DDR, inainte de general/separat; tehnologica motor normal",
+  "verdict": "G",
+  "severitate": "P0",
+  "obtinut": "Pompă de incendiu 45 kW în TG din PT, după Q1, cu MCCB + KM + releu termic de declanșare, cablu ACYABY, identică cu pompa tehnologică; „PT 630” pierdut (cere kVA)"
+ },
+ {
+  "id": 65,
+  "text": "cuptor pizza 12 kW, friteuza 2 x 9 kW, plita inductie 14 kW, hota 1,5 kW, din BMPT 80A TN-C-S",
+  "asteptat": "5 plecari, Q1 80",
+  "verdict": "G",
+  "severitate": "P1",
+  "obtinut": "Bucătărie restaurant → locuință cu circuite inventate (boiler, mașină de spălat, centrală, prize baie); friteuze și hota pierdute; mesaj „Ib 25 A > 80 A”"
+ },
+ {
+  "id": 66,
+  "text": "TG TT din BMPT 100A, RA 30 ohm: pompa 11 kW, 2 ventilatoare 4 kW, prize 4 circuite 16A",
+  "asteptat": "TT, DDR pe toate, RA*Idn",
+  "verdict": "C",
+  "severitate": "P2",
+  "obtinut": "TT corect: DDR 100 mA pe forță, 30 mA pe prize, RA·IΔn = 9 V; prize 16 A pe 3×16 gG 4P"
+ },
+ {
+  "id": 67,
+  "text": "GE 10 kVA monofazat cu ATS pentru centrala termica 0,2 kW si pompa circulatie 0,1 kW si frigidere 1 kW, din BMPT monofazat, TN-C-S",
+  "asteptat": "GE mono + ATS 2P, 3 circuite mono",
+  "verdict": "C",
+  "severitate": "—",
+  "obtinut": "GE monofazat → V96 + întrebare"
+ },
+ {
+  "id": 68,
+  "text": "TG productie, sursa PT 1000 kVA 20/0,4 kV, TN-S. Utilaje: linie extrudare 160 kW (VFD), 2 granulatoare 37 kW soft-starter, turn racire 2 x 11 kW, compresor 75 kW Y/D, macara 10 t (3 motoare 7,5 + 2,2 + 1,5 kW), iluminat 12 kW, prize 8 circ.",
+  "asteptat": "~12 plecari corecte cu demaroare",
+  "verdict": "P",
+  "severitate": "P2",
+  "obtinut": "PT 1000 + 12 plecări cu VFD/soft/Y-Δ corecte; macara ca sub-tablou; turn răcire și motoarele 2,2/1,5 kW fără demaror; prize întrebate"
+ }
+]

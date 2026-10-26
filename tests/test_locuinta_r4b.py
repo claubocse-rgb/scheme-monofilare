@@ -84,7 +84,8 @@ def test_mn3_repartizare_pe_curent_de_calcul_K02():
     # cele din 4P) descrescător după ks·Ib → maxim 38,31 A → Q C40 (vezi test_locuinta.test_casa_tri_15kw…)
     from test_locuinta import CASA_TRI
     z = calculeaza(CASA_TRI)["rezultat"]
-    assert z["alimentare"]["Q"]["In_A"] == 40 and z["faze"]["I_calc_max_A"] < 40.24
+    # r5: branșament nou → Q din puterea cerută (15 kW → C25), nu din sarcina de calcul
+    assert z["alimentare"]["Q"]["In_A"] == 25 and z["faze"]["I_calc_max_A"] < 40.24
     assert z["faze"]["dezechilibru_calc_pct"] < 2.0
     assert "curentul de calcul" in z["faze"]["repartizare"]
 
@@ -119,10 +120,12 @@ def test_N5_fara_q_si_fara_pa_avertismente_vizibile():
 
 
 def test_mn5_blocant_pe_q_presupus_spune_ca_e_presupus():
-    # N18: tri, Pa 11 kW → Q presupus 20 A (Ib 16,71 A); VE mono pe L2 32,17 A > 1,13·20 = 22,6 A → BLOCANT
+    # N18: tri, Pa 11 kW → Q presupus 16 A (r5: Q uzual din ATR, 11 000/692,8 = 15,9 A); VE mono pe L2 32,17 A > 1,13·16 → BLOCANT
     r = calculeaza(_loc("tri", [L("VE", "vehicul_electric", faza="L2"), L("Pr", "prize")], P_aprobata_kW=11))
-    b = [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
-    assert b and b[0]["mesaj"].startswith("Q branșament presupus 20 A (nedeclarat)")
+    # r6: Q presupus ≥ Ib (16,71 A → 20 A) și, fiind presupus, AVERTISMENT (nu BLOCANT)
+    assert not [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
+    b = [v for v in _v(r, "V46", "AVERTISMENT") if v["obiect"] == "Q" and "1,13" in v["mesaj"]]
+    assert b and b[0]["mesaj"].startswith("Q branșament presupus 16 A (nedeclarat)")
     assert b[0]["remediere"].startswith("introdu Q branșament real")
 
 
@@ -136,8 +139,9 @@ def test_q_peste_bloc_nu_goleste_circuitele():
     c = [L("Plită", "plita"), L("Cuptor", "cuptor"), L("Boiler", "boiler"), L("Inc", "incalzire_electrica"),
          L("Inc2", "incalzire_electrica"), L("Sauna", "sauna")]
     r = calculeaza(_loc("mono", c))
-    assert any(v["obiect"] == "Q" and "limita blocului" in v["mesaj"] for v in _v(r, "V46", "BLOCANT"))
-    assert r["blocheaza_export"] and len(_circuite(r["rezultat"])) == 6
+    # r6: Q nedeclarat și fără P aprobată → AVERTISMENT „limita blocului” (Q presupus nu blochează)
+    assert any(v["obiect"] == "Q" and "limita blocului" in v["mesaj"] for v in _v(r, "V46", "AVERTISMENT"))
+    assert len(_circuite(r["rezultat"])) == 6
     assert r["rezultat"]["alimentare"]["Q"]["In_A"] == 40
 
 
@@ -167,7 +171,7 @@ def test_P14_nivel_din_nume(nume, niv):
 # --------------------------------------------------------------------------------------------- P2-1 — V43 agregat
 def test_V43_agregat_o_singura_atentionare():
     c = [L("Il1", "iluminat"), L("Il2", "iluminat"), L("Pr", "prize"), L("PB", "prize_bucatarie")]
-    r = calculeaza(_loc("mono", c, In_Q_bransament_A=32, P_aprobata_kW=7))
+    r = calculeaza(_loc("mono", c, In_Q_bransament_A=32, P_aprobata_kW=7, DDR_bransament_selectiv=False))
     v = _v(r, "V43", "AVERTISMENT")
     assert len(v) == 1 and v[0]["obiect"] == "DDR1–DDR4 vs RCBO BMPM" and "DDR1–DDR4" in v[0]["mesaj"]
 

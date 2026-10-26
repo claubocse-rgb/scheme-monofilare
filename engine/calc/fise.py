@@ -85,7 +85,8 @@ def aplica(inp, j, tip):
                 j.pas(f"Iac,max = {fmt_ro(inv['Iac_max_A'])} A — din fișa invertorului {model_text(inv)}".rstrip())
             if inv.get("hibrid") and not inp.get("hibrid"):
                 inp["hibrid"] = True
-        bat = inp.get("baterie") if isinstance(inp.get("baterie"), dict) else inp.get("bess") if isinstance(inp.get("bess"), dict) else None
+        # v1.9 (R5): `baterie` = baterie pe portul invertorului hibrid; `bess` (P_kW, kWh) poate fi și PCS separat (cuplaj c.a.)
+        bat = inp.get("baterie") if isinstance(inp.get("baterie"), dict) else None
         if bat and not inp.get("hibrid"):
             inp["hibrid"] = True
     if tip == "cef":

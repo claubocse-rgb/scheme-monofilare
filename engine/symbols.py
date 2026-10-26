@@ -224,6 +224,27 @@ def contact(p, d):
     _switch(p, "semicerc"); p.anc["masura"] = (3.6, 0); p.anc["comanda"] = (3.6, 0)
 
 
+def releu_termic(p, d):
+    """releu termic de suprasarcină (IEC 60617 07-15-21): dreptunghi cu elementul termic (meandru) pe conductor"""
+    p.append(Line((0, HALF), (0, 4), "FORTA")); p.append(Rect((-3.2, -4), 6.4, 8))
+    p.append(Polyline([(0, 4), (0, 2), (1.6, 2), (1.6, -2), (-1.6, -2), (-1.6, 0), (0, 0), (0, -4)], "FORTA"))
+    p.append(Line((0, -4), (0, -HALF), "FORTA"))
+
+
+def convertizor(p, d):
+    """convertizor de frecvență / soft-starter (IEC 60617 06-14-01): dreptunghi cu diagonală, „~” în ambele colțuri"""
+    p.append(Line((0, HALF), (0, 6), "FORTA")); p.append(Rect((-7, -6), 14, 12)); p.append(Line((-7, -6), (7, 6)))
+    p.append(Text((-4.2, 1.6), "~", 2.6, True, align="middle")); p.append(Text((4.2, -4.6), "~", 2.6, True, align="middle"))
+    p.append(Line((0, -6), (0, -HALF), "FORTA"))
+
+
+def pornitor_yd(p, d):
+    """pornitor stea-triunghi (contactoarele KΔ + KY): dreptunghi cu marcajul Y/Δ"""
+    p.append(Line((0, HALF), (0, 5), "FORTA")); p.append(Rect((-6, -5), 12, 10))
+    p.append(Text((0, -1.0), "Y/Δ", 2.6, True, align="middle"))
+    p.append(Line((0, -5), (0, -HALF), "FORTA"))
+
+
 def nod(p, d):
     """nod / trecere directă (fără aparat)"""
     p.append(Line((0, HALF), (0, -HALF), "FORTA"))
@@ -339,6 +360,9 @@ SYMBOLS = {
  "convertor_bess":(convertor_bess, "Convertor bidirecțional BESS", "serie"),
  "ats":           (ats, "Comutator automat de sursă (AAR / ATS)", "serie"),
  "contact":       (contact, "Contactor", "serie"),
+ "releu_termic":  (releu_termic, "Releu termic de suprasarcină", "serie"),
+ "convertizor":   (convertizor, "Convertizor de frecvență / soft-starter", "serie"),
+ "pornitor_yd":   (pornitor_yd, "Pornitor stea-triunghi (KΔ + KY)", "serie"),
  "string_pv":     (string_pv, "Câmp fotovoltaic (stringuri)", "serie"),
  "baterie":       (baterie, "Baterie de acumulatori", "serie"),
  "generator":     (generator, "Generator", "serie"),

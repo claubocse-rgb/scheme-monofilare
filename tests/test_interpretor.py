@@ -168,6 +168,8 @@ CUVINTE_CHEIE = {
         ["200 a", "ib", "curent maxim absorbit", "cosfi 0,9", "doar pentru δu"],
     "50 kW = putere c.a. totală → 2 × 25 kW": ["50 kw", "putere c.a. totala", "2 x 25 kw"],
     "kWp nedeclarat (raport c.c./c.a. necalculat)": ["kwp nedeclarat"],
+    "Invertoarele sunt de 25 kW fiecare (2 × 25 = 50 kW)? Indicați puterea fiecărui invertor.":
+        ["25 kw fiecare", "2 x 25 = 50 kw", "puterea fiecarui invertor"],
     "7,5 kW cu virgulă zecimală": ["7,5 kw", "virgula zecimala"],
     "P TD din bilanțul sub-plecărilor": ["p td", "bilantul sub-plecarilor"],
     "la PT, o lungime generală se aplică tuturor plecărilor (0,2 km = 200 m)":

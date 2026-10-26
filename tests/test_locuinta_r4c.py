@@ -105,18 +105,21 @@ VE = [L("Il", "iluminat"), L("VE", "vehicul_electric", P_kW=7.4)]
 
 
 def test_Mc3_VE_sub_RCBO_BMPM_tip_AC_avertisment():
+    # r5: implicit (DDR branșament tip A, VE tip A + RDC-DD) → fără V43 c.c.; branșament vechi tip AC declarat → AV
     r = calculeaza(_loc("mono", VE, In_Q_bransament_A=40, P_aprobata_kW=9))
+    assert not [x for x in _v(r, "V43") if "c.c." in x["mesaj"]]
+    r = calculeaza(_loc("mono", VE, In_Q_bransament_A=40, P_aprobata_kW=9, DDR_bransament_tip="AC"))
     v = [x for x in _v(r, "V43") if "c.c." in x["mesaj"]]
     assert len(v) == 1 and v[0]["nivel"] == "AVERTISMENT" and v[0]["obiect"].endswith("vs RCBO BMPM")
     assert "tip AC" in v[0]["mesaj"] and "531.3.2" in v[0]["mesaj"] and "722.531.3.101" in v[0]["mesaj"]
     assert "tip B" in v[0]["remediere"] and v[0]["camp"] == "alimentare.DDR_bransament_tip"
     assert r["rezultat"]["alimentare"]["DDR_bransament_tip"] == "AC"
-    assert any("tip AC" in p and "DDR-ul din branșament" in p for p in r["presupus"])
+    assert any("RCBO BMPM" in v_["obiect"] for v_ in _v(r, "V43"))
 
 
 def test_Mc3_TT_blocant_si_remedieri():
     tt = dict(schema_pamant="TT", RA_ohm=30)
-    r = calculeaza(dict(_loc("tri", VE, In_Q_bransament_A=32, P_aprobata_kW=15), **tt))
+    r = calculeaza(dict(_loc("tri", VE, In_Q_bransament_A=32, P_aprobata_kW=15, DDR_bransament_tip="AC"), **tt))
     v = [x for x in _v(r, "V43") if "c.c." in x["mesaj"]]
     assert len(v) == 1 and v[0]["nivel"] == "BLOCANT" and "RCCB BMPT" in v[0]["obiect"] and "TT" in v[0]["mesaj"]
     # DDR-ul din branșament declarat tip B → nimic
@@ -127,7 +130,8 @@ def test_Mc3_TT_blocant_si_remedieri():
     r = calculeaza(dict(_loc("tri", ve_a, In_Q_bransament_A=32, P_aprobata_kW=15, DDR_bransament_tip="A"), **tt))
     assert not [x for x in _v(r, "V43") if "c.c." in x["mesaj"]] and _v(r, "V49", "AVERTISMENT")
     # amonte A + VE tip B (fără limitarea c.c.) → tot BLOCANT în TT
-    r = calculeaza(dict(_loc("tri", VE, In_Q_bransament_A=32, P_aprobata_kW=15, DDR_bransament_tip="A"), **tt))
+    ve_b = [L("Il", "iluminat"), L("VE", "vehicul_electric", P_kW=7.4, DDR={"IdN_mA": 30, "tip": "B"})]
+    r = calculeaza(dict(_loc("tri", ve_b, In_Q_bransament_A=32, P_aprobata_kW=15, DDR_bransament_tip="A"), **tt))
     assert [x["nivel"] for x in _v(r, "V43") if "c.c." in x["mesaj"]] == ["BLOCANT"]
     # tip necunoscut → V12 BLOCANT cu `camp`, câmpul ignorat (AC implicit)
     r = calculeaza(_loc("mono", VE, In_Q_bransament_A=40, P_aprobata_kW=9, DDR_bransament_tip="X"))
@@ -221,8 +225,9 @@ def test_N16_prize_pe_niveluri_separate():
     for g in gr:
         niv = {("parter" if "parter" in n else "etaj") for n in g if "parter" in n or "etaj" in n}
         assert len(niv) <= 1, g
-    # circuitul fără nivel completează lotul cel mai mic (parter: 2 circuite)
-    assert ["Prize living parter", "Prize hol parter", "Prize birou"] in gr
+    # circuitul fără nivel completează lotul cel mai mic (parter: 2 circuite); r6: lotul se poate împărți pe faze
+    assert {n for g in gr if any("parter" in x for x in g) for n in g} == {"Prize living parter", "Prize hol parter",
+                                                                           "Prize birou"}
 
 
 def test_N16_fara_niveluri_neschimbat():

@@ -92,7 +92,10 @@ def test_casa_mono_7kw_8_circuite():
     assert z["faze"]["dezechilibru_pct"] is None and z["faze"]["L1_A"] > 0
     assert z["nota_schema_pamant"].startswith("Schemă de legare la pământ: TN-C-S") and "5 grupe" in z["nota_schema_pamant"]
     assert z["retea"] == "mono"
-    # RCBO BMPM instantaneu în amonte → V43 AVERTISMENT, v1.6 (P2-1): o singură atenționare agregată DDR1–DDR5
+    # r5: RCBO BMPM nedeclarat → presupus tip A selectiv (S) → fără V43; declarat instantaneu → V43 AVERTISMENT,
+    # v1.6 (P2-1): o singură atenționare agregată DDR1–DDR5
+    assert not _v(r, "V43", "AVERTISMENT")
+    r = calculeaza(dict(CASA_MONO, alimentare=dict(CASA_MONO["alimentare"], DDR_bransament_selectiv=False)))
     assert [v["obiect"] for v in _v(r, "V43", "AVERTISMENT")] == ["DDR1–DDR5 vs RCBO BMPM"]
     assert "DDR1–DDR5" in _v(r, "V43", "AVERTISMENT")[0]["mesaj"]
 
@@ -112,7 +115,9 @@ def test_casa_tri_15kw_plita_pompa_ve():
     # prize bucătărie 4,83, prize 1 / 2 3,86, baie 3,86, exterior 2,90, iluminat 0,97 → L1 29,32 + 6,09 + 2,90 = 38,31 A
     # (în v1.5: 40,24 A) → BMPTd-40, Q C40 (nu C50)
     assert b["Ib_A"] == pytest.approx(22.79, rel=1e-3) and b["Ib_Pc_A"] == pytest.approx(38.895, rel=1e-3)
-    assert z["alimentare"]["bloc"] == "BMPTd-40" and z["alimentare"]["Q"]["In_A"] == 40
+    # r5 (L04): branșament nou — Q din puterea CERUTĂ (15 kW / 692,82 V = 21,65 A → C25), Pc peste ea → întrebare (AV)
+    assert z["alimentare"]["bloc"] == "BMPTd-40" and z["alimentare"]["Q"]["In_A"] == 25
+    assert any(v["obiect"] == "Q" for v in _v(r, "V46", "AVERTISMENT"))
     assert z["faze"]["I_calc_max_A"] == pytest.approx(38.31, rel=1e-3) and not _v(r, "V46", "BLOCANT")
     assert z["Q_general"]["poli"] == "4P" and z["SPD"]["poli"] == "3P+N"
     c = _circuite(z)
@@ -121,9 +126,9 @@ def test_casa_tri_15kw_plita_pompa_ve():
     assert c["Plită"]["faza"] == "3F" and c["Plită"]["protectie"]["In_A"] == 16 and c["Plită"]["retea"] == "tri"
     assert c["Pompă de căldură"]["faza"] == "3F" and c["Pompă de căldură"]["protectie"]["In_A"] == 16
     assert c["Încărcare VE"]["faza"] == "3F" and c["Încărcare VE"]["S_faza_mm2"] == 4
-    # VE: grupă proprie, DDR tip B (alternativ A-EV + RDC-DD 6 mA c.c.), 4P
+    # VE: grupă proprie, DDR tip A + RDC-DD 6 mA c.c. în stație (r5: implicit compatibil cu DDR tip A în amonte), 4P
     ve = [g for g in z["grupe_DDR"] if g["grupa"] == "vehicul electric"]
-    assert len(ve) == 1 and ve[0]["DDR"]["tip"] == "B" and "RDC-DD" in ve[0]["DDR"]["alternativa"]
+    assert len(ve) == 1 and ve[0]["DDR"]["tip"] == "A" and "RDC-DD" in ve[0]["DDR"]["alternativa"]
     assert ve[0]["DDR"]["poli"] == "4P" and [x["nume"] for x in ve[0]["circuite"]] == ["Încărcare VE"]
     # bucătăria are plita 3F → o grupă 4P cu prizele bucătăriei și cuptorul; baia / exteriorul / iluminatul: RCBO 2P pe o fază
     gb = {g["grupa"]: g for g in z["grupe_DDR"]}
@@ -184,7 +189,7 @@ def test_tt():
     # v1.7 (M-c3): casa are VE — în TT, sub RCCB-ul BMPT tip AC implicit, V43 „ve_dc” BLOCANT; cu DDR-ul din
     # branșament declarat tip B nu mai blochează
     r0 = calculeaza(dict(CASA_TRI, schema_pamant="TT", RA_ohm=100,
-                         alimentare=dict(CASA_TRI["alimentare"], P_aprobata_kW=35)))
+                         alimentare=dict(CASA_TRI["alimentare"], P_aprobata_kW=35, DDR_bransament_tip="AC")))
     assert [v["cod"] for v in r0["verificari"] if v["nivel"] == "BLOCANT"] == ["V43"]
     r = calculeaza(dict(CASA_TRI, schema_pamant="TT", RA_ohm=100,
                         alimentare=dict(CASA_TRI["alimentare"], P_aprobata_kW=35, DDR_bransament_tip="B")))

@@ -1,0 +1,72 @@
+{
+ "p1_cef_2inv_bess": {
+  "blocant": false,
+  "coliziuni": [],
+  "verificari": [
+   "AV V66 schema: S = 275 kVA > 173 kVA: racord JT doar direct din PT OD conform ATR",
+   "AV V32 INV-1: Ik1min 924 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-2: ΔU cumulat 1,11 % > 1 %",
+   "AV V32 INV-2: Ik1min 840 A < Ia 1200 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 PCS: Ik1min 924 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 3,84 kA (Ik3max 21,1 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 3,84 kA (Ik3max 21,1 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs PCS: selectivitate parțială până la 3,84 kA (Ik3max 21,1 kA) — confirmă cu tabelele producătorului"
+  ]
+ },
+ "p2_prosumator_hibrid": {
+  "blocant": false,
+  "coliziuni": [],
+  "verificari": [
+   "AV V73 schema: DDR în circuitul invertorului: tip A (sau B dacă fișa invertorului nu exclude curenți de defect c.c.)"
+  ]
+ },
+ "p3_cef_tg_existent_pt": {
+  "blocant": false,
+  "coliziuni": [],
+  "verificari": [
+   "AV V33 Q TG: Icu nedeclarat — trebuie ≥ Ik3max 20 kA la bara TG existent",
+   "AV V45 C0: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×240 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "AV V32 C0: Ik1min 1047 A < Ia 1800 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V41 Q TG vs QG: amonte = aval = 1000 A — fără selectivitate",
+   "AV V44 Q TG / C0: defect la capătul C0 (bara TGD-CF): Ik1min 1047 A < Ia(Q TG, 5 s) 1800 A — nu e deconectat de protecția din TG",
+   "AV V21 INV-1: ΔU cumulat 1,07 % > 1 %",
+   "AV V32 INV-1: Ik1min 970 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-2: ΔU cumulat 1,07 % > 1 %",
+   "AV V32 INV-2: Ik1min 970 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-3: ΔU cumulat 1,07 % > 1 %",
+   "AV V32 INV-3: Ik1min 970 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-4: ΔU cumulat 1,07 % > 1 %",
+   "AV V32 INV-4: Ik1min 970 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V21 INV-5: ΔU cumulat 1,07 % > 1 %",
+   "AV V32 INV-5: Ik1min 970 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 9,6 kA (Ik3max 17,51 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 9,6 kA (Ik3max 17,51 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-3: selectivitate parțială până la 9,6 kA (Ik3max 17,51 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-4: selectivitate parțială până la 9,6 kA (Ik3max 17,51 kA) — confirmă cu tabelele producătorului",
+   "AV V42 QG vs INV-5: selectivitate parțială până la 9,6 kA (Ik3max 17,51 kA) — confirmă cu tabelele producătorului"
+  ]
+ },
+ "p4_injectie_zero": {
+  "blocant": false,
+  "coliziuni": [],
+  "verificari": [
+   "AV V32 C0: Ik1min 1058 A < Ia 1134 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V32 INV-1: Ik1min 1014 A < Ia 3000 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-1: selectivitate parțială până la 6,05 kA (Ik3max 22,07 kA) — confirmă cu tabelele producătorului",
+   "AV V32 INV-2: Ik1min 1014 A < Ia 3000 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs INV-2: selectivitate parțială până la 6,05 kA (Ik3max 22,07 kA) — confirmă cu tabelele producătorului",
+   "AV V32 PCS: Ik1min 1001 A < Ia 2400 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+   "AV V42 QG vs PCS: selectivitate parțială până la 6,05 kA (Ik3max 22,07 kA) — confirmă cu tabelele producătorului"
+  ]
+ },
+ "p5_bess_singur": {
+  "blocant": false,
+  "coliziuni": [],
+  "verificari": [
+   "AV V45 C0: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×185 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "AV V45 PCS: cablurile multipolare Al PVC nu ajung (4×240 mm², nici Cu XLPE) → 2 sisteme de cabluri monopolare Cu XLPE 1×185 mm² în treflă pe pat perforat (metoda F) — POZARE ÎN AER, de confirmat",
+   "AV V21 PCS: ΔU cumulat 1,52 % > 1 %",
+   "AV V41 QG vs PCS: amonte = aval = 950 A — fără selectivitate"
+  ]
+ }
+}

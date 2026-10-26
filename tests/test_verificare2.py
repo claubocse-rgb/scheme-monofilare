@@ -308,7 +308,7 @@ def test_M10_motor_pornire_directa():
     # Ib = 45 000/(692,82·0,85) = 76,41 A; Ip pornire = 6·76,41 = 458,5 A. gG 80 (Imin 10 s = 215 A) s-ar topi →
     # MCCB TM 80 A, Ir = 1,00·80 = 80 A, prag 0,8·Im = 640 A ≥ 458,5 A (V23 INFO); ΔU la pornire calculat (V22)
     r = calculeaza({"tip_schema": "tablou", "L_alimentare_m": 30,
-                    "plecari": [{"nume": "Compresor", "P_kW": 45, "receptor": "motor", "L_m": 120}]})
+                    "plecari": [{"nume": "Compresor", "P_kW": 45, "receptor": "motor", "L_m": 120, "randament": 1.0, "cosfi": 0.85}]})
     p = r["rezultat"]["plecari"][0]
     assert p["Ib_A"] == pytest.approx(76.414, rel=1e-4)
     assert p["protectie"]["tip"] == "MCCB" and p["protectie"]["In_A"] == 80 and p["protectie"]["Ir_A"] == 80.0
@@ -321,7 +321,8 @@ def test_M10_motor_pornire_directa():
 def test_M10_motor_gG_impus_marit():
     # gG impus: Imin(10 s) ≥ 458,5 A → gG 125 (355 A) nu; gG 160 (465 A) da → In = 160 A
     r = calculeaza({"tip_schema": "tablou", "L_alimentare_m": 30,
-                    "plecari": [{"nume": "Compresor", "P_kW": 45, "receptor": "motor", "L_m": 120, "prot_tip": "gG"}]})
+                    "plecari": [{"nume": "Compresor", "P_kW": 45, "receptor": "motor", "L_m": 120, "prot_tip": "gG",
+                                  "randament": 1.0, "cosfi": 0.85}]})
     p = r["rezultat"]["plecari"][0]
     assert p["protectie"]["tip"] == "gG" and p["protectie"]["In_A"] == 160
 
@@ -329,7 +330,7 @@ def test_M10_motor_gG_impus_marit():
 def test_M10_motor_mcb_c_marit():
     # circuit final motor 5,5 kW: Ib = 5500/(692,82·0,85) = 9,34 A; Ip = 56,0 A; MCB C: 5·In ≥ 56 → In = 13 A
     r = calculeaza({"tip_schema": "tablou", "circuite_finale": True, "L_alimentare_m": 20,
-                    "plecari": [{"nume": "Pompă", "P_kW": 5.5, "receptor": "motor"}]})
+                    "plecari": [{"nume": "Pompă", "P_kW": 5.5, "receptor": "motor", "randament": 1.0, "cosfi": 0.85}]})
     p = r["rezultat"]["plecari"][0]
     assert p["protectie"]["tip"] == "MCB" and p["protectie"]["curba"] == "C" and p["protectie"]["In_A"] == 13
 
@@ -600,7 +601,7 @@ def test_R2_minore():
     assert any("ks" in p for p in r["presupus"])
     # ΔU la pornire fără dubla numărare: Compresor 45 kW → ≈ 12,0 % (înainte 12,62 %)
     r = calculeaza({"tip_schema": "tablou", "L_alimentare_m": 30,
-                    "plecari": [{"nume": "Compresor", "P_kW": 45, "receptor": "motor", "L_m": 120}]})
+                    "plecari": [{"nume": "Compresor", "P_kW": 45, "receptor": "motor", "L_m": 120, "randament": 1.0, "cosfi": 0.85}]})
     assert 11.5 < r["rezultat"]["plecari"][0]["dU_pornire_pct"] < 12.3
 
 
