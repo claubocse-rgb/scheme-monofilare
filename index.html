@@ -141,7 +141,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .result ul{margin:4px 0 0;padding-left:18px}
 .result .warn{color:var(--warn)}
 .llm{margin-top:var(--s2);font-size:var(--fs-xs);color:var(--ink-3)}
-.llm>summary{cursor:pointer;width:max-content}
+.llm>summary{cursor:pointer;width:max-content;max-width:100%}
 .llm .llm-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
 .llm input[type=password]{flex:1 1 180px;min-width:0;height:28px;padding:0 8px;border:1px solid var(--rule-2);border-radius:var(--r);background:var(--surface);color:var(--ink);font:inherit}
 .llm p{margin:6px 0 0;line-height:1.4}
@@ -440,6 +440,42 @@ details>summary{min-height:24px}
   .lc-row .del{grid-column:4;grid-row:1}
   .lc-row .rz{grid-column:1/-1;grid-row:4}
 }
+/* ===================================================================== confirmarea intrării după chat */
+.conf{display:flex;flex-direction:column;gap:var(--s3)}
+.conf .desc{margin:-6px 0 0}
+.cf-card h3{margin:0 0 var(--s2);font:600 var(--fs-md)/1.2 var(--font-c)}
+.cf-txt{margin:0;font-size:var(--fs-sm)}
+.cf-presl{margin-top:var(--s2);font-size:var(--fs-sm)}
+.cf-presl summary{cursor:pointer;font-weight:600}
+.cf-presl ul,.cf-q{margin:6px 0 0;padding-left:18px}
+.cf-presl li{margin:2px 0;color:var(--ink-2)}
+.cf-q{display:flex;flex-direction:column;gap:var(--s2);padding:0;list-style:none}
+.cf-q li{padding:8px 10px;border-radius:var(--r);background:var(--warn-soft)}
+.cf-q li p{margin:0 0 6px;font-size:var(--fs-sm);color:var(--ink)}
+.cf-q li .fld{max-width:320px}
+.cf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2);align-items:end}
+.cf-grid .fld>label,.cf-q .fld>label{white-space:normal;overflow:visible}
+.cf-tag{margin-left:6px;padding:0 5px;border-radius:var(--r-sm);background:var(--sig-soft);color:var(--ink);font-size:10.5px;font-weight:600;vertical-align:1px}
+.cf-pres input,.cf-pres select,td.cf-pres input,td.cf-pres select{border-color:var(--sig-line)!important;box-shadow:0 0 0 1px var(--sig-line);background:var(--sig-soft)}
+.fld select[aria-invalid="true"]{border-color:var(--danger);background:var(--danger-soft)}
+.cf-scroll{overflow-x:auto;max-width:100%;border:1px solid var(--rule);border-radius:var(--r);margin-bottom:var(--s2)}
+.cf-scroll:focus-visible{outline-offset:2px}
+.cf-tab{border-collapse:collapse;width:100%;font-size:var(--fs-sm)}
+.cf-tab th{position:sticky;top:0;padding:5px 6px;background:var(--sunk);border-bottom:1px solid var(--rule);text-align:left;font-size:var(--fs-xs);font-weight:600;color:var(--ink-2);white-space:nowrap}
+.cf-tab td{padding:3px 4px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.cf-tab tr:last-child td{border-bottom:0}
+.cf-tab input[type=text],.cf-tab select{width:100%;height:var(--h-ctl-sm);padding:0 6px;border:1px solid var(--rule-2);border-radius:var(--r-sm);background:var(--surface)}
+.cf-tab input[aria-invalid="true"]{border-color:var(--danger);background:var(--danger-soft)}
+.cf-tab input[type=checkbox]{width:18px;height:18px;margin:0 auto;display:block}
+.cf-tab .w-n{min-width:150px}.cf-tab .w-r{min-width:130px}.cf-tab .w-s{min-width:72px;width:80px}.cf-tab .w-u{min-width:96px}.cf-tab .w-b{width:64px;text-align:center}
+.cf-tab .cf-ro{font-size:var(--fs-xs);color:var(--ink-3);white-space:nowrap}
+.cf-tab .cf-del{width:34px}
+#pane.confm{padding-bottom:0}
+.cf-act{position:sticky;bottom:0;z-index:2;margin:0 calc(-1 * var(--s3));padding:var(--s2) var(--s3);background:var(--panel);border-top:1px solid var(--rule)}
+.cf-act .msg{margin:0 0 var(--s2)}
+.cf-btns{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+.cf-btns .sp{flex:1}
+.cf-btns .hint{font-size:var(--fs-xs);color:var(--ink-3)}
 /* ===================================================================== mobil / îngust */
 .mswitch{display:none}
 @media (max-width:1320px){.proj{display:none}}
@@ -523,7 +559,7 @@ details>summary{min-height:24px}
         <label for="chat-text" class="sr">Descrierea instalației</label>
         <textarea id="chat-text" rows="2" placeholder="ex. BMPTi 150 kW, cablu 80 m, beneficiar SC Agro Vest SRL, Ciumeghiu, jud. Bihor"></textarea>
         <div class="row-act">
-          <button class="btn sm" id="chat-go">Generează schema</button>
+          <button class="btn sm" id="chat-go">Citește descrierea</button>
           <label class="check hint" id="claude-wrap" hidden><input type="checkbox" id="chat-claude" checked> Citire avansată (Claude)</label>
           <span class="hint" id="chat-kbd">Ctrl + Enter</span>
         </div>
@@ -1703,7 +1739,7 @@ let WIZ_START = null;           // { renunta: bool } cât timp se alege tipul lu
 const PASI = ['Ce proiectezi', 'Date de intrare', 'Proiect și firmă', 'Verificare'];
 const wizActiv = () => !!WIZ_START || !!(MODEL && MODEL._wiz);
 const wizPas = () => WIZ_START ? 0 : (MODEL && MODEL._wiz) || 0;
-function startWizard(o = {}) { WIZ_START = { renunta: o.renunta !== false }; $('#pane').scrollTop = 0; render(); }
+function startWizard(o = {}) { CONF = null; WIZ_START = { renunta: o.renunta !== false }; $('#pane').scrollTop = 0; render(); }
 function wizGo(p) {
   if (p === 0) { WIZ_START = { renunta: true, inapoi: true }; }
   else { WIZ_START = null; MODEL._wiz = p; autosave(); }
@@ -1778,17 +1814,11 @@ async function wizChat(ta, btn, res) {
   btn.disabled = true; btn.classList.add('busy'); res.textContent = 'Interpretez descrierea…';
   try {
     const cur = payload(false); cur.cartus = Object.assign({}, profileCartus());
-    const r = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, claude: INFO.claude, model: cur }) })).json();
+    const r = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, claude: INFO.claude, model: cur, fara_model: true }) })).json();
     if (r.eroare) throw new Error(r.eroare);
     const it = r.interpretare || {};
-    if (it.actiune === 'refuza' || !r.model) { res.textContent = String(it.intelegere || 'Nu am înțeles descrierea.').replace(/\s*\(I\d{2}\)/g, ''); return; }
-    r.model._wiz = 1; WIZ_START = null; PENDING_FOCUS = 'wz-h';
-    if (r.model.calc && /nu încape în monofazat/.test((it.presupus || []).join(' '))) r.model.calc._retea_dedusa = true;
-    replaceModel(r.model, null, { chat: true }); setValid(r.validare); render();
-    const prim = String(it.intelegere || 'Am completat datele din descriere.').replace(/\s*\(I\d{2}\)/g, '').split(/\.\s+Am presupus/)[0].replace(/\.?$/, '.');
-    const np = (r.validare && r.validare.presupus || []).length;
-    const q = (it.intrebari || [])[0];
-    toast(prim + (q ? ' ' + String(q).replace(/\s*\(I\d{2}\)/g, '') : '') + (np ? ` Restul (${np} valori) l-am presupus — verifică datele și completează ce lipsește.` : ' Verifică datele și completează ce lipsește.'), { ms: 14000, kind: q ? 'warn' : '' });
+    if (it.actiune === 'refuza' || !it.intrare_fizica) { res.textContent = faraI(it.intelegere || 'Nu am înțeles descrierea.'); return; }
+    confDeschide({ src: 'wiz', text, it, citire: r.citire && r.citire.mesaj, cart: r.cartus_chat, cur });   // r10: confirmare înainte de date / desen
   } catch (e) { res.textContent = 'Nu am putut interpreta descrierea: ' + e.message; }
   finally { btn.disabled = false; btn.classList.remove('busy'); }
 }
@@ -2307,14 +2337,18 @@ function render() {
   pane.querySelectorAll('details').forEach(d => DET_OPEN.set(cheieDet(d), d.open));
   fid = 0;
   wizChrome();
-  RO = !!MODEL.calc && TAB === 'schema' && !wizActiv();
+  $('.tabs').hidden = !!CONF;                       // panoul de confirmare ține locul tab-urilor (și al pașilor asistentului)
+  if (CONF) $('#wizbar').hidden = $('#wizfoot').hidden = true;
+  pane.classList.toggle('confm', !!CONF);
+  RO = !CONF && !!MODEL.calc && TAB === 'schema' && !wizActiv();
   pane.classList.toggle('ro', RO);
   const frag = document.createDocumentFragment();
   if (RO) frag.append(el('div', { class: 'banner' }, el('b', {}, 'Schema e generată și dimensionată din calcul.'),
     el('span', {}, ' Aparatele, cablurile și textele se recalculează din tab-ul Calcul, ca să nu poată contrazice dimensionarea. '),
     el('button', { class: 'btn sm', type: 'button', onclick: () => setTab('calc') }, 'Mergi la Calcul'),
     el('button', { class: 'btn ghost sm', type: 'button', onclick: detaseaza }, 'Desprinde pentru desen manual')));
-  if (wizActiv()) wizRender(frag);
+  if (CONF) confRender(frag);
+  else if (wizActiv()) wizRender(frag);
   else ({ calc: tabCalc, schema: tabSchema, deviz: tabDeviz, proiect: tabProiect, note: tabNote, json: tabJson })[TAB](frag);
   frag.querySelectorAll('details').forEach(d => { const k = cheieDet(d); if (DET_OPEN.has(k)) d.open = DET_OPEN.get(k); });
   pane.replaceChildren(frag);
@@ -2530,7 +2564,7 @@ function replaceModel(m, msg, o = {}) {
   const n = HIST.past.length; pushHistory();
   if (!o.keepDoc) { m._doc = 'd' + Date.now().toString(36); LAST_SAVE = 0; }
   MODEL = normalize(m); OPEN.clear(); CALC.clear(); SELECTED = null; VIEW.fitted = false; VIEW.user = false;
-  if (!o.chat) $('#chat-res').hidden = true;
+  if (!o.chat) { $('#chat-res').hidden = true; CONF = null; }
   render(); redraw(0);
   if (msg) toast(msg, { ...undoAction(n), kind: o.kind || '' });
   return n;
@@ -2605,22 +2639,381 @@ async function chatGo() {
   const res = $('#chat-res'); res.hidden = false; res.textContent = 'Interpretez descrierea…';
   try {
     const cur = payload(false); cur.cartus = Object.assign({}, cur.cartus || {}, profileCartus());
-    const r = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, claude: INFO.claude && $('#chat-claude').checked, model: cur }) })).json();
+    const r = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, claude: INFO.claude && $('#chat-claude').checked, model: cur, fara_model: true }) })).json();
     if (r.eroare) throw new Error(r.eroare);
     const it = r.interpretare || {};
-    const fara = t => String(t || '').replace(/\s*\(I\d{2}\)/g, '');
-    const kids = [el('div', { class: 'res-chat' }, fara(it.intelegere))];
-    if (r.citire && r.citire.mesaj) kids.push(el('div', { class: 'res-citire' }, r.citire.mesaj + '.'));
-    if ((it.avertismente || []).length) kids.push(el('ul', { class: 'plist', style: 'margin-top:6px' }, it.avertismente.map(x => el('li', {}, fara(typeof x === 'string' ? x : (x.mesaj || JSON.stringify(x)))))));
-    if (it.actiune === 'refuza') {
+    if (it.actiune === 'refuza' || !it.intrare_fizica) {
+      const kids = [el('div', { class: 'res-chat' }, faraI(it.intelegere))];
+      if (r.citire && r.citire.mesaj) kids.push(el('div', { class: 'res-citire' }, r.citire.mesaj + '.'));
+      if ((it.avertismente || []).length) kids.push(el('ul', { class: 'plist', style: 'margin-top:6px' }, it.avertismente.map(x => el('li', {}, faraI(typeof x === 'string' ? x : (x.mesaj || JSON.stringify(x)))))));
       kids.unshift(el('b', { class: 'warn' }, 'Nu am generat schema. '));
-    } else if (r.model) {
-      replaceModel(r.model, null, { chat: true }); setValid(r.validare); setTab('calc');
-      kids.push(el('div', { style: 'margin-top:6px;display:flex;gap:8px' }, el('button', { class: 'btn sm', type: 'button', onclick: () => { undo(); res.hidden = true; } }, 'Revino la schema anterioară')));
+      res.replaceChildren(...kids);
+    } else {
+      // r10: nu se desenează direct — întâi panoul de confirmare (în locul tab-urilor)
+      res.replaceChildren(el('div', {}, 'Verifică datele înțelese în panoul de mai jos, corectează ce nu e bine, apoi „Confirmă și desenează”.'));
+      confDeschide({ src: 'chat', text, it, citire: r.citire && r.citire.mesaj, cart: r.cartus_chat, cur });
     }
-    res.replaceChildren(...kids);
   } catch (e) { res.replaceChildren(el('div', { class: 'warn' }, 'Nu am putut interpreta descrierea: ' + e.message)); }
   btn.classList.remove('busy'); btn.disabled = false;
+}
+
+/* =========================================================================== confirmarea intrării (după chat, înainte de desen) */
+// r10: regulile de citire nu prind toate formulările → proiectantul vede ce a înțeles programul, corectează pe loc, apoi se desenează.
+// Panoul editează o copie a intrării fizice; câmpurile neafișate rămân exact ca în intrarea originală.
+let CONF = null;
+const CONF_UNIT = new WeakMap();     // unitatea aleasă (A / kW) pentru rândurile fără valoare   // { src: 'chat'|'wiz', text, it, citire, cart, cur, orig, ed, bat, batAtins, inv1, pres, touched, raw }
+const CONF_RETEA_OBLIG = ['locuinta', 'bransament', 'prosumator', 'tablou'];
+const faraI = t => String(t || '').replace(/\s*\(I\d{2}\)/g, '');
+const confTip = () => (CONF.ed.tip_schema === 'bess' ? 'cef' : CONF.ed.tip_schema);
+const getP = (o, p) => p.split('.').reduce((a, k) => (a == null ? undefined : a[k]), o);
+function setP(o, p, v) {
+  const ks = p.split('.'); const last = ks.pop(); let a = o;
+  for (const k of ks) { if (a[k] == null || typeof a[k] !== 'object') a[k] = {}; a = a[k]; }
+  if (v === undefined || v === '') delete a[last]; else a[last] = v;
+}
+// presupunerile motorului (și avertismentele) → câmpul din panou pe care îl privesc: marcat „presupus” până îl atingi
+const CONF_PRES = [
+  [/rețea nedeclarată|nu încape în monofazat/i, ['retea']],
+  [/schema de legare la pământ nedeclarată/i, ['schema_pamant']],
+  [/calibrul Q din BMPT nedeclarat/i, ['alimentare.In_Q_bransament_A']],
+  [/alimentare din branșament existent/i, ['alimentare.tip']],
+  [/sursa tabloului nedeclarată/i, ['origine']],
+  [/sursa nedeclarată/i, ['sursa_retea']],
+  [/PT propriu .*adăugat/i, ['pt_Sn_kVA']],
+  [/PCS BESS = /i, ['bat.P_kW']],
+  [/cuplaj declarat/i, ['bat.cuplaj']],
+  [/racordul prin BMPT \(nedeclarat\)/i, ['racord']],
+  [/plecări:? L = \d+/i, ['plecari.L_m', 'consumatori.L_m']],
+  [/puterile și lungimile circuitelor nedeclarate/i, ['circuite.P_kW', 'circuite.L_m']],
+];
+// întrebările / avertismentele → câmpul de completat lângă ele
+const CONF_INTREB = [
+  [/monofazat .*trifazat|rețeaua nu se presupune/i, 'retea'], [/unde se racordează/i, 'racord'], [/PT propriu/i, 'pt_Sn_kVA'],
+  [/cuplată în c\.c\./i, 'bat.cuplaj'], [/puterea PCS/i, 'bat.P_kW'], [/schema de legare|TN-C-S|\bTT\b/i, 'schema_pamant'], [/putere(a)? aprobată/i, 'alimentare.P_aprobata_kW'],
+  [/sursa tabloului|originea/i, 'origine'],
+];
+const CONF_PORNIRE = [['', 'directă / —'], ['directa', 'directă'], ['stea_triunghi', 'stea-triunghi'], ['convertizor', 'convertizor'], ['soft', 'soft-starter']];
+const CONF_SPL = { locuinta: ['TN-C-S', 'TT'], bransament: ['TN-C-S', 'TT'], tablou: ['TN-C-S', 'TN-S', 'TT', 'TN-C'], prosumator: ['TN-C-S', 'TN-S', 'TT'],
+  cef: ['TN-C-S', 'TN-S', 'TT'], pt: ['TN-S', 'TN-C-S', 'TN-C'], ge_ats: ['TN-S', 'TN-C-S'] };
+
+function confDeschide(o) {
+  const it = o.it || {}; const ed = clone(it.intrare_fizica);
+  const C = { src: o.src, text: o.text, it, citire: o.citire, cart: o.cart || {}, cur: o.cur, orig: clone(it.intrare_fizica), ed,
+    bat: {}, batAtins: false, inv1: false, pres: new Map(), touched: new Set(), raw: new Map() };
+  const t = ed.tip_schema;
+  if (['cef', 'bess', 'prosumator'].includes(t)) {
+    const b = ed.bess || {}; C.bat = { kWh: b.kWh ?? ed.baterie_kWh, P_kW: b.P_kW, cuplaj: b.cuplaj };
+    if (t === 'prosumator' && !(Array.isArray(ed.invertoare) && ed.invertoare.length) && (ed.Pn_inv_kW != null || ed.invertor)) {
+      // un singur invertor (Pn_inv_kW / invertor) = un rând în tabel; la confirmare revine la forma inițială dacă rămâne unul
+      C.inv1 = true; ed.invertoare = [Object.assign({}, ed.invertor || {}, { n: 1 }, ed.Pn_inv_kW != null ? { Pn_kW: ed.Pn_inv_kW } : {})];
+      delete ed.Pn_inv_kW; delete ed.invertor;
+    }
+  }
+  for (const txt of [...(it.presupus || []), ...(it.avertismente || []).map(x => typeof x === 'string' ? x : (x.mesaj || ''))])
+    for (const [re, ps] of CONF_PRES) if (re.test(txt)) ps.forEach(p => { if (!C.pres.has(p)) C.pres.set(p, faraI(txt)); });
+  CONF = C; PENDING_FOCUS = 'cf-h'; $('#pane').scrollTop = 0; render();
+}
+const confPres = p => (CONF.touched.has(p) ? null : CONF.pres.get(p) || null);
+const confRoot = p => (p.startsWith('bat.') ? CONF : CONF.ed);
+function confSet(p, v) {
+  CONF.touched.add(p);
+  if (p.startsWith('bat.')) CONF.batAtins = true;
+  if (p === '_nTD') {
+    const n = Math.max(0, Math.round(v || 0)); const a = CONF.ed.tablouri_secundare = CONF.ed.tablouri_secundare || [];
+    while (a.length > n) a.pop();
+    while (a.length < n) a.push({ nume: 'TD' + (a.length + 1), L_m: 20, circuite: [{ nume: 'Prize', receptor: 'prize', P_kW: 2 }] });
+    return;
+  }
+  setP(confRoot(p), p, v);
+}
+/** câmp numeric: text în format românesc → număr; textul nevalid rămâne în câmp (și blochează confirmarea) */
+function confNum(inp, key, set) {
+  const t = inp.value.trim(); const v = parseRO(t);
+  if (t !== '' && v === null) { CONF.raw.set(key, inp.value); inp.setAttribute('aria-invalid', 'true'); inp.title = 'Număr invalid — folosește virgula pentru zecimale, ex. 12,5'; }
+  else { CONF.raw.delete(key); inp.removeAttribute('aria-invalid'); inp.title = ''; set(t === '' ? undefined : v); }
+  inp.closest('.cf-pres')?.classList.remove('cf-pres');
+  confStare();
+}
+/** câmpurile esențiale ale tipului de schemă (etichete ca în tab-ul Calcul) */
+function confCampuri() {
+  const e = CONF.ed, t = confTip(), F = [];
+  const sel = (p, label, select, o = {}) => F.push({ p, label, select, ...o });
+  const num = (p, label, ph, o = {}) => F.push({ p, label, num: true, ph, ...o });
+  const trafo = (p, label, gol) => sel(p, label, [['', gol], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], { numVal: true, rerender: true });
+  sel('tip_schema', 'Tipul schemei', [...TIP_SCHEMA, ...(TIP_SCHEMA.some(x => x[0] === e.tip_schema) ? [] : [[e.tip_schema, e.tip_schema === 'bess' ? 'BESS de sine stătător (stocare)' : e.tip_schema]])], { rerender: true });
+  if (t !== 'pt') {
+    const ob = CONF_RETEA_OBLIG.includes(t);
+    sel('retea', ob ? 'Rețea (obligatoriu)' : 'Rețea', ob ? [['', '— alege: mono sau trifazat —'], ['mono', 'monofazată 230 V'], ['tri', 'trifazată 3 × 400/230 V']]
+      : [['', 'trifazată 3 × 400/230 V (implicit)'], ['tri', 'trifazată 3 × 400/230 V'], ['mono', 'monofazată 230 V']], { rerender: true, oblig: ob });
+  }
+  const pSpl = (/→\s*(TN-C-S|TN-S|TN-C|TT)/.exec(confPres('schema_pamant') || '') || [])[1];
+  sel('schema_pamant', 'Schema de legare la pământ', [['', pSpl ? `nedeclarată (presupus ${pSpl})` : 'nedeclarată (implicit)'], ...(CONF_SPL[t] || ['TN-C-S', 'TN-S', 'TT']).map(x => [x, x])], { rerender: true });
+  if (e.schema_pamant === 'TT') num('RA_ohm', 'RA [Ω]', 'măsurată sau estimată');
+  if (t === 'locuinta') {
+    sel('alimentare.tip', 'Branșamentul', [['', 'existent (implicit)'], ['bransament_existent', 'existent'], ['bransament_nou', 'nou (se proiectează)']]);
+    num('alimentare.P_aprobata_kW', 'Putere aprobată (ATR) [kW]', 'din ATR');
+    num('alimentare.In_Q_bransament_A', 'Q în branșament [A]', 'din ATR / BMPT');
+    num('alimentare.L_coloana_m', 'Coloana până la tablou [m]', '15');
+    num('_nTD', 'Tablouri secundare', '0');
+  } else if (t === 'bransament') {
+    const src = e.Ib_A != null ? 'Ib_A' : e.S_kVA != null ? 'S_kVA' : 'P_kW';
+    num(src, src === 'P_kW' ? 'Pa [kW]' : src === 'S_kVA' ? 'S [kVA]' : 'Ib [A]', 'din ATR');
+    num('L_coloana_m', 'Coloana C2 [m]', '50');
+  } else if (t === 'tablou') {
+    num('P_kW', 'Pa declarată [kW]', 'din bilanț'); num('L_alimentare_m', 'Alimentare C1 [m]', '50');
+    sel('origine', 'Sursa tabloului', [['', 'nedeclarată (presupus BMPT)'], ['bmpt', 'rețea publică prin BMPT'], ['tg_existent', 'tablou existent (TGD)'], ['pt_propriu', 'PT propriu']], { rerender: true });
+    if (e.origine === 'pt_propriu') trafo('pt_Sn_kVA', 'Sn trafo [kVA]', '—');
+  } else if (t === 'pt') {
+    trafo('Sn_kVA', 'Sn trafo [kVA]', '—');
+    sel('n_trafo', 'Transformatoare', [['', '1 trafo'], ['1', '1 trafo'], ['2', '2 trafo (2 secții de bare + cuplă JT)']], { numVal: true });
+    sel('U_MT_kV', 'Tensiunea MT', [['', '20 kV (implicit)'], ['20', '20 kV'], ['15', '15 kV'], ['10', '10 kV'], ['6', '6 kV']], { numVal: true });
+  } else if (t === 'ge_ats') {
+    num('Sn_GE_kVA', 'Grup electrogen Sn [kVA]', ''); num('P_sarcina_kW', 'Sarcina [kW]', '');
+    sel('sursa_retea', 'Rețeaua (intrarea I) vine din', [['', 'nedeclarat (presupus BMPT)'], ['bmpt', 'rețea publică prin BMPT'], ['pt', 'PT propriu'], ['tgd', 'TGD existent']], { rerender: true });
+    if (e.sursa_retea === 'pt') trafo('pt_Sn_kVA', 'Sn PT [kVA]', '—');
+  } else if (t === 'cef') {
+    num('kWp', 'Putere c.c. [kWp]', '');
+    trafo('pt_Sn_kVA', 'PT propriu [kVA]', 'fără (racord JT)');
+    if (e.pt_Sn_kVA) sel('n_trafo', 'Transformatoare în PT', [['', '1 trafo'], ['1', '1 trafo'], ['2', '2 trafo (cuplă JT)'], ['3', '3 trafo'], ['4', '4 trafo']], { numVal: true });
+    sel('racord', 'Se leagă în', [['', e.pt_Sn_kVA ? 'PT propriu' : 'punctul de racord (BMPT)'], ['tg_existent', 'tablou general existent']]);
+    num('P_evacuata_kW', 'P evacuată ATR [kW]', 'nedeclarată');
+    num('limitare_injectie_kW', 'Limitare injecție [kW] (0 = zero)', 'fără');
+  } else if (t === 'prosumator') {
+    sel('racord', 'Se leagă în', [['', 'tabloul existent (branșament OD)'], ['tg_existent', 'TG existent'], ['bmpt', 'BMPT existent'], ['pt', 'PT existent']]);
+    num('P_aprobata_kW', 'P aprobată / evacuată ATR [kW]', 'nedeclarată');
+    num('limitare_injectie_kW', 'Limitare injecție [kW] (0 = zero)', 'fără');
+  }
+  if (t === 'cef' || t === 'prosumator') {
+    num('bat.kWh', 'Baterie — capacitate [kWh]', 'fără');
+    num('bat.P_kW', CONF.bat.cuplaj === 'cc' ? 'P baterie [kW]' : 'PCS [kW]', 'automat');
+    sel('bat.cuplaj', 'Cuplaj baterie', [['', 'automat'], ['cc', 'c.c. — port invertor hibrid'], ['ca', 'c.a. — PCS propriu']], { rerender: true });
+  }
+  return F;
+}
+function confFld(s, suf = '') {
+  const id = 'cf-' + s.p.replace(/\W/g, '-') + suf;
+  const v = s.p === '_nTD' ? ((CONF.ed.tablouri_secundare || []).length || undefined) : getP(confRoot(s.p), s.p);
+  const pres = confPres(s.p);
+  let inp;
+  if (s.select) {
+    inp = el('select', { id });
+    s.select.forEach(([val, t]) => inp.append(el('option', { value: val }, t)));
+    const cur = v == null ? '' : String(v);
+    if (cur && ![...inp.options].some(o => o.value === cur)) inp.append(el('option', { value: cur }, cur));
+    inp.value = cur;
+    inp.addEventListener('change', () => { confSet(s.p, inp.value === '' ? undefined : s.numVal ? Number(inp.value) : inp.value); render(); });
+  } else {
+    inp = el('input', { type: 'text', id, inputmode: 'decimal', autocomplete: 'off', placeholder: s.ph || '' });
+    inp.value = CONF.raw.has(id) ? CONF.raw.get(id) : v == null ? '' : numRO(v);
+    if (CONF.raw.has(id)) inp.setAttribute('aria-invalid', 'true');
+    inp.addEventListener('input', () => { confNum(inp, id, x => confSet(s.p, x)); document.querySelectorAll(`[data-cfp="${s.p}"]`).forEach(n => { if (n !== inp && n.value !== inp.value) n.value = inp.value; }); });
+    if (s.p === '_nTD') inp.addEventListener('change', () => render());
+  }
+  inp.dataset.cfp = s.p;
+  if (s.oblig && !['mono', 'tri'].includes(v)) { inp.setAttribute('aria-invalid', 'true'); inp.setAttribute('aria-describedby', 'cf-retea-err'); inp.required = true; }
+  if (pres) inp.title = 'Presupus: ' + pres;
+  return el('div', { class: 'fld' + (pres ? ' cf-pres' : '') }, el('label', { for: id }, s.label, pres ? el('span', { class: 'cf-tag' }, 'presupus') : null), inp);
+}
+/** tabel editabil (rânduri = obiectele listei, editate pe loc) cu adăugare / ștergere; derulare orizontală în propriul container */
+function confTabel(o) {
+  const { id, titlu, list, cols, nou, numeRand, adauga } = o;
+  const tb = el('tbody');
+  const th = el('tr', {}, ...cols.map(c => el('th', { scope: 'col', title: c.title || null }, c.label)), el('th', { scope: 'col' }, el('span', { class: 'sr' }, 'Acțiuni')));
+  list.forEach((row, i) => {
+    const nr = numeRand(row, i);
+    const tr = el('tr');
+    cols.forEach(c => {
+      const cid = `${id}-${i}-${c.k}`; const lab = `${c.label}, ${nr}`;
+      const v = c.get ? c.get(row) : row[c.k];
+      let n;
+      if (c.ro && c.ro(row)) n = el('span', { class: 'cf-ro' }, c.ro(row));
+      else if (c.bool) {
+        n = el('input', { type: 'checkbox', id: cid, 'aria-label': lab }); n.checked = !!v;
+        n.addEventListener('change', () => { CONF.touched.add(cid); c.set ? c.set(row, n.checked) : (n.checked ? row[c.k] = true : delete row[c.k]); });
+      } else if (c.select) {
+        n = el('select', { id: cid, 'aria-label': lab }, ...c.select.map(([val, t]) => el('option', { value: val }, t)));
+        const cur = v == null ? '' : String(v); if (cur && ![...n.options].some(x => x.value === cur)) n.append(el('option', { value: cur }, cur));
+        n.value = cur;
+        n.addEventListener('change', () => { CONF.touched.add(cid); c.set ? c.set(row, n.value) : (n.value === '' ? delete row[c.k] : row[c.k] = n.value); render(); });
+      } else {
+        n = el('input', { type: 'text', id: cid, 'aria-label': lab, autocomplete: 'off', placeholder: c.ph || '', inputmode: c.num ? 'decimal' : null, spellcheck: c.num ? null : 'false' });
+        n.value = CONF.raw.has(cid) ? CONF.raw.get(cid) : v == null ? '' : c.num ? numRO(v) : String(v);
+        if (CONF.raw.has(cid)) n.setAttribute('aria-invalid', 'true');
+        if (c.num) n.addEventListener('input', () => { CONF.touched.add(cid); confNum(n, cid, x => c.set ? c.set(row, x) : (x === undefined ? delete row[c.k] : row[c.k] = x)); });
+        else n.addEventListener('input', () => { CONF.touched.add(cid); if (n.value === '' && c.k !== 'nume') delete row[c.k]; else row[c.k] = n.value; });
+      }
+      const pres = c.pres && v == null && !CONF.touched.has(cid) ? confPres(c.pres) : null;
+      if (pres) n.title = 'Presupus: ' + pres;
+      tr.append(el('td', { class: (c.cls || '') + (pres ? ' cf-pres' : '') }, n));
+    });
+    tr.append(el('td', { class: 'cf-del' }, el('button', { class: 'btn ghost sm icon danger', type: 'button', id: `${id}-${i}-del`, 'aria-label': `Șterge ${nr}`, title: 'Șterge rândul', html: '✕',
+      onclick: () => { list.splice(i, 1); CONF.touched.add(id); PENDING_FOCUS = list.length ? `${id}-${Math.min(i, list.length - 1)}-del` : `${id}-add`; render(); } })));
+    tb.append(tr);
+  });
+  const box = el('div', { class: 'card cf-card' }, el('div', { class: 'ghead' }, el('h3', { style: 'margin:0', id: id + '-h' }, titlu), el('span', { class: 'count' }, String(list.length))));
+  box.append(el('div', { class: 'cf-scroll', role: 'region', 'aria-labelledby': id + '-h', tabindex: '0' },
+    el('table', { class: 'cf-tab', 'aria-labelledby': id + '-h' }, el('thead', {}, th), tb)));
+  if (!list.length) box.append(el('p', { class: 'hint' }, 'Niciun rând — adaugă cel puțin unul.'));
+  box.append(el('button', { class: 'btn-add', type: 'button', id: id + '-add', html: ICON.plus + adauga, onclick: () => { list.push(nou(list)); CONF.touched.add(id); PENDING_FOCUS = `${id}-${list.length - 1}-${cols[0].k}`; render(); } }));
+  return box;
+}
+function confTabele() {
+  const e = CONF.ed, t = confTip(), out = [];
+  const uRand = r => (r.P_kW != null ? 'kW' : r.In_A != null ? 'A' : CONF_UNIT.get(r) || 'A');
+  const valPl = { k: 'val', label: 'P [kW] / In [A]', num: true, get: r => r.P_kW ?? r.In_A,
+    set: (r, x) => { const u = uRand(r); CONF_UNIT.set(r, u); const k = u === 'kW' ? 'P_kW' : 'In_A'; if (x === undefined) delete r[k]; else r[k] = x; },
+    ro: r => (r.copii && r.copii.length ? `tablou cu ${r.copii.length} circuite` : null) };
+  const unit = { k: 'u', label: 'Unitate', select: [['A', 'A (calibru)'], ['kW', 'kW (putere)']], get: uRand, ro: r => (r.copii && r.copii.length ? '—' : null),
+    set: (r, u) => { const v = r.P_kW ?? r.In_A; delete r.P_kW; delete r.In_A; CONF_UNIT.set(r, u); if (v != null) r[u === 'kW' ? 'P_kW' : 'In_A'] = v; } };
+  const sig = { k: 'siguranta', label: 'Siguranță', title: 'Consumator de siguranță la incendiu: fără DDR, cablu E90', bool: true, get: r => r.siguranta === true, set: (r, on) => { if (on) r.siguranta = true; else if (r.siguranta === true) r.siguranta = false; else delete r.siguranta; } };
+  const porn = { k: 'pornire', label: 'Pornire', select: CONF_PORNIRE };
+  const nrm = (l, i) => `rândul ${i + 1}${l.nume ? ' (' + l.nume + ')' : ''}`;
+  if (t === 'locuinta') {
+    e.circuite = e.circuite || [];
+    const cols = [{ k: 'nume', label: 'Circuit', cls: 'w-n' }, { k: 'receptor', label: 'Receptor', select: RECEPTOR_LOC, cls: 'w-r' },
+      { k: 'P_kW', label: 'P [kW]', num: true, ph: 'uzual', pres: 'circuite.P_kW', cls: 'w-s' }];
+    if (e.retea !== 'mono') cols.push({ k: 'faza', label: 'Faza', select: [['', 'automat'], ['L1', 'L1'], ['L2', 'L2'], ['L3', 'L3'], ['3F', 'trifazat']], cls: 'w-s' });
+    cols.push({ k: 'L_m', label: 'L [m]', num: true, ph: 'uzual', pres: 'circuite.L_m', cls: 'w-s' });
+    out.push(confTabel({ id: 'cf-ci', titlu: 'Circuitele tabloului', list: e.circuite, cols, adauga: 'Circuit', numeRand: (r, i) => `circuitul ${i + 1}${r.nume ? ' (' + r.nume + ')' : ''}`,
+      nou: l => ({ nume: 'Circuit ' + (l.length + 1), receptor: 'prize' }) }));
+  } else if (t === 'tablou' || t === 'pt') {
+    e.plecari = e.plecari || [];
+    out.push(confTabel({ id: 'cf-pl', titlu: 'Plecări', list: e.plecari, adauga: 'Plecare', numeRand: nrm, nou: l => ({ nume: 'TD-' + (l.length + 1), In_A: 63 }),
+      cols: [{ k: 'nume', label: 'Nume', cls: 'w-n' }, { ...valPl, cls: 'w-s' }, { ...unit, cls: 'w-u' }, { ...porn, cls: 'w-r' }, { ...sig, cls: 'w-b' },
+        { k: 'L_m', label: 'L [m]', num: true, ph: '50', pres: 'plecari.L_m', cls: 'w-s' }, { k: 'n_circuite', label: 'Circuite', title: 'Circuite identice', num: true, ph: '1', cls: 'w-s' }] }));
+  } else if (t === 'ge_ats') {
+    e.consumatori = e.consumatori || [];
+    out.push(confTabel({ id: 'cf-co', titlu: 'Consumatori', list: e.consumatori, adauga: 'Consumator', numeRand: nrm, nou: l => ({ nume: 'Consumator ' + (l.length + 1), P_kW: 10 }),
+      cols: [{ k: 'nume', label: 'Nume', cls: 'w-n' }, { k: 'P_kW', label: 'P [kW]', num: true, cls: 'w-s' }, { ...porn, cls: 'w-r' }, { ...sig, cls: 'w-b' },
+        { k: 'vital', label: 'Vital (pe GE)', bool: true, cls: 'w-b' }, { k: 'L_m', label: 'L [m]', num: true, ph: '50', pres: 'consumatori.L_m', cls: 'w-s' },
+        { k: 'n_circuite', label: 'Circuite', title: 'Circuite identice', num: true, ph: '1', cls: 'w-s' }] }));
+  } else if (t === 'cef' || t === 'prosumator') {
+    e.invertoare = e.invertoare || [];
+    out.push(confTabel({ id: 'cf-inv', titlu: 'Invertoare', list: e.invertoare, adauga: 'Grup de invertoare', numeRand: (r, i) => `grupul ${i + 1}`,
+      nou: () => ({ n: 1, Pn_kW: t === 'cef' ? 50 : 10 }),
+      cols: [{ k: 'n', label: 'Bucăți', num: true, ph: '1', cls: 'w-s' }, { k: 'model', label: 'Model', cls: 'w-n', ph: 'din fișă' }, { k: 'Pn_kW', label: 'Pn [kW]', num: true, cls: 'w-s' },
+        { k: 'faza', label: 'Faza', select: [['', 'automat (din model)'], ['3F', 'trifazat'], ['L1', 'L1'], ['L2', 'L2'], ['L3', 'L3']], cls: 'w-r',
+          get: r => r.faza || (r.retea === 'tri' ? '3F' : ''), set: (r, v) => { delete r.faza; delete r.retea; if (v === '3F') r.retea = 'tri'; else if (v) { r.retea = 'mono'; r.faza = v; } } },
+        { k: 'existent', label: 'Existent', bool: true, cls: 'w-b' }] }));
+  }
+  return out;
+}
+function confBlocaj() {
+  if (!CONF) return '';
+  const t = confTip();
+  if (CONF_RETEA_OBLIG.includes(t) && !['mono', 'tri'].includes(CONF.ed.retea)) return 'Confirmarea e blocată: alege rețeaua (monofazată sau trifazată) în câmpul „Rețea”.';
+  if (CONF.raw.size) return 'Corectează valorile marcate cu roșu: nu sunt numere (folosește virgula pentru zecimale, ex. 12,5).';
+  return '';
+}
+function confStare() {
+  const b = $('#cf-ok'), m = $('#cf-block'); if (!b) return;
+  const blk = confBlocaj();
+  b.setAttribute('aria-disabled', blk ? 'true' : 'false'); b.classList.toggle('blocked', !!blk);
+  if (m) { m.textContent = blk; m.hidden = !blk; }
+}
+function confRender(root) {
+  const C = CONF, it = C.it, t = confTip();
+  const wrap = el('div', { id: 'conf', class: 'conf' });
+  wrap.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); confInapoi(); }
+    else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); confConfirma(); }
+  });
+  wrap.append(el('h2', { class: 'wz-h', id: 'cf-h', tabindex: '-1' }, 'Verifică ce am înțeles'),
+    el('p', { class: 'desc' }, 'Corectează pe loc ce nu e bine, apoi confirmă — planșa se desenează abia după confirmare.'));
+  const linii = faraI(it.intelegere).split('\n');
+  const am = linii.filter(l => !/^(Am presupus|Verificări|Întrebare|Nu am înțeles)/.test(l)).join(' ') || 'Am citit descrierea.';
+  const pres = (it.presupus || []).map(faraI);
+  const ai = el('div', { class: 'card cf-card' }, el('h3', {}, 'Am înțeles'), el('p', { class: 'cf-txt' }, am.replace(/^Am înțeles:\s*/, '')));
+  if (C.citire) ai.append(el('p', { class: 'hint', style: 'margin:4px 0 0' }, C.citire[0].toUpperCase() + C.citire.slice(1) + '.'));
+  if (pres.length) ai.append(el('details', { class: 'cf-presl', open: pres.length <= 5 ? true : null },
+    el('summary', {}, `Am presupus (${pres.length})`, el('span', { class: 'hint' }, ' — câmpurile presupuse au contur galben')), el('ul', {}, ...pres.map(p => el('li', {}, p)))));
+  wrap.append(ai);
+  // neînțelese / întrebări, cu câmpul de completat lângă ele
+  const campuri = confCampuri();
+  const intreb = [...(it.intrebari || []).map(faraI), ...(it.avertismente || []).map(x => faraI(typeof x === 'string' ? x : (x.mesaj || '')))];
+  if ((it.neconsumat || []).length && !intreb.some(q => /Nu am folosit/.test(q))) intreb.push('Nu am folosit în schemă: ' + it.neconsumat.map(x => `„${x}”`).join('; '));
+  if (intreb.length) {
+    const ul = el('ul', { class: 'cf-q' });
+    const folosite = new Set();
+    intreb.filter(Boolean).forEach((q, i) => {
+      const hit = CONF_INTREB.find(([re, p]) => re.test(q) && !folosite.has(p) && campuri.some(s => s.p === p));
+      let f = null; if (hit) { folosite.add(hit[1]); f = confFld(campuri.find(s => s.p === hit[1]), '-q'); }
+      ul.append(el('li', {}, el('p', {}, q), f));
+    });
+    wrap.append(el('div', { class: 'card cf-card cf-intreb', role: 'group', 'aria-labelledby': 'cf-qh' }, el('h3', { id: 'cf-qh' }, `De lămurit (${intreb.length})`), ul));
+  }
+  const g = el('div', { class: 'card cf-card' }, el('h3', {}, 'Instalația'), el('div', { class: 'cf-grid' }, ...campuri.map(s => confFld(s))));
+  if (CONF_RETEA_OBLIG.includes(t) && !['mono', 'tri'].includes(C.ed.retea))
+    g.append(el('p', { class: 'msg err', id: 'cf-retea-err' }, 'Alege rețeaua din ATR — monofazat (BMPM) sau trifazat (BMPT) schimbă aparatele și cablurile.'));
+  wrap.append(g, ...confTabele());
+  wrap.append(el('div', { class: 'cf-act' }, el('p', { class: 'msg err', id: 'cf-block', role: 'status', 'aria-live': 'polite', hidden: true }),
+    el('div', { class: 'cf-btns' }, el('button', { class: 'btn', type: 'button', id: 'cf-back', onclick: confInapoi }, '← Înapoi la text'), el('span', { class: 'sp' }),
+      el('span', { class: 'hint hide-sm' }, IS_MAC ? '⌘ + Enter' : 'Ctrl + Enter'),
+      el('button', { class: 'btn pri', type: 'button', id: 'cf-ok', 'aria-describedby': 'cf-block', onclick: confConfirma }, 'Confirmă și desenează'))));
+  root.append(wrap);
+  requestAnimationFrame(confStare);
+}
+function confInapoi() {
+  const C = CONF; if (!C) return;
+  CONF = null; render();
+  if (C.src === 'wiz') { const ta = $('#wz-text'); if (ta) { ta.value = C.text; ta.focus(); } }
+  else { $('#assist').open = true; $('#chat-res').hidden = true; $('#chat-text').focus(); }
+}
+/** intrarea editată → intrarea fizică pentru motor (forma inițială acolo unde panoul a schimbat-o doar pentru afișare) */
+function confExport() {
+  const e = clone(CONF.ed), o = CONF.orig, b = CONF.bat;
+  if (CONF.inv1 && Array.isArray(e.invertoare) && e.invertoare.length === 1) {
+    const { n, Pn_kW, ...rest } = e.invertoare[0];
+    if ((n == null || +n === 1) && !rest.faza && !rest.retea && !rest.existent) {
+      delete e.invertoare;
+      if (o.Pn_inv_kW !== undefined || !(o.invertor && 'Pn_kW' in o.invertor)) { if (Pn_kW != null) e.Pn_inv_kW = Pn_kW; } else rest.Pn_kW = Pn_kW;
+      if (Object.keys(rest).length) e.invertor = rest;
+    }
+  }
+  if (CONF.batAtins) {
+    const are = ['kWh', 'P_kW', 'cuplaj'].some(k => b[k] != null && b[k] !== '');
+    if (!are) { delete e.bess; delete e.baterie_kWh; }
+    else if (e.bess || b.P_kW != null || b.cuplaj || e.tip_schema !== 'prosumator') {
+      e.bess = Object.assign({}, e.bess || {}); ['kWh', 'P_kW', 'cuplaj'].forEach(k => { if (b[k] == null || b[k] === '') delete e.bess[k]; else e.bess[k] = b[k]; });
+      delete e.baterie_kWh;
+    } else e.baterie_kWh = b.kWh;
+  }
+  if (e.retea === 'mono' && Array.isArray(e.circuite)) e.circuite.forEach(c => { if (c && c.faza) delete c.faza; });
+  for (const k of Object.keys(e)) {
+    const v = e[k];
+    if (!(k in o) && ((Array.isArray(v) && !v.length) || (v && typeof v === 'object' && !Array.isArray(v) && !Object.keys(v).length))) delete e[k];
+  }
+  return e;
+}
+async function confConfirma() {
+  const C = CONF; if (!C) return;
+  const blk = confBlocaj();
+  if (blk) { confStare(); toast(blk, { kind: 'err' }); (document.querySelector('#conf [aria-invalid="true"]'))?.focus(); return; }
+  const btn = $('#cf-ok'); if (!btn || btn.classList.contains('busy')) return;
+  btn.classList.add('busy'); btn.setAttribute('aria-busy', 'true');
+  const intrare = confExport();
+  try {
+    const r = await (await fetch('/api/chat/confirma', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ intrare, cartus_chat: C.cart, model: C.cur }) })).json();
+    if (r.eroare) throw new Error(r.eroare);
+    if (CONF !== C) return;           // între timp s-a revenit la text
+    CONF = null;
+    const corectat = C.touched.size;
+    if (C.src === 'wiz') {
+      r.model._wiz = 1; WIZ_START = null; PENDING_FOCUS = 'wz-h';
+      if (r.model.calc && r.model.calc.retea === 'tri' && !C.touched.has('retea') && /nu încape în monofazat/.test((C.it.presupus || []).join(' '))) r.model.calc._retea_dedusa = true;
+      replaceModel(r.model, null, { chat: true }); setValid(r.validare); render();
+      const np = (r.validare && r.validare.presupus || []).length;
+      toast('Am completat datele din descrierea confirmată.' + (np ? ` ${np} valori sunt încă presupuse — verifică-le și completează ce lipsește.` : ' Verifică datele și completează ce lipsește.'), { ms: 10000 });
+    } else {
+      replaceModel(r.model, null, { chat: true }); setValid(r.validare); setTab('calc');
+      const res = $('#chat-res'); res.hidden = false;
+      res.replaceChildren(el('div', { class: 'res-chat' }, 'Am desenat schema din datele confirmate' + (corectat ? ', cu corecturile tale.' : '.')),
+        el('div', { style: 'margin-top:6px;display:flex;gap:8px' }, el('button', { class: 'btn sm', type: 'button', onclick: () => { undo(); res.hidden = true; } }, 'Revino la schema anterioară')));
+    }
+  } catch (e) {
+    toast('Schema nu a putut fi desenată: ' + e.message, { kind: 'err', ms: 9000 });
+    const b2 = $('#cf-ok'); if (b2) { b2.classList.remove('busy'); b2.removeAttribute('aria-busy'); }
+  }
 }
 
 /* =========================================================================== toast */
@@ -2710,7 +3103,7 @@ function initChrome() {
   document.addEventListener('keydown', e => {
     const mod = e.metaKey || e.ctrlKey; if (!mod) return;
     // în câmpuri editate deja, Ctrl+Z rămâne al browserului (anulează tastarea); altfel anulează modificarea din schemă
-    const inText = e.target.matches('input[type=text],input[type=number],textarea') && (typingPushed.has(e.target) || e.target.dataset.nativ === '1' || !!e.target.closest('.prof-new,.dv-new'));
+    const inText = e.target.matches('input[type=text],input[type=number],textarea') && (typingPushed.has(e.target) || e.target.dataset.nativ === '1' || !!e.target.closest('.prof-new,.dv-new,#conf'));
     const k = e.key.toLowerCase();
     if (k === 'z' && !inText) { e.preventDefault(); e.shiftKey ? redo() : undo(); }
     else if (k === 'y' && !inText) { e.preventDefault(); redo(); }
