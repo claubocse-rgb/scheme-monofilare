@@ -124,6 +124,21 @@ def _sabloane(tip, p):
                 f"Icn {_u(icn, 'kA')}, {_u(u, 'V')} c.a., SR EN 60898-1" + bk_t,
                 f"{poli} {PUNCT} {curba}{fmt_ro(In)} {PUNCT} {_u(icn, 'kA')}")
     if t in ("mccb", "acb"):
+        den, car, desen = _sabloane_mccb(t, p, In)
+        # r12 (proiecte reale): întreruptorul de interfață motorizat (comandat de PI), reglajele impuse
+        if _g(p, "motorizat"):
+            den += ", motorizat (acționare de la releul de protecție de interfață)"
+            desen += f" {PUNCT} motorizat"
+        if _g(p, "interfata"):
+            den = "Întreruptor de interfață — " + den[0].lower() + den[1:]
+        if _g(p, "Ir_fortat"):
+            car += " (Ir reglat conform proiect)"
+        return den, car, desen
+    return _sabloane_rest(t, p, In)
+
+
+def _sabloane_mccb(t, p, In):
+    if True:
         poli = _poli(_g(p, "poli"), 4)
         ir = _g(p, "Ir_A", implicit=In)
         k = ir / In if In else 1.0
@@ -164,6 +179,10 @@ def _sabloane(tip, p):
             desen += f" {PUNCT} Isd {_u(isd, 'A')}"
         return (f"Întreruptor automat {nume} {poli}, In {_u(In, 'A')}, declanșator electronic LSI",
                 ", ".join(parti), desen)
+    raise AssertionError(t)
+
+
+def _sabloane_rest(t, p, In):
     if t == "sep_sig":
         poli = _poli(_g(p, "poli"), 3)
         gab = str(_g(p, "gabarit") or gabarit_nh(In))

@@ -72,7 +72,9 @@ CATALOG = {
              "bara": "{obiect}: ΔU cumulat la bara tabloului {x} % > {lim} % (limita I7 pentru forță){detaliu} — niciun "
                      "receptor din aval nu se mai poate încadra",
              "inv": "{obiect}: ΔU pe cablul invertorului {x} % > {lim} %{detaliu} — invertorul declanșează la "
-                    "supratensiune"},
+                    "supratensiune",
+             "inv_cumulat": "{obiect}: ΔU cumulat la bornele invertorului {x} % (amonte {a} % + acest cablu {b} %) > "
+                            "{lim} %{detaliu} — invertorul declanșează la supratensiune"},
             "secțiune mai mare / cabluri în paralel / mutarea tabloului"),
     "V21": ("ΔU la bara tabloului / CEF", {"": "{obiect}: ΔU cumulat {x} % > {lim} %"},
             "secțiune mai mare sau rezervă mai mică pentru circuitele finale"),

@@ -207,7 +207,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "PI_externa": {
@@ -264,6 +265,48 @@ INVENTAR = {
 "tipuri": [
 "prosumator"
 ]
+},
+"QG.Icu_kA": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"QG.In_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"QG.Ir_reglat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"QG.Isd_reglat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"QG.electronic": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": []
+},
+"QG.motorizat": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": []
 },
 "Q_In_A": {
 "t": [
@@ -768,7 +811,6 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"prosumator",
 "tablou"
 ]
 },
@@ -779,7 +821,6 @@ INVENTAR = {
 "v": [],
 "tipuri": [
 "bransament",
-"prosumator",
 "tablou"
 ]
 },
@@ -814,7 +855,6 @@ INVENTAR = {
 ],
 "tipuri": [
 "bransament",
-"prosumator",
 "tablou"
 ]
 },
@@ -862,7 +902,6 @@ INVENTAR = {
 "NA2XY"
 ],
 "tipuri": [
-"prosumator",
 "tablou"
 ]
 },
@@ -872,7 +911,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "cablu_C0.S_fortat": {
@@ -881,7 +921,8 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "cablu_C0.izolatie": {
@@ -889,10 +930,12 @@ INVENTAR = {
 "string"
 ],
 "v": [
+"PVC",
 "XLPE"
 ],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "cablu_C0.material": {
@@ -904,19 +947,11 @@ INVENTAR = {
 "Cu"
 ],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
 },
 "cablu_C0.n_fortat": {
-"t": [
-"number"
-],
-"v": [],
-"tipuri": [
-"cef"
-]
-},
-"cablu_C0.n_paralel": {
 "t": [
 "number"
 ],
@@ -936,8 +971,37 @@ INVENTAR = {
 "NYY-J"
 ],
 "tipuri": [
-"cef"
+"cef",
+"prosumator"
 ]
+},
+"cablu_C0.tronsoane[].L": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"cablu_C0.tronsoane[].S_fortat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"cablu_C0.tronsoane[].material": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
+"cablu_C0.tronsoane[].n_fortat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
 },
 "cablu_MT.L_m": {
 "t": [
@@ -979,6 +1043,13 @@ INVENTAR = {
 "pt"
 ]
 },
+"cablu_MT.tronsoane[].L_m": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
 "cablu_cc.S_fortat": {
 "t": [
 "number"
@@ -1015,6 +1086,17 @@ INVENTAR = {
 "number"
 ],
 "v": [],
+"tipuri": [
+"cef"
+]
+},
+"cablu_inv.izolatie": {
+"t": [
+"string"
+],
+"v": [
+"PVC"
+],
 "tipuri": [
 "cef"
 ]
@@ -1105,6 +1187,7 @@ INVENTAR = {
 ],
 "v": [],
 "tipuri": [
+"cef",
 "pt"
 ]
 },
@@ -1392,6 +1475,13 @@ INVENTAR = {
 "ge_ats"
 ]
 },
+"contor_productie.tip": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
 "cosfi": {
 "t": [
 "number"
@@ -1415,6 +1505,13 @@ INVENTAR = {
 ]
 },
 "ddr_amonte": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": []
+},
+"dg_intreruptor": {
 "t": [
 "boolean"
 ],
@@ -1485,6 +1582,20 @@ INVENTAR = {
 "prosumator"
 ]
 },
+"invertoare[].Iac_max_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].L_m": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
 "invertoare[].Pn_kW": {
 "t": [
 "number"
@@ -1498,6 +1609,20 @@ INVENTAR = {
 "invertoare[].U_ca_V": {
 "t": [
 "number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].cablu.S_fortat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].cablu.material": {
+"t": [
+"string"
 ],
 "v": [],
 "tipuri": []
@@ -1593,7 +1718,70 @@ INVENTAR = {
 "prosumator"
 ]
 },
+"invertoare[].prot_tip": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].protectie.Icu_kA": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].protectie.In_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].protectie.Ir_reglat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].protectie.electronic": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": []
+},
 "invertoare[].sectie": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].string.n_MPPT": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].string.n_module": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].string.n_stringuri_paralel": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"invertoare[].tablou": {
 "t": [
 "number"
 ],
@@ -1737,6 +1925,20 @@ INVENTAR = {
 "bransament"
 ]
 },
+"modul.I_rev_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"modul.Impp_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
 "modul.Pmax_W": {
 "t": [
 "number"
@@ -1746,6 +1948,20 @@ INVENTAR = {
 "cef",
 "prosumator"
 ]
+},
+"modul.Umax_sistem_V": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"modul.Vmpp_V": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
 },
 "modul.model": {
 "t": [
@@ -1782,6 +1998,45 @@ INVENTAR = {
 "prosumator"
 ]
 },
+"monitorizare.contor_productie.tip": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
+"monitorizare.rs485": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": []
+},
+"monitorizare.smart_meter.TC_primar_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"monitorizare.smart_meter.model": {
+"t": [
+"string"
+],
+"v": [
+"DTSU666-H"
+],
+"tipuri": [
+"cef"
+]
+},
+"monitorizare.smartlogger.model": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
 "n_tgd_cf": {
 "t": [
 "number"
@@ -1811,6 +2066,16 @@ INVENTAR = {
 "tg_existent"
 ],
 "tipuri": [
+"tablou"
+]
+},
+"plecari[].Ib_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": [
+"pt",
 "tablou"
 ]
 },
@@ -2239,6 +2504,20 @@ INVENTAR = {
 "v": [],
 "tipuri": []
 },
+"protectie_interfata.releu": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
+"protectie_interfata.ups_VA": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
 "pt_Sn_kVA": {
 "t": [
 "number"
@@ -2276,6 +2555,27 @@ INVENTAR = {
 "tipuri": [
 "cef"
 ]
+},
+"punct_conexiune.aar": {
+"t": [
+"boolean"
+],
+"v": [],
+"tipuri": []
+},
+"punct_conexiune.celule_linie": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"punct_conexiune.servicii_proprii_kVA": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
 },
 "racord": {
 "t": [
@@ -2482,6 +2782,55 @@ INVENTAR = {
 "v": [
 "trafo"
 ],
+"tipuri": []
+},
+"tablouri_intermediare[].In_A": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"tablouri_intermediare[].L_m": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"tablouri_intermediare[].cablu.S_fortat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"tablouri_intermediare[].cablu.material": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
+"tablouri_intermediare[].cablu.n_fortat": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
+"tablouri_intermediare[].nume": {
+"t": [
+"string"
+],
+"v": [],
+"tipuri": []
+},
+"tablouri_intermediare[].prot_tip": {
+"t": [
+"string"
+],
+"v": [],
 "tipuri": []
 },
 "tablouri_secundare[].L_m": {

@@ -7,7 +7,7 @@ import copy
 CARTUS_CEP = {
     "verificator": "", "referat": "",
     "beneficiar": "", "titlu": "", "adresa": "", "atr": "",
-    "atestat_anre": "", "atestat_tip": "", "sef_proiect": "", "verificat": "",
+    "atestat_anre": "", "atestat_tip": "", "sef_proiect": "", "verificat": "", "aprobat": "",
     # datele firmei de proiectare NU au valori implicite: vin din profilul de firmă al utilizatorului (tab-ul Proiect)
     "proiectant": "", "adresa_proiectant": "",
     "reg": "",

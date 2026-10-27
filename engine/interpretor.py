@@ -39,9 +39,11 @@ except ImportError:
 try:  # r11: dicționarul central de sinonime + clasele r11 (rescriere înainte / completări după reguli)
     from . import interp_sinonime as SIN
     from . import interp_r11 as R11
+    from . import interp_reale as R12
 except ImportError:
     from engine import interp_sinonime as SIN  # type: ignore
     from engine import interp_r11 as R11  # type: ignore
+    from engine import interp_reale as R12  # type: ignore
 try:  # r6: catalogul modelelor de invertoare / baterii (al motorului) — Pn și „hibrid” din cod
     from .calc import catalog_invertoare as _cat_inv
 except Exception:  # noqa: BLE001
@@ -3089,7 +3091,7 @@ def extrage_module_string(c: Ctx, modele: list, intr: dict):
             c.nota(f"„{c.o(s, v['e']).strip()}” = modulul PV: Pmax {fmt(v['brut'])} W (nu putere de invertor)")
             break
     if "modul" not in intr:                     # r6 (f18): „module JA 550” fără W → Pmax 550 W (presupus)
-        mw = re.search(r"\b(?:module|modul|panouri|panou)\s+(?:[a-z]+\s+){0,3}?(?P<v>[2-8]\d\d)\b(?!\s*(?:kw|a|m|v|wp|w|buc)\b)", t)
+        mw = re.search(r"\b(?:module|modul|panouri|panou)\s+(?:[a-z]+\s+){0,3}?(?P<v>[2-8]\d\d)\b(?![.,]\d)(?!\s*(?:kw|kwp|a|m|v|wp|w|buc)\b)", t)
         if mw:
             md = next((x for x in modele if mw.start() <= x["s"] < mw.end() and x["fel"] == "mod"), None)
             intr["modul"] = dict({"Pmax_W": int(mw.group("v"))}, **(_fisa(md) if md else {}))
@@ -3853,6 +3855,13 @@ def extrage_pv(c: Ctx, intr: dict, ex: dict, tip: str) -> dict:
         elif intr.get("limitare_injectie_kW") == 0 and p_evac > 0 and tip == "cef":
             c.probleme.append(("I08", f"Contradicție: „injecție zero” și puterea aprobată de evacuare {fmt(p_evac)} kW din ATR (I08).",
                                f"Centrala injectează până la {fmt(p_evac)} kW (ATR), sau funcționează cu injecție zero?"))
+    if inv and total and total > sigma + 0.5 and not kwp and tip == "cef" and \
+            re.search(rf"\b(?:pi|p\s*inst\w*|puterea?\s+instalat\w*)\s*(?:=|:|de)?\s*{re.escape(fmt(total, 3)).replace(',', '[.,]')}\s*kw\b", c.t):
+        # r12 (real X): „CEF Pi 324 kW” cu 3 × 100 kW — „Pi” > Σ invertoare = puterea instalată c.c. (kWp), nu contradicție
+        puteri["kWp"] = intr["kWp"] = _nr(total)
+        kwp = {"val": total}
+        c.nota(f"„Pi {fmt(total)} kW” > Σ invertoare {fmt(sigma)} kW = puterea instalată a modulelor ({fmt(total)} kWp)")
+        total = None
     if inv and total and abs(total - sigma) > max(0.5, 0.01 * total):
         desc = " + ".join(f"{i['n']} × {fmt(i['Pn_kW'])}" for i in inv)
         c.probleme.append(("I08", f"Contradicție: invertoarele {desc} kW = {fmt(sigma)} kW, dar puterea totală scrisă e "
@@ -6527,9 +6536,11 @@ def _r10_tablou(c: Ctx, intr: dict, ex: dict):
 
 
 def interpreteaza_local(text: str) -> dict:
+    text, date_r12, note_r12 = R12.preextrage(text)          # r12: texte de proiectant — cabluri / racord / QG pe segmente
     text, note_tabel = rescrie(text)                          # r8: tabel / engleză / cascade / autocorecturi
     c = Ctx(text)
-    for n in note_tabel:
+    c._reale = date_r12
+    for n in note_r12 + note_tabel:
         c.nota(n)
     mp = RE_PRET.search(c.t)
     if mp and not re.search(r"\d\s*(?:kw|kva|a)\b", c.t):     # r8 (industrial #54): prețul nu e o schemă
@@ -6548,7 +6559,7 @@ def interpreteaza_local(text: str) -> dict:
                                   "schemele de aici sunt TN / TT (I12).",
                            "Rețeaua IT medicală (trafo de separare + CPI) se proiectează separat — desenez doar alimentarea "
                            "tabloului (TN-S, din TG), sau tabloul nu e IT medical?"))
-    tip = R11.corecteaza_tip(c, detecteaza_tip(c))          # r11: UPS … kVA ≠ PT
+    tip = R12.corecteaza_tip(c, R11.corecteaza_tip(c, detecteaza_tip(c)))   # r11: UPS … kVA ≠ PT; r12: PV ≠ GE
     c._tip = tip
     retea = detecteaza_retea(c)
     ex = _extras_gol(c, tip, retea)
@@ -6689,6 +6700,7 @@ def interpreteaza_local(text: str) -> dict:
                                    "monofazat, alimentat de pe o fază a BMPT-ului trifazat (circuite L+N), sau e trifazat "
                                    "(3 × 400/230 V)?"))
     R11.post(c, intr, ex, tip, sys.modules[__name__])          # r11: UPS, AAR, GE izolat, PV, locuință, rețea dedusă
+    R12.aplica(c, intr, ex, tip, sys.modules[__name__])        # r12: cablurile / racordul / QG / monitorizarea pe segmente
     neconsumat = plasa_siguranta(c, intr, tip)
     if neconsumat:
         c.intrebari.append(("I15", "Nu am folosit în schemă: " + "; ".join(f"„{x}”" for x in neconsumat)
@@ -6801,6 +6813,12 @@ def _chei_motor(intr: dict) -> list[str]:
             note.append(f"măsura {intr['masura_ceruta']} pe JT (masura: JT, cu TC)")
     for cale, k in _ch.chei_nefolosite(intr, tip):
         if cale:
+            # r12: cheile noi pe elementele listelor (invertoare[].prot_tip …) — informative până le citește motorul
+            mc = re.fullmatch(r"(\w+)\[(\d+)\]", cale)
+            if mc and isinstance(intr.get(mc.group(1)), list) and int(mc.group(2)) < len(intr[mc.group(1)]):
+                el = intr[mc.group(1)][int(mc.group(2))]
+                if isinstance(el, dict) and k in el:
+                    el["_" + k] = el.pop(k)
             continue
         intr["_" + k] = intr.pop(k)
         note.append(f"„{k}” nu e o dată a schemei „{tip}” — păstrată doar informativ (nu intră în calcul)")

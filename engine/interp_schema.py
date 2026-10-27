@@ -78,7 +78,29 @@ CAI_MOTOR = {"bess.n_pcs": "number", "bess.pcs.n": "number", "bess.pcs.Pn_kW": "
              "invertoare[].U_ca_V": "number", "bess.n_module": "number", "bess.kWh_modul": "number",
              "invertoare[].faza": "string", "invertoare[].sectie": "number", "Ik3_bara_kA": "number",
              # r10 (motorul le citește; corpusul le arată doar în unele scheme)
-             "invertoare[].existent": "boolean", "cablu.existent": "boolean", "consumatori[].vital": "boolean"}
+             "invertoare[].existent": "boolean", "cablu.existent": "boolean", "consumatori[].vital": "boolean",
+             # r12 (proiecte reale, engine/interp_reale.py): QG, protecția invertoarelor, tablouri intermediare, monitorizare,
+             # C0 pe tronsoane, cablul MT, fișa modulului
+             "QG.In_A": "number", "QG.electronic": "boolean", "QG.motorizat": "boolean", "QG.Icu_kA": "number",
+             "QG.Ir_reglat": "number", "QG.Isd_reglat": "number", "invertoare[].prot_tip": "string",
+             "invertoare[].protectie.In_A": "number", "invertoare[].protectie.Icu_kA": "number",
+             "invertoare[].protectie.Ir_reglat": "number", "invertoare[].protectie.electronic": "boolean",
+             "invertoare[].tablou": "number", "invertoare[].Iac_max_A": "number", "invertoare[].L_m": "number",
+             "invertoare[].cablu.S_fortat": "number", "invertoare[].cablu.material": "string",
+             "invertoare[].string.n_module": "number", "invertoare[].string.n_stringuri_paralel": "number",
+             "invertoare[].string.n_MPPT": "number",
+             "tablouri_intermediare[].nume": "string", "tablouri_intermediare[].L_m": "number",
+             "tablouri_intermediare[].cablu.S_fortat": "number", "tablouri_intermediare[].cablu.material": "string",
+             "tablouri_intermediare[].cablu.n_fortat": "number", "tablouri_intermediare[].prot_tip": "string",
+             "tablouri_intermediare[].In_A": "number",
+             "monitorizare.smart_meter.model": "string", "monitorizare.smart_meter.TC_primar_A": "number",
+             "monitorizare.smartlogger.model": "string", "monitorizare.rs485": "boolean",
+             "protectie_interfata.ups_VA": "number", "protectie_interfata.releu": "string", "monitorizare.contor_productie.tip": "string", "contor_productie.tip": "string", "dg_intreruptor": "boolean", "punct_conexiune.celule_linie": "number", "punct_conexiune.aar": "boolean", "punct_conexiune.servicii_proprii_kVA": "number",
+             "cablu_C0.tronsoane[].S_fortat": "number", "cablu_C0.tronsoane[].material": "string",
+             "cablu_C0.tronsoane[].n_fortat": "number", "cablu_C0.tronsoane[].L": "number",
+             "cablu_MT.S_mm2": "number", "cablu_MT.tip": "string", "cablu_MT.L_m": "number",
+             "cablu_MT.tronsoane[].L_m": "number", "modul.Vmpp_V": "number", "modul.Impp_A": "number",
+             "modul.I_rev_A": "number", "modul.Umax_sistem_V": "number"}
 NUMERICE_EXTRA_INT = {"n_pcs"}
 TIP_EXPLICIT_PLECARE = {"siguranta": "boolean", "rezerva": "boolean"}
 EXCLUSE_PLECARE = {"DDR", "ddr", "blocat", "nivel", "copii"}

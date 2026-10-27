@@ -19,7 +19,10 @@ def normalizeaza_tip(tip):
     if tip is None:
         return None
     t = str(tip).strip()
-    return {"MCB": "MCB", "MCCB": "MCCB", "ACB": "ACB", "GG": "gG", "GPV": "gPV"}.get(t.upper(), t)
+    # r12 (proiecte reale): separatorul cu siguranțe MPR / NH (separator fuzibil, „sigurante”) = gG
+    return {"MCB": "MCB", "MCCB": "MCCB", "ACB": "ACB", "GG": "gG", "GPV": "gPV", "MPR": "gG", "NH": "gG",
+            "SEPARATOR_FUZIBIL": "gG", "SIGURANTE": "gG", "SIGURANTE_GG": "gG", "SEP_SIG": "gG",
+            "MCB_C": "MCB"}.get(t.upper().replace(" ", "_").replace("-", "_").replace("Ț", "T"), t)
 
 
 def tip_implicit(rol, receptor, ip_min):
@@ -76,21 +79,32 @@ def alege_reglaj_ir(tip, In, ip_min):
     return 1.0, float(In)
 
 
-def construieste(tip, In, ip_min, curba=None, are_aval=False):
-    """SPEC §B.5: completează protecția (In ales, Ir, Im/Ii, tsd) pentru tipul dat."""
+def construieste(tip, In, ip_min, curba=None, are_aval=False, decl=None, ir=None, isd=None):
+    """SPEC §B.5: completează protecția (In ales, Ir, Im/Ii, tsd) pentru tipul dat.
+    r12 (proiecte reale): `decl` impus („EL” — declanșator electronic și la In ≤ 250 A), `ir` = Ir reglat impus [A]
+    (reglajul proiectantului, ex. 0,8·In), `isd` = Isd reglat impus [A] (altfel ales după Ik1min, §B.5 pct. 4)."""
     p = {"tip": tip, "In_A": In}
     if tip == "MCB":
         p["curba"] = curba or "C"
     elif tip in ("MCCB", "ACB"):
-        k, ir = alege_reglaj_ir(tip, In, ip_min)
-        p["Ir_multiplu"] = k
-        p["Ir_A"] = ir
-        p["decl"] = declansator(tip, In)
+        if ir is not None:
+            p["Ir_A"] = float(ir)
+            p["Ir_multiplu"] = round(float(ir) / In, 3)
+            p["Ir_fortat"] = True
+        else:
+            k, ir_ = alege_reglaj_ir(tip, In, ip_min)
+            p["Ir_multiplu"] = k
+            p["Ir_A"] = ir_
+        p["decl"] = decl if decl in ("TM", "EL") else declansator(tip, In)
         if p["decl"] == "TM":
             p["Im_A"] = norme.IM_TM_MULTIPLU * In
         else:
             p["Ii_A"] = 12.0 * In
             p["tsd_s"] = norme.TSD_S if are_aval else 0.0
+            if isd is not None:
+                p["Isd_A"] = float(isd)
+                p["Isd_multiplu"] = round(float(isd) / p["Ir_A"], 2)
+                p["Isd_fortat"] = True
     return p
 
 
@@ -129,7 +143,10 @@ def i2(prot):
 
 
 def alege_isd(prot, ik1_A):
-    """SPEC §B.5 pct. 4: cel mai mare multiplu m cu 1,2·m·Ir ≤ Ik1min; dacă niciunul nu satisface, m = 1,5."""
+    """SPEC §B.5 pct. 4: cel mai mare multiplu m cu 1,2·m·Ir ≤ Ik1min; dacă niciunul nu satisface, m = 1,5.
+    r12: Isd reglat impus de proiectant (`Isd_fortat`) nu se modifică."""
+    if prot.get("Isd_fortat"):
+        return prot.get("Isd_multiplu")
     ok = [m for m in norme.ISD_MULTIPLI if ge(ik1_A, norme.TOLERANTA_MAGNETIC * m * prot["Ir_A"])]
     m = max(ok) if ok else norme.ISD_MULTIPLI[0]
     prot["Isd_multiplu"] = m
@@ -242,7 +259,7 @@ def in_serie(prot):
     t = prot["tip"]
     if prot["In_A"] not in SERII[t]:
         return False
-    if t in ("MCCB", "ACB"):
+    if t in ("MCCB", "ACB") and not prot.get("Ir_fortat"):
         trepte = norme.IR_TREPTE["MCCB_TM"] if prot.get("decl") == "TM" else norme.IR_TREPTE["MCCB_EL"]
         if not any(eq(k * prot["In_A"], prot["Ir_A"]) for k in trepte):
             return False

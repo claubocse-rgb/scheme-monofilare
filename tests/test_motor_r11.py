@@ -232,8 +232,14 @@ def test_cef_doua_tgd_cf(racord):
 
 
 def test_cef_tgd_peste_suportat_blocant():
+    # r12: n_tgd_cf > 2 = alias pentru 3 tablouri intermediare spre un TEG comun (nu mai e V96)
     r = calculeaza({"tip_schema": "cef", "retea": "tri", "n_tgd_cf": 3, "invertoare": INV2})
-    assert _cod(r, "V96", "BLOCANT")
+    assert not _cod(r, "V96", "BLOCANT")
+    assert _cod(r, "V07", "BLOCANT")            # al treilea tablou fără invertoare
+    inv3 = INV2 + [dict(INV2[0], tgd=3)]
+    r = calculeaza({"tip_schema": "cef", "retea": "tri", "n_tgd_cf": 3, "invertoare": inv3})
+    assert not _cod(r, "V96", "BLOCANT")
+    assert len(r["rezultat"]["tablouri_intermediare"]) == 3
 
 
 def test_cef_tgd_fara_repartitie_declarata_imparte_si_presupune():

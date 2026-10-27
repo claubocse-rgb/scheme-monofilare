@@ -152,6 +152,13 @@ def pachet_zip(model_original, m, r, name):
         add(name + "_lista_echipamente.xlsx", bom.bom_xlsx(m, poz), "lista de echipamente și materiale")
         dv = _deviz(model_original, m)
         add(name + "_deviz_estimativ.xlsx", deviz.deviz_xlsx(m, dv), "deviz estimativ (prețuri din catalog)")
+        from engine import planse as _pl
+        if _pl.cere_planse(m.get("calc") or {}):
+            # r12: convenția proiectantului — pachetul de planșe A3 (IE 07.x … IE 11) alături de planșa unică
+            lst = _pl.planse_din_model(m)
+            if lst:
+                add(name + "_planse_A3.zip", _pl.pachet_planse_zip(lst, name, pdf=lambda svgs: html_to_pdf(_pl.html_multipagina(svgs))),
+                    f"pachetul de {len(lst)} planșe A3 (SVG + DXF pe planșă, PDF multi-pagină): " + ", ".join(c for c, _ in lst))
         add(name + "_proiect.json", json.dumps(validare._fara_interne(model_original), ensure_ascii=False, indent=2),
             "proiectul — se redeschide în aplicație (Deschide)")
         k = m.get("cartus") or {}
@@ -389,6 +396,14 @@ class H(BaseHTTPRequestHandler):
                                       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", name + "_deviz.xlsx", extra=hdr)
                 if p == "/api/export/pachet":
                     return self._send(200, pachet_zip(model, m, r, name), "application/zip", name + "_pachet.zip", extra=hdr)
+                if p == "/api/export/planse":
+                    # r12: pachetul de planșe A3 (IE 07.x c.c. pe invertor, IE 08, IE 09 c.a., IE 09.1 releu, IE 11 smart meter)
+                    from engine import planse as _pl
+                    lst = _pl.planse_din_model(m)
+                    if not lst:
+                        return self._send(400, json.dumps({"eroare": "Pachetul de planșe se generează pentru CEF calculate."}, ensure_ascii=False))
+                    zipb = _pl.pachet_planse_zip(lst, name, pdf=lambda svgs: html_to_pdf(_pl.html_multipagina(svgs)))
+                    return self._send(200, zipb, "application/zip", name + "_planse_A3.zip")
                 if p == "/api/export/memoriu":
                     if r is None:
                         return self._send(400, json.dumps({"eroare": "Memoriul de calcul există doar pentru schemele generate din calcul."}, ensure_ascii=False))

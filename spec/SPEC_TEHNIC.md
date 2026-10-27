@@ -1358,6 +1358,59 @@ Concluzia r11: reparațiile anterioare acopereau cuvântul testat, nu sinonimele
 5. **Teste / reverificare:** `tests/test_interpretor_r11.py` (P0/P1 r11, plasa + blocaj întrebat + chei acceptate pe tot r11,
    sinonimele pe concept, 5–10 formulări noi pe clasă), `teste/r11/reverificare.py` (r5…r11).
 
+### F.16 (r12) Texte de proiectant (memorii, ATR-uri, devize copiate) — `engine/interp_reale.py`
+Testarea pe proiecte reale a arătat că textele lungi „ca de proiectant” leagă greșit cablurile, nu recunosc racordul
+existent și cad în capcane de vocabular. `preextrage(text)` rulează ÎNAINTEA regulilor vechi: citește pe SEGMENTE (rând,
+„;”, „. ”), scoate din text fragmentele pe care le-a interpretat (sau le rescrie canonic: „PT existent”, „racord in TG
+existent”, „Icu N kA”, „N x MODEL”) și le păstrează structurat; `aplica` le scrie în `intrare_fizica` după reguli.
+Fiecare fragment scos lasă o notă în „Am presupus” sau o întrebare.
+
+1. **Cablurile pe segment.** Contextul propoziției decide: invertor → tablou („INVk: … cablu …”, „fiecare invertor cu
+   cablu …”, „de la invertor…”) = `invertoare[k].cablu` + `L_m` pe rândul INVk, altfel `cablu_inv` + `L_inv_m`; tablou →
+   PT / TEG beneficiar / stație / TDRI / BMPT / tabloul consumatorului („Legătura X - PT …:”, „de la TE la PTAb”) =
+   `cablu_C0` + `L_racord_m`, „…, apoi …” = `cablu_C0.tronsoane[]` (L_racord_m = Σ); LES / A2XS(FL)2Y / NA2XS… / „cablu MT”
+   = `cablu_MT` {S_mm2, material, tip, L_m, tronsoane[]} — niciodată C0; TE secundar → TEG = `tablouri_intermediare[].cablu`;
+   trafo → TDRI = informativ; spre contorul de producție = `monitorizare.contor_productie.cablu`; branșament / coloană
+   (prosumator) = `L_coloana_m`. „N cabluri … în paralel”, „2x TYIR …”, „N x … 1xS pe fază” = `n_fortat` DOAR pe cablul
+   segmentului; „în paralel” fără număr → întrebare. Lungimea: „(10-120 m)” = cea mai mare; „L=”, „cca”, „lungime traseu”;
+   „m 600” după cablu (deviz) = cantitate, nu lungime; „70m conductor …” (listă de cantități) = total → ÷ cabluri în
+   paralel / invertoare, cu întrebare. Mai multe cabluri fără context → I05 „Unde se leagă …” (nu C0 implicit); un singur
+   cablu fără context rămâne la regula veche (C0, cu notă).
+2. **Invertoarele pe rânduri.** „INV1 …:”, „Invertorul 2 - …” (≥ 2 rânduri) = câte un grup `n = 1` pe rând, cu `string`
+   propriu; „N stringuri × M (module)” = N stringuri PE INVERTOR, împărțite pe MPPT: `n_stringuri_paralel = ⌈N / K⌉`,
+   `n_MPPT = N / paralel` (K = „K MPPT” din rând, din rândul-frate cu același model sau întrebare); „pe MPPT” scris →
+   neschimbat. Module ≠ stringuri × M → I08; rânduri ≠ invertoare → I05.
+3. **Racordul existent.** „PTAb / PT / post(ul de transformare) … existent”, „barele JT ale postului (existent)”,
+   „TDRI” fără PT nou → `racord: pt`, `pt_existent: true`, `pt_Sn_kVA` din preajmă; „TEG / TG beneficiar(ului)
+   (alimentat din PT N kVA)”, „stația / secția de 0,4 kV a fabricii / uzinei / halei” → `racord: tg_existent` (+
+   `pt_Sn_kVA` = sursa TG); cu „trafo existent N kVA” → PT existent; „… cu întreruptor nou N A” / „Întrerupător N A …
+   în secția 0,4 kV” → `racord_In_Q_A` (ACB ≥ 1000 A, altfel MCCB); „pe separator vertical MPR N A existent” →
+   `racord_In_Q_A`, `racord_Q_tip: gG`. PT NOU doar cu „nou / proiectat / (pr)”. Cu PT / TG existent, „BMPT semidirect”
+   = grupul de măsură al CEF (`monitorizare.contor_productie`), nu racordul.
+4. **Vocabular.** „N TT …”, „TT 20/0,1 kV”, „TT cl …” = transformatoare de tensiune (nu schema TT); „AAR” la celulele MT
+   / PC și „în paralel” la cabluri ≠ GE + ATS (text PV fără GE → `cef`); „Ir = 36 kA”, „Ir-16kA” = Icu; „MODEL buc N”
+   (rând de deviz, nu tabel) și „N buc. invertor …” = N × MODEL; „Pi X kW” la CEF cu X > Σ Pn și fără kWp = X kWp;
+   „Putere nominală totală invertoare X kW” / „putere maximă în AC X MW” = `Pn_total_kW` (sumă de control, I08 dacă
+   ≠ Σ); „puterea instalată panouri X kW” = X kWp; „evacuată A kVA / B kW” = B kW (`P_evacuata_kW`); „absorbită A kVA” =
+   informativ; „0,4 kV” după un cod de model nu intră în model; modulul „panouri 203,32” nu e Pmax 203 W.
+5. **Chei noi pentru motor** (formele din `engine/calc/scheme.py::config_q`, `normalizeaza_cascada`):
+   `QG` {In_A, electronic, motorizat, Icu_kA, Ir_reglat [A]} + `In_QG_A` („întreruptor de interfață / general …”); Q0
+   „întreruptor general” din TDRI la PT nou = `In_Q_JT_A`, „plecare Q1 N A spre TE … CEF” = QG; `invertoare[].prot_tip`
+   (gG / MCB / MCCB) + `invertoare[].protectie` {In_A, Icu_kA, Ir_reglat, electronic} (tablou de protecție / separator
+   cu siguranțe / întreruptor „pe fiecare invertor”, sau N aparate = N invertoare); `tablouri_intermediare[]` {nume,
+   cablu, L_m, prot_tip, In_A, Icu_kA} + `invertoare[].tablou` = 1…N („grupate câte M pe N tablouri secundare /
+   intermediare”); `monitorizare` {smart_meter {model, TC_primar_A} | true, smartlogger {model} | true, rs485,
+   contor_productie {tip, cablu, L_m, TC_primar_A}} (la prosumator `contor_productie` la nivel 1); `protectie_interfata`
+   {releu, ups_VA}; `punct_conexiune` {celule_linie, aar, servicii_proprii_kVA, scada}; `dg_intreruptor`;
+   `cablu_C0.tronsoane[].L`; `Iac_max_A` pe invertor („Iac max …”, „(25 A max)”); fișa
+   modulului (`modul.Vmpp_V`, `Impp_A`, `I_rev_A`, `Umax_sistem_V`); celulele MT („celule: linie, măsură …”, „2 celule
+   de linie”) = `celule_mt`, „dispozitiv general / protecție trafo cu întrerupător (SF6)” = `celula_trafo: intreruptor`.
+   Prosumator: „branșament existent N A” / „BMPM OD … N A” = `In_Q_bransament_A`, „TE-AC invertor cu RCBO N A” =
+   `In_QG_A`, aparatele tabloului consumatorului = informativ. Cheile pe care schema nu le citește încă se păstrează ca
+   metadate `_cheie` (inclusiv pe elementele listelor, ex. `invertoare[]._cheie`), nu ca V96.
+6. **Teste:** `tests/test_interpretor_reale.py` (fraze NOI anonimizate, 5–10 pe clasă; plasa + chei acceptate). Textele
+   proiectelor reale nu se copiază în teste sau în cod.
+
 ### F.8 Răspunsul
 Totdeauna conține:
 1. „Am înțeles:” cu tipul schemei, puterile, numărul și lista plecărilor, lungimile și cartușul;
@@ -1499,6 +1552,7 @@ Câmpurile și unitățile sunt exact cele din `cazuri_golden.json` → `_schema
 ### H.5 Istoric modificări ale specificației
 | Data | Versiune | Modificare |
 |---|---|---|
+| 27.10.2026 | 1.12 r12-reale | §F.16 nou: texte de proiectant (memorii, ATR, devize) — cablurile legate pe segment (C0 / invertor / MT / tablouri intermediare / tronsoane), invertoarele pe rânduri INVk, racordul existent (PT / TG / stație), capcanele de vocabular (TT de măsură, AAR, „Ir = kA”, „buc N”, „Pi kW”, Pn total, ATR kVA / kW), cheile noi pentru motor (QG, protecția invertoarelor, monitorizare, tablouri intermediare, cablu_MT). `engine/interp_reale.py`; teste `tests/test_interpretor_reale.py`. |
 | 12.10.2026 | 1.0 | versiunea inițială |
 | 23.10.2026 | 1.11 claude | §F.11 nou: Claude (`claude-opus-5-5`, unealta `intrare_fizica`) e interpretorul principal când există cheie API; schema generată `engine/interp_schema.py` (+ inventar), fuziunea cu regulile locale (I16 întrebările lui Claude, I17 diferențe critice cu ambele variante), cheia (`engine/cheie_api.py`, `/api/setari/cheie`, `/api/chat/cerere`), versiunea web (apel direct din browser, `web/shim.js`). Fără cheie: comportamentul F.1–F.10 neschimbat. Teste: `tests/test_interpretor_claude.py`; `test_interpretor_locuinta::test_llm_locuinta_normalizare` actualizat (setul tipic completat și la Claude). Evaluare simulată: `teste/r8/eval_llm.py`. |
 | 23.10.2026 | 1.10 r7-chat | Runda 7 (`teste/r7/*.md`, 68 + 70 + 70 fraze): §F.10 nou — normalizarea formatului înainte de regex (`engine/interp_text.py`), legarea valorii de entitate, PV fără cuvânt-cheie, baterii după model, contradicții numerice, plasa extinsă, chei noi (vezi §F.10). Teste: `tests/test_interpretor_r7.py`; reverificare r5+r6+r7: `teste/r7/reverificare.py`. `test_interpretor_locuinta::test_mono_13kw` actualizat (mono > 9,2 kW → se generează ȘI se întreabă). |

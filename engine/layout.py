@@ -98,6 +98,7 @@ class Layout:
         self.poz = []
         self.bn_xy = None; self.bn_stanga = None; self.spd_pe = []
         self.box_bottom = 1e9
+        self._comp = {}
         self.meta = {"carcase": [], "obiecte": [], "legaturi": [], "poz": [], "scara": 1.0}
         self._cabluri = []      # etichete de cablu amânate până se cunosc carcasele
 
@@ -120,6 +121,7 @@ class Layout:
             self.poz.append((len(self.poz) + 1, mat.get("ref", ""), mat.get("lista", []), f"{q} {mat.get('um', '')}".strip(), "material"))
         if self.m.get("lista_auto", True): self._tabel()
         if self.m.get("legenda", True): self._legenda()
+        self._tabel_pi()
         self._note()
         self._cartus()
         if not self.m.get("blocaj"):
@@ -211,7 +213,7 @@ class Layout:
 
     def _adancime(self, br):
         """(rânduri de aparate, mm suplimentari) ocupați de o plecare până la segmentul ei de cablu"""
-        n = len(br.get("aparate", []))
+        n = len([a for a in br.get("aparate", []) or [] if not a.get("jos")])
         copii = br.get("copii") or []
         if not copii: return (n, 0.0)
         best = max((self._adancime(ch) for ch in copii), key=lambda t: t[0] * 20 + t[1])
@@ -261,7 +263,41 @@ class Layout:
                 xs.append(x + off * k); x += w * k
             return xs, [w * k for w in ws]
         cup = bara.get("cupla") if isinstance(bara.get("cupla"), dict) else None
-        if cup and dims_out:
+        sect = bara.get("sectiuni") if isinstance(bara.get("sectiuni"), list) and bara.get("sectiuni") else None
+        self._sect = None
+        if sect:
+            # r12 (cascade CEF): N tablouri intermediare — fiecare cu intrările lui (invertoarele) deasupra unei bare
+            # proprii și plecarea lui (o coloană) sub ea; tablourile stau unul lângă altul, fiecare în carcasa lui
+            cup = None
+            offs_i = [max(l, bw / 2 + 1) for (l, r, bw) in dims_in]
+            ws_i = [off + max(r, bw / 2 + 1) for (l, r, bw), off in zip(dims_in, offs_i)]
+            offs_o = [max(l, bw / 2 + 1) for (l, r, bw) in dims_out]
+            ws_o = [off + max(r, bw / 2 + 1) for (l, r, bw), off in zip(dims_out, offs_o)]
+            gap_s = 16.0
+            grupe, i0_, o0_ = [], 0, 0
+            for sc_ in sect:
+                ni, no = int(sc_.get("n_in", 0)), int(sc_.get("n_out", 1))
+                grupe.append((list(range(i0_, i0_ + ni)), list(range(o0_, o0_ + no))))
+                i0_ += ni; o0_ += no
+            lat = [max(sum(ws_i[i] for i in gi), sum(ws_o[o] for o in go)) for gi, go in grupe]
+            tot = sum(lat) + gap_s * (len(lat) - 1)
+            x0 = x_left + max(0.0, avail - tot) / 2
+            xin, win = [0.0] * len(dims_in), [0.0] * len(dims_in)
+            xout, wout = [0.0] * len(dims_out), [0.0] * len(dims_out)
+            self._sect = []
+            for (gi, go), L_, sc_ in zip(grupe, lat, sect):
+                wi = sum(ws_i[i] for i in gi); xx = x0 + (L_ - wi) / 2
+                for i in gi:
+                    xin[i] = xx + offs_i[i]; win[i] = ws_i[i]; xx += ws_i[i]
+                wo = sum(ws_o[o] for o in go)
+                cx_in = (sum(xin[i] for i in gi) / len(gi)) if gi else x0 + L_ / 2
+                xx = min(max(cx_in - wo / 2, x0), x0 + L_ - wo)
+                for o in go:
+                    xout[o] = xx + offs_o[o]; wout[o] = ws_o[o]; xx += ws_o[o]
+                self._sect.append({"x1": x0 - 4, "x2": x0 + L_ + 4, "titlu": sc_.get("titlu", ""), "sub": sc_.get("sub", ""),
+                                   "cols": [xin[i] for i in gi] + [xout[o] for o in go]})
+                x0 += L_ + gap_s
+        elif cup and dims_out:
             # r7 (PT 2 trafo): coloana fantomă a cuplei longitudinale între cele două secții de bare
             n1 = max(0, min(int(cup.get("n1", len(dims_out) // 2)), len(dims_out)))
             ap_cup = cup.get("aparate") or ([cup["aparat"]] if cup.get("aparat") else [])
@@ -295,7 +331,7 @@ class Layout:
                 t0 = sum(xout[:n1]) / n1 if n1 else self.x_cupla - 30
                 t1 = sum(xout[n1:]) / max(1, len(xout) - n1) if len(xout) > n1 else self.x_cupla + 30
                 xin = [min(t0, self.x_cupla - max(r0, b0 / 2 + 1) - 4), max(t1, self.x_cupla + max(l1, b1 / 2 + 1) + 4)]
-        else:
+        elif not sect:
             cup = None
             xin, win = place(dims_in); xout, wout = place(dims_out)
         dims_rest = [[self._col_dims(b, True) for b in rd] for rd in randuri[1:]]
@@ -393,7 +429,18 @@ class Layout:
             st = min([xmin - 10] + [x - d[0] for d, x in zip(dims_out, xout)])
             x1 = (st - 9 - 22 * n_lat_bus - ext_rz) if n_lat_bus else xmin - 10
             x2 = max(xs_all) + 10
-            if cup and cup.get("fara_legatura"):
+            if self._sect:
+                segs = []
+                for k_, sc_ in enumerate(self._sect):
+                    u1 = min(sc_["cols"]) - 8 if sc_["cols"] else sc_["x1"] + 4
+                    u2 = max(sc_["cols"]) + 8 if sc_["cols"] else sc_["x2"] - 4
+                    if k_ == 0:
+                        u1 = min(u1, x1)
+                    c.line((u1, y_bus), (u2, y_bus), "FORTA"); c.line((u1, y_bus - 0.7), (u2, y_bus - 0.7), "FORTA")
+                    segs.append(((u1, y_bus), (u2, y_bus)))
+                    sc_["bara"] = (u1, u2)
+                self.bus_segs = segs
+            elif cup and cup.get("fara_legatura"):
                 # r11: două bare separate (două tablouri TGD-CF), fără cuplă între ele
                 xc = self.x_cupla
                 xa_, xb_ = xc - 4.0, xc + 4.0
@@ -472,6 +519,8 @@ class Layout:
             """tinta = (rânduri, mm) până la începutul segmentului de cablu, comune plecărilor de pe aceeași bară"""
             y = y0
             for a in b.get("aparate", []):
+                if a.get("jos"):
+                    continue          # r12: aparatul de la capătul dinspre bara comună (QFk în TEG) — desenat la joncțiune
                 yc = y - step / 2
                 c.line((x, y), (x, yc + S.HALF), "FORTA"); self._aparat(x, yc, a); c.line((x, yc - S.HALF), (x, y - step), "FORTA")
                 gx = (x - dl, x + self._dreapta(a), yc - S.HALF, yc + S.HALF)
@@ -482,9 +531,12 @@ class Layout:
             sar = b.get("sarcina", {})
             if not copii and sar.get("jonctiune"):
                 # r8: coloana se unește cu altele pe o bară comună (bara MT a PT-ului cu 2 trafo), desenată după plecări
+                # r12: cu cablu (C-TEk) și aparate la capătul dinspre bara comună (`aparate_jos`, QFk în TEG)
                 y_end = y0 - tinta[0] * step - tinta[1]
                 c.line((x, y), (x, y_end), "FORTA")
                 self._jonct.append((x, y_end))
+                if any(a.get("jos") for a in b.get("aparate") or []) or (b.get("cablu") or {}).get("text"):
+                    self._jonct_ext[x] = b
                 return
             if not copii:
                 y_end = y0 - tinta[0] * step - tinta[1]
@@ -569,6 +621,7 @@ class Layout:
 
         self._carcase_y = {}
         self._jonct = []
+        self._jonct_ext = {}
         for b, x, w, (dl, dr, _) in zip(plecari, xout, wout, dims_out):
             plecare(b, x, w, dl, y_bus, (a_out, b_out), 0, "principala" if car else None)
         if len(randuri) > 1 and show_bus:
@@ -578,9 +631,32 @@ class Layout:
             # r8: bara comună sub coloanele marcate „jonctiune” (bara MT a PT-ului: celulele trafo T1, T2 → celula de
             # măsură QM și celula de linie QL comune) → cablu → caseta punctului de racord, în carcasa proprie
             xs_j = sorted(x_ for x_, _ in self._jonct)
-            yj = min(y_ for _, y_ in self._jonct) - 20
+            n_jos = max([len([a for a in b_.get("aparate") or [] if a.get("jos")]) for b_ in self._jonct_ext.values()] + [0])
+            y_top_j = min(y_ for _, y_ in self._jonct)
+            seg_j = self.seg_out if self._jonct_ext else 0.0
+            yj = y_top_j - 20 - seg_j - n_jos * step
+            ext_jos = []
             for x_, y_ in self._jonct:
-                c.line((x_, y_), (x_, yj), "FORTA"); c.dot((x_, yj), 0.9)
+                b_ = self._jonct_ext.get(x_)
+                if not b_:
+                    c.line((x_, y_), (x_, yj), "FORTA"); c.dot((x_, yj), 0.9)
+                    continue
+                # cablul plecării (C-TEk) până la carcasa barei comune, apoi aparatele de la capătul ei (QFk)
+                y_c = yj + n_jos * step + 8
+                c.line((x_, y_), (x_, y_c), "FORTA")
+                self._cabluri.append({"x": x_, "hi": y_, "lo": y_c, "d": b_.get("cablu"), "rot": True, "carcasa": None})
+                y = y_c
+                c.line((x_, y), (x_, yj + n_jos * step), "FORTA")
+                y = yj + n_jos * step
+                for a in [a for a in b_.get("aparate") or [] if a.get("jos")]:
+                    yc = y - step / 2
+                    c.line((x_, y), (x_, yc + S.HALF), "FORTA"); self._aparat(x_, yc, a)
+                    c.line((x_, yc - S.HALF), (x_, y - step), "FORTA")
+                    ext_jos.append((x_ - 6 - LEFT_EXT.get(a.get("tip"), 4) - max(
+                        [text_width(a.get("ref", ""), 2.8, True)] + [text_width(s_, 2.1) for s_ in a.get("spec", [])] + [0]),
+                        x_ + self._dreapta(a), yc - S.HALF, yc + S.HALF + 2))
+                    y -= step
+                c.line((x_, y), (x_, yj), "FORTA"); c.dot((x_, yj), 0.9)
             bx1, bx2 = xs_j[0] - 6, xs_j[-1] + 6
             c.line((bx1, yj), (bx2, yj), "FORTA"); c.line((bx1, yj - 0.7), (bx2, yj - 0.7), "FORTA")
             if jn.get("eticheta"):
@@ -595,11 +671,13 @@ class Layout:
                 c.line((xm, y), (xm, yc + S.HALF), "FORTA"); self._aparat(xm, yc, a); c.line((xm, yc - S.HALF), (xm, y - step), "FORTA")
                 ext_j.append((xm - 6 - LEFT_EXT.get(a.get("tip"), 4), xm + self._dreapta(a), yc - S.HALF, yc + S.HALF))
                 y -= step
+            ext_j += ext_jos
             ex1 = min(e[0] for e in ext_j); ex2 = max(e[1] for e in ext_j); ey1 = min(e[2] for e in ext_j)
             jc = jn.get("carcasa") or {}
             if jc:
                 nume_j = jc.get("titlu", "")
-                cx1, cx2, cy1, cy2 = min(ex1 - 4, xs_j[0] - 8 - _tw(nume_j, 3.0)), ex2 + 4, ey1 - 4, yj + 11
+                cx1, cx2, cy1, cy2 = min(ex1 - 4, xs_j[0] - 8 - _tw(nume_j, 3.0)), ex2 + 4, ey1 - 4, \
+                    yj + 11 + (n_jos * step + 2 if ext_jos else 0)
                 tw_ = _tw(nume_j, 3.0) + 4 + _tw(jc.get("sub", ""), 2.1) + 8
                 cx2 = max(cx2, cx1 + tw_)
                 c.rect(cx1, cy1, cx2 - cx1, cy2 - cy1, "CARCASA")
@@ -609,10 +687,16 @@ class Layout:
                 y_c = cy1
             else:
                 nume_j, y_c = None, y
-            c.line((xm, y), (xm, y_c - self.seg_out), "FORTA")
-            self._cabluri.append({"x": xm, "hi": y_c, "lo": y_c - self.seg_out, "d": jn.get("cablu"), "rot": True, "carcasa": None})
-            self._box(xm, y_c - self.seg_out, jn.get("sarcina") or {}, max(40.0, bx2 - bx1), "tablou")
-            self.box_bottom = min(self.box_bottom, y_c - self.seg_out - BOX_H)
+            if jn.get("copii"):
+                # r12: după bara comună (TEG) — C0 → tabloul de racord (TGJT / TG existent) cu aparatele lui
+                c.line((xm, y), (xm, y_c), "FORTA")
+                bj = {"aparate": [], "cablu": jn.get("cablu"), "sarcina": jn.get("sarcina") or {}, "copii": jn["copii"]}
+                plecare(bj, xm, max(60.0, bx2 - bx1), 20.0, y_c, self._adancime(bj), 1, None)
+            else:
+                c.line((xm, y), (xm, y_c - self.seg_out), "FORTA")
+                self._cabluri.append({"x": xm, "hi": y_c, "lo": y_c - self.seg_out, "d": jn.get("cablu"), "rot": True, "carcasa": None})
+                self._box(xm, y_c - self.seg_out, jn.get("sarcina") or {}, max(40.0, bx2 - bx1), "tablou")
+                self.box_bottom = min(self.box_bottom, y_c - self.seg_out - BOX_H)
 
         # --- carcasa principală
         if ext[0] < 1e8:
@@ -628,13 +712,49 @@ class Layout:
             y2 = ext[3] + 7
             y2 = min(y2, (y_out_bot - 10) if y_out_bot is not None else y_top - BOX_H - 10)
             self.y_carcasa_jos = y1
-            if car:
+            if car and self._sect:
+                # r12: câte o carcasă pe fiecare tablou intermediar (aceeași înălțime), cu titlul lui
+                for k_, sc_ in enumerate(self._sect):
+                    sx1 = min(sc_["x1"], x1) if k_ == 0 else sc_["x1"]
+                    sx2 = sc_["x2"]
+                    c.rect(sx1, y1, sx2 - sx1, y2 - y1, "CARCASA")
+                    self._titlu_carcasa(sx1, sx2, y2, sc_["titlu"], sc_["sub"])
+                    self.meta["carcase"].append({"nume": sc_["titlu"] or f"TE-{k_ + 1}", "bbox": (sx1, y1, sx2, y2),
+                                                 "parinte": None, "principala": k_ == 0})
+                self._carcase_y["principala"] = (y1, y2)
+            elif car:
                 c.rect(x1, y1, x2 - x1, y2 - y1, "CARCASA")
                 self._titlu_carcasa(x1, x2, y2, car.get("titlu", ""), car.get("sub", ""))
                 self.meta["carcase"].append({"nume": car.get("titlu", "") or "carcasă", "bbox": (x1, y1, x2, y2), "parinte": None, "principala": True})
                 self._carcase_y["principala"] = (y1, y2)
         else:
             self.y_carcasa_jos = y_bus
+
+        # --- r12: compartimentele celulelor MT (OD hașurat / utilizator), pe grupuri de aparate vecine
+        for nume_c, bbs in self._comp.items():
+            grupe_c = []
+            for bb in sorted(bbs, key=lambda t: (round(t[0] / 40), -t[3])):
+                for g in grupe_c:
+                    if bb[0] < g[1] + 30 and bb[1] > g[0] - 30 and bb[2] < g[3] + 40 and bb[3] > g[2] - 40:
+                        g[0], g[1], g[2], g[3] = min(g[0], bb[0]), max(g[1], bb[1]), min(g[2], bb[2]), max(g[3], bb[3])
+                        break
+                else:
+                    grupe_c.append(list(bb))
+            for (u1, u2, v1, v2) in grupe_c:
+                u1 -= 4.0
+                od = nume_c.startswith("COMPARTIMENT OD")
+                c.rect(u1, v1, u2 - u1, v2 - v1, "COMPARTIMENT")
+                # eticheta pe latura din stânga, citită de jos în sus, în interiorul chenarului
+                h_t = min(1.8, 1.8 * (v2 - v1 - 2) / max(text_width(nume_c, 1.8, True), 0.1))
+                c.text(u1 + 2.3, v1 + 1.0, nume_c, h_t, True, layer="TEXT_GRI", rot=90)
+                if od:
+                    # hașura OD: linii oblice pe latura din dreapta a chenarului
+                    k_ = 0
+                    yy = v2 - 0.5
+                    while yy - 2.0 > v1 and k_ < 60:
+                        c.line((u2 - 2.0, yy - 2.0), (u2, yy), "HASURA")
+                        yy -= 1.6; k_ += 1
+                self.meta["carcase"].append({"nume": nume_c, "bbox": (u1, v1, u2, v2), "parinte": None, "compartiment": True})
 
         # --- etichetele de cablu, după ce se cunosc carcasele (nu taie conturul carcasei)
         for cb in self._cabluri:
@@ -863,6 +983,12 @@ class Layout:
         br = BlockRef(name, (x, yc), {"REF": a.get("ref", ""), "SPEC": " | ".join(a.get("spec", [])), "TIP": tip}, prims, uid=a.get("_uid", ""))
         c.add(br)
         sym_bb = block_bbox(br)
+        if a.get("compartiment"):
+            # r12: compartimentul OD / utilizator al celulelor MT (chenar punctat, OD hașurat), desenat la final
+            lw_ = max([text_width(a.get("ref", ""), 2.8, True)] + [text_width(s_, 2.1) for s_ in a.get("spec", [])] + [0])
+            hs = max(S.HALF + 1.0, getattr(self, "step", 12.0) / 2 - 0.4)
+            self._comp.setdefault(a["compartiment"], []).append(
+                (x - 2 - LEFT_EXT.get(tip, 4) - lw_ - 2, x + self._dreapta(a) + 4, yc - hs, yc + hs))
         if tip != "nod":
             self._ref_text(x - 2 - LEFT_EXT.get(tip, 4), yc + 2, a)
             n_ap = self._poz_add(a)        # aparatul primește numărul înaintea lateralelor lui
@@ -893,7 +1019,9 @@ class Layout:
             comanda = l.get("legatura") == "comanda"
             # v1.8: „pe” = conductor de echipotențializare (verde, fără săgeată); „grup” = aparatul face parte din cutia laterală
             # v1.9: „forta” = circuit de forță lateral (portul de baterie al invertorului hibrid), fără săgeată
-            lay = "COMANDA" if comanda else {"pe": "PE", "grup": "CARCASA", "forta": "FORTA"}.get(l.get("legatura"), "MASURA")
+            lay = "COMANDA" if comanda else {"pe": "PE", "grup": "CARCASA", "forta": "FORTA",
+                                             "comunicatie": "RS485"}.get(l.get("legatura"), "MASURA")
+            if lay == "RS485": self.are_rs485 = True
             xe = lx + 8 - 0.5 if t != "fuzibil" else cx - w / 2
             lb = self._lat_bbox(cx, yc, l)
             if comanda:
@@ -1045,7 +1173,7 @@ class Layout:
         y -= hdr; ytop = y
         # spațiul disponibil până deasupra cartușului (+ legendă); dacă nu încape, se compactează: întâi mai puține
         # rânduri pe poziție, apoi corp de literă mai mic
-        y_lim = 11 + 67.7 + (26 if self.m.get("legenda", True) else 4)
+        y_lim = 11 + 67.7 + (26 if self.m.get("legenda", True) else 4) + self._h_tabel_pi()
         fh, step, max_l = 1.9, 3.1, 4
         def _inalt(fh_, step_, ml):
             mc = int((cols[3] - cols[2] - 3) / (CH * fh_ / 2.1)); tot = 0
@@ -1096,8 +1224,11 @@ class Layout:
         c.text(x0, y, "LEGENDĂ", 2.8, True); y -= 5
         items = [("FORTA", "circuit de forță"), ("MASURA", "circuite de măsură"), ("COMANDA", "circuit de comandă"),
                  ("PE", "conductor de protecție PE"), ("CARCASA", "carcasă / tablou"), ("MECANIC", "legătură mecanică")]
+        if getattr(self, "are_rs485", False):
+            items.append(("RS485", "comunicație RS485"))
+        dxc = 75 if len(items) <= 6 else 52
         for i, (lay, s) in enumerate(items):
-            yy = y - 4.5 * (i % 3); xx = x0 + 75 * (i // 3)
+            yy = y - 4.5 * (i % 3); xx = x0 + dxc * (i // 3)
             c.line((xx, yy + 0.8), (xx + 10, yy + 0.8), lay); c.text(xx + 12, yy, s, 2.1)
         yy = y - 13.5
         c.circle((x0 + 5, yy + 0.8), 2.0); c.text(x0 + 5, yy + 0.1, "n", 1.8, True, align="middle"); c.text(x0 + 12, yy, "poziție în lista de echipamente", 2.1)
@@ -1106,6 +1237,75 @@ class Layout:
         if abrev:
             y -= 4; c.text(x0, y, "ABREVIERI", 2.8, True); y -= 4.5
             for s in abrev[:10]: c.text(x0, y, s, 2.0); y -= 3.6
+        self.y_legenda_jos = y
+
+    PI_RAND = 2.9
+
+    def _tabele_dreapta(self):
+        """r12: tabelele din coloana dreaptă — reglajele PI (3 coloane) și fișele (modul / invertor, 2 coloane)"""
+        out = []
+        tp = self.m.get("tabel_pi")
+        if isinstance(tp, dict) and tp.get("randuri"):
+            out.append(dict(tp, coloane=tp.get("coloane") or ["Funcția", "Valoare reglaj", "Temporizare"]))
+        for t in self.m.get("tabele") or []:
+            if isinstance(t, dict) and t.get("randuri"):
+                out.append(t)
+        return out
+
+    def _h_tabel_pi(self):
+        return sum(6.0 + 4.0 + self.PI_RAND * len(t["randuri"]) + (4.5 if t.get("sursa") else 1.5) + 2
+                   for t in self._tabele_dreapta())
+
+    def _tabel_pi(self):
+        """r12 (Top 15 #7): tabelul „Parametri și protecții invertoare / PI” (funcție · reglaj · temporizare) și
+        tabelele de fișă („Model panou solar”, „Model invertor”), în coloana din dreapta, sub legendă"""
+        tabele = self._tabele_dreapta()
+        if not tabele:
+            return
+        c = self.c
+        x0, w = self.w - 10 - 158, 150.0
+        if self.m.get("lista_auto", True) or self.m.get("legenda", True):
+            y = getattr(self, "y_legenda_jos", getattr(self, "y_tabel_jos", self.h - 60) - 8) - 2
+        else:
+            y = self.h - 20
+        h_tot = self._h_tabel_pi()
+        jos = 11 + 67.7 + 1
+        k_r = 1.0
+        if y - h_tot < jos:
+            # nu încape sub legendă: rândurile se strâng (cel mult la 60 %), altfel tabelele urcă peste spațiul listei
+            k_r = max(0.6, (y - jos) / max(h_tot, 1))
+            if y - k_r * h_tot < jos:
+                y = jos + k_r * h_tot
+        rand = self.PI_RAND * k_r
+        fz = 1.9 * min(1.0, k_r * 1.1)
+        for tp in tabele:
+            ncol = len(tp["coloane"])
+            cols = (0, 92, 124, w) if ncol == 3 else (0, 70, w)
+            tit = tp.get("titlu", "")
+            c.text(x0, y - 3, tit, min(2.6, 2.6 * w / max(text_width(tit, 2.6, True), 1)), True)
+            y -= 6
+            hdr = 4.0
+            c.rect(x0, y - hdr, w, hdr, "TABEL", fill="#f3f3f3")
+            for i_, t_ in enumerate(tp["coloane"]):
+                c.text(x0 + cols[i_] + 1.5, y - 2.9, t_, 1.9, True)
+            y -= hdr
+            ytop = y
+            for r_ in tp["randuri"]:
+                for i_, t_ in enumerate(r_[:ncol]):
+                    ca, cb_ = cols[i_], cols[i_ + 1]
+                    h_ = min(fz, fz * (cb_ - ca - 3) / max(text_width(str(t_), fz), 0.1))
+                    c.text(x0 + ca + 1.5, y - rand * 0.8, str(t_), h_)
+                y -= rand
+                c.line((x0, y), (x0 + w, y), "TABEL")
+            c.rect(x0, y, w, ytop - y + hdr, "TABEL")
+            for cx_ in cols[1:-1]:
+                c.line((x0 + cx_, ytop + hdr), (x0 + cx_, y), "TABEL")
+            if tp.get("sursa"):
+                c.text(x0, y - 3.2, tp["sursa"], min(1.8, 1.8 * w / max(text_width(tp["sursa"], 1.8), 0.1)), layer="TEXT_GRI")
+                y -= 4.5
+            else:
+                y -= 1.5
+            y -= 2
 
     def _calc_note(self):
         """înălțimea zonei de note (deasupra marginii de jos, la stânga cartușului): se alege cel mai mare corp de literă
@@ -1156,7 +1356,7 @@ class Layout:
             if maxw and s: h = min(h, h * maxw / max(text_width(s, h, b), 0.1))
             T(x, yt + (rh + h) / 2 - 0.1, s, h, b, i, al)
         c.rect(x0, y0, W, H, "CARTUS", fill="#fff")
-        SIG = [45.0, 48.5, 52.3, 56.1, 59.9, 63.7]
+        SIG = [45.0, 48.2, 51.3, 54.4, 57.5, 60.6, 63.7]        # r12: + rândul „Aprobat” (convenția proiectantului)
         for y in (5, 10, 17.5, 22.5, 33, 38) + tuple(SIG[:-1]): L(0, y, XR, y)
         L(0, SIG[-1], W, SIG[-1])
         L(C1, 0, C1, SIG[-1]); L(92, 0, 92, 5); L(100, 22.5, 100, 33)
@@ -1180,10 +1380,11 @@ class Layout:
         cell(1, 38, 7, "DENUMIRE PLAN:", 1.9)
         T(C1 + 1, 41.0, k.get("denumire1", ""), 2.0, True, maxw=XR - C1 - 2)
         T(C1 + 1, 44.3, k.get("denumire2", ""), 2.0, True, maxw=XR - C1 - 2)
-        cell(1, SIG[0], 3.5, "Funcția", 1.5, True); cell(C1 + 1, SIG[0], 3.5, "Numele", 1.5, True)
-        cell((CN + CS) / 2, SIG[0], 3.5, "Semnătura", 1.5, True, al="middle"); cell((CS + XR) / 2, SIG[0], 3.5, "Data", 1.5, True, al="middle")
-        for y, lab, key in zip(SIG[1:], ("Șef proiect", "Proiectat", "Desenat", "Verificat"), ("sef_proiect", "proiectat", "desenat", "verificat")):
-            cell(1, y, 3.8, lab, 1.8); cell(C1 + 1, y, 3.8, k.get(key, ""), 1.8, maxw=CN - C1 - 2)
+        cell(1, SIG[0], 3.2, "Funcția", 1.5, True); cell(C1 + 1, SIG[0], 3.2, "Numele", 1.5, True)
+        cell((CN + CS) / 2, SIG[0], 3.2, "Semnătura", 1.5, True, al="middle"); cell((CS + XR) / 2, SIG[0], 3.2, "Data", 1.5, True, al="middle")
+        for y, lab, key in zip(SIG[1:], ("Șef proiect", "Proiectat", "Desenat", "Verificat", "Aprobat"),
+                               ("sef_proiect", "proiectat", "desenat", "verificat", "aprobat")):
+            cell(1, y, 3.1, lab, 1.7); cell(C1 + 1, y, 3.1, k.get(key, ""), 1.7, maxw=CN - C1 - 2)
         # dreapta
         for y in (13, 25, 31, 37, 43, 51): L(XR, y, W, y)
         L(XR + 19, 13, XR + 19, 25)
@@ -1271,9 +1472,13 @@ def _layout(model: dict) -> "Layout":
             and (L.meta.get("scara") or 1) < 0.7:
         note = list(model.get("note") or []) + [f"{len(model.get('note') or []) + 1}. Lista de echipamente și materiale "
                                                  "se predă ca anexă la planșă (fișier .xlsx) — nu încape lizibil pe A1."]
-        model = dict(model, lista_auto=False, legenda=False, note=note); L = Layout(model); L.build()
+        if model.get("tabel_pi"):
+            # r12: tabelul de reglaje PI pleacă împreună cu lista (anexă / planșa IE 09.1 a pachetului)
+            note.append(f"{len(note) + 1}. Tabelul „Parametri și protecții invertoare / PI” se predă ca anexă "
+                        "(și pe planșa IE 09.1/FV a pachetului de planșe).")
+        model = dict(model, lista_auto=False, legenda=False, note=note, tabel_pi=None); L = Layout(model); L.build()
     # pe A2 / A1, o schemă lată și joasă (scara limitată de lățime) primește pas vertical mai mare, ca să ocupe și înălțimea
-    if model.get("format") in ("A2", "A1"):
+    if model.get("format") in ("A2", "A1") or model.get("plansa_pachet"):
         vb = 1.0
         for _ in range(3):
             kx, ky = getattr(L, "kx_ky", (1, 1))

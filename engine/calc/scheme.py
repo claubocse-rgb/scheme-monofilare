@@ -276,6 +276,9 @@ def _valideaza_dict(d, j, obiect, sari=()):
         d["metoda"] = mm
     for k in ("prot_tip", "Q1_tip", "racord_Q_tip"):
         t = d.get(k)
+        if isinstance(t, str) and pr.normalizeaza_tip(t) != t.strip() and str(pr.normalizeaza_tip(t)).upper() in TIPURI_PROT:
+            # r12 (proiecte reale): „MPR” / „separator fuzibil” / „NH” = gG, „MCB C” = MCB
+            d[k] = t = pr.normalizeaza_tip(t)
         if t is not None and (not isinstance(t, str) or t.strip().upper() not in TIPURI_PROT):
             emite(j, "V12", BLOCANT, obiect, "camp", camp=k, valoare=t)
             return False
@@ -771,6 +774,8 @@ def _plecari(plecari, ctx_bara, amonte, j, prefix="", final=False, ctx_sig=None,
         rr = calculeaza_ramura(r, ctx, j, obiect, amonte=prot_amonte)
         intrare = {"nume": pl.get("nume", ""), "nivel": nivel}
         intrare.update(rr["rezultat"])
+        if pl.get("_echipata"):
+            intrare["rezerva_echipata"] = True
         if pl.get("_compensare"):
             intrare.update({"compensare": True, "Q_kvar": pl["_Q_kvar"], "In_cap_A": pl["_In_cap_A"]})
         if not rr["blocat"] and r.get("receptor") == "motor" and not copii:
@@ -1273,6 +1278,12 @@ def pregateste_ups(plecari, retea, j, obiect="P"):
                 out[-1].pop("L_m")
             j.pas(f"{ob}: intrare de bypass separată — plecare proprie dimensionată la In ieșire {fmt_ro(in_out)} A")
     return out
+
+
+def rezerva_echipata(pl):
+    """r12: plecare de rezervă echipată (aparat montat, fără circuit): `rezerva: true`, fără putere / sarcină / copii"""
+    return (isinstance(pl, dict) and pl.get("rezerva") is True and pl.get("P_kW") is None and pl.get("S_kVA") is None
+            and pl.get("Ib_A") is None and not pl.get("copii") and not pl.get("_siguranta") and not pl.get("siguranta"))
 
 
 def _pregateste_plecari(plecari, retea, j, obiect="P"):
@@ -2160,6 +2171,22 @@ def n_trafo_sursa(inp, j, ce="PT-ul sursă"):
     return n, True
 
 
+def dg_cerut(inp):
+    """r12 (proiecte reale C / S, Top 15 #9): dispozitivul general (DG) al utilizatorului cu ÎNTRERUPTOR + 50/51/51N +
+    TC + tor homopolar — cerut explicit (`dg_intreruptor: true`, ATR „dispozitiv general cu întrerupător”) sau implicit
+    când OD-ul e E-Distribuție (norma lor), indiferent de pragul de 1000 kVA."""
+    if inp.get("dg_intreruptor") is not None:
+        return bool(inp.get("dg_intreruptor"))
+    od = _fd(inp.get("OD") or "") if isinstance(inp.get("OD"), str) else ""
+    return od.replace("_", "").replace("-", "") in ("edistributie", "enel", "edistributiebanat", "edistributiemuntenia",
+                                                    "edistributiedobrogea")
+
+
+def _celula_trafo_inp(inp):
+    """celula trafo impusă: declarată (`celula_trafo`) sau „intreruptor” când DG-ul cu întreruptor e cerut"""
+    return inp.get("celula_trafo") or ("intreruptor" if dg_cerut(inp) else None)
+
+
 def _celula_trafo(sn, fortat, j, u_kv=20):
     """SPEC §C.5 pct. 6: Sn ≤ 1000 kVA → separator de sarcină + siguranțe MT; > 1000 kVA → întreruptor + releu.
     Siguranțe impuse peste 1000 kVA → V61 BLOCANT."""
@@ -2372,7 +2399,12 @@ def schema_pt(inp, j):
     j.pas(f"Trafo {sn} kVA: In_T = {fmt_ro(t['In_T_A'])} A; uk {fmt_ro(t['uk_pct'])} %, Pk {t['Pk_W']} W; "
           f"Z_T = {fmt_ro(t['Z_T'][0] * 1000, 3)} + j{fmt_ro(t['Z_T'][1] * 1000, 3)} mΩ; K_T = {fmt_ro(t['K_T'], 4)}")
     j.pas(f"Ik3max bara TGJT = {fmt_ro(t['Ik3max_bara_kA'])} kA; Ik1min bara = {fmt_ro(t['Ik1min_bara_A'], 0)} A")
-    rez["celula_trafo"] = _celula_trafo(sn, inp.get("celula_trafo"), j, u_mt)
+    rez["celula_trafo"] = _celula_trafo(sn, _celula_trafo_inp(inp), j, u_mt)
+    if dg_cerut(inp):
+        rez["dg"] = True            # r12: DG cu întreruptor + 50/51/51N + TC + tor homopolar (celulă proprie)
+    for k_ in ("OD", "punct_conexiune", "compartimente"):
+        if inp.get(k_) is not None:
+            rez[k_] = inp[k_]
     if inp.get("pt_aerian"):
         # r8 (#21, S10): PTA pe stâlp — separator de exterior + siguranțe MT + trafo pe stâlp + cutie TDJT, fără celule
         rez["pt_aerian"] = True
@@ -2426,9 +2458,15 @@ def schema_pt(inp, j):
     mod_sig = marcheaza_siguranta(plecari, inp, j, "TGJT")
     if mod_sig:
         rez["siguranta"] = mod_sig
-    pis = [0.0 if pl.get("_rezerva") else _pi(pl, 0) for pl in plecari]
+    for pl in plecari:
+        if rezerva_echipata(pl):
+            # r12 (proiectul real C): rezervă echipată = doar aparatul (calibru), fără cablu și fără sarcină — nu intră
+            # în bilanț (V62 fals); cablul de calcul e simbolic (1 m), nu se desenează
+            pl["_echipata"] = True
+            pl.setdefault("L_m", 1.0)
+    pis = [0.0 if (pl.get("_rezerva") or pl.get("_echipata")) else _pi(pl, 0) for pl in plecari]
     spi = sum(pis)
-    ks, ks_impl = _ks_bilant(inp, sum(1 for p_ in plecari if not p_.get("_compensare")))
+    ks, ks_impl = _ks_bilant(inp, sum(1 for p_ in plecari if not p_.get("_compensare") and not p_.get("_echipata")))
     if ks_impl:
         j.presupune(f"ks = {fmt_ro(ks)} (IEC 61439-2 tab. 101, {len(plecari)} plecări)")
     j.ipoteza("ks", ks, ks_impl)
@@ -2562,7 +2600,19 @@ def _q_tg_existent(inp, j, ctx, s_iac):
         jos, sus = _vecini_serie(pr.SERII[tip], rin)
         emite(j, "V05", BLOCANT, "Q TG", In=rin, tip=tip, vecini=f"{jos} A / {sus} A")
         return None
-    q = pr.construieste(tip, rin, rin, "C" if tip == "MCB" else None, are_aval=True)
+    # r12: reglajele declarate ale Q-ului de racord (Ir / Isd, declanșator electronic)
+    dcl = inp.get("racord_decl")
+    dcl = "EL" if isinstance(dcl, str) and _fd(dcl) in ("el", "electronic", "lsi") else (
+        "TM" if isinstance(dcl, str) and _fd(dcl) in ("tm", "termomagnetic") else None)
+    ir_r = _reglaj(inp.get("racord_Ir_A"), rin) if tip in ("MCCB", "ACB") else None
+    if ir_r is not None and not (0.4 * rin - 1e-6 <= ir_r <= rin + 1e-6):
+        emite(j, "V12", BLOCANT, "Q TG", "camp", camp="racord_Ir_A", valoare=f"{fmt_ro(ir_r)} A (In {rin} A)")
+        return None
+    isd_r = inp.get("racord_Isd_A") if tip in ("MCCB", "ACB") else None
+    if isd_r is not None:
+        dcl = "EL"
+        isd_r = _reglaj(isd_r, ir_r or rin)
+    q = pr.construieste(tip, rin, rin, "C" if tip == "MCB" else None, are_aval=True, decl=dcl, ir=ir_r, isd=isd_r)
     if q.get("decl") == "EL":
         # v1.9: Q TG cu declanșator electronic (In > 630 A) — Isd ales ca la QG (altfel Ia(5 s) nedefinit)
         pr.alege_isd(q, sc.ik1_din_zb(ctx["Zb"]))
@@ -2587,6 +2637,8 @@ def _q_plecare_pt_existent(inp, j, ctx, qg, s_iac):
     Ir = cea mai mică treaptă ≥ Ir QG (reglajele cresc spre sursă), Icu ≥ Ik3 bara JT a PT-ului."""
     if inp.get("racord_In_Q_A") is not None:
         return _q_tg_existent(inp, j, ctx, s_iac)
+    if inp.get("racord_Ir_A") is not None or inp.get("racord_Isd_A") is not None:
+        j.presupune("racord_Ir_A / racord_Isd_A fără racord_In_Q_A — reglajele se aplică numai Q-ului de racord declarat")
     tinta = max(float(qg["In_A"]), pr.ip(qg), s_iac)     # ≥ orice reglaj al QG (Ir ≤ In QG)
     tip = "MCCB" if tinta <= 1600 + 1e-9 else "ACB"
     ales = None
@@ -2893,6 +2945,155 @@ def _fara_neutru(res):
 
 
 TGD_CF_MAX = 2        # r11: tablouri TGD-CF desenate de motor (fiecare cu QG și C0 proprii); mai multe → V96
+
+
+def normalizeaza_cascada(inp):
+    """r12 (proiecte reale, cascade CEF): `tablouri_intermediare` [{nume, L_m, cablu, prot_tip, In_A, Ir_A, Icu_kA,
+    invertoare?}] — tablourile intermediare / TE secundare, fiecare cu invertoarele lui și plecarea proprie spre TEG-ul
+    de interfață comun (QG + PI + măsură). Invertoarele se leagă prin `invertoare[].tablou` (1…N; 0 = direct pe TEG)
+    sau se scriu în tabloul lor (`tablouri_intermediare[k].invertoare`, mutate aici în lista globală). `n_tgd_cf` > 2
+    (alias, r11) = N tablouri intermediare, cu `invertoare[].tgd` → `tablou`. Modifică `inp` (copie) pe loc."""
+    if not isinstance(inp, dict):
+        return inp
+    te = inp.get("tablouri_intermediare")
+    n = inp.get("n_tgd_cf")
+    if te is None and _numar(n) and not isinstance(n, bool) and n == int(n) and int(n) > TGD_CF_MAX:
+        te = inp["tablouri_intermediare"] = [{} for _ in range(int(n))]
+        inp.pop("n_tgd_cf")
+        for g in inp.get("invertoare") or []:
+            if isinstance(g, dict) and "tgd" in g and "tablou" not in g:
+                g["tablou"] = g.pop("tgd")
+        if isinstance(inp.get("bess"), dict) and "tgd" in inp["bess"]:
+            inp["bess"]["tablou"] = inp["bess"].pop("tgd")
+    if _numar(te) and not isinstance(te, bool) and te == int(te) and int(te) >= 1:
+        te = inp["tablouri_intermediare"] = [{} for _ in range(int(te))]
+    if isinstance(te, list):
+        inv = list(inp.get("invertoare") or [])
+        for k, t in enumerate(te, 1):
+            if isinstance(t, dict) and isinstance(t.get("invertoare"), list):
+                for g in t["invertoare"]:
+                    inv.append(dict(g, tablou=k) if isinstance(g, dict) else g)
+                te[k - 1] = {kk: v for kk, v in t.items() if kk != "invertoare"}
+        inp["invertoare"] = inv
+    return inp
+
+
+def _c0_tronsoane(inp, j, r0, tr, ctx_s, oc0, q_tg, tg):
+    """r12 (proiecte reale, G): C0 compus din mai multe tronsoane (`cablu_C0.tronsoane` [{material, S_fortat, n_fortat,
+    izolatie, metoda, tip_cablu, L}], listate de la tabloul CEF spre punctul de racord) — fiecare tronson cu Iz', ΔU
+    și Ik la capăt; protecția (QG / Q racord) e aceeași pe tot traseul, deconectarea se verifică la capătul fiecărui
+    tronson. Calculul merge de la sursă (punctul de racord) spre tablou. Întoarce rezultatul ramurii compuse."""
+    n = len(tr)
+    baza = {k: v for k, v in (r0.get("cablu") or {}).items() if k in ("metoda", "izolatie", "theta", "rho_sol", "n_alte")}
+    ctx, rez_l, ultim = ctx_s, [], None
+    for i in range(n - 1, -1, -1):
+        t = tr[i]
+        if not isinstance(t, dict) or not _valideaza_dict(t, j, "schema", sari=("L",)):
+            if not isinstance(t, dict):
+                emite(j, "V07", BLOCANT, oc0, "param", camp="cablu_C0.tronsoane", x=repr(t)[:40], conditie="se așteaptă un obiect")
+            return None
+        L = t.get("L", t.get("L_m"))
+        if L is None or not _numar(L) or float(L) <= 0:
+            emite(j, "V07", BLOCANT, oc0, "param", camp=f"cablu_C0.tronsoane[{i}].L", x=repr(L), conditie="lungimea tronsonului > 0 m")
+            return None
+        cab = dict(baza)
+        cab.update({k: v for k, v in t.items() if v is not None and k not in ("L", "L_m")})
+        cb.metoda_implicita(cab, "D1")
+        if cab.get("material") is None:
+            cab["material"] = "Al" if cab["metoda"] in norme.METODE_IN_PAMANT else "Cu"
+        cab["L"] = float(L)
+        ob = f"{oc0}/t{i + 1}"
+        rr = calculeaza_ramura(dict(r0, cablu=cab), ctx, j, ob, amonte=q_tg if i == n - 1 else None,
+                               obiect_sel="Q TG vs QG" if tg else "Q PT vs QG")
+        if rr["blocat"]:
+            return rr
+        rez_l.insert(0, dict(rr["rezultat"], tronson=i + 1))
+        ctx = dict(rr["ctx_aval"], dU_cef_pct=rr["rezultat"]["dU_cumulat_pct"])
+        ultim = rr
+    comb = dict(ultim["rezultat"])
+    comb["tronsoane"] = rez_l
+    comb["L_m"] = sum(x["L_m"] for x in rez_l)
+    comb["dU_ramura_pct"] = sum(x["dU_ramura_pct"] for x in rez_l)
+    comb["Iz_corectat_A"] = min(x["Iz_corectat_A"] for x in rez_l)
+    comb["cablu"] = " + ".join(f"{x['cablu']} ({fmt_ro(x['L_m'], 0)} m)" for x in rez_l)
+    j.pas(f"{oc0}: {n} tronsoane — " + "; ".join(f"t{x['tronson']}: {x['cablu']}, L {fmt_ro(x['L_m'], 0)} m, Iz' "
+                                                  f"{fmt_ro(x['Iz_corectat_A'])} A, ΔU {fmt_ro(x['dU_ramura_pct'], 2)} %"
+                                                  for x in rez_l)
+          + f"; ΔU total {fmt_ro(comb['dU_ramura_pct'], 2)} %, Ik1min la tablou {fmt_ro(comb['Ik1min_capat_A'], 0)} A")
+    return {"rezultat": comb, "prot": ultim["prot"], "ctx_aval": ultim["ctx_aval"], "blocat": False,
+            "Ib": ultim["Ib"], "Ip": ultim["Ip"]}
+
+
+def _reglaj(v, baza):
+    """r12: reglaj dat ca multiplu (≤ 20 → ·baza) sau în amperi (> 20)"""
+    if v is None or not _numar(v) or isinstance(v, bool):
+        return None
+    return float(v) * baza if float(v) <= 20 else float(v)
+
+
+def config_q(d, in_implicit=None):
+    """r12 (proiecte reale): configurația impusă a unui întreruptor (QG de interfață, protecția unei plecări):
+    {tip | prot_tip: MCCB / ACB / gG / MCB, In_A, electronic | decl („EL”/„electronic”), motorizat, Ir_A | Ir_reglat |
+    Ir_multiplu, Isd_A | Isd_reglat | Isd_multiplu, Icu_kA, curba}. Reglajele ≤ 20 sunt multipli (Ir·In, Isd·Ir)."""
+    d = d if isinstance(d, dict) else {}
+    out = {}
+    tip = d.get("tip", d.get("prot_tip"))
+    tn = _fd(tip) if isinstance(tip, str) else ""
+    if tn in ("electronic", "el", "lsi"):
+        out["decl"] = "EL"
+        tip = None
+    elif tn in ("motorizat",):
+        out["motorizat"] = True
+        tip = None
+    if tip is not None:
+        out["tip"] = pr.normalizeaza_tip(tip)
+    In = d.get("In_A", in_implicit)
+    if In is not None:
+        out["In_A"] = In
+    dc = d.get("decl")
+    if d.get("electronic") is True or (isinstance(dc, str) and _fd(dc) in ("el", "electronic", "lsi")):
+        out["decl"] = "EL"
+    elif isinstance(dc, str) and _fd(dc) in ("tm", "termomagnetic"):
+        out["decl"] = "TM"
+    if d.get("motorizat"):
+        out["motorizat"] = True
+    for k in ("Icu_kA", "curba"):
+        if d.get(k) is not None:
+            out[k] = d[k]
+    ir = next((d.get(k) for k in ("Ir_A", "Ir_reglat", "Ir_multiplu") if d.get(k) is not None), None)
+    isd = next((d.get(k) for k in ("Isd_A", "Isd_reglat", "Isd_multiplu") if d.get(k) is not None), None)
+    if ir is not None:
+        out["_ir"] = ir
+    if isd is not None:
+        out["_isd"] = isd
+        out.setdefault("decl", "EL")
+    return out
+
+
+def q_ramura(cfg, In):
+    """r12: cheile de ramură (calculeaza_ramura) din configurația impusă `config_q`, la calibrul In"""
+    r = {}
+    if cfg.get("tip"):
+        r["prot_tip"] = cfg["tip"]
+    if cfg.get("In_A") is not None:
+        r["In_fortat"] = cfg["In_A"]
+    if cfg.get("decl"):
+        r["decl_fortat"] = cfg["decl"]
+    if cfg.get("motorizat"):
+        r["motorizat"] = True
+    if cfg.get("Icu_kA") is not None:
+        r["Icu_fortat"] = float(cfg["Icu_kA"])
+    if cfg.get("curba"):
+        r["curba"] = cfg["curba"]
+    if In is not None and cfg.get("_ir") is not None:
+        r["Ir_fortat"] = _reglaj(cfg["_ir"], In)
+    isd = cfg.get("_isd")
+    if isd is not None and _numar(isd) and not isinstance(isd, bool):
+        if float(isd) <= 20:
+            r["Isd_multiplu_fortat"] = float(isd)
+        else:
+            r["Isd_fortat"] = float(isd)
+    return r
 
 
 def _schema_cef(inp, j):
@@ -3216,6 +3417,9 @@ def _schema_cef(inp, j):
         racord["tg_existent"] = True
         racord["tip"] = f"TG existent (consum propriu) — {racord['tip']}"
     L0 = inp.get("L_racord_m", (inp.get("cablu_C0") or {}).get("L"))
+    _tr = (inp.get("cablu_C0") or {}).get("tronsoane") if isinstance(inp.get("cablu_C0"), dict) else None
+    if isinstance(_tr, list) and _tr and all(isinstance(t, dict) and _numar(t.get("L", t.get("L_m"))) for t in _tr):
+        L0 = sum(float(t.get("L", t.get("L_m"))) for t in _tr)        # r12: C0 din tronsoane
     if L0 is None and cablu_impus_fara_L(inp.get("cablu_C0"), j, "C0", "L_racord_m"):
         return rez
 
@@ -3249,6 +3453,11 @@ def _schema_cef(inp, j):
         # v1.9 (R5 P0-6): DDR pe invertorul CEF doar la cerere (fișă / ATR: `invertoare[].ddr` {IdN_mA, tip}) sau în TT
         if isinstance(g.get("ddr"), dict):
             r["ddr"] = dict(g["ddr"])
+        # r12 (proiecte reale): tipul protecției invertorului — separator cu siguranțe gG / MPR, MCB curba C sau MCCB —
+        # și calibrul / reglajele impuse (`invertoare[].prot_tip`, `invertoare[].protectie` {In_A, Ir_A, Icu_kA, curba})
+        if not u["pcs"] and (g.get("prot_tip") is not None or isinstance(g.get("protectie"), dict)):
+            cfg = config_q(dict(g.get("protectie") or {}, **({"tip": g["prot_tip"]} if g.get("prot_tip") else {})))
+            r.update(q_ramura(cfg, cfg.get("In_A")))
         return r
 
     lim_inj = None
@@ -3277,6 +3486,89 @@ def _schema_cef(inp, j):
             emite(j, "V12", BLOCANT, "schema", "camp", camp="invertoare[].tgd", valoare=tgd_g)
             j.verificari[-1]["remediere"] = f"tgd 1…{n_tgd} pe fiecare grup de invertoare"
             return rez
+
+    # r12 (proiecte reale): cascade CEF — N tablouri intermediare (TE secundare), fiecare cu invertoarele lui și
+    # plecarea proprie (C-TEk, protecție la ambele capete: QFk în TEG, QSk în tablou) spre TEG-ul de interfață comun
+    cascada = None
+    te_in = inp.get("tablouri_intermediare")
+    if te_in is not None:
+        if not isinstance(te_in, list) or not te_in or not all(isinstance(t, dict) for t in te_in):
+            emite(j, "V07", BLOCANT, "schema", "param", camp="tablouri_intermediare", x=repr(te_in)[:40],
+                  conditie="se așteaptă o listă de tablouri (obiecte)")
+            return rez
+        motiv = ("PT nou cu 2 trafo (secții)" if sectii_pt else "CEF monofazat" if mono else
+                 "n_tgd_cf (TGD-CF cu QG proprii)" if tgd else None)
+        if motiv:
+            emite(j, "V96", BLOCANT, "schema", ce=f"tablouri intermediare la {motiv}",
+                  detaliu="combinația nu e desenată de motor", remediere="tablouri intermediare spre un singur TEG")
+            return rez
+        for t_ in te_in:
+            ok_t = _valideaza_dict({k: v for k, v in t_.items() if k not in ("cablu", "nume", "IP")}, j, "schema")
+            if ok_t and t_.get("cablu") is not None:
+                ok_t = isinstance(t_["cablu"], dict) and _valideaza_dict(t_["cablu"], j, "schema", sari=("L",))
+            if not ok_t:
+                return rez
+        cascada = []
+        for k, t_ in enumerate(te_in, 1):
+            cascada.append({"k": k, "spec": t_, "nume": str(t_.get("nume") or f"TE-{k}"), "unitati": []})
+        fara = []
+        for u in unitati:
+            g_ = u.get("grup") or {}
+            x = (bess or {}).get("tablou") if u["pcs"] and isinstance(bess, dict) else g_.get("tablou")
+            if x is None and not u["pcs"]:
+                fara.append(u)
+                continue
+            if x is None or x == 0:
+                continue                     # direct pe bara TEG (PCS, invertor cu tablou 0)
+            if isinstance(x, bool) or not _numar(x) or x != int(x) or not 1 <= x <= len(cascada):
+                emite(j, "V12", BLOCANT, "schema", "camp", camp="invertoare[].tablou", valoare=x)
+                j.verificari[-1]["remediere"] = f"tablou 1…{len(cascada)} (0 = direct pe TEG)"
+                return rez
+            cascada[int(x) - 1]["unitati"].append(u)
+        if fara:
+            for k, g_ in enumerate(_repartitie_sectii(fara, len(cascada), Jurnal())):
+                cascada[k]["unitati"].extend(g_)
+            j.presupune(f"invertoarele fără `tablou` repartizate pe cele {len(cascada)} tablouri intermediare în tranșe "
+                        f"de putere egală — declarați invertoare[].tablou")
+        for te in cascada:
+            if not te["unitati"]:
+                emite(j, "V07", BLOCANT, te["nume"], "plecari", tablou=te["nume"])
+                j.verificari[-1]["remediere"] = f"invertoare pe {te['nume']} (invertoare[].tablou = {te['k']}) sau mai puține tablouri"
+                return rez
+            te["unitati"].sort(key=lambda u: unitati.index(u))
+            for u in te["unitati"]:
+                u["_te"] = te["k"]
+            te["iac"] = sum(u["Iac"] for u in te["unitati"])
+            te["pn"] = sum(u["Pn_kW"] for u in te["unitati"])
+        # ordinea unităților: tablou 1, tablou 2 …, apoi cele directe pe TEG (numerotarea INV-k urmează desenul)
+        j.pas(f"{len(cascada)} tablouri intermediare → TEG de interfață comun: " + "; ".join(
+            f"{te['nume']}: {', '.join(u['obiect'] for u in te['unitati'])} (Σ Iac {fmt_ro(te['iac'])} A)" for te in cascada))
+
+    def ramura_te(te):
+        """r12: plecarea tabloului intermediar k (cablul C-TEk, TEG → TEk) — ramură de tip c0 cu Iac = Σ Iac al
+        tabloului, protecția (tip / In / reglaje impuse sau aleasă) ≥ Ip max al invertoarelor lui"""
+        t = te["spec"]
+        cab = {k: v for k, v in (inp.get("cablu") or {}).items() if k in CAMPURI_CABLU_SCHEMA and v is not None}
+        cab.update({k: v for k, v in (t.get("cablu") or {}).items() if v is not None})
+        cb.metoda_implicita(cab, "D1")
+        if cab.get("material") is None:
+            cab["material"] = "Al" if cab["metoda"] in norme.METODE_IN_PAMANT else "Cu"
+            cab["material_implicit"] = True
+        L = t.get("L_m", cab.get("L"))
+        if L is None:
+            L = 30.0
+            if not te.get("_L_pres"):
+                te["_L_pres"] = True
+                j.presupune(f"lungime cablu {te['nume']} → TEG 30 m (nedeclarată: tablouri_intermediare[].L_m)")
+        cab["L"] = float(L)
+        r = {"rol": "c0", "receptor": "invertor", "retea": retea, "Pn_kW": te["pn"], "Iac_max_A": te["iac"],
+             "cablu": cab, "are_aval": True, "_validat": True, "Ip_min_extra": te.get("ip_inv") or 0.0}
+        cfg = config_q(t.get("protectie") if isinstance(t.get("protectie"), dict) else t, t.get("In_A"))
+        In_ = cfg.get("In_A")
+        r.update(q_ramura(cfg, In_))
+        if r.get("Ir_fortat") is None and cfg.get("_ir") is not None and In_ is None:
+            r.pop("Ir_fortat", None)
+        return r
 
     def sectiune(unit_s, suf, ctx_s, rz, i_fz=None):
         """QG, C0, invertoarele / PCS și TC-ul unei bare TGD-CF (r8: o secție = un trafo al PT-ului nou, `suf` = „1”, „2”;
@@ -3307,12 +3599,22 @@ def _schema_cef(inp, j):
             s_iac_s, pn_s = s_iac, pn_tot
         # QG (pct. 3): Ip,min = max(Σ Iac; Ip invertoare) — protecțiile invertoarelor se calculează întâi (doar Ip)
         jt = Jurnal()
+        direct = [u for u in unit_s if not cascada or u.get("_te") is None]
         ip_inv = [x["Ip"] for x in (calculeaza_ramura(dict(ramura_unitate(u), _doar_protectie=True), ctx_s, jt, "tmp")
-                                    for u in unit_s) if x["Ip"] is not None]
+                                    for u in direct) if x["Ip"] is not None]
+        for te in (cascada or []):
+            # r12: plecarea fiecărui tablou intermediar — Ip ≥ Σ Iac al tabloului și ≥ Ip max al invertoarelor lui
+            ip_te = [x["Ip"] for x in (calculeaza_ramura(dict(ramura_unitate(u), _doar_protectie=True), ctx_s, jt, "tmp")
+                                       for u in te["unitati"]) if x["Ip"] is not None]
+            te["ip_inv"] = max(ip_te) if ip_te else 0.0
+            x = calculeaza_ramura(dict(ramura_te(te), _doar_protectie=True), ctx_s, jt, "tmp")
+            if x["Ip"] is not None:
+                ip_inv.append(x["Ip"])
         ip_min = max([s_iac_s] + ip_inv)
-        in_f = inp.get("In_QG_A")
+        qcfg = config_q(inp.get("QG"), inp.get("In_QG_A"))
+        in_f = qcfg.get("In_A")
         ref = in_f if in_f is not None else ip_min
-        tip = "MCCB" if ref <= 1600 + 1e-9 else "ACB"
+        tip = qcfg.get("tip") if qcfg.get("tip") in ("MCCB", "ACB") else ("MCCB" if ref <= 1600 + 1e-9 else "ACB")
         In = in_f if in_f is not None else pr.alege_calibru(tip, ip_min)
         if In is None:
             emite(j, "V06", BLOCANT, oqg, Ib=s_iac_s, tip="ACB")
@@ -3321,8 +3623,23 @@ def _schema_cef(inp, j):
                 j.verificari[-1]["remediere"] = ("PT nou cu 2 trafo (n_trafo 2): câte o secție de bare JT și un QG pe "
                                                  "trafo, cuplă normal deschisă")
             return None
-        qg = pr.construieste(tip, In, ip_min, are_aval=True)
-        qg["Icu_kA"], ok = pr.alege_icu(tip, ctx_s["Ik3_kA"])
+        qkw = q_ramura(qcfg, In)
+        if qkw.get("Ir_fortat") is not None and not (0.4 * In - 1e-6 <= qkw["Ir_fortat"] <= In + 1e-6):
+            emite(j, "V12", BLOCANT, oqg, "camp", camp="QG.Ir_A", valoare=f"{fmt_ro(qkw['Ir_fortat'])} A (In {In} A)")
+            j.verificari[-1]["remediere"] = "Ir reglat între 0,4·In și In"
+            return None
+        # r12 (proiecte reale): QG de interfață cu declanșator electronic / motorizat / reglaje Ir, Isd și Icu impuse
+        qg = pr.construieste(tip, In, ip_min, are_aval=True, decl=qkw.get("decl_fortat"), ir=qkw.get("Ir_fortat"),
+                             isd=qkw.get("Isd_fortat"))
+        if qkw.get("Isd_multiplu_fortat") is not None and qg.get("decl") == "EL":
+            qg["Isd_multiplu"] = qkw["Isd_multiplu_fortat"]
+            qg["Isd_A"] = qg["Isd_multiplu"] * qg["Ir_A"]
+            qg["Isd_fortat"] = True
+        if qkw.get("Icu_fortat") is not None:
+            qg["Icu_kA"] = qkw["Icu_fortat"]
+            ok = ge(qg["Icu_kA"], ctx_s["Ik3_kA"])
+        else:
+            qg["Icu_kA"], ok = pr.alege_icu(tip, ctx_s["Ik3_kA"])
         if qg.get("decl") == "EL":
             pr.alege_isd(qg, sc.ik1_din_zb(ctx_s["Zb"]))
         rz["QG"] = {"tip": tip, "In_A": In, "Ir_A": qg["Ir_A"], "Ir_multiplu": qg["Ir_multiplu"], "Icu_kA": qg["Icu_kA"],
@@ -3330,6 +3647,11 @@ def _schema_cef(inp, j):
         for k in ("decl", "Im_A", "Isd_A", "Isd_multiplu", "tsd_s", "Ii_A"):
             if qg.get(k) is not None:
                 rz["QG"][k] = qg[k]
+        for k in ("Ir_fortat", "Isd_fortat"):
+            if qg.get(k):
+                rz["QG"][k] = True
+        if qcfg.get("motorizat"):
+            rz["QG"]["motorizat"] = True
         if idn_qg is not None:
             # v1.3 R5: bloc diferențial reglabil asociat QG (Δt explicit)
             rz["QG"]["DDR"] = {"IdN_mA": idn_qg, "tip": "A", "selectiv": True, "temporizare": "reglabil", "dt_s": DT_QG,
@@ -3381,7 +3703,7 @@ def _schema_cef(inp, j):
             j.presupune("legătura JT T1 → TGD-CF (C0) nedimensionată — lungimea nedeclarată (introduceți L_racord_m)")
         if L0 is not None:
             cab0 = {k: v for k, v in (inp.get("cablu") or {}).items() if k in CAMPURI_CABLU_SCHEMA and v is not None}
-            cab0.update({k: v for k, v in (inp.get("cablu_C0") or {}).items() if v is not None})
+            cab0.update({k: v for k, v in (inp.get("cablu_C0") or {}).items() if v is not None and k != "tronsoane"})
             cb.metoda_implicita(cab0, "D1")
             if cab0.get("material") is None:
                 cab0["material"] = "Al" if cab0["metoda"] in norme.METODE_IN_PAMANT else "Cu"
@@ -3393,9 +3715,29 @@ def _schema_cef(inp, j):
                   "_validat": True}
             if qg.get("curba"):
                 r0["curba"] = qg["curba"]
+            if qg.get("decl"):
+                r0["decl_fortat"] = qg["decl"]
+            if qg.get("Ir_A") is not None and qg.get("tip") in ("MCCB", "ACB"):
+                r0["Ir_fortat"] = qg["Ir_A"]          # r12: același reglaj Ir pe QG și în calculul C0
+            if qg.get("Isd_fortat"):
+                r0["Isd_fortat"] = qg["Isd_A"]
+            tr0 = (inp.get("cablu_C0") or {}).get("tronsoane")
+            if isinstance(tr0, list) and tr0:
+                rr0 = _c0_tronsoane(inp, j, r0, tr0, ctx_s, oc0, q_tg, tg)
+                if rr0 is None:
+                    return None
+            else:
+                rr0 = None
             # (PT nou: Q JT al trafo și QG sunt în serie pe același curent de injecție — fără verificare de selectivitate;
             # C0 se alimentează la defect din ambele capete, protejat de QG și de Q JT)
-            rr0 = calculeaza_ramura(r0, ctx_s, j, oc0, amonte=q_tg, obiect_sel="Q TG vs QG" if tg else f"Q PT vs {oqg}")
+            if rr0 is None:
+                rr0 = calculeaza_ramura(r0, ctx_s, j, oc0, amonte=q_tg, obiect_sel="Q TG vs QG" if tg else f"Q PT vs {oqg}")
+            if not rr0["blocat"] and qg.get("decl") == "EL" and not qg.get("Isd_fortat"):
+                # r12: Isd al QG ales după Ik1min la capătul C0 (bara TGD-CF) — același reglaj pe planșă și în V30
+                p0 = rr0["rezultat"].get("protectie") or {}
+                if p0.get("Isd_A") is not None:
+                    qg["Isd_A"], qg["Isd_multiplu"] = p0["Isd_A"], p0.get("Isd_multiplu")
+                    rz["QG"].update(Isd_A=p0["Isd_A"], Isd_multiplu=p0.get("Isd_multiplu"))
             rz["C0"] = dict(rr0["rezultat"], descriere=f"TGD-CF{suf} → " + ("TG existent" if tg else
                                                                            f"bara JT a PT (T{suf or 1})" if pt_nou
                                                                            else "punctul de racord"))
@@ -3413,8 +3755,41 @@ def _schema_cef(inp, j):
 
         # invertoare și PCS (pct. 1) — cu contextul barei TGD-CF (capătul C0, dacă există)
         ramuri = []
+        ctx_u = {}
+        if cascada:
+            # r12: plecările tablourilor intermediare din bara TEG (protecție la ambele capete, același calibru) →
+            # bara fiecărui tablou intermediar (Ik, ΔU cumulat C0 + C-TEk) → invertoarele lui
+            rz["tablouri_intermediare"] = []
+            for te in cascada:
+                k = te["k"]
+                rr_t = calculeaza_ramura(ramura_te(te), ctx_inv, j, f"C-TE{k}")
+                zt = {"nr": k, "nume": te["nume"], "unitati": [u["obiect"] for u in te["unitati"]],
+                      "sume": {"Pn_total_kW": te["pn"], "Iac_total_A": te["iac"]}}
+                if te["spec"].get("IP"):
+                    zt["IP"] = te["spec"]["IP"]
+                if isinstance(rr_t.get("rezultat"), dict):
+                    zt["C"] = dict(rr_t["rezultat"], descriere=f"{te['nume']} → bara TEG")
+                    zt["Q"] = rr_t["rezultat"].get("protectie")
+                rz["tablouri_intermediare"].append(zt)
+                if rr_t["blocat"]:
+                    ctx_t = ctx_inv
+                    # protecția declarată rămâne desenată (planșa blocată arată ce a cerut proiectantul)
+                    sp_ = te["spec"]
+                    tq = pr.normalizeaza_tip(sp_.get("prot_tip")) if sp_.get("prot_tip") else None
+                    if tq and sp_.get("In_A"):
+                        zt["Q"] = {"tip": tq, "In_A": sp_["In_A"], "declarat": True}
+                else:
+                    _selectivitate_qg(qg, rr_t["prot"], ctx_inv["Ik3_kA"], f"QF{k}", j, len(cascada) + len(direct), oqg)
+                    ctx_t = dict(rr_t["ctx_aval"], dU_cef_pct=rr_t["rezultat"]["dU_cumulat_pct"])
+                    zt["bara"] = {"Ik3max_kA": ctx_t["Ik3_kA"], "dU_pct": rr_t["rezultat"]["dU_cumulat_pct"]}
+                te["prot"] = None if rr_t["blocat"] else rr_t["prot"]
+                for u in te["unitati"]:
+                    ctx_u[u["obiect"]] = (ctx_t, te)
         for u in unit_s:
-            rr = calculeaza_ramura(ramura_unitate(u), ctx_inv, j, u["obiect"])
+            c_u, te_u = ctx_u.get(u["obiect"], (ctx_inv, None))
+            rr = calculeaza_ramura(ramura_unitate(u), c_u, j, u["obiect"])
+            if te_u is not None and isinstance(rr.get("rezultat"), dict):
+                rr["rezultat"]["tablou"] = te_u["k"]
             if isinstance(rr.get("rezultat"), dict):
                 rr["rezultat"].setdefault("obiect", u["obiect"])
                 if u["pcs"]:
@@ -3432,7 +3807,12 @@ def _schema_cef(inp, j):
             if len([u for u in unitati if u["pcs"]]) > 1:
                 rz["PCS_lista"] = pcs_l
         for u, rr in ramuri:
-            if not rr["blocat"]:
+            c_u, te_u = ctx_u.get(u["obiect"], (ctx_inv, None))
+            if not rr["blocat"] and te_u is not None:
+                if te_u.get("prot") is not None:
+                    _selectivitate_qg(te_u["prot"], rr["prot"], c_u["Ik3_kA"], u["obiect"], j, len(te_u["unitati"]),
+                                      f"QS{te_u['k']}")
+            elif not rr["blocat"]:
                 _selectivitate_qg(qg, rr["prot"], ctx_inv["Ik3_kA"], u["obiect"], j, len(unit_s), oqg)
             _spd_ca_invertor(j, u["obiect"], rr, u.get("grup") if not u["pcs"] else (bess or {}))
             _ddr_invertor_mare(j, u, rr["rezultat"])
@@ -3809,7 +4189,12 @@ def _pt_nou_cef(inp, j, sn, t, n_t=1, masura="JT"):
         r["masura"] = {"loc": "MT"}
         j.pas("măsura de decontare pe MT: celulă de măsură MT (TT + TC MT, contor de decontare) în PT-ul propriu — "
               "fără TC de decontare pe JT în TGD-CF")
-    r["celula_trafo"] = _celula_trafo(sn, inp.get("celula_trafo"), j)
+    r["celula_trafo"] = _celula_trafo(sn, _celula_trafo_inp(inp), j)
+    if dg_cerut(inp):
+        r["dg"] = True              # r12: DG cu întreruptor + 50/51/51N + TC + tor homopolar
+    for k_ in ("OD", "punct_conexiune", "cablu_MT", "compartimente"):
+        if inp.get(k_) is not None:
+            r[k_] = inp[k_]
     q = _q_jt_cef(t["In_T_A"], t["Ik3max_bara_kA"], inp.get("In_Q_JT_A"))
     if q is None:
         emite(j, "V06", BLOCANT, "Q JT", Ib=t["In_T_A"], tip="ACB")
@@ -4351,20 +4736,27 @@ def schema_prosumator(inp, j):
         if lim is None:
             return rez
     cab0 = dict(inp.get("cablu") or {})
+    # r12 (bug P din proiectele reale): `cablu_inv` (secțiunea / materialul impuse ale cablului invertorului) se aplica
+    # doar la CEF — la prosumator era ignorat pe calea manuală (se desena CYY-F 3 × 4 în loc de 3 × 6 cerut)
+    cab0.update({k: v for k, v in (inp.get("cablu_inv") or {}).items() if v is not None and k != "L"})
     cb.metoda_implicita(cab0, "C")
     cab0.setdefault("material", "Cu")
-    if inp.get("cablu") is None:
+    if inp.get("cablu") is None and inp.get("cablu_inv") is None:
         j.presupune("cablu invertor Cu PVC, metoda C")
 
     def ramura_unitate(u):
         g = u["grup"] or {}
         cab = dict(cab0)
+        if u["pcs"] and isinstance(inp.get("cablu_pcs"), dict):
+            cab = dict(inp.get("cablu") or {}, **{k: v for k, v in inp["cablu_pcs"].items() if v is not None})
+            cb.metoda_implicita(cab, "C")
+            cab.setdefault("material", "Cu")
         cab.update({k: v for k, v in (g.get("cablu") or {}).items() if v is not None})
         L = g.get("L_m", (g.get("cablu") or {}).get("L"))
         if L is None:
             L = inp.get("L_pcs_m") if u["pcs"] else None
         if L is None:
-            L = inp.get("L_inv_m", cab.get("L"))
+            L = inp.get("L_inv_m", cab.get("L", (inp.get("cablu_inv") or {}).get("L")))
         if L is None:
             L = 15.0
             j.presupune("lungime cablu invertor prosumator 15 m")
@@ -5550,6 +5942,8 @@ def calculeaza(intrare):
     v1.3 (§C.7): cu cheia `priza` se calculează și priza de pământ (rez["priza"], V37); în TT fără RA_ohm, RA = Rp
     calculat (declarat)."""
     inp = copy.deepcopy(intrare)
+    if isinstance(inp, dict) and inp.get("tip_schema") in ("cef", "bess"):
+        normalizeaza_cascada(inp)          # r12: tablouri intermediare (cascade CEF)
     if isinstance(inp, dict) and inp.get("tip_schema") == "bess":
         inp["tip_schema"] = "cef"          # v1.9 (R5): BESS de sine stătător = CEF fără invertoare PV (SPEC §C.3)
     priza = inp.pop("priza", None) if isinstance(inp, dict) else None

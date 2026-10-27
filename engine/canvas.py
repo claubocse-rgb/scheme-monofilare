@@ -23,6 +23,8 @@ LAYERS = {
     "TABEL":    (7, 18, "CONTINUOUS", "#000"),
     "CARTUS":   (7, 35, "CONTINUOUS", "#000"),
     "HASURA":   (7, 18, "CONTINUOUS", "#000"),
+    "RS485":    (4, 25, "DASHED",     "#0096b4"),
+    "COMPARTIMENT": (8, 18, "DASHED", "#888"),      # r12: compartimentele OD / utilizator ale celulelor MT (fundal)   # r12: magistrala de comunicație RS485 (cyan, ca la proiectant)
 }
 DASH_SVG = {"DASHED": "2.4 1.2", "DOT": "0.5 0.9", "DASHEDX2": "3.6 1.8", "CONTINUOUS": None}
 

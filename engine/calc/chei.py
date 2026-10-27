@@ -28,7 +28,8 @@ CHEI = {
     "pt": {"Sn_kVA", "plecari", "U_MT_kV", "In_Q_JT_A", "Q_general_tip", "Q_JT_tip", "aparat", "Q1_tip", "celula_trafo",
            "celule_mt", "cablu_MT", "compensare_kvar", "compensare_L_m", "cupla", "aar", "masura", "masura_pt", "n_trafo",
            "plecari_pe_sectie", "plecari_pe_semibara", "pt_aerian", "trafo_izolatie", "SkQ_MVA", "ks", "cosfi",
-           "grupa_conexiuni", "pt_grupa_conexiuni", "siguranta_tablou", "siguranta", "titlu_tablou", *CHEI_UK},
+           "grupa_conexiuni", "pt_grupa_conexiuni", "siguranta_tablou", "siguranta", "titlu_tablou", "dg_intreruptor",
+           "OD", "punct_conexiune", "compartimente", *CHEI_UK},
     "ge_ats": {"Sn_GE_kVA", "consumatori", "plecari", "P_sarcina_kW", "Ib_sarcina_A", "sursa_retea", "sursa_rezerva",
                "fara_retea", "ge_paralel", "bara_vitala", "comutare", "ATS_poli", "ATS_interblocaj", "DDR_GE", "xd",
                "excitatie_sustinuta", "In_QG_A", "In_Q_retea_A", "L_C1_m", "L_C2_m", "L_C3_m", "L_GE_ATS_m", "L_m",
@@ -40,12 +41,15 @@ CHEI = {
             "P_evacuata_kW", "Pn_total_kW", "In_QG_A", "In_Q_bransament_A", "L_racord_m", "L_inv_m", "L_pcs_m", "cablu",
             "cablu_C0", "cablu_inv", "cablu_pcs", "cablu_cc", "U_ca_V", "U_inv_ca_V", "gpv_In_A", "gpv", "spd_cc",
             "Ucpv_V", "racord_In_Q_A", "racord_Icu_kA", "racord_Q_tip", "Ik3_TG_kA", "Ik3_sursa_kA", "Ik3_bara_kA",
-            "Zb_TG_ohm", "cosfi", *CHEI_UK, *_OD},
+            "Zb_TG_ohm", "cosfi", "tablouri_intermediare", "QG", "racord_Ir_A", "racord_Isd_A", "racord_decl",
+            "monitorizare", "protectie_interfata", "cablu_MT", "dg_intreruptor", "OD", "punct_conexiune", "planse", "compartimente",
+            *CHEI_UK, *_OD},
     "prosumator": {"invertoare", "invertor", "Pn_inv_kW", "hibrid", "Iac_max_A", "baterie", "baterie_kWh", "bess",
                    "backup", "kWp", "modul", "string", "racord", "PI_externa", "P_aprobata_kW", "P_evacuata_kW",
                    "limitare_injectie_kW", "In_QG_A", "In_Q_bransament_A", "L_racord_m", "L_inv_m", "L_coloana_m",
-                   "cablu", "cablu_C0", "cablu_inv", "comercial", "pt_Sn_kVA", "n_trafo", "trafo_izolatie", "SkQ_MVA",
-                   "gpv", "gpv_In_A", "spd_cc", "Ucpv_V", "invertor_baterie", *_OD},
+                   "cablu", "cablu_C0", "cablu_inv", "cablu_pcs", "comercial", "pt_Sn_kVA", "n_trafo", "trafo_izolatie", "SkQ_MVA",
+                   "gpv", "gpv_In_A", "spd_cc", "Ucpv_V", "invertor_baterie", "contor_productie", "monitorizare",
+                   "protectie_interfata", "planse", *_OD},
     "locuinta": {"alimentare", "circuite", "tablouri_secundare", "ge_rezerva", "ks", "Q_general_tip", "Ik3_OD_kA",
                  "Zb_OD_ohm", "separare_PEN"},
 }
@@ -54,14 +58,15 @@ CHEI["cascada"] = CHEI["tablou"]
 PLECARE = frozenset({"nume", "P_kW", "In_A", "S_kVA", "Sn_kVA", "L_m", "cablu", "receptor", "pornire", "cosfi", "ks",
                      "prot_tip", "curba", "In_fortat", "Icu_fortat", "h3", "h3_pct", "randament", "DDR", "ddr", "copii",
                      "n", "n_circuite", "in_tablou", "retea", "rezerva", "siguranta", "sectie", "ups", "bypass",
-                     "bypass_manual", "intrari_separate", "autonomie_min", "vital", "faza", "U_V", "titlu", "tip"})
+                     "bypass_manual", "intrari_separate", "autonomie_min", "vital", "faza", "U_V", "titlu", "tip",
+                     "Ir_A", "Isd_A", "decl"})
 CONSUMATOR = frozenset({"nume", "P_kW", "n", "n_rezerva", "rezerva", "siguranta", "vital", "pe_ge", "normal", "ramura",
                         "pornire", "receptor", "cosfi", "L_m", "cablu", "retea", "prot_tip", "In_A", "S_kVA", "DDR", "ddr",
                         "ks", "faza", "h3_pct", "copii"})
 INVERTOR = frozenset({"n", "Pn_kW", "producator", "model", "Iac_max_A", "Idc_max_A", "Isc_max_A", "Umax_dc_V",
                       "MPPT_min_V", "MPPT_max_V", "nr_MPPT", "hibrid", "existent", "faza", "retea", "U_ca_V", "sectie",
                       "tgd", "cablu", "L_m", "ddr", "IdN_min_mA", "tip_ddr", "spd_ca", "string", "modul",
-                      "separator_cc_integrat"})
+                      "separator_cc_integrat", "tablou", "prot_tip", "protectie"})
 LISTE = {"plecari": PLECARE, "consumatori": CONSUMATOR, "invertoare": INVERTOR}
 
 

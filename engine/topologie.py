@@ -18,6 +18,8 @@ def _aparate(model):
             yield from walk(b.get("copii"))
     yield from walk(model.get("intrari"))
     yield from walk(model.get("plecari"))
+    if isinstance(model.get("jonctiune"), dict):          # r12: bara comună (TEG / bara MT)
+        yield from walk([model["jonctiune"]])
 
 
 def _v57(model, meta):
@@ -44,7 +46,7 @@ def _v82(meta):
     for o in meta.get("obiecte", []):
         if o.get("tip") not in ("sursa", "tablou"): continue
         for car in meta.get("carcase", []):
-            if car.get("nume") == o.get("nume"): continue
+            if car.get("nume") == o.get("nume") or car.get("compartiment"): continue
             if o["bbox"] and bbox_overlap(o["bbox"], car["bbox"], 0.0):
                 cine = "sursa" if o["tip"] == "sursa" else "tabloul"
                 out.append(_r("V82", "BLOCANT", o.get("nume") or o["tip"],

@@ -316,7 +316,22 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
                 motor_v23 = ("AV", prag)
         else:
             motor_v23 = ("INFO", prag)
-    prot = pr.construieste(tip, In, ip_min, curba, are_aval)
+    # r12 (proiecte reale): reglajele proiectantului — declanșator electronic impus, Ir / Isd reglate
+    decl_f = r.get("decl_fortat")
+    ir_f = r.get("Ir_fortat")
+    isd_f = r.get("Isd_fortat")
+    if ir_f is not None and tip in ("MCCB", "ACB") and not (0.4 * In - 1e-6 <= float(ir_f) <= In + 1e-6):
+        emite(j, "V12", BLOCANT, obiect, "camp", camp="Ir reglat", valoare=f"{fmt_ro(float(ir_f))} A (In {fmt_ro(In)} A)")
+        j.verificari[-1]["remediere"] = "Ir reglat între 0,4·In și In"
+        return _blocat(ib)
+    prot = pr.construieste(tip, In, ip_min, curba, are_aval, decl=decl_f if tip in ("MCCB", "ACB") else None,
+                           ir=ir_f if tip in ("MCCB", "ACB") else None, isd=isd_f if tip in ("MCCB", "ACB") else None)
+    if r.get("motorizat"):
+        prot["motorizat"] = True
+    if r.get("Isd_multiplu_fortat") is not None and prot.get("decl") == "EL" and not prot.get("Isd_fortat"):
+        prot["Isd_multiplu"] = float(r["Isd_multiplu_fortat"])
+        prot["Isd_A"] = prot["Isd_multiplu"] * prot["Ir_A"]
+        prot["Isd_fortat"] = True
     if motor_ma:
         prot["Im_A"] = norme.MOTOR_IM_MULTIPLU * In
         prot["intrerupator_motor"] = True
@@ -802,8 +817,13 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
     if gt(ev["dU_c"], lim):
         if lim_max is not None and gt(ev["dU_c"], lim_max):
             # v1.2 (C6): peste limita I7 nici mărirea automată nu ajută → BLOCANT
-            emite(j, "V20", BLOCANT, obiect, "inv" if invertor else "bara", x=ev["dU_c"], lim=lim_max,
-                  detaliu=" cu secțiunea impusă" if S_f is not None else " chiar la secțiunea maximă (4 × 240 mm²)")
+            det_ = " cu secțiunea impusă" if S_f is not None else " chiar la secțiunea maximă (4 × 240 mm²)"
+            if invertor and gt(du0, 0.005):
+                # r12: valoarea e CUMULATĂ (C0 / tablou intermediar + cablul invertorului) — mesajul o spune
+                emite(j, "V20", BLOCANT, obiect, "inv_cumulat", x=ev["dU_c"], lim=lim_max, a=round(du0, 2),
+                      b=round(ev["dU_r"], 2), detaliu=det_)
+            else:
+                emite(j, "V20", BLOCANT, obiect, "inv" if invertor else "bara", x=ev["dU_c"], lim=lim_max, detaliu=det_)
         elif cod_lim == "V21" or invertor:
             emite(j, "V21", AVERTISMENT, obiect, x=ev["dU_c"], lim=lim)
         else:
@@ -945,6 +965,9 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         prot_out["intrerupator_motor"] = True
     if prot.get("Icu_fortat"):
         prot_out["Icu_fortat"] = True
+    for k_ in ("Ir_fortat", "Isd_fortat", "motorizat"):
+        if prot.get(k_):
+            prot_out[k_] = True
     tip_txt = tip_impus if tip_impus and not cb.monopolar(c) and norme.material_izolatie_din_denumire(tip_impus) == \
         (mat, izl) else None
     rez = {"obiect": obiect, "Ib_A": ib, "Ip_min_A": ip_min, "protectie": prot_out, "I2_A": I2, "Iz_min_A": iz_min,
