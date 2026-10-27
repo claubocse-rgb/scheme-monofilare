@@ -1,5 +1,5 @@
 """Construiește versiunea web (o pagină + worker Pyodide) din aceleași surse ca aplicația locală.
-Utilizare: python3 web/build.py DEST   — DEST primește index.html, worker.js, app_src.json, pyodide/, whl/.
+Utilizare: python3 web/build.py DEST   — DEST primește index.html, config.js, worker.js, app_src.json, pyodide/, whl/.
 Fișierele Pyodide și roțile Python se iau din web/vendor/ (vezi web/README.md)."""
 import base64, json, pathlib, re, shutil, sys
 
@@ -43,6 +43,9 @@ html,body{overflow:hidden}
 <div>Pornesc motorul de calcul direct în browser — prima deschidere durează 10–20 de secunde, apoi merge instant.</div>
 <div class="bar"></div><small id="sm-boot-t">Se încarcă…</small></div></div>
 """
+    # configurarea conturilor (Supabase) rămâne fișier separat lângă pagină: se completează fără o nouă construire
+    s = s.replace('<script src="/static/config.js"></script>', '<script src="config.js"></script>', 1)
+    shutil.copy(ROOT / "static" / "config.js", DEST / "config.js")
     shim = "<script>\n" + (WEB / "shim.js").read_text(encoding="utf-8") + "\n</script>\n"
     i = s.index("<script>")
     s = s[:i] + boot + shim + s[i:]

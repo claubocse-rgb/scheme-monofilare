@@ -137,7 +137,7 @@ def _pagina(browser, url, w=1440, h=900):
 
 
 def _chat(pg, text):
-    pg.evaluate("() => { WIZ_START = null; render(); $('#assist').open = true; }")
+    pg.evaluate("() => { acasaInchide(); WIZ_START = null; render(); $('#assist').open = true; }")   # de pe pagina de start în editor
     pg.fill("#chat-text", text)
     pg.press("#chat-text", "Control+Enter")          # Ctrl+Enter din text → panoul de confirmare
     pg.wait_for_selector("#conf", timeout=30000)

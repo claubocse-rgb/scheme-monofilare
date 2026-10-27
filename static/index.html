@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>Scheme monofilare</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/static/config.js"></script>
 <style>
 /* fonturi locale (SIL OFL, static/fonts/OFL.txt) — funcționează și fără internet */
 @font-face{font-family:"Barlow";font-style:normal;font-weight:400;font-display:swap;src:url(/static/fonts/barlow-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -402,6 +403,7 @@ body.wiz #pane{padding:var(--s4) max(16px,calc((100% - 1040px)/2)) 40px}
 .wz-card .tag{font-size:var(--fs-xs);font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
 @media (max-width:560px){.wz-card.main{grid-column:auto}#wizbar li button:not([aria-current]) .t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}#wizbar li button{padding-right:6px}#wizbar li button[aria-current] {padding-right:12px}}
 .wz-alt{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;margin-top:var(--s2)}
+.wz-res{flex:1 1 260px;min-width:0}.wz-res:empty{display:none}
 .wz-desc textarea{width:100%;min-height:64px;padding:8px 10px;border:1px solid var(--rule-2);border-radius:var(--r);background:var(--surface);resize:vertical;line-height:1.4}
 .wz-sum dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0}
 .wz-sum dt{color:var(--ink-3)}
@@ -479,6 +481,14 @@ details>summary{min-height:24px}
 .cf-tdesc{margin:0 0 var(--s2)}
 .cf-grid .fld:has(> .cf-warn:not([hidden])){grid-column:1/-1}
 #pane.confm{padding-bottom:0}
+.cf-oblig input,.cf-oblig select{border-color:var(--danger)!important;box-shadow:0 0 0 1px var(--danger);background:var(--danger-soft)}
+.cf-tag.ob{background:var(--danger);color:var(--surface)}
+.cf-q li.cf-oblig-li{background:var(--danger-soft);box-shadow:inset 3px 0 0 var(--danger)}
+.cf-q li.cf-oblig-li.rezolvat{background:var(--sunk);box-shadow:inset 3px 0 0 var(--ok)}
+.cf-q li.cf-oblig-li.rezolvat .cf-oblig input{border-color:var(--rule-2)!important;box-shadow:none;background:var(--surface)}
+.lucru{display:inline-flex;align-items:center;gap:8px;font-weight:500;color:var(--ink);font-size:var(--fs-sm)}
+.spin{width:14px;height:14px;flex:none;border:2px solid var(--ink-3);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+.msg.neint{margin:0;font-size:var(--fs-sm);line-height:1.4}
 .cf-act{position:sticky;bottom:0;z-index:2;margin:0 calc(-1 * var(--s3));padding:var(--s2) var(--s3);background:var(--panel);border-top:1px solid var(--rule)}
 .cf-act .msg{margin:0 0 var(--s2)}
 .cf-btns{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
@@ -510,13 +520,159 @@ details>summary{min-height:24px}
   .dv-set{grid-template-columns:repeat(2,1fr)}
   .dv-head,.dv-row{grid-template-columns:1fr 56px 72px 52px 72px}
 }
+
+/* ===================================================================== pagina de start */
+.brand-btn{display:inline-grid;place-items:center;width:30px;height:30px;padding:0;margin:0 -2px;border:0;border-radius:var(--r);background:none;cursor:pointer}
+.brand-btn:hover{background:var(--sunk)}
+#proj-save.err{color:var(--danger)}
+body.home>header,body.home>main{display:none!important}
+#home{flex:1;min-height:0;display:grid;grid-template-columns:260px minmax(0,1fr);--grid:color-mix(in srgb,var(--rule) 70%,transparent)}
+#h-nav{display:flex;flex-direction:column;gap:var(--s3);min-height:0;overflow:auto;padding:var(--s3) var(--s3) var(--s4);background:var(--surface);border-right:1px solid var(--rule)}
+.h-brand{display:flex;align-items:center;gap:10px;padding:4px 6px 8px;font:600 var(--fs-lg)/1.1 var(--font-c)}
+.h-brand svg{width:28px;height:28px;flex:none}
+.h-close{margin-left:auto;display:none}
+.h-menu{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.h-menu li.sep{height:1px;margin:8px 6px;background:var(--rule)}
+.h-menu button{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:0 10px;border:0;border-radius:var(--r);background:none;color:var(--ink-2);font-weight:500;text-align:left;cursor:pointer}
+.h-menu button .ic{display:inline-grid;place-items:center;color:var(--ink-3)}
+.h-menu button:hover{background:var(--sunk);color:var(--ink)}
+.h-menu button[aria-current="page"]{background:var(--sig-soft);color:var(--ink);font-weight:600;box-shadow:inset 3px 0 0 var(--sig-line)}
+.h-menu button[aria-current="page"] .ic{color:var(--ink)}
+.h-menu .cnt{margin-left:auto;min-width:22px;padding:0 6px;border-radius:10px;background:var(--sunk);color:var(--ink-2);font-size:var(--fs-xs);text-align:center}
+.h-menu .cnt.on{background:none;color:var(--ok)}
+/* cartușul: singurul element desenat ca pe planșă — chenar plin, rubrici, fără rotunjiri */
+.h-cartus{margin-top:auto;display:grid;grid-template-columns:auto minmax(0,1fr);padding:0;border:1.5px solid var(--ink);border-radius:0;background:var(--surface);color:var(--ink);text-align:left;cursor:pointer;font:var(--fs-xs)/1.25 var(--font)}
+.h-cartus>span{padding:5px 8px;border-top:1px solid var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h-cartus>.ttl{grid-column:1/-1;border-top:0;font:600 var(--fs-sm)/1.2 var(--font-c);background:var(--sunk)}
+.h-cartus>.k{border-right:1px solid var(--ink);color:var(--ink-3)}
+.h-cartus>.v{font-weight:500}.h-cartus>.v.gol{color:var(--danger);font-weight:400}
+.h-cartus:hover{box-shadow:4px 4px 0 var(--sig)}
+.h-body{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--panel)}
+.h-top{display:none}
+.h-main{flex:1;min-height:0;overflow:auto;padding:44px clamp(16px,4vw,64px) 72px;outline:none}
+.h-sec{max-width:1100px}
+.h-h{margin:0 0 6px;font:600 30px/1.1 var(--font-c);letter-spacing:-.01em}
+.h-h:focus{outline:none;box-shadow:none}
+.h-lead{margin:0 0 var(--s5);max-width:66ch;color:var(--ink-2);font-size:var(--fs-md);line-height:1.5}
+.h-h3{display:flex;align-items:center;gap:8px;margin:36px 0 var(--s3);font:600 var(--fs-lg)/1.2 var(--font-c)}
+.h-h3.mic{margin:var(--s5) 0 var(--s2);font-size:var(--fs-md)}
+.h-h3 .cnt{font:500 var(--fs-xs) var(--font);color:var(--ink-3)}
+.h-sub{margin:0 0 var(--s3);max-width:70ch;color:var(--ink-2);font-size:var(--fs-sm);line-height:1.45}
+.h-row{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);margin-top:var(--s3)}
+.h-hrow{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3)}
+.h-hrow .h-h3{margin-bottom:var(--s3)}
+.h-load{display:flex;align-items:center;gap:8px;color:var(--ink-2)}
+/* tipurile de lucrare: simbolul monofilar pe hârtie milimetrică */
+.h-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3)}
+.h-tile{position:relative;display:flex;flex-direction:column;width:100%;height:100%;padding:0;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);color:var(--ink);text-align:left;cursor:pointer;overflow:hidden}
+.gl{display:grid;place-items:center;color:var(--ink-2)}
+.gl svg{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.gl .s{stroke:var(--c-src)}
+.h-tile .gl{position:relative;height:104px;border-bottom:1px solid var(--rule);background-color:var(--sunk);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:12px 12px;background-position:-1px -1px}
+.h-tile .gl svg{width:120px;height:80px}
+.h-tile .tx{display:block;padding:11px 14px 14px}
+.h-tile b{display:block;font:600 var(--fs-md)/1.2 var(--font-c)}
+.h-tile small{display:block;margin-top:4px;color:var(--ink-3);font-size:var(--fs-sm);line-height:1.35}
+.h-tile::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--sig);transform:scaleX(0);transform-origin:left;transition:transform .16s ease-out}
+.h-tile:hover{border-color:var(--rule-2)}.h-tile:hover .gl{color:var(--ink)}
+.h-tile:hover::after,.h-tile:focus-visible::after,.h-tile.busy::after{transform:scaleX(1)}
+.h-tile.busy{cursor:progress}.h-tile.busy .gl svg{opacity:.25}
+.h-tile.busy .gl::after{content:"";position:absolute;width:18px;height:18px;border:2px solid var(--ink);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+.h-desc{margin-top:var(--s4);padding:var(--s4);border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface)}
+.h-desc textarea{display:block;width:100%;min-height:76px;padding:9px 11px;border:1px solid var(--rule-2);border-radius:var(--r);background:var(--surface);resize:vertical;line-height:1.45}
+.h-desc .hint{font-size:var(--fs-xs);color:var(--ink-3)}
+.h-res{flex:1 1 100%;min-width:0}.h-res:empty{display:none}
+/* liste de proiecte */
+.h-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:var(--s3)}
+.h-card{display:flex;flex-direction:column;width:100%;padding:0;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);color:var(--ink);text-align:left;cursor:pointer;overflow:hidden}
+.h-card:hover{border-color:var(--rule-2)}
+.h-card .tx{display:block;padding:10px 12px 12px}.h-card b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h-card small{display:block;margin-top:2px;color:var(--ink-3);font-size:var(--fs-xs)}
+.h-card.busy{cursor:progress;opacity:.7}
+.h-mini{display:grid;place-items:center;width:104px;aspect-ratio:1.414;flex:none;border:1px solid var(--rule);background:#fff center/contain no-repeat}
+.h-mini.mare{width:100%;border:0;border-bottom:1px solid var(--rule)}
+.h-mini.gol{background-color:var(--sunk);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:10px 10px}
+.gl.mic svg{width:60px;height:40px}.h-mini.mare .gl.mic svg{width:84px;height:56px}
+.h-bar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center;margin-bottom:var(--s3)}
+.h-bar .inp,.h-ren .inp{flex:1 1 240px;min-width:0;height:var(--h-ctl);padding:0 10px;border:1px solid var(--rule-2);border-radius:var(--r);background:var(--surface)}
+.h-note{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s3);margin-bottom:var(--s3);padding:10px 12px;border-radius:var(--r);background:var(--sig-soft);font-size:var(--fs-sm)}
+.h-note span{flex:1 1 220px}
+.h-list{list-style:none;margin:0;padding:0;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);overflow:hidden}
+.h-item{display:flex;align-items:center;gap:var(--s3);padding:10px 12px;border-top:1px solid var(--rule)}
+.h-item:first-child{border-top:0}
+.h-item.cur{box-shadow:inset 3px 0 0 var(--sig-line)}
+.h-item.del{background:var(--danger-soft)}
+.h-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.h-info>b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h-open{align-self:flex-start;max-width:100%;padding:0;border:0;background:none;color:var(--ink);font-weight:600;font-size:var(--fs-md);text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-radius:2px}
+.h-open:hover{text-decoration:underline;text-decoration-color:var(--sig-line);text-decoration-thickness:2px;text-underline-offset:3px}
+.h-open.busy{color:var(--ink-3)}
+.h-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:var(--fs-xs);color:var(--ink-3)}
+.h-tag{padding:0 6px;border-radius:8px;background:var(--sig-soft);color:var(--ink);font-weight:600}
+.h-acts{display:flex;gap:2px;flex:none}
+.h-ren{flex:1;display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
+.h-conf{flex:1;min-width:0}.h-conf p{margin:0;font-size:var(--fs-sm)}.h-conf .h-row{margin-top:var(--s2)}
+.btn.danger-pri{background:var(--danger);border-color:var(--danger);color:var(--surface);font-weight:600}
+.btn.danger-pri:hover{filter:brightness(1.08)}
+.h-gol{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2);padding:var(--s5);border:1px dashed var(--rule-2);border-radius:var(--r-lg);color:var(--ink-2)}
+.h-gol p{margin:0;max-width:60ch}.h-gol .gl{color:var(--ink-3)}.h-gol .gl svg{width:84px;height:56px}
+p.h-gol{display:block}
+/* exemple */
+.h-ex{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--s2)}
+.h-exb{display:flex;flex-direction:column;gap:3px;width:100%;height:100%;padding:12px 14px;border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface);color:var(--ink);text-align:left;cursor:pointer}
+.h-exb:hover{border-color:var(--rule-2)}
+.h-exb b{font:600 var(--fs-md)/1.2 var(--font-c)}.h-exb span{color:var(--ink-2);font-size:var(--fs-sm);line-height:1.4}
+.h-exb.gl-row{flex-direction:row;align-items:center;gap:var(--s3)}.h-exb.gl-row>span{display:flex;flex-direction:column;gap:3px}
+.h-exb.busy{cursor:progress;opacity:.6}
+/* formulare (setări, cont) */
+.h-card-f{max-width:760px;margin-bottom:var(--s4);padding:var(--s4) var(--s4) var(--s4);border:1px solid var(--rule);border-radius:var(--r-lg);background:var(--surface)}
+.h-card-f>.h-row:last-child{margin-top:var(--s4)}
+.h-fgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.h-fgrid .fld.lat{grid-column:1/-1}
+.h-card-f .fld>label{white-space:normal}
+.h-card-f .inp{width:100%;height:var(--h-ctl);padding:0 10px;border:1px solid var(--rule-2);border-radius:var(--r);background:var(--surface)}
+.h-card-f .inp:focus{border-color:var(--ink)}
+.h-auth{max-width:440px;display:flex;flex-direction:column;gap:var(--s3)}
+.h-auth>.h-row:last-child{margin-top:var(--s1)}
+.h-stare{display:inline-block;padding:0 8px;border-radius:9px;background:var(--sunk);color:var(--ink-2);font-weight:600;font-size:var(--fs-xs)}
+.h-stare.on{background:var(--ok);color:var(--surface)}
+.h-seg{display:inline-flex;flex-wrap:wrap;margin-bottom:var(--s3);border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+.h-seg>button,.h-seg>label{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 14px;border:0;border-left:1px solid var(--rule);background:none;color:var(--ink-2);font-weight:500;cursor:pointer}
+.h-seg>:first-child{border-left:0}
+.h-seg>button[aria-selected="true"],.h-seg>label:has(input:checked){background:var(--ink);color:var(--surface)}
+.h-seg input{position:absolute;opacity:0;pointer-events:none}
+.h-seg>label:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:-4px;box-shadow:inset 0 0 0 4px var(--sig)}
+.h-dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:0}.h-dl dt{color:var(--ink-3)}.h-dl dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+.msg.ok{color:var(--ok);padding-left:0}
+@media (max-width:900px){
+  #home{grid-template-columns:minmax(0,1fr)}
+  #h-nav{position:fixed;inset:0 auto 0 0;z-index:70;width:min(300px,86vw);transform:translateX(-102%);visibility:hidden;transition:transform .2s ease-out,visibility 0s .2s;box-shadow:var(--shadow-pop)}
+  body.h-nav-open #h-nav{transform:none;visibility:visible;transition:transform .2s ease-out}
+  .h-close{display:inline-flex}
+  .h-scrim{position:fixed;inset:0;z-index:65;background:color-mix(in srgb,var(--ink) 45%,transparent)}
+  .h-top{display:flex;align-items:center;gap:var(--s2);height:52px;flex:none;padding:0 var(--s2);background:var(--surface);border-bottom:1px solid var(--rule)}
+  .h-top b{font:600 var(--fs-md)/1 var(--font-c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .h-top .sp{flex:1}
+  .h-main{padding:22px 16px 56px}
+  .h-h{font-size:25px}
+  .h-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+  .h-tile .gl{height:84px}.h-tile .gl svg{width:100px;height:66px}
+  .h-tile .tx{padding:9px 10px 11px}
+  .h-item{flex-wrap:wrap;gap:var(--s2) var(--s3)}
+  .h-item .h-mini{width:76px}
+  .h-acts{width:100%;justify-content:flex-end}
+  .h-fgrid{grid-template-columns:1fr}
+  .h-cards{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .h-ex{grid-template-columns:1fr}
+}
+@media (max-width:360px){.h-tiles{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <a class="skip" href="#pane" onclick="event.preventDefault();const t=document.getElementById('wz-h')||document.querySelector('#pane input,#pane select,#pane button');t&&t.focus()">Sari la conținut</a>
 <header>
   <div class="brand">
-    <svg viewBox="0 0 26 26" aria-hidden="true"><rect x=".5" y=".5" width="25" height="25" rx="5" fill="var(--sig)"/><path d="M13 3v5M13 18v5M9.5 8h7M13 8l4.5 9" stroke="#1a1e22" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M10 18h6" stroke="#1a1e22" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <button class="brand-btn" id="home-btn" type="button" title="Acasă — pagina de start" aria-label="Acasă — pagina de start"><svg viewBox="0 0 26 26" aria-hidden="true"><rect x=".5" y=".5" width="25" height="25" rx="5" fill="var(--sig)"/><path d="M13 3v5M13 18v5M9.5 8h7M13 8l4.5 9" stroke="#1a1e22" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M10 18h6" stroke="#1a1e22" stroke-width="1.8" stroke-linecap="round"/></svg></button>
     <h1>Scheme monofilare</h1>
   </div>
   <div class="proj" id="proj" title="Planșa curentă"><span id="proj-name">—</span><small id="proj-save">salvat automat în acest browser</small></div>
@@ -615,6 +771,23 @@ details>summary{min-height:24px}
     <div class="verr" id="verr" role="alert" hidden></div>
   </section>
 </main>
+<div id="home" hidden>
+  <aside id="h-nav" aria-label="Meniu">
+    <div class="h-brand"><svg viewBox="0 0 26 26" aria-hidden="true"><rect x=".5" y=".5" width="25" height="25" rx="5" fill="var(--sig)"/><path d="M13 3v5M13 18v5M9.5 8h7M13 8l4.5 9" stroke="#1a1e22" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M10 18h6" stroke="#1a1e22" stroke-width="1.8" stroke-linecap="round"/></svg><span>Scheme monofilare</span>
+      <button class="btn ghost icon sm h-close" id="h-close" type="button" aria-label="Închide meniul"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+    <nav aria-label="Secțiuni"><ul class="h-menu" id="h-menu"></ul></nav>
+    <button class="h-cartus" id="h-cartus" type="button" aria-label="Datele din cartuș — deschide Setări"></button>
+  </aside>
+  <div class="h-scrim" id="h-scrim" hidden></div>
+  <div class="h-body" id="h-body">
+    <div class="h-top">
+      <button class="btn ghost icon" id="h-burger" type="button" aria-label="Deschide meniul" aria-controls="h-nav" aria-expanded="false"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"/></svg></button>
+      <b id="h-top-t">Scheme monofilare</b><span class="sp"></span>
+      <button class="btn ghost icon" id="h-theme" type="button" aria-label="Schimbă tema"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor"/></svg></button>
+    </div>
+    <div class="h-main" id="h-main" tabindex="-1"></div>
+  </div>
+</div>
 <div id="toasts" aria-live="polite"></div>
 
 <script>
@@ -721,6 +894,7 @@ function chainTo(k) {
 /* =========================================================================== istoric (undo / redo) */
 function pushHistory() {
   const s = JSON.stringify(MODEL);
+  if (MODEL && MODEL._provizoriu) delete MODEL._provizoriu;       // prima modificare face din schema provizorie un proiect
   if (HIST.past[HIST.past.length - 1] === s) return;
   HIST.past.push(s); if (HIST.past.length > 150) HIST.past.shift();
   HIST.future.length = 0; updUndo();
@@ -739,7 +913,8 @@ const undoAction = (n, label = 'Anulează') => ({ action: label, onAction: () =>
 /* =========================================================================== autosalvare + recente */
 let saveT = null;
 const DOCS = 'sm.docs';
-function docName(m) { const c = m.cartus || {}; return [c.plansa, c.denumire2 || c.denumire1].filter(Boolean).join(' · ') || 'Schemă fără titlu'; }
+function docName(m) { if (m._titlu) return m._titlu; const c = m.cartus || {}; return [c.plansa, c.denumire2 || c.denumire1].filter(Boolean).join(' · ') || 'Schemă fără titlu'; }
+const tipDoc = m => (m && m.calc && m.calc.tip_schema) || 'manual';
 const TAB_ID = (() => { try { let t = sessionStorage.getItem('sm.tab'); if (!t) { t = 't' + Math.random().toString(36).slice(2, 9); sessionStorage.setItem('sm.tab', t); } return t; } catch { return 't' + Math.random().toString(36).slice(2, 9); } })();
 let LAST_SAVE = 0;   // momentul ultimei salvări făcute de această filă pentru schema curentă
 // fiecare filă deschisă își anunță prezența; o filă închisă (sau browserul repornit) nu mai blochează schema
@@ -747,8 +922,9 @@ const bate = () => { const a = store.get('sm.alive', {}); const now = Date.now()
 bate(); setInterval(bate, 5000);
 addEventListener('pagehide', () => { const a = store.get('sm.alive', {}); delete a[TAB_ID]; store.set('sm.alive', a); });
 const filaVie = id => { const t = store.get('sm.alive', {})[id]; return !!t && Date.now() - t < 20000; };
+const MINI = new Map();          // miniatura planșei (JPEG mic) pe document — pentru „Proiectele mele”
 function saveNow() {
-  clearTimeout(saveT); if (!MODEL) return;
+  clearTimeout(saveT); if (!MODEL || MODEL._provizoriu) return;     // schema provizorie de la prima pornire nu e un proiect
   let docs = store.get(DOCS, []);
   const other = docs.find(d => d.id === MODEL._doc);
   // aceeași schemă a fost salvată între timp din altă filă: nu o suprascriem — aceasta devine o copie separată
@@ -756,13 +932,21 @@ function saveNow() {
     MODEL._doc = 'd' + Date.now().toString(36);
     toast('Schema aceasta e deschisă și în altă filă. Am salvat versiunea de aici separat, în „Recente”.', { kind: 'warn', ms: 9000 });
   }
+  const vechi = docs.find(d => d.id === MODEL._doc);
   docs = docs.filter(d => d.id !== MODEL._doc);
   LAST_SAVE = Date.now();
-  docs.unshift({ id: MODEL._doc, tab: TAB_ID, name: docName(MODEL), ben: (MODEL.cartus || {}).beneficiar || '', t: LAST_SAVE, model: MODEL });
-  let ok = store.set(DOCS, docs.slice(0, 10));
-  if (!ok) ok = store.set(DOCS, docs.slice(0, 3));
-  $('#proj-save').textContent = ok ? 'salvat automat în acest browser' : 'salvarea automată nu e disponibilă — salvează ca .json';
+  docs.unshift({ id: MODEL._doc, tab: TAB_ID, name: docName(MODEL), ben: (MODEL.cartus || {}).beneficiar || '', t: LAST_SAVE, tip: tipDoc(MODEL),
+    mini: MINI.get(MODEL._doc) || (vechi && vechi.mini) || null, model: MODEL });
+  // spațiul din browser e limitat (~5 MB): întâi fără miniaturile vechi, apoi mai puține proiecte
+  let pastrate = 0;
+  for (const n of [DOCS_MAX, 30, 15, 5]) { if (store.set(DOCS, docs.slice(0, n))) { pastrate = Math.min(n, docs.length); break; }
+    if (store.set(DOCS, docs.slice(0, n).map((d, i) => (i ? Object.assign({}, d, { mini: null }) : d)))) { pastrate = Math.min(n, docs.length); break; } }
+  if (pastrate && pastrate < Math.min(docs.length, DOCS_MAX) && !SAVE_AVERT) { SAVE_AVERT = true;
+    toast(`Spațiul din browser e plin: am păstrat doar ultimele ${pastrate} proiecte. Salvează-le în cont sau ca fișier .json.`, { kind: 'warn', ms: 12000 }); }
+  if (!(CLOUD.sb && CLOUD.user)) $('#proj-save').textContent = pastrate ? 'salvat automat în acest browser' : 'salvarea automată nu e disponibilă — salvează ca .json';
+  cloudLater();
 }
+const DOCS_MAX = 60; let SAVE_AVERT = false;
 function autosave() { clearTimeout(saveT); saveT = setTimeout(saveNow, 500); }
 addEventListener('pagehide', saveNow);
 addEventListener('beforeunload', saveNow);
@@ -1644,7 +1828,8 @@ async function newFromSablon(k, o = {}) {
     if (o.wiz) { r.model._wiz = 1; WIZ_START = null; PENDING_FOCUS = 'wz-h'; }
     replaceModel(r.model, o.primul || o.wiz ? null : `Schemă nouă: ${SABLOANE[k].nume}.`, { primul: o.primul });
     setValid(r.validare); setTab('calc'); $('#assist').open = false;
-  } catch (e) { toast('Schema nu a putut fi generată: ' + e.message, { kind: 'err' }); }
+    return true;
+  } catch (e) { toast('Schema nu a putut fi generată: ' + e.message, { kind: 'err' }); return false; }
 }
 function profileCartus() { const p = profilActiv() || {}; const o = {}; PROFILE_KEYS.forEach(k => { if (p[k]) o[k] = p[k]; }); return o; }
 
@@ -1654,7 +1839,7 @@ let WIZ_START = null;           // { renunta: bool } cât timp se alege tipul lu
 const PASI = ['Ce proiectezi', 'Date de intrare', 'Proiect și firmă', 'Verificare'];
 const wizActiv = () => !!WIZ_START || !!(MODEL && MODEL._wiz);
 const wizPas = () => WIZ_START ? 0 : (MODEL && MODEL._wiz) || 0;
-function startWizard(o = {}) { CONF = null; WIZ_START = { renunta: o.renunta !== false }; $('#pane').scrollTop = 0; render(); }
+function startWizard(o = {}) { acasaInchide(); CONF = null; WIZ_START = { renunta: o.renunta !== false }; $('#pane').scrollTop = 0; render(); }
 function wizGo(p) {
   if (p === 0) { WIZ_START = { renunta: true, inapoi: true }; }
   else { WIZ_START = null; MODEL._wiz = p; autosave(); }
@@ -1715,8 +1900,8 @@ function wizTip(root) {
       k === 'locuinta' ? el('span', { class: 'tag' }, 'cel mai folosit') : null, el('b', {}, v.nume), el('small', {}, v.descriere || ''))); });
   root.append(g);
   const ta = el('textarea', { id: 'wz-text', rows: 2, placeholder: 'ex. casă P+1, trifazat 15 kW, plită, pompă de căldură, încărcător mașină 11 kW, coloană 25 m' });
-  const res = el('div', { class: 'desc', role: 'status', 'aria-live': 'polite' });
-  const go = el('button', { class: 'btn sm', type: 'button', onclick: () => wizChat(ta, go, res) }, 'Pornește din descriere');
+  const res = el('div', { class: 'wz-res', id: 'wz-res', 'aria-live': 'polite' });
+  const go = el('button', { class: 'btn pri sm', type: 'button', id: 'wz-go', onclick: () => wizChat(ta, go, res) }, 'Pornește din descriere');
   ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); go.click(); } });
   root.append(el('div', { class: 'card wz-desc' }, el('h3', {}, 'Sau descrie lucrarea în cuvinte'), el('label', { for: 'wz-text', class: 'sr' }, 'Descrierea lucrării'), ta,
     el('div', { class: 'wz-alt' }, go, res)));
@@ -1725,17 +1910,38 @@ function wizTip(root) {
     PRESETS.tg ? el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { WIZ_START = null; newFromPreset('tg'); } }, 'Desen manual, fără calcul') : null));
 }
 async function wizChat(ta, btn, res) {
-  const text = ta.value.trim(); if (!text) { ta.focus(); return; }
-  btn.disabled = true; btn.classList.add('busy'); res.textContent = 'Interpretez descrierea…';
+  const text = ta.value.trim(); if (!text) { ta.focus(); res.replaceChildren(el('p', { class: 'msg warn' }, 'Scrie întâi ce proiectezi, de exemplu „branșament trifazat 20 kW”.')); return; }
+  if (btn.classList.contains('busy')) return;
+  btn.disabled = true; btn.classList.add('busy'); const gata = lucruStart(res);
   try {
     const cur = payload(false); cur.cartus = Object.assign({}, profileCartus());
     const r = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, claude: INFO.claude, model: cur, fara_model: true }) })).json();
     if (r.eroare) throw new Error(r.eroare);
     const it = r.interpretare || {};
-    if (it.actiune === 'refuza' || !it.intrare_fizica) { res.textContent = faraI(it.intelegere || 'Nu am înțeles descrierea.'); return; }
+    // a recunoscut ceva (tipul lucrării, rețeaua…) → panoul de confirmare cu ce s-a înțeles; ce lipsește e cerut acolo
+    if (!intelesCeva(it)) { neinteles(res, it); ta.focus(); return; }
+    res.replaceChildren();
     confDeschide({ src: 'wiz', text, it, citire: r.citire && r.citire.mesaj, cart: r.cartus_chat, cur });   // r10: confirmare înainte de date / desen
-  } catch (e) { res.textContent = 'Nu am putut interpreta descrierea: ' + e.message; }
-  finally { btn.disabled = false; btn.classList.remove('busy'); }
+  } catch (e) { res.replaceChildren(el('p', { class: 'msg err', role: 'alert' }, 'Nu am putut interpreta descrierea: ' + e.message)); }
+  finally { gata(); btn.disabled = false; btn.classList.remove('busy'); }
+}
+/** interpretorul a recunoscut măcar tipul lucrării → se deschide panoul de confirmare (și când a refuzat pentru date lipsă) */
+const intelesCeva = it => !!(it && it.intrare_fizica && it.intrare_fizica.tip_schema);
+/** indicator de lucru vizibil (spinner + text); după câteva secunde spune de ce durează. Întoarce funcția de oprire. */
+function lucruStart(res, text = 'Interpretez descrierea…') {
+  res.hidden = false;
+  const t = el('span', {}, text);
+  res.replaceChildren(el('span', { class: 'lucru', role: 'status', 'aria-live': 'polite' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), t));
+  const tm = setTimeout(() => { t.textContent = text + (window.SM_WEB ? ' Prima interpretare în browser poate dura câteva secunde.' : ' Mai durează puțin.'); }, 2500);
+  return () => { clearTimeout(tm); const l = res.querySelector('.lucru'); if (l) l.remove(); };
+}
+/** textul nu a fost înțeles deloc: mesaj vizibil (nu text mic gri), cu întrebarea interpretorului și exemple */
+function neinteles(res, it) {
+  res.hidden = false;
+  const q = ((it && it.intrebari) || []).map(faraI)[0];
+  res.replaceChildren(el('div', { class: 'msg err neint', role: 'alert' },
+    el('b', {}, 'Nu am recunoscut tipul lucrării.'),
+    el('span', {}, ' ' + (q || 'Scrie ce proiectezi și puterea, de exemplu „branșament trifazat 20 kW”, „casă trifazată” sau „CEF 100 kW cu 2 invertoare de 50 kW”.'))));
 }
 function wizVerif(root) {
   root.append(el('h2', { class: 'wz-h', id: 'wz-h', tabindex: '-1' }, 'Verificare înainte de planșă'),
@@ -2197,7 +2403,7 @@ async function incarcaProfile() {
   }
 }
 async function scrieProfile() {
-  try { PROFILES = await (await fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(PROFILES) })).json(); return true; }
+  try { PROFILES = await (await fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(PROFILES) })).json(); cloudProfilScrie(); acasaCartus(); return true; }
   catch { toast('Profilele nu au putut fi salvate.', { kind: 'err' }); return false; }
 }
 const profilActiv = () => PROFILES.profile.find(p => p.nume === PROFILES.activ) || null;
@@ -2318,6 +2524,7 @@ async function draw() {
     setStat('ok', fmtName + ((MODEL.format || 'A3') !== fmtName ? ' (trecut automat — schema nu încăpea lizibil)' : '') + (anexa ? ' · lista de echipamente în anexă (.xlsx)' : ''));
     if (SELECTED) markPlan();
     FIRST_DRAW = false;
+    if (!MODEL._provizoriu && !WIZ_START) miniLater();
   } catch (e) {
     if (seq !== drawSeq) return;
     setStat('err', 'Planșa nu s-a putut genera');
@@ -2495,6 +2702,8 @@ async function openFile(f) {
   try { m = JSON.parse(await f.text()); } catch { toast(`„${f.name}” nu este un fișier JSON valid.`, { kind: 'err' }); return; }
   const chk = checkModel(m); if (chk.err) { toast(`„${f.name}” nu poate fi deschis: ${chk.err}`, { kind: 'err', ms: 9000 }); return; }
   replaceModel(m, `Deschis ${f.name}.` + (chk.warn.length ? ' ' + chk.warn.join(' ') : ''), { kind: chk.warn.length ? 'warn' : '' });
+  delete MODEL._cid;                // copia deschisă din fișier e un proiect nou (în cont primește id propriu)
+  acasaInchide(); setTab(MODEL.calc ? 'calc' : 'schema'); if (MODEL.calc) scheduleRegen(0);
 }
 function openRecent(d) {
   if (d.id === MODEL._doc) return;
@@ -2537,11 +2746,11 @@ function stareLLM() {
     : 'Citire avansată: indisponibilă (fără cheie API) — se folosesc regulile locale';
   if (window.SM_WEB) $('#llm-avert').textContent = 'Versiunea web: cheia rămâne DOAR în acest browser (în memorie; în localStorage numai dacă bifezi „ține minte”) și descrierea se trimite direct de aici la API-ul Anthropic. Nu bifa pe un calculator folosit de alții; poți șterge cheia oricând.';
 }
-async function salvezCheia(cheie) {
+async function salvezCheia(cheie, tine = $('#llm-tine').checked) {
   try {
-    const r = await (await fetch('/api/setari/cheie', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cheie, pastreaza: $('#llm-tine').checked }) })).json();
+    const r = await (await fetch('/api/setari/cheie', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cheie, pastreaza: tine }) })).json();
     if (r.eroare) throw new Error(r.eroare);
-    INFO.claude = !!r.claude; $('#llm-cheie').value = ''; stareLLM();
+    INFO.claude = !!r.claude; $('#llm-cheie').value = ''; stareLLM(); if (HOME.on && HOME.sec === 'setari') acasaRender();
     toast(cheie ? (r.claude ? 'Cheia e folosită pentru citirea avansată.' : 'Cheia nu a fost reținută.') : 'Cheia a fost ștearsă.' + (r.claude ? ' Rămâne cheia din mediu (ANTHROPIC_API_KEY).' : ''));
   } catch (e) { toast('Cheia nu a fost salvată: ' + e.message, { kind: 'warn' }); }
 }
@@ -2552,24 +2761,22 @@ async function chatGo() {
   if (!text) { $('#chat-text').focus(); toast('Scrie mai întâi ce conține instalația, de exemplu „BMPTi 120 kW, cablu 60 m”.'); return; }
   const btn = $('#chat-go'); if (btn.classList.contains('busy')) return;
   btn.classList.add('busy'); btn.disabled = true;
-  const res = $('#chat-res'); res.hidden = false; res.textContent = 'Interpretez descrierea…';
+  const res = $('#chat-res'); const gata = lucruStart(res);
   try {
     const cur = payload(false); cur.cartus = Object.assign({}, cur.cartus || {}, profileCartus());
     const r = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, claude: INFO.claude && $('#chat-claude').checked, model: cur, fara_model: true }) })).json();
     if (r.eroare) throw new Error(r.eroare);
     const it = r.interpretare || {};
-    if (it.actiune === 'refuza' || !it.intrare_fizica) {
-      const kids = [el('div', { class: 'res-chat' }, faraI(it.intelegere))];
-      if (r.citire && r.citire.mesaj) kids.push(el('div', { class: 'res-citire' }, r.citire.mesaj + '.'));
-      if ((it.avertismente || []).length) kids.push(el('ul', { class: 'plist', style: 'margin-top:6px' }, it.avertismente.map(x => el('li', {}, faraI(typeof x === 'string' ? x : (x.mesaj || JSON.stringify(x)))))));
-      kids.unshift(el('b', { class: 'warn' }, 'Nu am generat schema. '));
-      res.replaceChildren(...kids);
+    gata();
+    if (!intelesCeva(it)) {
+      neinteles(res, it);
+      if (r.citire && r.citire.mesaj) res.append(el('div', { class: 'res-citire' }, r.citire.mesaj + '.'));
     } else {
       // r10: nu se desenează direct — întâi panoul de confirmare (în locul tab-urilor)
       res.replaceChildren(el('div', {}, 'Verifică datele înțelese în panoul de mai jos, corectează ce nu e bine, apoi „Confirmă și desenează”.'));
       confDeschide({ src: 'chat', text, it, citire: r.citire && r.citire.mesaj, cart: r.cartus_chat, cur });
     }
-  } catch (e) { res.replaceChildren(el('div', { class: 'warn' }, 'Nu am putut interpreta descrierea: ' + e.message)); }
+  } catch (e) { gata(); res.replaceChildren(el('div', { class: 'msg err', role: 'alert' }, 'Nu am putut interpreta descrierea: ' + e.message)); }
   btn.classList.remove('busy'); btn.disabled = false;
 }
 
@@ -2642,7 +2849,41 @@ function confDeschide(o) {
   C.ptMod = ed.pt_Sn_kVA ? (ed.pt_existent === true || (ed.racord === 'tg_existent' && ed.pt_existent !== false) ? 'existent' : 'nou') : '';
   // r11: pe ecran îngust textul descrierii se pliază, ca panoul să aibă loc („← Înapoi la text” îl redeschide)
   if (o.src !== 'wiz' && innerWidth <= 900 && $('#assist')) $('#assist').open = false;
-  CONF = C; PENDING_FOCUS = 'cf-h'; $('#pane').scrollTop = 0; render();
+  // interpretorul a refuzat (ex. I02 — lipsește puterea): panoul se deschide oricum, cu ce s-a înțeles preselectat
+  C.refuz = it.actiune === 'refuza' ? { cod: it.refuz_cod || '', motiv: faraI(it.refuz_motiv || '') } : null;
+  CONF = C;
+  const lip = confLipsa();
+  PENDING_FOCUS = lip.length ? confLipsaId(lip[0]) : 'cf-h'; $('#pane').scrollTop = 0; render();
+}
+/** datele fără de care motorul nu poate desena (aceleași condiții ca refuzul I02 al interpretorului), pe tipul de schemă */
+function confLipsa() {
+  if (!CONF) return [];
+  const e = CONF.ed, t = e.tip_schema, L = [];
+  const are = x => x != null && x !== '' && !(typeof x === 'number' && !(x > 0));
+  const sarc = pl => (pl || []).some(p => are(p.In_A) || are(p.P_kW) || sarc(p.copii));
+  if (t === 'bransament' && !['P_kW', 'Ib_A', 'S_kVA'].some(k => are(e[k])))
+    L.push({ p: e.Ib_A !== undefined ? 'Ib_A' : e.S_kVA !== undefined ? 'S_kVA' : 'P_kW', msg: 'puterea aprobată din ATR (Pa, kW)', re: /putere(a)? aprobată|curentul maxim|puterea \(kW\) sau curentul/i });
+  if (t === 'tablou' && !are(e.P_kW) && !are(e.In_Q1_A) && !sarc(e.plecari))
+    L.push({ p: 'P_kW', msg: 'puterea tabloului (Pa, kW) sau valorile plecărilor', re: /puterea tabloului|puterile|calibrele/i });
+  if (t === 'pt' && !are(e.Sn_kVA)) L.push({ p: 'Sn_kVA', msg: 'puterea transformatorului (Sn trafo)', re: /puterea trafo|puterea transformatorului/i });
+  if (t === 'ge_ats' && !are(e.Sn_GE_kVA)) L.push({ p: 'Sn_GE_kVA', msg: 'puterea grupului electrogen (Sn, kVA)', re: /puterea GE|grupului electrogen/i });
+  if ((t === 'cef' || t === 'prosumator') && !(e.invertoare || []).some(r => are(r.Pn_kW)) && !are(e.Pn_inv_kW) && !are((e.invertor || {}).Pn_kW))
+    L.push({ p: 'invertoare', tabel: 'cf-inv', msg: 'invertoarele — cel puțin un rând cu puterea Pn (kW)', re: /invertor/i });
+  if (t === 'locuinta' && !(e.circuite || []).length) L.push({ p: 'circuite', tabel: 'cf-ci', msg: 'circuitele tabloului', re: /circuite/i });
+  return L;
+}
+const CONF_OBLIG = { bransament: ['P_kW', 'Ib_A', 'S_kVA'], tablou: ['P_kW'], pt: ['Sn_kVA'], ge_ats: ['Sn_GE_kVA'] };
+const confLipsaId = L => (L.tabel ? 'cf-lipsa-' + L.p : 'cf-' + L.p.replace(/\W/g, '-') + '-q');
+/** câmpurile obligatorii necompletate: contur roșu + aria-invalid, actualizate la fiecare tastă (fără redesenarea panoului) */
+function confObligUpd() {
+  if (!CONF) return;
+  const lips = new Set(confLipsa().map(L => L.p));
+  document.querySelectorAll('#conf [data-oblig]').forEach(n => {
+    const lipsa = lips.has(n.dataset.oblig);
+    n.closest('.fld')?.classList.toggle('cf-oblig', lipsa);
+    if (lipsa) n.setAttribute('aria-invalid', 'true'); else if (!CONF.raw.has(n.id)) n.removeAttribute('aria-invalid');
+  });
+  document.querySelectorAll('#conf li[data-lipsa]').forEach(li => li.classList.toggle('rezolvat', !lips.has(li.dataset.lipsa)));
 }
 /** `_deduse` (interpretor) → [[cale, motiv]]; acceptă listă de căi / obiecte {camp, motiv}, dicționar {cale: motiv} sau text */
 function confDeduse(d) {
@@ -2812,6 +3053,12 @@ function confFld(s, suf = '') {
   }
   inp.dataset.cfp = s.p;
   if (s.oblig && !['mono', 'tri'].includes(v)) { inp.setAttribute('aria-invalid', 'true'); inp.setAttribute('aria-describedby', 'cf-retea-err'); inp.required = true; }
+  // datele fără de care nu se poate desena (puterea branșamentului, a tabloului, Sn trafo / GE): obligatorii, evidențiate cât lipsesc
+  const lipsaAcum = confLipsa().some(L => L.p === s.p);
+  if ((CONF_OBLIG[CONF.ed.tip_schema] || []).includes(s.p)) {
+    inp.dataset.oblig = s.p; inp.required = true;
+    if (lipsaAcum) { inp.setAttribute('aria-invalid', 'true'); inp.setAttribute('aria-describedby', 'cf-block'); }
+  }
   if (pres) inp.title = 'Presupus: ' + pres;
   let wn = null;
   if (s.warn) {
@@ -2820,9 +3067,9 @@ function confFld(s, suf = '') {
     CONF.warnFns.set(wid, s.warn);
     inp.setAttribute('aria-describedby', [inp.getAttribute('aria-describedby'), wid].filter(Boolean).join(' '));
   }
-  const tag = pres ? el('span', { class: 'cf-tag' }, 'presupus') : null;
+  const tag = lipsaAcum ? el('span', { class: 'cf-tag ob' }, 'obligatoriu') : pres ? el('span', { class: 'cf-tag' }, 'presupus') : null;
   if (s.bool) return el('div', { class: 'fld cf-chk' + (pres ? ' cf-pres' : '') }, el('label', { for: id }, inp, el('span', {}, s.label), tag), wn);
-  return el('div', { class: 'fld' + (pres ? ' cf-pres' : '') }, el('label', { for: id }, s.label, tag), inp, wn);
+  return el('div', { class: 'fld' + (lipsaAcum ? ' cf-oblig' : pres ? ' cf-pres' : '') }, el('label', { for: id }, s.label, tag), inp, wn);
 }
 /** tabel editabil (rânduri = obiectele listei, editate pe loc) cu adăugare / ștergere; derulare orizontală în propriul container.
  *  `fix`: rânduri fixe (fără adăugare / ștergere); `gol`: textul pentru lista goală; `cls`: clasa cardului */
@@ -3021,8 +3268,10 @@ function confCabluri() {
 function confBlocaj() {
   if (!CONF) return '';
   const t = confTip(), e = CONF.ed;
-  if (CONF_RETEA_OBLIG.includes(t) && !['mono', 'tri'].includes(e.retea)) return 'Confirmarea e blocată: alege rețeaua (monofazată sau trifazată) în câmpul „Rețea”.';
+  const lip = confLipsa();
+  if (CONF_RETEA_OBLIG.includes(t) && !['mono', 'tri'].includes(e.retea)) return 'Confirmarea e blocată: alege rețeaua (monofazată sau trifazată) în câmpul „Rețea”' + (lip.length ? ' și completează ' + lip.map(L => L.msg).join('; ') : '') + '.';
   if (CONF.raw.size) return 'Corectează valorile marcate cu roșu: nu sunt numere (folosește virgula pentru zecimale, ex. 12,5).';
+  if (lip.length) return 'Confirmarea e blocată: completează ' + lip.map(L => L.msg).join('; ') + '.';
   if (t === 'cef' && CONF.ptMod && !e.pt_Sn_kVA) return 'Alege puterea transformatorului (Sn trafo) sau „Post de transformare: nu e cazul”.';
   if ((t === 'tablou' && e.origine === 'pt_propriu' || t === 'ge_ats' && e.sursa_retea === 'pt') && +e.n_trafo >= 2 && !e.pt_Sn_kVA) return 'Alege puterea transformatoarelor (Sn trafo) — sunt declarate ' + e.n_trafo + ' trafo.';
   if (t === 'locuinta' && e.ge_rezerva && !(e.ge_rezerva.Sn_kVA > 0)) return 'Completează puterea generatorului de rezervă (Sn generator).';
@@ -3033,7 +3282,7 @@ function confStare() {
   const blk = confBlocaj();
   b.setAttribute('aria-disabled', blk ? 'true' : 'false'); b.classList.toggle('blocked', !!blk);
   if (m) { m.textContent = blk; m.hidden = !blk; }
-  confWarnUpd(); confPrevLater();
+  confObligUpd(); confWarnUpd(); confPrevLater();
 }
 /** atenționările de lângă câmpuri (ex. Q declarat) — recalculate fără redesenarea panoului */
 function confWarnUpd() {
@@ -3070,7 +3319,7 @@ function confRender(root) {
   wrap.append(el('h2', { class: 'wz-h', id: 'cf-h', tabindex: '-1' }, 'Verifică ce am înțeles'),
     el('p', { class: 'desc' }, 'Corectează pe loc ce nu e bine, apoi confirmă — planșa se desenează abia după confirmare.'));
   const linii = faraI(it.intelegere).split('\n');
-  const am = linii.filter(l => !/^(Am presupus|Verificări|Întrebare|Nu am înțeles)/.test(l)).join(' ') || 'Am citit descrierea.';
+  const am = linii.filter(l => !/^(Am presupus|Verificări|Întrebare|Nu am înțeles|Nu pot genera)/.test(l)).join(' ') || 'Am citit descrierea.';
   const pres = (it.presupus || []).map(faraI);
   // r11: câmpurile deduse (cheia `_deduse`) apar și în listă, chiar dacă interpretorul nu le-a trecut la „Am presupus”
   const ETI = { retea: 'rețeaua', schema_pamant: 'schema de legare la pământ', 'alimentare.tip': 'tipul branșamentului', racord: 'racordul', pt_Sn_kVA: 'postul de transformare' };
@@ -3087,15 +3336,27 @@ function confRender(root) {
   const campuri = confCampuri();
   const intreb = [...(it.intrebari || []).map(faraI), ...(it.avertismente || []).map(x => faraI(typeof x === 'string' ? x : (x.mesaj || '')))];
   if ((it.neconsumat || []).length && !intreb.some(q => /Nu am folosit/.test(q))) intreb.push('Nu am folosit în schemă: ' + it.neconsumat.map(x => `„${x}”`).join('; '));
-  if (intreb.length) {
-    const ul = el('ul', { class: 'cf-q' });
-    const folosite = new Set();
-    intreb.filter(Boolean).forEach((q, i) => {
+  // obligatoriu (refuzul I02 al interpretorului): câmpul de completat, evidențiat, primul în listă; „Confirmă” rămâne blocat până e completat
+  const lipsa = confLipsa();
+  const liO = lipsa.map(L => {
+    const s = campuri.find(x => x.p === L.p);
+    const f = s ? confFld(Object.assign({}, s, { oblig2: true }), '-q')
+      : L.tabel ? el('button', { class: 'btn sm', type: 'button', id: confLipsaId(L), html: ICON.plus + (L.p === 'invertoare' ? 'Adaugă invertor' : 'Adaugă circuit'),
+        onclick: () => { document.getElementById(L.tabel + '-add')?.click(); } }) : null;
+    return el('li', { class: 'cf-oblig-li', 'data-lipsa': L.p }, el('p', {}, el('b', {}, 'Obligatoriu: '), L.msg + '.'), f);
+  });
+  const deLipsa = q => lipsa.some(L => L.re.test(q));
+  const intrebRest = intreb.filter(q => q && !(lipsa.length && deLipsa(q)));
+  const nQ = liO.length + intrebRest.length;
+  if (nQ) {
+    const ul = el('ul', { class: 'cf-q' }, ...liO);
+    const folosite = new Set(lipsa.map(L => L.p));
+    intrebRest.forEach((q, i) => {
       const hit = CONF_INTREB.find(([re, p]) => re.test(q) && !folosite.has(p) && campuri.some(s => s.p === p));
       let f = null; if (hit) { folosite.add(hit[1]); f = confFld(campuri.find(s => s.p === hit[1]), '-q'); }
       ul.append(el('li', {}, el('p', {}, q), f));
     });
-    wrap.append(el('div', { class: 'card cf-card cf-intreb', role: 'group', 'aria-labelledby': 'cf-qh' }, el('h3', { id: 'cf-qh' }, `De lămurit (${intreb.length})`), ul));
+    wrap.append(el('div', { class: 'card cf-card cf-intreb' + (liO.length ? ' cf-are-oblig' : ''), role: 'group', 'aria-labelledby': 'cf-qh' }, el('h3', { id: 'cf-qh' }, `De lămurit (${nQ})`), ul));
   }
   const g = el('div', { class: 'card cf-card' }, el('h3', {}, 'Instalația'), el('div', { class: 'cf-grid' }, ...campuri.map(s => confFld(s))));
   if (CONF_RETEA_OBLIG.includes(t) && !['mono', 'tri'].includes(C.ed.retea))
@@ -3216,9 +3477,9 @@ function menu(btn, m, onOpen) {
 function setMView(v) { document.body.dataset.mview = v; $('#mv-edit').setAttribute('aria-pressed', v !== 'plan'); $('#mv-plan').setAttribute('aria-pressed', v === 'plan'); if (v === 'plan') requestAnimationFrame(() => { if (!VIEW.user) fit(); }); }
 function initChrome() {
   const th = store.get('sm.theme', null); if (th) document.documentElement.dataset.theme = th;
-  $('#theme').onclick = () => {
+  $('#theme').onclick = $('#h-theme').onclick = () => {
     const dark = getComputedStyle(document.documentElement).colorScheme === 'dark';
-    const next = dark ? 'light' : 'dark'; document.documentElement.dataset.theme = next; store.set('sm.theme', next);
+    temaSet(dark ? 'light' : 'dark');
   };
   // splitter (limitat și la redimensionarea ferestrei)
   const sp = $('#splitter');
@@ -3241,7 +3502,8 @@ function initChrome() {
   menu($('#new-btn'), $('#new-menu'), buildNewMenu); menu($('#exp-more'), $('#exp-menu'));
   $('#exp-menu').addEventListener('click', e => { const b = e.target.closest('[data-exp]'); if (b) exportAs(b.dataset.exp, $('#exp-more')); });
   $('#exp-dxf').onclick = () => exportAs('dxf');
-  $('#save-btn').onclick = () => exportAs('json', $('#save-btn'));
+  $('#save-btn').onclick = salveazaExplicit;
+  $('#home-btn').onclick = () => acasaArata();
   $('#open-btn').onclick = () => $('#open-file').click();
   $('#open-file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) openFile(f); };
   $('#undo').onclick = undo; $('#redo').onclick = redo;
@@ -3268,17 +3530,723 @@ function initChrome() {
     // în câmpuri editate deja, Ctrl+Z rămâne al browserului (anulează tastarea); altfel anulează modificarea din schemă
     const inText = e.target.matches('input[type=text],input[type=number],textarea') && (typingPushed.has(e.target) || e.target.dataset.nativ === '1' || !!e.target.closest('.prof-new,.dv-new,#conf'));
     const k = e.key.toLowerCase();
+    if (HOME.on && k !== 'o') return;                 // pe pagina de start scurtăturile editorului nu au obiect
     if (k === 'z' && !inText) { e.preventDefault(); e.shiftKey ? redo() : undo(); }
     else if (k === 'y' && !inText) { e.preventDefault(); redo(); }
-    else if (k === 's') { e.preventDefault(); exportAs('json', $('#save-btn')); }
+    else if (k === 's') { e.preventDefault(); if (!HOME.on) salveazaExplicit(); }
     else if (k === 'o') { e.preventDefault(); $('#open-file').click(); }
     else if (k === 'e') { e.preventDefault(); exportAs('dxf'); }
   });
 }
 
+/* =========================================================================== conturi și proiecte în cloud (Supabase)
+   Config în static/config.js (SM_CONFIG). Gol → mod local: proiectele rămân în acest browser, ca până acum.
+   Completat → supabase-js (versiune fixă, din CDN), cont cu email + parolă, proiectele în tabelul `projects` (RLS: fiecare
+   utilizator vede doar rândurile lui), istoric în `project_versions`, datele de cartuș în `profiles`. */
+const CFG = (() => { const c = window.SM_CONFIG || {}; return { url: String(c.SUPABASE_URL || '').trim().replace(/\/+$/, ''), key: String(c.SUPABASE_ANON_KEY || '').trim() }; })();
+const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+const CLOUD = { on: !!(CFG.url && CFG.key), sb: null, user: null, err: null, saveT: null, ver: new Map(), recovery: false, gata: false, neimp: 0 };
+const cloudOk = () => !!(CLOUD.sb && CLOUD.user);
+function uuid() {
+  try { return crypto.randomUUID(); } catch { }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+}
+const esteUuid = s => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(s || ''));
+function incarcaScript(src) {
+  return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.async = true; s.crossOrigin = 'anonymous';
+    s.onload = ok; s.onerror = () => no(new Error('biblioteca de conturi nu s-a putut încărca (verifică internetul)')); document.head.append(s); });
+}
+/** stocare în memorie pentru sesiune, când localStorage e blocat (fereastră privată, date de site blocate) */
+function stocareMemorie() { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => { m.set(k, String(v)); }, removeItem: k => { m.delete(k); } }; }
+async function cloudInit() {
+  if (!CLOUD.on) { CLOUD.gata = true; return; }
+  try {
+    if (!(window.supabase && window.supabase.createClient)) await incarcaScript(SUPABASE_JS);
+    let ls = true; try { localStorage.setItem('sm.t', '1'); localStorage.removeItem('sm.t'); } catch { ls = false; }
+    CLOUD.sb = window.supabase.createClient(CFG.url, CFG.key, { auth: Object.assign({ persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: 'sm.auth' },
+      ls ? {} : { storage: stocareMemorie() }) });
+    const { data } = await CLOUD.sb.auth.getSession();
+    CLOUD.user = (data && data.session && data.session.user) || null;
+    CLOUD.sb.auth.onAuthStateChange((ev, session) => {
+      const inainte = CLOUD.user && CLOUD.user.id;
+      CLOUD.user = (session && session.user) || null;
+      if (ev === 'PASSWORD_RECOVERY') { CLOUD.recovery = true; setTimeout(() => acasaArata('cont'), 0); }
+      // apelurile Supabase nu se fac direct din acest callback (blochează clientul) — se amână
+      if ((CLOUD.user && CLOUD.user.id) !== inainte) setTimeout(() => cloudSchimbat(false), 0);
+    });
+    CLOUD.gata = true;
+    if (CLOUD.user) await cloudSchimbat(true);
+  } catch (e) { CLOUD.err = (e && e.message) || String(e); CLOUD.sb = null; CLOUD.gata = true; }
+  stareSalvare(); acasaCartus(); if (HOME.on) { HOME.lista = null; acasaNav(); acasaRender(); }
+}
+/** intrare / ieșire din cont: profilul, oferta de import, lista proiectelor */
+async function cloudSchimbat(initial) {
+  HOME.lista = null; stareSalvare(); acasaCartus();
+  if (cloudOk()) {
+    await cloudProfilIncarca();
+    const n = (await localeNeimportate()).length; CLOUD.neimp = n;
+    if (n && !initial) toast(`Ai ${n === 1 ? 'un proiect salvat' : n + ' proiecte salvate'} doar în acest browser. Le adaugi în cont?`, { tag: 'imp', action: 'Importă în cont', onAction: cloudImport, ms: 15000 });
+    if (MODEL && !MODEL._provizoriu && !initial) cloudLater();
+  }
+  if (HOME.on) { acasaNav(); acasaRender(); }
+}
+function stareSalvare(text, err) {
+  const n = $('#proj-save'); if (!n) return;
+  if (cloudOk()) { n.textContent = text || 'salvat în contul tău'; n.classList.toggle('err', !!err); }
+  else if (text) n.textContent = text;
+  $('#save-btn').title = cloudOk() ? 'Salvează în cont acum (și o versiune în istoric) — Ctrl+S' : 'Salvează proiectul ca fișier .json — Ctrl+S';
+}
+function cloudLater() {
+  if (!cloudOk() || !MODEL || MODEL._provizoriu) return;
+  clearTimeout(CLOUD.saveT); CLOUD.saveT = setTimeout(() => cloudSave(false), 2500);
+}
+const eRLS = err => /row-level security|42501|violates|permission/i.test(String((err && (err.message || '')) + ' ' + (err && err.code || '')));
+/** salvarea în cont (upsert); explicit = și o versiune în istoric (altfel cel mult una la 10 minute) */
+async function cloudSave(explicit) {
+  clearTimeout(CLOUD.saveT);
+  if (!cloudOk() || !MODEL || MODEL._provizoriu) return false;
+  if (!esteUuid(MODEL._cid)) MODEL._cid = uuid();
+  const scrie = async () => {
+    const m = clone(MODEL);
+    const row = { id: m._cid, titlu: docName(m), tip_schema: tipDoc(m), model: m, miniatura: MINI.get(m._doc) || null };
+    const r = await CLOUD.sb.from('projects').upsert(row);
+    return { err: r.error, row, m };
+  };
+  stareSalvare('se salvează în cont…');
+  let w;
+  try {
+    w = await scrie();
+    // id-ul aparține altui cont (ex. proiect primit de la un coleg): se salvează ca proiect nou în contul tău
+    if (w.err && eRLS(w.err)) { MODEL._cid = uuid(); w = await scrie(); }
+  } catch (e) { w = { err: { message: (e && e.message) || String(e) } }; }
+  if (w.err) {
+    stareSalvare('nesalvat în cont — ' + w.err.message, true);
+    if (explicit) toast('Nu am putut salva în cont: ' + w.err.message + '. Proiectul rămâne salvat în acest browser.', { kind: 'err', ms: 10000 });
+    return false;
+  }
+  const now = Date.now(), ult = CLOUD.ver.get(w.row.id) || 0;
+  if (explicit || now - ult > 10 * 60000) {
+    const v = await CLOUD.sb.from('project_versions').insert({ project_id: w.row.id, titlu: w.row.titlu, model: w.m });
+    if (!v.error) CLOUD.ver.set(w.row.id, now);
+  }
+  HOME.lista = null;
+  stareSalvare('salvat în cont · ' + new Date(now).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }));
+  return true;
+}
+/** „Salvează”: în cont când ești logat; altfel fișierul .json (ca până acum) */
+async function salveazaExplicit() {
+  if (WIZ_START) { toast('Alege întâi tipul lucrării — schema nouă nu există încă.'); return; }
+  if (!cloudOk()) return exportAs('json', $('#save-btn'));
+  const b = $('#save-btn'); if (b.classList.contains('busy')) return;
+  if (MODEL._provizoriu) delete MODEL._provizoriu;
+  b.classList.add('busy'); saveNow();
+  const ok = await cloudSave(true);
+  b.classList.remove('busy');
+  if (ok) toast('Salvat în cont. Versiunea e păstrată în istoric.', { action: 'Descarcă .json', onAction: () => exportAs('json', $('#save-btn')) });
+}
+async function localeNeimportate() {
+  const docs = store.get(DOCS, []).filter(d => d && d.model); if (!docs.length || !cloudOk()) return [];
+  const { data, error } = await CLOUD.sb.from('projects').select('id');
+  if (error) return [];
+  const ids = new Set((data || []).map(r => r.id));
+  return docs.filter(d => !(d.model._cid && ids.has(d.model._cid)));
+}
+async function cloudImport() {
+  if (!cloudOk()) return;
+  document.querySelectorAll('.toast[data-kind="imp"]').forEach(t => t.remove());
+  const lst = await localeNeimportate();
+  if (!lst.length) { CLOUD.neimp = 0; toast('Toate proiectele din acest browser sunt deja în cont.'); if (HOME.on) acasaRender(); return; }
+  const docs = store.get(DOCS, []); let ok = 0;
+  for (const d of lst) {
+    const m = clone(d.model); m._cid = uuid(); if (!m._doc) m._doc = d.id;
+    const { error } = await CLOUD.sb.from('projects').insert({ id: m._cid, titlu: d.name || docName(m), tip_schema: tipDoc(m), model: m, miniatura: d.mini || null });
+    if (error) continue;
+    ok++;
+    const x = docs.find(y => y.id === d.id); if (x) x.model._cid = m._cid;
+    if (MODEL && MODEL._doc === d.id) MODEL._cid = m._cid;
+  }
+  store.set(DOCS, docs); CLOUD.neimp = lst.length - ok; HOME.lista = null;
+  toast(ok === lst.length ? `Am importat ${ok === 1 ? 'un proiect' : ok + ' proiecte'} în cont.` : `Am importat ${ok} din ${lst.length} proiecte; celelalte nu au putut fi salvate — încearcă din nou.`, { kind: ok === lst.length ? '' : 'warn' });
+  if (HOME.on) { acasaNav(); acasaRender(); }
+}
+async function cloudProfilIncarca() {
+  try {
+    const { data, error } = await CLOUD.sb.from('profiles').select('*').eq('id', CLOUD.user.id).maybeSingle();
+    if (error) return;
+    const c = (data && data.cartus) || {};
+    if (Array.isArray(c.profile) && c.profile.length && !PROFILES.profile.length) {
+      PROFILES = { profile: c.profile, activ: c.activ || c.profile[0].nume }; await scrieProfile();
+    } else if (PROFILES.profile.length && !(Array.isArray(c.profile) && c.profile.length)) cloudProfilScrie();
+  } catch { }
+}
+function cloudProfilScrie() {
+  if (!cloudOk()) return;
+  const a = profilActiv() || {};
+  Promise.resolve(CLOUD.sb.from('profiles').upsert({ id: CLOUD.user.id, nume: a.proiectat || a.sef_proiect || null, firma: a.proiectant || null,
+    atestat: [a.atestat_tip, a.atestat_anre].filter(Boolean).join(' ') || null, cartus: { profile: PROFILES.profile, activ: PROFILES.activ } }))
+    .then(r => { if (r && r.error) console.warn('profil:', r.error.message); }).catch(() => { });
+}
+function erAuth(e) {
+  const m = String((e && e.message) || e || '');
+  if (/invalid login credentials/i.test(m)) return 'Email sau parolă greșită.';
+  if (/email not confirmed/i.test(m)) return 'Contul nu e confirmat încă: deschide linkul din emailul de confirmare, apoi intră în cont.';
+  if (/already registered|already exists/i.test(m)) return 'Există deja un cont cu acest email. Intră în cont sau resetează parola.';
+  if (/password.*(at least|short|characters)/i.test(m)) return 'Parola e prea scurtă — folosește cel puțin 8 caractere.';
+  if (/rate limit|too many/i.test(m)) return 'Prea multe încercări într-un timp scurt. Mai încearcă peste câteva minute.';
+  if (/failed to fetch|network/i.test(m)) return 'Nu mă pot conecta la serverul de conturi. Verifică internetul.';
+  return m || 'Operația nu a reușit.';
+}
+const linkRevenire = () => location.origin + location.pathname;
+
+/* =========================================================================== proiecte (local sau în cont) */
+let MINI_T = null;
+function miniLater() { clearTimeout(MINI_T); MINI_T = setTimeout(miniFa, 1500); }
+/** miniatura planșei: SVG-ul previzualizării → JPEG de 320 px (intră în lista proiectelor) */
+async function miniFa() {
+  const svg = $('#paper svg'); if (!svg || !MODEL || MODEL._provizoriu) return;
+  const doc = MODEL._doc;
+  try {
+    const vb = svg.viewBox.baseVal; if (!vb || !vb.width) return;
+    const W = 320, H = Math.max(120, Math.round(W * vb.height / vb.width));
+    const c = svg.cloneNode(true);
+    c.setAttribute('xmlns', 'http://www.w3.org/2000/svg'); c.setAttribute('width', W * 2); c.setAttribute('height', H * 2);
+    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(c)], { type: 'image/svg+xml' }));
+    const img = new Image();
+    await new Promise((ok, no) => { img.onload = ok; img.onerror = no; img.src = url; });
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.drawImage(img, 0, 0, W, H);
+    URL.revokeObjectURL(url);
+    const data = cv.toDataURL('image/jpeg', 0.72);
+    if (MODEL && MODEL._doc === doc && MINI.get(doc) !== data) { MINI.set(doc, data); autosave(); }
+  } catch { /* miniatura e opțională */ }
+}
+const PROJ = {
+  async lista() {
+    if (cloudOk()) {
+      const { data, error } = await CLOUD.sb.from('projects').select('id,titlu,tip_schema,miniatura,updated_at').order('updated_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      return (data || []).map(r => ({ id: r.id, cloud: true, titlu: r.titlu || 'Schemă fără titlu', tip: r.tip_schema || 'manual', mini: r.miniatura, t: Date.parse(r.updated_at) || 0 }));
+    }
+    return store.get(DOCS, []).filter(d => d && d.model).map(d => ({ id: d.id, titlu: d.name || docName(d.model), tip: d.tip || tipDoc(d.model), mini: d.mini, t: d.t || 0,
+      ben: PLACEHOLDER(d.ben) ? '' : d.ben })).sort((a, b) => b.t - a.t);
+  },
+  curent: p => !!MODEL && !MODEL._provizoriu && (p.cloud ? MODEL._cid === p.id : MODEL._doc === p.id),
+  async deschide(p) {
+    if (!PROJ.curent(p)) {
+      if (p.cloud) {
+        const { data, error } = await CLOUD.sb.from('projects').select('id,titlu,model').eq('id', p.id).single();
+        if (error || !data) throw new Error(error ? error.message : 'proiectul nu mai există');
+        const m = clone(data.model || {}); const chk = checkModel(m); if (chk.err) throw new Error(chk.err);
+        m._cid = data.id; m._titlu = data.titlu; if (!m._doc) m._doc = 'd' + Date.now().toString(36);
+        delete m._provizoriu;
+        replaceModel(m, `Deschis: ${data.titlu}.`, { keepDoc: true }); LAST_SAVE = 0;
+      } else {
+        const d = store.get(DOCS, []).find(x => x.id === p.id); if (!d) throw new Error('proiectul nu mai există în acest browser');
+        const chk = checkModel(d.model); if (chk.err) throw new Error(chk.err);
+        openRecent(d);
+      }
+      setTab(MODEL.calc ? 'calc' : 'schema'); if (MODEL.calc) scheduleRegen(0);
+    }
+    acasaInchide();
+  },
+  async redenumeste(p, titlu) {
+    titlu = titlu.trim(); if (!titlu) throw new Error('titlul nu poate fi gol');
+    if (p.cloud) { const { error } = await CLOUD.sb.from('projects').update({ titlu }).eq('id', p.id); if (error) throw new Error(error.message); }
+    const docs = store.get(DOCS, []);
+    docs.forEach(d => { if (d.model && (p.cloud ? d.model._cid === p.id : d.id === p.id)) { d.name = titlu; d.model._titlu = titlu; } });
+    store.set(DOCS, docs);
+    if (PROJ.curent(p)) { MODEL._titlu = titlu; projName(); }
+  },
+  async duplica(p) {
+    const titlu = p.titlu + ' (copie)';
+    if (p.cloud) {
+      const { data, error } = await CLOUD.sb.from('projects').select('model,miniatura,tip_schema').eq('id', p.id).single();
+      if (error) throw new Error(error.message);
+      const m = clone(data.model); m._cid = uuid(); m._doc = 'd' + Date.now().toString(36); m._titlu = titlu;
+      const r = await CLOUD.sb.from('projects').insert({ id: m._cid, titlu, tip_schema: data.tip_schema, model: m, miniatura: data.miniatura });
+      if (r.error) throw new Error(r.error.message);
+      return;
+    }
+    const docs = store.get(DOCS, []); const d = docs.find(x => x.id === p.id); if (!d) throw new Error('proiectul nu mai există');
+    const id = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    const m = clone(d.model); m._doc = id; m._titlu = titlu; delete m._cid;
+    docs.unshift(Object.assign({}, d, { id, name: titlu, t: Date.now(), tab: null, model: m }));
+    if (!store.set(DOCS, docs.slice(0, DOCS_MAX))) throw new Error('spațiul din browser e plin');
+  },
+  async sterge(p) {
+    if (p.cloud) { const { error } = await CLOUD.sb.from('projects').delete().eq('id', p.id); if (error) throw new Error(error.message); }
+    const era = PROJ.curent(p);
+    store.set(DOCS, store.get(DOCS, []).filter(d => !(p.cloud ? d.model && d.model._cid === p.id : d.id === p.id)));
+    if (era) schemaProvizorie();      // altfel salvarea automată ar readuce proiectul șters
+  },
+};
+function freshModel() { const m = normalize(clone(PRESETS.bmpt.model)); applyProfile(m); m._provizoriu = 1; return m; }
+/** editorul primește o schemă provizorie (nu se salvează până nu o modifici sau alegi o lucrare) */
+function schemaProvizorie() {
+  clearTimeout(saveT); clearTimeout(CLOUD.saveT);
+  MODEL = freshModel(); HIST.past.length = 0; HIST.future.length = 0; CONF = null; WIZ_START = { renunta: false };
+  OPEN.clear(); CALC.clear(); SELECTED = null; VIEW.fitted = false; render(); redraw(0); updUndo();
+}
+
+/* =========================================================================== pagina de start */
+const HOME = { on: false, sec: 'nou', q: '', qc: '', lista: null, listaErr: null, incarca: false, confirm: null, edit: null, cont: 'intra', msg: null, preturi: null };
+const HI = d => `<svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16">${d}</svg>`;
+const HOME_SEC = [
+  ['nou', 'Planșă nouă', HI('<path d="M3 2h6l4 4v8H3z"/><path d="M9 2v4h4M8 8.5v4M6 10.5h4"/>')],
+  ['proiecte', 'Proiectele mele', HI('<path d="M2 4h4l1.5 1.5H14V13H2z"/>')],
+  ['recente', 'Recente', HI('<circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2.2 1.4"/>')],
+  ['exemple', 'Exemple și șabloane', HI('<rect x="2.5" y="2.5" width="11" height="11" rx="1"/><path d="M2.5 6.5h11M6.5 6.5v7"/>')],
+  ['catalog', 'Catalog echipamente', HI('<path d="M3 2.5h10v11H3z"/><path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3"/>')],
+  null,
+  ['setari', 'Setări', HI('<path d="M2.5 4h11M2.5 8h11M2.5 12h11"/><circle cx="6" cy="4" r="1.4" fill="var(--surface)"/><circle cx="10.5" cy="8" r="1.4" fill="var(--surface)"/><circle cx="5" cy="12" r="1.4" fill="var(--surface)"/>')],
+  ['cont', 'Cont', HI('<circle cx="8" cy="5.5" r="2.6"/><path d="M2.8 13.5c.8-2.6 2.8-4 5.2-4s4.4 1.4 5.2 4"/>')],
+];
+// tipurile de lucrare: fiecare cu simbolul ei monofilar (sursa în maro, ca în planșe — IEC 60445)
+const GL = {
+  casa: '<path d="M14 24 36 8l22 16"/><path d="M19 21v23h34V21"/><rect x="29" y="27" width="14" height="12"/><path class="s" d="M36 2v6"/><path d="M33 31v4M36 31v4M39 31v4"/>',
+  mono: '<path class="s" d="M36 2v10"/><path class="s" d="m33 9 6-4"/><rect x="27" y="12" width="18" height="11"/><path d="M31 17.5h10"/><path d="M36 23v6m0 0 6 8m-6 4v5"/><path d="m33.5 26.5 5 5m0-5-5 5"/>',
+  tri: '<path class="s" d="M36 2v10"/><path class="s" d="m33 4.5 6-4M33 7.5l6-4M33 10.5l6-4"/><rect x="27" y="12" width="18" height="11"/><path d="M31 17.5h10"/><path d="M36 23v6m0 0 6 8m-6 4v5"/><path d="m33.5 26.5 5 5m0-5-5 5"/>',
+  triTC: '<path class="s" d="M36 2v6"/><path class="s" d="m33 4.5 6-4M33 7.5l6-4"/><circle cx="36" cy="11" r="3"/><path d="M36 14v1"/><rect x="27" y="15" width="18" height="9"/><path d="M31 19.5h10"/><path d="M36 24v5m0 0 6 8m-6 4v5"/><path d="m33.5 26.5 5 5m0-5-5 5"/>',
+  tg: '<path class="s" d="M36 2v10"/><path d="M8 14h56" stroke-width="3"/><path d="M15 14v30M29 14v30M43 14v30M57 14v30"/><path d="m12.5 25.5 5 5m0-5-5 5M26.5 25.5l5 5m0-5-5 5M40.5 25.5l5 5m0-5-5 5M54.5 25.5l5 5m0-5-5 5"/>',
+  cef: '<rect x="4" y="8" width="20" height="14"/><path d="M4 22 24 8M9 8v14M14 8v14M19 8v14" stroke-width="1"/><path d="M24 15h8"/><rect x="32" y="8" width="16" height="14"/><path d="M32 22 48 8"/><path d="M48 15h18" class="s"/><path d="M40 22v10"/><path d="M33 32h14M36 36h8" /><path d="M40 36v6"/>',
+  pros: '<path d="M10 26 30 12l20 14"/><path d="M15 23v21h30V23"/><path d="m22 14 12-8 9 6-12 8z"/><path d="m26 11.3 9 6M30 8.6l9 6" stroke-width="1"/><rect x="25" y="30" width="10" height="9"/><path class="s" d="M45 34h22"/><path d="M57 30v8"/>',
+  pt: '<path class="s" d="M36 2v8"/><circle cx="36" cy="17" r="8"/><circle cx="36" cy="28" r="8"/><path d="M36 36v4"/><path d="M14 40h44" stroke-width="3"/><path d="M22 40v6M36 40v6M50 40v6"/>',
+  ge: '<circle cx="16" cy="18" r="10"/><path d="M19.5 14.5a4.6 4.6 0 1 0 1 4.5h-4"/><path class="s" d="M56 2v12"/><path d="M16 28v8h14"/><path d="M56 14v8"/><path d="M30 36l8-8M42 36h-4m0 0v8M38 28h18v-6"/><circle cx="38" cy="36" r="1.6"/>',
+};
+const TIPURI_LUCRARE = [
+  ['locuinta', 'Casă / apartament', 'Tabloul locuinței, coloana și circuitele uzuale', 'casa'],
+  ['bmpm', 'Branșament monofazat', 'BMPM, măsură directă, până la 40 A', 'mono'],
+  ['bmptd', 'Branșament trifazat', 'BMPTd, măsură directă, până la 100 A', 'tri'],
+  ['bmpt', 'Branșament trifazat semidirect', 'BMPTi cu transformatoare de curent, 100–250 A', 'triTC'],
+  ['tg', 'Tablou general', 'Bilanț de puteri, plecări, cascadă', 'tg'],
+  ['cef', 'CEF / BESS', 'Invertoare, stocare, protecție de interfață', 'cef'],
+  ['prosumator', 'Prosumator', 'Invertor pe branșamentul existent', 'pros'],
+  ['pt', 'Post de transformare', 'Celule MT, transformator, TGJT', 'pt'],
+  ['ge', 'Grup electrogen + ATS', 'Sursă de rezervă cu comutare automată', 'ge'],
+];
+const TIP_ETI = { locuinta: 'Casă / apartament', bransament: 'Branșament', tablou: 'Tablou general', pt: 'Post de transformare', cef: 'CEF / BESS', bess: 'BESS',
+  prosumator: 'Prosumator', ge_ats: 'Grup electrogen + ATS', manual: 'Desen manual' };
+const TIP_GL = { locuinta: 'casa', bransament: 'tri', tablou: 'tg', pt: 'pt', cef: 'cef', bess: 'cef', prosumator: 'pros', ge_ats: 'ge', manual: 'tg' };
+const glyph = (g, cls = '') => el('span', { class: 'gl ' + cls, 'aria-hidden': 'true', html: `<svg viewBox="0 0 72 48">${GL[g] || GL.tg}</svg>` });
+function cand(t) {
+  if (!t) return '';
+  const d = new Date(t), now = new Date(), min = Math.round((now - d) / 60000);
+  const ora = d.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+  if (min < 1) return 'acum câteva secunde';
+  if (min < 60) return `acum ${min} min`;
+  const zi = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const dz = Math.round((zi(now) - zi(d)) / 86400000);
+  if (dz === 0) return 'azi, ' + ora;
+  if (dz === 1) return 'ieri, ' + ora;
+  return d.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: d.getFullYear() === now.getFullYear() ? undefined : 'numeric' }) + ', ' + ora;
+}
+function acasaArata(sec) {
+  if (sec) HOME.sec = sec;
+  const era = HOME.on; HOME.on = true;
+  if (!era) { if (MODEL && saveT) saveNow(); HOME.lista = null; HOME.confirm = HOME.edit = null; document.querySelectorAll('header .menu').forEach(m => { m.hidden = true; }); }
+  document.body.classList.add('home'); $('#home').hidden = false;
+  acasaNav(); acasaRender(); acasaCartus(); navInchide();
+  requestAnimationFrame(() => { const h = $('#h-main h2'); if (h && era) h.focus({ preventScroll: true }); });
+}
+function acasaInchide() {
+  if (!HOME.on) return;
+  HOME.on = false; document.body.classList.remove('home', 'h-nav-open'); $('#home').hidden = true; $('#h-scrim').hidden = true;
+  requestAnimationFrame(() => {        // focusul rămâne unde l-a pus editorul (ex. câmpul obligatoriu); altfel pe titlul ecranului
+    const a = document.activeElement; if (a && a !== document.body && !$('#home').contains(a)) return;
+    const t = document.getElementById('wz-h') || document.getElementById('cf-h') || $('#pane'); if (t) t.focus({ preventScroll: true }); });
+}
+function acasaNav() {
+  const ul = $('#h-menu'); ul.replaceChildren();
+  const nLoc = store.get(DOCS, []).length;
+  for (const it of HOME_SEC) {
+    if (!it) { ul.append(el('li', { class: 'sep', role: 'presentation' })); continue; }
+    const [k, t, ic] = it;
+    const cnt = k === 'proiecte' && !cloudOk() && nLoc ? String(nLoc) : k === 'cont' && cloudOk() ? '●' : null;
+    ul.append(el('li', {}, el('button', { type: 'button', id: 'hn-' + k, 'aria-current': HOME.sec === k ? 'page' : null, onclick: () => { HOME.sec = k; HOME.confirm = HOME.edit = null; acasaNav(); acasaRender(); navInchide(); $('#h-main').scrollTop = 0; requestAnimationFrame(() => $('#h-main h2')?.focus({ preventScroll: true })); } },
+      el('span', { class: 'ic', html: ic }), el('span', {}, t), cnt ? el('span', { class: 'cnt' + (cnt === '●' ? ' on' : ''), 'aria-label': cnt === '●' ? 'conectat' : `${cnt} proiecte` }, cnt) : null)));
+  }
+}
+function acasaCartus() {
+  const b = $('#h-cartus'); if (!b) return;
+  const a = (PROFILES && profilActiv()) || {};
+  const sal = cloudOk() ? 'în cont' : CLOUD.on ? 'în browser (neconectat)' : 'în acest browser';
+  const rd = (k, v, gol) => [el('span', { class: 'k' }, k), el('span', { class: 'v' + (gol ? ' gol' : '') }, v)];
+  b.replaceChildren(el('span', { class: 'ttl' }, 'Cartușul tău'),
+    ...rd('Proiectant', a.proiectant || 'necompletat', !a.proiectant), ...rd('Atestat', a.atestat_anre ? [a.atestat_tip, a.atestat_anre].filter(Boolean).join(' · ') : '—', !a.atestat_anre),
+    ...rd('Salvare', sal));
+  b.setAttribute('aria-label', `Cartușul tău: proiectant ${a.proiectant || 'necompletat'}, salvare ${sal}. Deschide setările.`);
+}
+function navDeschide() { document.body.classList.add('h-nav-open'); $('#h-scrim').hidden = false; $('#h-burger').setAttribute('aria-expanded', 'true'); requestAnimationFrame(() => $('#h-menu button[aria-current]')?.focus()); }
+function navInchide(refocus) { if (!document.body.classList.contains('h-nav-open')) return; document.body.classList.remove('h-nav-open'); $('#h-scrim').hidden = true; $('#h-burger').setAttribute('aria-expanded', 'false'); if (refocus) $('#h-burger').focus(); }
+function temaSet(v) {
+  if (v === 'auto') { delete document.documentElement.dataset.theme; store.del('sm.theme'); }
+  else { document.documentElement.dataset.theme = v; store.set('sm.theme', v); }
+  if (HOME.on && HOME.sec === 'setari') acasaRender();
+}
+function acasaRender() {
+  const root = $('#h-main'); if (!root) return;
+  const st = root.scrollTop; const act = document.activeElement; const aid = act && root.contains(act) ? act.id : null;
+  const sec = el('section', { class: 'h-sec', 'aria-labelledby': 'h-h' });
+  const fn = { nou: secNou, proiecte: secProiecte, recente: secRecente, exemple: secExemple, catalog: secCatalog, setari: secSetari, cont: secCont }[HOME.sec] || secNou;
+  fn(sec);
+  root.replaceChildren(sec); root.scrollTop = st;
+  const t = HOME_SEC.find(x => x && x[0] === HOME.sec); $('#h-top-t').textContent = t ? t[1] : 'Scheme monofilare';
+  if (aid) document.getElementById(aid)?.focus({ preventScroll: true });
+}
+const hH = (t, lead) => [el('h2', { class: 'h-h', id: 'h-h', tabindex: '-1' }, t), lead ? el('p', { class: 'h-lead' }, lead) : null].filter(Boolean);
+
+/* ---- Planșă nouă */
+function secNou(root) {
+  root.append(...hH('Planșă nouă', 'Alege lucrarea. Pe ecranul următor completezi datele; planșa se generează după verificare.'));
+  const g = el('div', { class: 'h-tiles', role: 'list' });
+  for (const [k, n, d, gl] of TIPURI_LUCRARE) {
+    const b = el('button', { class: 'h-tile', type: 'button', id: 'ht-' + k, onclick: () => acasaSablon(k, b) }, glyph(gl), el('span', { class: 'tx' }, el('b', {}, n), el('small', {}, d)));
+    g.append(el('div', { role: 'listitem' }, b));
+  }
+  root.append(g);
+  const ta = el('textarea', { id: 'h-text', rows: 3, placeholder: 'ex. branșament trifazat 20 kW, coloană 30 m — sau „casă P+1 trifazată, plită, pompă de căldură, încărcător 11 kW”' });
+  ta.value = HOME.text || '';
+  ta.addEventListener('input', () => { HOME.text = ta.value; });
+  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); acasaDescrie(); } });
+  root.append(el('div', { class: 'h-desc' }, el('h3', { class: 'h-h3', style: 'margin-top:0' }, el('label', { for: 'h-text' }, 'Sau descrie lucrarea în cuvinte')),
+    el('p', { class: 'h-sub' }, 'Ce recunosc din text (tipul, rețeaua, puterile) trece direct pe ecranul de verificare; ce lipsește îți cer acolo.'), ta,
+    el('div', { class: 'h-row' }, el('button', { class: 'btn pri', type: 'button', id: 'h-go', onclick: acasaDescrie }, 'Pornește din descriere'),
+      el('span', { class: 'hint' }, IS_MAC ? '⌘ + Enter' : 'Ctrl + Enter'), el('div', { class: 'h-res', id: 'h-res', 'aria-live': 'polite' }))));
+  // ultimele proiecte, ca să continui fără să cauți
+  const lst = HOME.lista;
+  if (lst === null) acasaIncarca();
+  else if (lst.length) {
+    root.append(el('div', { class: 'h-hrow' }, el('h3', { class: 'h-h3' }, 'Continuă de unde ai rămas'), el('button', { class: 'btn ghost sm', type: 'button', onclick: () => acasaArata('proiecte') }, 'Toate proiectele')));
+    root.append(cardsProiecte(lst.slice(0, 3)));
+  }
+}
+async function acasaSablon(k, btn) {
+  if (!SABLOANE[k]) { toast('Aplicația încă pornește — încearcă din nou în câteva secunde.'); return; }
+  if (btn.classList.contains('busy')) return;
+  btn.classList.add('busy'); btn.setAttribute('aria-busy', 'true');
+  const ok = await newFromSablon(k, { wiz: true });
+  btn.classList.remove('busy'); btn.removeAttribute('aria-busy');
+  if (ok) acasaInchide();
+}
+async function acasaDescrie() {
+  const ta = $('#h-text'), btn = $('#h-go'), res = $('#h-res'); if (!ta || btn.classList.contains('busy')) return;
+  const text = ta.value.trim();
+  if (!text) { ta.focus(); res.replaceChildren(el('p', { class: 'msg warn' }, 'Scrie întâi ce proiectezi, de exemplu „branșament trifazat 20 kW”.')); return; }
+  if (!Object.keys(SABLOANE).length) { toast('Aplicația încă pornește — încearcă din nou în câteva secunde.'); return; }
+  btn.classList.add('busy'); btn.disabled = true; const gata = lucruStart(res);
+  try {
+    const cur = payload(false); cur.cartus = Object.assign({}, profileCartus());
+    const r = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, claude: INFO.claude, model: cur, fara_model: true }) })).json();
+    if (r.eroare) throw new Error(r.eroare);
+    const it = r.interpretare || {};
+    gata();
+    if (!intelesCeva(it)) { neinteles(res, it); ta.focus(); return; }
+    res.replaceChildren(); HOME.text = '';
+    startWizard();            // închide pagina de start; „← Înapoi la text” revine la alegerea lucrării, cu textul completat
+    confDeschide({ src: 'wiz', text, it, citire: r.citire && r.citire.mesaj, cart: r.cartus_chat, cur });
+  } catch (e) { gata(); res.replaceChildren(el('p', { class: 'msg err', role: 'alert' }, 'Nu am putut interpreta descrierea: ' + e.message)); }
+  finally { btn.classList.remove('busy'); btn.disabled = false; }
+}
+
+/* ---- Proiectele mele / Recente */
+async function acasaIncarca() {
+  if (HOME.incarca) return;
+  HOME.incarca = true; HOME.listaErr = null;
+  try { HOME.lista = await PROJ.lista(); }
+  catch (e) { HOME.lista = []; HOME.listaErr = e.message; }
+  HOME.incarca = false;
+  if (HOME.on) { acasaNav(); acasaRender(); }
+}
+function miniEl(p, cls = 'h-mini') {
+  return p.mini ? el('span', { class: cls, 'aria-hidden': 'true', style: `background-image:url("${String(p.mini).replace(/"/g, '')}")` })
+    : el('span', { class: cls + ' gol', 'aria-hidden': 'true' }, glyph(TIP_GL[p.tip] || 'tg', 'mic'));
+}
+async function acasaDeschide(p, btn) {
+  if (btn) { btn.classList.add('busy'); btn.setAttribute('aria-busy', 'true'); }
+  try { await PROJ.deschide(p); }
+  catch (e) { toast(`„${p.titlu}” nu a putut fi deschis: ${e.message}`, { kind: 'err', ms: 9000 }); }
+  finally { if (btn) { btn.classList.remove('busy'); btn.removeAttribute('aria-busy'); } }
+}
+function cardsProiecte(lst) {
+  return el('ul', { class: 'h-cards' }, ...lst.map(p => {
+    const b = el('button', { class: 'h-card', type: 'button', onclick: () => acasaDeschide(p, b) }, miniEl(p, 'h-mini mare'),
+      el('span', { class: 'tx' }, el('b', {}, p.titlu), el('small', {}, [TIP_ETI[p.tip] || p.tip, cand(p.t)].filter(Boolean).join(' — '))));
+    b.setAttribute('aria-label', `Deschide ${p.titlu}, ${TIP_ETI[p.tip] || p.tip}, modificat ${cand(p.t)}`);
+    return el('li', {}, b);
+  }));
+}
+function notaSalvare() {
+  if (cloudOk()) return `În contul ${CLOUD.user.email || ''}. Le găsești de pe orice calculator; fiecare salvare păstrează o versiune în istoric.`;
+  if (CLOUD.on) return 'În acest browser. Intră în cont (secțiunea Cont) ca să le ai pe orice calculator.';
+  return 'În acest browser — se salvează singure cât lucrezi. Pentru predare sau alt calculator, descarcă proiectul ca .json.';
+}
+function secProiecte(root) {
+  root.append(...hH('Proiectele mele', notaSalvare()));
+  const q = el('input', { type: 'search', id: 'h-q', class: 'inp', placeholder: 'Caută după titlu, tip sau beneficiar', value: HOME.q, autocomplete: 'off' });
+  q.addEventListener('input', () => { HOME.q = q.value; const n = $('#h-lista'); if (n) n.replaceWith(listaProiecte()); });
+  root.append(el('div', { class: 'h-bar' }, el('label', { for: 'h-q', class: 'sr' }, 'Caută în proiecte'), q,
+    el('button', { class: 'btn', type: 'button', onclick: () => $('#open-file').click(), html: HI('<path d="M2 4h4l1.5 1.5H14V13H2z"/>') + 'Deschide .json' }),
+    el('button', { class: 'btn pri', type: 'button', onclick: () => acasaArata('nou'), html: HI('<path d="M8 3.5v9M3.5 8h9"/>') + 'Planșă nouă' })));
+  if (cloudOk() && CLOUD.neimp) root.append(el('div', { class: 'h-note', role: 'note' }, el('span', {}, `${CLOUD.neimp === 1 ? 'Un proiect e salvat' : CLOUD.neimp + ' proiecte sunt salvate'} doar în acest browser.`),
+    el('button', { class: 'btn sm', type: 'button', id: 'h-import', onclick: cloudImport }, 'Importă în cont')));
+  if (HOME.lista === null) { acasaIncarca(); root.append(el('p', { class: 'h-load', role: 'status' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), ' Se încarcă proiectele…')); return; }
+  if (HOME.listaErr) root.append(el('p', { class: 'msg err', role: 'alert' }, 'Lista proiectelor nu s-a putut încărca: ' + HOME.listaErr));
+  root.append(listaProiecte());
+}
+function listaProiecte() {
+  const q = HOME.q.trim().toLowerCase();
+  const lst = (HOME.lista || []).filter(p => !q || [p.titlu, TIP_ETI[p.tip], p.ben].join(' ').toLowerCase().includes(q));
+  if (!(HOME.lista || []).length) return el('div', { class: 'h-gol', id: 'h-lista' }, glyph('tg'), el('p', {}, 'Niciun proiect încă. Începe o planșă nouă — se salvează singură cât lucrezi.'),
+    el('button', { class: 'btn pri', type: 'button', onclick: () => acasaArata('nou') }, 'Planșă nouă'));
+  if (!lst.length) return el('p', { class: 'h-gol', id: 'h-lista' }, `Niciun proiect nu conține „${HOME.q}”.`);
+  const ul = el('ul', { class: 'h-list', id: 'h-lista', 'aria-label': 'Proiecte' });
+  lst.forEach((p, i) => {
+    const li = el('li', { class: 'h-item' + (PROJ.curent(p) ? ' cur' : '') });
+    const meta = [TIP_ETI[p.tip] || p.tip, p.ben, cand(p.t)].filter(Boolean).join(' · ');
+    if (HOME.edit === p.id) {
+      const inp = el('input', { type: 'text', class: 'inp', id: 'h-ren-' + i, value: p.titlu, 'aria-label': 'Titlul nou pentru ' + p.titlu });
+      const salv = async () => { try { await PROJ.redenumeste(p, inp.value); HOME.edit = null; HOME.lista = null; toast('Proiect redenumit.'); acasaRender(); } catch (e) { toast('Nu am putut redenumi: ' + e.message, { kind: 'err' }); } };
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); salv(); } else if (e.key === 'Escape') { e.preventDefault(); HOME.edit = null; acasaRender(); document.getElementById('h-ren-b-' + i)?.focus(); } });
+      li.append(miniEl(p), el('div', { class: 'h-ren' }, inp, el('button', { class: 'btn pri sm', type: 'button', onclick: salv }, 'Salvează titlul'),
+        el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { HOME.edit = null; acasaRender(); } }, 'Anulează')));
+      requestAnimationFrame(() => { inp.focus(); inp.select(); });
+    } else if (HOME.confirm === p.id) {
+      li.classList.add('del');
+      li.append(miniEl(p), el('div', { class: 'h-conf', role: 'alertdialog', 'aria-labelledby': 'h-conf-t-' + i },
+        el('p', { id: 'h-conf-t-' + i }, el('b', {}, `Ștergi definitiv „${p.titlu}”?`), el('span', {}, p.cloud ? ' Se șterge din cont, cu tot istoricul lui.' : ' Se șterge din acest browser.')),
+        el('div', { class: 'h-row' }, el('button', { class: 'btn danger-pri sm', type: 'button', id: 'h-del-ok', onclick: async () => {
+          try { await PROJ.sterge(p); HOME.confirm = null; HOME.lista = null; toast(`Am șters „${p.titlu}”.`); acasaNav(); acasaRender(); }
+          catch (e) { toast('Nu am putut șterge: ' + e.message, { kind: 'err' }); } } }, 'Șterge definitiv'),
+          el('button', { class: 'btn ghost sm', type: 'button', id: 'h-del-no', onclick: () => { HOME.confirm = null; acasaRender(); document.getElementById('h-del-b-' + i)?.focus(); } }, 'Anulează'))));
+      requestAnimationFrame(() => $('#h-del-no')?.focus());
+    } else {
+      const ob = el('button', { class: 'h-open', type: 'button', id: 'h-open-' + i, onclick: () => acasaDeschide(p, ob) }, p.titlu);
+      li.append(miniEl(p), el('div', { class: 'h-info' }, ob, el('span', { class: 'h-meta' }, meta, PROJ.curent(p) ? el('span', { class: 'h-tag' }, 'deschis acum') : null)),
+        el('div', { class: 'h-acts' },
+          el('button', { class: 'btn ghost sm', type: 'button', 'aria-label': 'Duplică ' + p.titlu, title: 'Duplică', html: ICON.dup + '<span class="hide-sm">Duplică</span>',
+            onclick: async () => { try { await PROJ.duplica(p); HOME.lista = null; toast(`Am creat „${p.titlu} (copie)”.`); acasaNav(); acasaRender(); } catch (e) { toast('Nu am putut duplica: ' + e.message, { kind: 'err' }); } } }),
+          el('button', { class: 'btn ghost sm', type: 'button', id: 'h-ren-b-' + i, 'aria-label': 'Redenumește ' + p.titlu, title: 'Redenumește', html: HI('<path d="M3 13h2.5L13 5.5 10.5 3 3 10.5z"/>') + '<span class="hide-sm">Redenumește</span>',
+            onclick: () => { HOME.edit = p.id; HOME.confirm = null; acasaRender(); } }),
+          el('button', { class: 'btn ghost sm danger', type: 'button', id: 'h-del-b-' + i, 'aria-label': 'Șterge ' + p.titlu, title: 'Șterge', html: ICON.del + '<span class="hide-sm">Șterge</span>',
+            onclick: () => { HOME.confirm = p.id; HOME.edit = null; acasaRender(); } })));
+    }
+    ul.append(li);
+  });
+  return ul;
+}
+function secRecente(root) {
+  root.append(...hH('Recente', 'Planșele la care ai lucrat ultima dată.'));
+  if (HOME.lista === null) { acasaIncarca(); root.append(el('p', { class: 'h-load', role: 'status' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), ' Se încarcă…')); return; }
+  const lst = HOME.lista.slice(0, 9);
+  if (!lst.length) { root.append(el('div', { class: 'h-gol' }, glyph('tg'), el('p', {}, 'Nimic recent încă. Planșele pe care le deschizi apar aici.'), el('button', { class: 'btn pri', type: 'button', onclick: () => acasaArata('nou') }, 'Planșă nouă'))); return; }
+  root.append(cardsProiecte(lst));
+  root.append(el('div', { class: 'h-row', style: 'margin-top:var(--s4)' }, el('button', { class: 'btn', type: 'button', onclick: () => $('#open-file').click() }, 'Deschide un proiect salvat (.json)')));
+}
+
+/* ---- Exemple și șabloane */
+function secExemple(root) {
+  root.append(...hH('Exemple și șabloane', 'Puncte de plecare gata completate. Le modifici după ce se deschid.'));
+  root.append(el('h3', { class: 'h-h3' }, 'Pornește dintr-o descriere'));
+  root.append(el('ul', { class: 'h-ex' }, ...EXAMPLES.map(([lbl, txt]) => el('li', {}, el('button', { type: 'button', class: 'h-exb', onclick: () => { HOME.text = txt; acasaArata('nou'); requestAnimationFrame(() => acasaDescrie()); } },
+    el('b', {}, lbl), el('span', {}, `„${txt}”`))))));
+  root.append(el('h3', { class: 'h-h3' }, 'Șabloane calculate și verificate'));
+  root.append(el('ul', { class: 'h-ex' }, ...TIPURI_LUCRARE.filter(([k]) => SABLOANE[k]).map(([k, , , gl]) => { const b = el('button', { type: 'button', class: 'h-exb gl-row', onclick: () => acasaSablon(k, b) },
+    glyph(gl, 'mic'), el('span', {}, el('b', {}, SABLOANE[k].nume), el('span', {}, SABLOANE[k].descriere || ''))); return el('li', {}, b); })));
+  const pr = Object.entries(PRESETS);
+  if (pr.length) {
+    root.append(el('h3', { class: 'h-h3' }, 'Desene de exemplu (fără calcul)'), el('p', { class: 'h-sub' }, 'Desen manual, nedimensionat — pentru planșe pe care le compui aparat cu aparat.'));
+    root.append(el('ul', { class: 'h-ex' }, ...pr.map(([k, v]) => el('li', {}, el('button', { type: 'button', class: 'h-exb', onclick: () => { acasaInchide(); newFromPreset(k); setTab('schema'); } }, el('b', {}, v.nume), el('span', {}, 'exemplu de desen'))))));
+  }
+}
+
+/* ---- Catalog echipamente */
+function secCatalog(root) {
+  root.append(...hH('Catalog echipamente', 'Echipamentele salvate din fișe tehnice. În tab-ul Calcul le alegi din listă; datele de fișă trec pe planșă, în listă și în deviz.'));
+  const q = el('input', { type: 'search', id: 'h-qc', class: 'inp', placeholder: 'Caută producător sau model', value: HOME.qc, autocomplete: 'off' });
+  q.addEventListener('input', () => { HOME.qc = q.value; const n = $('#h-cat'); if (n) n.replaceWith(listaCatalog()); });
+  root.append(el('div', { class: 'h-bar' }, el('label', { for: 'h-qc', class: 'sr' }, 'Caută în catalog'), q));
+  root.append(listaCatalog());
+  root.append(el('h3', { class: 'h-h3' }, 'Prețuri pentru deviz'));
+  const pp = el('p', { class: 'h-sub', id: 'h-pret' }, HOME.preturi == null ? 'Se citește catalogul de prețuri…' : HOME.preturi ? `Catalogul de prețuri are ${HOME.preturi} articole. Un preț introdus o dată se regăsește în toate proiectele.` : 'Catalogul de prețuri e gol. Importă lista furnizorului (.xlsx cu coloanele Denumire și Preț) sau completează prețurile din tab-ul Deviz.');
+  root.append(pp, el('div', { class: 'h-row' }, el('button', { class: 'btn', type: 'button', onclick: () => $('#imp-preturi').click() }, 'Importă listă de prețuri (.xlsx)')));
+  if (HOME.preturi == null) fetch('/api/preturi').then(r => r.json()).then(r => { HOME.preturi = Object.keys((r && r.articole) || {}).length; if (HOME.on && HOME.sec === 'catalog') acasaRender(); }).catch(() => { HOME.preturi = 0; });
+}
+function listaCatalog() {
+  const q = HOME.qc.trim().toLowerCase();
+  const all = (ECH.echipamente || []);
+  if (!all.length) return el('div', { class: 'h-gol', id: 'h-cat' }, glyph('cef'), el('p', {}, 'Catalogul e gol. Adaugi echipamente din tab-ul Calcul al unei planșe CEF sau prosumator: „Importă fișă PDF” sau „Salvează în catalog”.'));
+  const lst = all.filter(e => !q || [e.producator, e.model, (ECH.tipuri || {})[e.tip]].join(' ').toLowerCase().includes(q));
+  const box = el('div', { id: 'h-cat' });
+  if (!lst.length) { box.append(el('p', { class: 'h-gol' }, `Nimic nu conține „${HOME.qc}”.`)); return box; }
+  const tipuri = [...new Set(lst.map(e => e.tip))];
+  for (const t of tipuri) {
+    const nume = (ECH.tipuri || {})[t]; const eti = typeof nume === 'string' ? nume : (nume && nume.nume) || t;
+    box.append(el('h3', { class: 'h-h3 mic' }, eti, el('span', { class: 'cnt' }, String(lst.filter(e => e.tip === t).length))));
+    box.append(el('ul', { class: 'h-list' }, ...lst.filter(e => e.tip === t).map(e => {
+      const camp = Object.entries((ECH.campuri || {})[t] || {}).filter(([k]) => e[k] != null).slice(0, 4).map(([k, [l, u]]) => `${l} ${numRO(e[k])}${u ? ' ' + u : ''}`).join(' · ');
+      const li = el('li', { class: 'h-item cat' });
+      if (HOME.confirm === 'ech:' + e.id) {
+        li.append(el('div', { class: 'h-conf', role: 'alertdialog', 'aria-label': 'Confirmă ștergerea' }, el('p', {}, el('b', {}, `Ștergi „${echNume(e)}” din catalog?`), el('span', {}, ' Planșele care îl folosesc își păstrează datele.')),
+          el('div', { class: 'h-row' }, el('button', { class: 'btn danger-pri sm', type: 'button', onclick: async () => {
+            try { const r = await (await fetch('/api/echipamente', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sterge: e.id }) })).json();
+              if (r.eroare) throw new Error(r.eroare); ECH = Object.assign(ECH, r); HOME.confirm = null; toast(`Am șters ${echNume(e)} din catalog.`); acasaRender(); }
+            catch (err) { toast('Nu am putut șterge: ' + err.message, { kind: 'err' }); } } }, 'Șterge'),
+            el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { HOME.confirm = null; acasaRender(); } }, 'Anulează'))));
+        requestAnimationFrame(() => li.querySelector('.btn.ghost')?.focus());
+      } else li.append(el('div', { class: 'h-info' }, el('b', {}, echNume(e) || e.id), el('span', { class: 'h-meta' }, [camp, e.actualizat ? 'actualizat ' + e.actualizat : ''].filter(Boolean).join(' — '))),
+        el('div', { class: 'h-acts' }, el('button', { class: 'btn ghost sm danger', type: 'button', 'aria-label': 'Șterge ' + echNume(e), html: ICON.del + '<span class="hide-sm">Șterge</span>', onclick: () => { HOME.confirm = 'ech:' + e.id; acasaRender(); } })));
+      return li;
+    })));
+  }
+  return box;
+}
+
+/* ---- Setări */
+const PROF_ETI = { proiectant: 'Firma de proiectare', adresa_proiectant: 'Adresa firmei', reg: 'Nr. ORC, CUI, telefon', sef_proiect: 'Șef proiect', proiectat: 'Proiectat',
+  desenat: 'Desenat', verificat: 'Verificat', aprobat: 'Aprobat', atestat_anre: 'Nr. atestat ANRE', atestat_tip: 'Tip atestat' };
+function secSetari(root) {
+  root.append(...hH('Setări'));
+  // datele proiectantului (profilul implicit) — se pun singure în cartușul fiecărei planșe noi
+  const a = profilActiv() || {};
+  const vals = {}; PROFILE_KEYS.forEach(k => { vals[k] = a[k] || ''; });
+  const f = el('form', { class: 'h-card-f', 'aria-labelledby': 'h-prof-h', onsubmit: async e => {
+    e.preventDefault();
+    const fd = {}; PROFILE_KEYS.forEach(k => { const n = document.getElementById('hp-' + k); fd[k] = n ? n.value.trim() : ''; });
+    const vechi = profilActiv();
+    const p = Object.assign({}, vechi || {}, fd); if (!p.nume) p.nume = fd.proiectant || 'Profilul meu';
+    PROFILES.profile = vechi ? PROFILES.profile.map(x => (x === vechi ? p : x)) : PROFILES.profile.concat([p]);
+    PROFILES.activ = p.nume;
+    if (await scrieProfile()) {
+      toast('Datele proiectantului sunt salvate. Se pun singure pe fiecare planșă nouă.', MODEL && !MODEL._provizoriu ? { action: 'Pune-le și pe planșa deschisă', onAction: () => { const n = mutate(() => applyProfile()); toast('Am pus datele în cartușul planșei deschise.', undoAction(n)); }, ms: 9000 } : {});
+      acasaRender();
+    }
+  } });
+  f.append(el('h3', { class: 'h-h3', id: 'h-prof-h', style: 'margin-top:0' }, 'Date proiectant pentru cartuș'),
+    el('p', { class: 'h-sub' }, PROFILES.profile.length > 1 ? `Profilul implicit: „${PROFILES.activ}”. Celelalte profile le găsești în tab-ul Proiect al unei planșe.` : 'Se pun singure în cartușul fiecărei planșe noi.'));
+  const grid = el('div', { class: 'h-fgrid' });
+  PROFILE_KEYS.forEach(k => {
+    const id = 'hp-' + k;
+    const inp = k === 'atestat_tip' ? el('select', { id, class: 'inp' }, ...[['', '—'], ['Bp', 'Bp'], ['Ap', 'Ap'], ['Bp + Ap', 'Bp + Ap']].map(([v, t]) => el('option', { value: v }, t)))
+      : el('input', { type: 'text', id, class: 'inp', autocomplete: k === 'proiectant' ? 'organization' : 'off' });
+    inp.value = vals[k];
+    grid.append(el('div', { class: 'fld' + (['proiectant', 'adresa_proiectant', 'reg'].includes(k) ? ' lat' : '') }, el('label', { for: id }, PROF_ETI[k] || k), inp));
+  });
+  f.append(grid, el('div', { class: 'h-row' }, el('button', { class: 'btn pri', type: 'submit', id: 'hp-save' }, 'Salvează datele proiectantului')));
+  root.append(f);
+  // citirea avansată (cheia API Claude)
+  const ch = el('input', { type: 'password', id: 'hs-cheie', class: 'inp', autocomplete: 'off', spellcheck: 'false', placeholder: 'sk-ant-…' });
+  const tine = el('input', { type: 'checkbox', id: 'hs-tine' });
+  root.append(el('form', { class: 'h-card-f', 'aria-labelledby': 'h-llm-h', onsubmit: e => { e.preventDefault(); const k = ch.value.trim(); if (!k) { ch.focus(); return; } salvezCheia(k, tine.checked); } },
+    el('h3', { class: 'h-h3', id: 'h-llm-h', style: 'margin-top:0' }, 'Citire avansată a descrierilor (Claude)'),
+    el('p', { class: 'h-sub' }, el('span', { class: 'h-stare' + (INFO.claude ? ' on' : '') }, INFO.claude ? 'Activă' : 'Inactivă'), ' ',
+      INFO.claude ? 'Descrierile sunt citite de Claude și verificate cu regulile locale.' : 'Fără cheie se folosesc doar regulile locale — merg pentru formulările obișnuite.'),
+    el('div', { class: 'fld', style: 'max-width:440px' }, el('label', { for: 'hs-cheie' }, 'Cheia API Anthropic'), ch),
+    el('label', { class: 'check' }, tine, window.SM_WEB ? ' Ține minte în acest browser' : ' Ține minte pe acest calculator'),
+    el('p', { class: 'h-sub' }, window.SM_WEB ? 'Cheia rămâne doar în acest browser și descrierea pleacă direct de aici la Anthropic. Nu bifa „ține minte” pe un calculator folosit de alții.'
+      : 'Cheia se ține în memoria aplicației locale; cu „ține minte”, în ~/.config/scheme-monofilare — niciodată în proiect sau în exporturi.'),
+    el('div', { class: 'h-row' }, el('button', { class: 'btn pri', type: 'submit' }, 'Folosește cheia'), INFO.claude ? el('button', { class: 'btn ghost', type: 'button', onclick: () => salvezCheia('', false) }, 'Șterge cheia') : null)));
+  // aspect
+  const tema = store.get('sm.theme', null) || 'auto';
+  const rg = el('div', { class: 'h-seg', role: 'radiogroup', 'aria-labelledby': 'h-tema-h' });
+  [['auto', 'Ca sistemul'], ['light', 'Luminoasă'], ['dark', 'Întunecată']].forEach(([v, t]) => {
+    const r = el('input', { type: 'radio', name: 'h-tema', id: 'h-tema-' + v, value: v }); r.checked = tema === v;
+    r.addEventListener('change', () => temaSet(v));
+    rg.append(el('label', { for: 'h-tema-' + v }, r, el('span', {}, t)));
+  });
+  root.append(el('div', { class: 'h-card-f' }, el('h3', { class: 'h-h3', id: 'h-tema-h', style: 'margin-top:0' }, 'Temă'), rg));
+}
+
+/* ---- Cont */
+function secCont(root) {
+  if (!CLOUD.on) {
+    root.append(...hH('Cont', 'Conturile nu sunt încă activate.'));
+    root.append(el('div', { class: 'h-card-f' }, el('p', { style: 'margin-top:0' }, 'Proiectele se salvează automat în acest browser. Când conturile sunt activate, aici îți creezi un cont și îți găsești proiectele pe orice calculator.'),
+      el('p', { class: 'h-sub', style: 'margin-bottom:0' }, 'Pentru administrator: completează SUPABASE_URL și SUPABASE_ANON_KEY în config.js și rulează o dată supabase/schema.sql în proiectul Supabase.')));
+    return;
+  }
+  if (!CLOUD.gata) { root.append(...hH('Cont'), el('p', { class: 'h-load', role: 'status' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), ' Se conectează la serviciul de conturi…')); return; }
+  if (CLOUD.err && !CLOUD.sb) {
+    root.append(...hH('Cont'), el('p', { class: 'msg err', role: 'alert' }, 'Serviciul de conturi nu e disponibil acum: ' + CLOUD.err + '. Proiectele se salvează în continuare în acest browser.'),
+      el('div', { class: 'h-row' }, el('button', { class: 'btn', type: 'button', onclick: () => { CLOUD.err = null; CLOUD.gata = false; acasaRender(); cloudInit(); } }, 'Încearcă din nou')));
+    return;
+  }
+  const msg = HOME.msg ? el('p', { class: 'msg ' + (HOME.msg.err ? 'err' : 'ok'), role: HOME.msg.err ? 'alert' : 'status', id: 'h-cont-msg' }, HOME.msg.t) : el('p', { class: 'sr', role: 'status', id: 'h-cont-msg' });
+  const lucru = async (btn, fn) => {
+    btn.classList.add('busy'); btn.disabled = true; HOME.msg = null;
+    try { const t = await fn(); if (t) HOME.msg = { t }; }
+    catch (e) { HOME.msg = { t: erAuth(e), err: true }; }
+    btn.classList.remove('busy'); btn.disabled = false; acasaRender(); requestAnimationFrame(() => $('#h-cont-msg')?.focus?.());
+  };
+  const inp = (id, label, type, ac, extra = {}) => el('div', { class: 'fld' }, el('label', { for: id }, label), el('input', Object.assign({ type, id, class: 'inp', autocomplete: ac, required: true }, extra)));
+  const v = id => (document.getElementById(id) || {}).value || '';
+  if (CLOUD.recovery && cloudOk()) {
+    root.append(...hH('Parolă nouă', 'Alege parola nouă pentru ' + (CLOUD.user.email || 'contul tău') + '.'), msg);
+    const b = el('button', { class: 'btn pri', type: 'submit' }, 'Salvează parola');
+    root.append(el('form', { class: 'h-card-f h-auth', onsubmit: e => { e.preventDefault(); lucru(b, async () => {
+      const { error } = await CLOUD.sb.auth.updateUser({ password: v('ha-p1') }); if (error) throw error; CLOUD.recovery = false; return 'Parola a fost schimbată.'; }); } },
+      inp('ha-p1', 'Parola nouă (cel puțin 8 caractere)', 'password', 'new-password', { minlength: 8 }), el('div', { class: 'h-row' }, b)));
+    return;
+  }
+  if (cloudOk()) {
+    const u = CLOUD.user;
+    root.append(...hH('Cont', 'Ești conectat. Proiectele se salvează automat în cont (și în acest browser, pentru lucru fără internet).'), msg);
+    const card = el('div', { class: 'h-card-f' }, el('dl', { class: 'h-dl' }, el('dt', {}, 'Email'), el('dd', {}, u.email || '—'),
+      el('dt', {}, 'Cont creat'), el('dd', {}, u.created_at ? new Date(u.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' }) : '—')));
+    const out = el('button', { class: 'btn', type: 'button', id: 'h-logout', onclick: () => lucru(out, async () => { clearTimeout(CLOUD.saveT); await cloudSave(false); const { error } = await CLOUD.sb.auth.signOut(); if (error) throw error; return 'Ai ieșit din cont. Proiectele rămân și în acest browser.'; }) }, 'Ieși din cont');
+    card.append(el('div', { class: 'h-row' }, out));
+    root.append(card);
+    root.append(el('div', { class: 'h-card-f' }, el('h3', { class: 'h-h3', style: 'margin-top:0' }, 'Proiectele din acest browser'),
+      el('p', { class: 'h-sub' }, CLOUD.neimp ? `${CLOUD.neimp === 1 ? 'Un proiect e salvat' : CLOUD.neimp + ' proiecte sunt salvate'} doar aici. Importă-le ca să le ai în cont.` : 'Toate proiectele din acest browser sunt și în cont.'),
+      CLOUD.neimp ? el('div', { class: 'h-row' }, el('button', { class: 'btn pri', type: 'button', onclick: cloudImport }, 'Importă în cont')) : null));
+    return;
+  }
+  // neconectat: intrare / cont nou / parolă uitată
+  root.append(...hH('Cont', 'Cu un cont, proiectele se salvează în cloud și le deschizi de pe orice calculator.'));
+  const tabs = el('div', { class: 'h-seg', role: 'tablist', 'aria-label': 'Cont' });
+  [['intra', 'Intră în cont'], ['nou', 'Cont nou'], ['parola', 'Am uitat parola']].forEach(([k, t]) => tabs.append(el('button', { type: 'button', role: 'tab', id: 'hc-' + k, 'aria-selected': HOME.cont === k ? 'true' : 'false',
+    onclick: () => { HOME.cont = k; HOME.msg = null; acasaRender(); $('#hc-' + k)?.focus(); } }, t)));
+  root.append(tabs, msg);
+  const b = el('button', { class: 'btn pri', type: 'submit', id: 'ha-go' });
+  let f;
+  if (HOME.cont === 'nou') {
+    b.textContent = 'Creează contul';
+    f = el('form', { class: 'h-card-f h-auth', role: 'tabpanel', 'aria-labelledby': 'hc-nou', onsubmit: e => { e.preventDefault(); lucru(b, async () => {
+      if (v('ha-p').length < 8) throw new Error('password at least 8 characters');
+      const { data, error } = await CLOUD.sb.auth.signUp({ email: v('ha-e').trim(), password: v('ha-p'), options: { emailRedirectTo: linkRevenire(), data: { nume: v('ha-n').trim() } } });
+      if (error) throw error;
+      if (data && data.session) return 'Contul e creat și ești conectat.';
+      HOME.cont = 'intra'; return `Ți-am trimis un email de confirmare la ${v('ha-e').trim()}. Deschide linkul din el, apoi intră în cont.`;
+    }); } }, inp('ha-n', 'Numele tău', 'text', 'name', { required: false }), inp('ha-e', 'Email', 'email', 'email'), inp('ha-p', 'Parola (cel puțin 8 caractere)', 'password', 'new-password', { minlength: 8 }), el('div', { class: 'h-row' }, b));
+  } else if (HOME.cont === 'parola') {
+    b.textContent = 'Trimite linkul de resetare';
+    f = el('form', { class: 'h-card-f h-auth', role: 'tabpanel', 'aria-labelledby': 'hc-parola', onsubmit: e => { e.preventDefault(); lucru(b, async () => {
+      const { error } = await CLOUD.sb.auth.resetPasswordForEmail(v('ha-e').trim(), { redirectTo: linkRevenire() }); if (error) throw error;
+      return 'Dacă există un cont cu acest email, ți-am trimis un link de resetare. Deschide-l pe acest dispozitiv și alege parola nouă.'; }); } },
+      inp('ha-e', 'Email', 'email', 'email'), el('div', { class: 'h-row' }, b));
+  } else {
+    b.textContent = 'Intră în cont';
+    f = el('form', { class: 'h-card-f h-auth', role: 'tabpanel', 'aria-labelledby': 'hc-intra', onsubmit: e => { e.preventDefault(); lucru(b, async () => {
+      const { error } = await CLOUD.sb.auth.signInWithPassword({ email: v('ha-e').trim(), password: v('ha-p') }); if (error) throw error; return null; }); } },
+      inp('ha-e', 'Email', 'email', 'username'), inp('ha-p', 'Parola', 'password', 'current-password'), el('div', { class: 'h-row' }, b,
+        el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { HOME.cont = 'parola'; HOME.msg = null; acasaRender(); } }, 'Am uitat parola')));
+  }
+  root.append(f);
+}
+function initAcasa() {
+  $('#h-burger').onclick = navDeschide; $('#h-close').onclick = () => navInchide(true); $('#h-scrim').onclick = () => navInchide(true);
+  $('#h-cartus').onclick = () => acasaArata('setari');
+  $('#home').addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('h-nav-open')) { e.preventDefault(); navInchide(true); } });
+  addEventListener('resize', () => { if (innerWidth > 900) navInchide(); });
+}
+
 /* =========================================================================== pornire */
 (async () => {
-  initChrome(); initViewer();
+  // pagina de start apare imediat; editorul se pregătește dedesubt (planșa ultimei scheme, ca înainte)
+  HOME.on = true; document.body.classList.add('home'); $('#home').hidden = false;
+  initChrome(); initViewer(); initAcasa();
+  if (/^#(cont|access_token|error)/.test(location.hash)) HOME.sec = 'cont';
+  acasaNav(); acasaRender(); acasaCartus();
+  cloudInit();
   try {
     const [sy, pr, inf, sb] = await Promise.all([fetch('/api/symbols').then(r => r.json()), fetch('/api/presets').then(r => r.json()), fetch('/api/info').then(r => r.json()).catch(() => ({})), fetch('/api/sabloane').then(r => r.json())]);
     sy.forEach(s => SYMBOLS[s.cheie] = s); PRESETS = pr; INFO = inf; SABLOANE = sb;
@@ -3291,7 +4259,7 @@ function initChrome() {
     }
   } catch (e) { setStat('err', 'Serverul nu răspunde'); toast('Nu mă pot conecta la server. Pornește aplicația cu „python3 app.py” și reîncarcă pagina.', { kind: 'err', ms: 60000 }); return; }
   stareLLM();
-  const fresh = () => { const m = normalize(clone(PRESETS.bmpt.model)); applyProfile(m); return m; };
+  const fresh = freshModel;
   // migrare din versiunea anterioară (o singură schemă salvată în „sm.model”)
   const old = store.get('sm.model', null);
   if (old && !store.get(DOCS, []).length && !checkModel(old).err) { old._doc = old._doc || 'd' + Date.now().toString(36); store.set(DOCS, [{ id: old._doc, name: docName(old), ben: (old.cartus || {}).beneficiar || '', t: Date.now(), model: old }]); store.del('sm.model'); }
@@ -3305,7 +4273,7 @@ function initChrome() {
     MODEL = fresh(); TAB = 'calc'; WIZ_START = { renunta: false }; render(); HIST.past.length = 0; updUndo();
   } else { TAB = MODEL.calc ? 'calc' : 'schema'; setTab(TAB); if (MODEL.calc) scheduleRegen(0); }
   $('#assist').open = innerWidth > 900 && store.get('sm.assist', false);
-  if (restored && !wizActiv()) toast('Am redeschis ultima schemă la care ai lucrat.', { action: 'Schemă nouă', onAction: () => startWizard() });
+  HOME.lista = null; acasaNav(); acasaRender(); acasaCartus();
   redraw(0);
 })();
 </script>
