@@ -90,6 +90,16 @@ ETICHETE_RECEPTOR = {
 CAMPURI_GLOBALE_IGNORABILE = {"Zb_OD_ohm": "Ω", "RA_ohm": "Ω", "Ik3_OD_kA": "kA"}
 
 
+V46_TOLERANTA = 1.02      # DECIZIE r11: depășirea lui 1,13·In Q cu ≤ 2 % = AVERTISMENT (toleranța ks / cosφ presupuse)
+
+
+def _propune_q(v, retea, i_min):
+    """r11: V46 BLOCANT pe Q declarat — propunerea (nu înlocuirea!) calibrului standard ≥ i_min, pentru întrebare / panou."""
+    serie = SERIE_Q_MONO if retea == "mono" else SERIE_Q_TRI_TOATE
+    q = prima_din_serie(serie, i_min)
+    if q is not None:
+        v["propunere"] = {"camp": "alimentare.In_Q_bransament_A", "valoare": q}
+
 def eticheta_receptor(cheie):
     """Denumirea românească a unui receptor al locuinței (cheia necunoscută rămâne ca atare, fără „_”)."""
     return ETICHETE_RECEPTOR.get(cheie) or str(cheie).replace("_", " ")
@@ -1197,6 +1207,11 @@ def _calculeaza(inp, j, cutie):
         # r5 (L04): branșament nou — Pc din bilanț peste puterea cerută: întrebare, nu „Ib se ia din puterea aprobată”
         emite(j, "V46", AVERTISMENT, "schema", "pc_nou", Pc=pc, P=pa,
               rem="puterea cerută în ATR ≥ Pc (sau ks = Pa/Pi justificat / gestionarea dinamică a sarcinii la VE)")
+        if al.get("In_Q_bransament_A") is not None:
+            # r11: cu Q declarat, Q-ul nu se alege — mesajul nu mai spune „Q ales pe puterea cerută”
+            v_ = j.verificari[-1]
+            v_["mesaj"] = (v_["mesaj"].split(" — ")[0] + f" — Q declarat {fmt_ro(al['In_Q_bransament_A'], 0)} A se "
+                           "păstrează; Ib față de Q e verificat separat")
     elif pa is not None and lt(pa, pc):
         emite(j, "V46", AVERTISMENT, "schema", "pc", Pc=pc, P=pa,
               rem="solicită ATR pentru mărirea puterii aprobate" + (" sau trecerea pe branșament trifazat"
@@ -1339,6 +1354,12 @@ def _calculeaza(inp, j, cutie):
         bi["Q_In_A"] = q_in
         # v1.6 (m8): coloana poartă curentul fazei celei mai încărcate (nu Ib echilibrat din Pa), limitat la In Q
         bi["Ib_A"] = min(float(q_in), max(i_dim, i_calc_max))
+    elif q_decl is not None:
+        # r11 (locuințe #3 / #20): branșament NOU cu Q DECLARAT (ATR / cererea de racordare) — Q-ul se respectă, nu se
+        # alege din bilanț; Ib peste 1,13·In Q → V46 BLOCANT cu întrebare (mai jos), niciodată înlocuire tăcută
+        bi["Q_In_A"] = q_decl
+        bi["Ib_A"] = min(float(q_decl), max(i_dim, i_calc_max))
+        j.pas(f"Branșament nou: Q declarat {fmt_ro(q_decl, 0)} A (respectat)")
     elif pa is not None and q_decl is None:
         # r5 (L04): branșament NOU cu puterea cerută declarată → Q din puterea cerută (convenția ATR, cosφ 1), nu din Pc;
         # Pc > P cerută rămâne semnalat (V46 „pc”), Q-ul nu se mărește în tăcere
@@ -1474,15 +1495,27 @@ def _calculeaza(inp, j, cutie):
                 # r5 (L04): branșament NOU — Q rezultă din puterea CERUTĂ, care încă se poate mări: întrebare (AV), nu blocaj
                 rem = "puterea cerută în ATR mărită la ≥ Pc (Q mai mare) sau gestionarea dinamică a sarcinii (DLM la VE)"
             # r6: pe un Q PRESUPUS (nedeclarat) nu se blochează — AVERTISMENT + cererea Q-ului real
-            emite(j, "V46", BLOCANT if nv == 2 and not nou_pa and q_pres is None else AVERTISMENT, "Q", var, Ib=i_f,
-                  In=in_q_br, lim=lim113,
+            # r11 (locuințe #35, #59): depășire foarte mică a pragului (≤ 2 %, ex. 45,33 A față de 45,2 A) — în
+            # toleranța calculului (ks, cosφ presupuse) → AVERTISMENT, nu blocaj
+            mic = var == "ib" and not gt(i_f, V46_TOLERANTA * lim113)
+            emite(j, "V46", BLOCANT if nv == 2 and not nou_pa and q_pres is None and not mic else AVERTISMENT, "Q", var,
+                  Ib=i_f, In=in_q_br, lim=lim113,
                   faza=f, cont=cont[f], rem=rem)
+            if mic:
+                j.verificari[-1]["mesaj"] += (f" — depășire {fmt_ro((i_f / lim113 - 1) * 100, 1)} % (≤ "
+                                              f"{fmt_ro((V46_TOLERANTA - 1) * 100, 0)} %, în toleranța calculului)")
+            elif j.verificari[-1]["nivel"] == BLOCANT:
+                j.verificari[-1]["intrebare"] = True
+                _propune_q(j.verificari[-1], retea, i_f / (1.0 if var == "cont" else norme.LOCUINTA_I_NEDECLANSARE))
             if q_pres is not None:
                 # m-n5: mesajul spune că Q e presupus
                 v = j.verificari[-1]
                 v["mesaj"] = (f"Q branșament presupus {in_q_br} A (nedeclarat) — " + v["mesaj"])
         if ib_pa is not None and q_decl is not None and gt(ib_pa, lim113):
             emite(j, "V46", BLOCANT, "Q", "pa", P=pa, Ib=ib_pa, lim=lim113, rem=rem)
+            j.verificari[-1]["intrebare"] = True
+            _propune_q(j.verificari[-1], retea, max(ib_pa / norme.LOCUINTA_I_NEDECLANSARE,
+                                                    max(calc[f] for f in faze_act) / norme.LOCUINTA_I_NEDECLANSARE))
     ik3_te = ctx["Ik3_kA"]
     amonte_txt = (f"Q branșament {(rb.get('Q') or {}).get('tip', '')} {in_q_br} A + SF gG").replace("  ", " ")
 

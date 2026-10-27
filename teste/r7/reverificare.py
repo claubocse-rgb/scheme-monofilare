@@ -349,7 +349,7 @@ IND = {
     53: [INTREABA_SAU_REFUZ, Q("690"), _eq("U_V", 690)],
     54: [INTREABA_SAU_REFUZ, Q("16")],
     55: [T, _np(1), _pl(0, "cablu.S_fortat", 2.5)],
-    56: [INTREABA_SAU_REFUZ, Q("160"), _eq("In_Q_amonte_A", 160)],
+    56: [INTREABA_SAU_REFUZ, Q("160"), ("Q amonte 160 (r11: metadată _In_Q_amonte_A — cheia nu e a motorului)", lambda r: 160 in (r["in"].get("In_Q_amonte_A"), r["in"].get("_In_Q_amonte_A")))],
     57: [INTREABA_SAU_REFUZ],
     58: [INTREABA_SAU_REFUZ, Q("15"), Q("20")],
     59: [T, _np(5), _eq("origine", "pt_propriu"), _eq("pt_Sn_kVA", 400)],

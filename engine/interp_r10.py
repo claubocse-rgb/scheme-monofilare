@@ -157,15 +157,19 @@ def _inv_paranteza(text, note):
         itemi = [x.strip() for x in re.split(r"(?<!\d),|,(?!\d)|\s+(?:si|și|plus)\s+|\s*\+\s*|;", lista) if x.strip()]
         if len(itemi) < 2 or not all(re.search(rf"{NUM}\s*(?:kw|kva)\b|[a-z]{{2,}}\d|\d+ktl", _n(x)) for x in itemi):
             return None
-        if len(itemi) != n:
+        # r11 (P0 fotovoltaic #20): „3 invertoare (2 x Huawei 100KTL și 1 x SG110CX)” — paranteza DETALIAZĂ antetul:
+        # numărul de invertoare = Σ k din paranteză (nu N × primul + restul)
+        k_par = [re.match(r"\s*(\d+)\s*(?:x|×|buc\.?|bucati)\s*", _n(x)) for x in itemi]
+        suma = sum(int(k.group(1)) if k else 1 for k in k_par)
+        if suma != n:
             return None                                   # numărul nu se potrivește → regula I05 (întrebare)
         out = []
         for x in itemi:
-            mx = re.match(rf"(?P<k>\d+)\s*[x×]\s*", _n(x))
-            out.append(x if mx else f"1 x invertor {x}")
+            mx = re.match(rf"\s*(?P<k>\d+)\s*[x×]\s*", _n(x))
+            out.append(x.strip() if mx else f"1 x invertor {x}")
         note.append(f"„{t0[m.start():m.end()].strip()}” = {n} invertoare: " + " + ".join(itemi)
                     + " (lista din paranteză are prioritate)")
-        return ", ".join(out)
+        return ("invertoare: " if all(re.match(r"\s*\d+\s*[x×]", _n(x)) for x in itemi) else "") + ", ".join(out)
     return _sub(text, RE_INV_PARANTEZA, f, note)
 
 
@@ -183,7 +187,16 @@ def _suma_paranteza(text, note):
 
     def p_model(model):
         mm = re.search(r"(\d+(?:[.,]\d+)?)\s*-?\s*(?:ktl|k\b|kw|cx|hx|-3|\.0)", model)
-        return _num(mm.group(1)) if mm else None
+        if mm:
+            return _num(mm.group(1))
+        if _cauta:                       # r11 (fotovoltaic #19): „STP 25000TL-30” — Pn din catalog
+            try:
+                g = _cauta(None, model.strip())
+            except Exception:  # noqa: BLE001
+                g = None
+            if g and g.get("Pn_kW"):
+                return float(g["Pn_kW"])
+        return None
 
     def f(m, t0):
         n = _NUMERAL.get(m.group("n")) or int(m.group("n"))

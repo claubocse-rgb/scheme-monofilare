@@ -1,0 +1,70 @@
+{
+ "intrare": {
+  "tip_schema": "cef",
+  "racord": "pt",
+  "pt_Sn_kVA": 630,
+  "pt_existent": true,
+  "retea": "tri",
+  "schema_pamant": "TN-S",
+  "n_tgd_cf": 2,
+  "L_racord_m": 60,
+  "limitare_injectie_kW": 0,
+  "invertoare": [
+   {
+    "n": 3,
+    "Pn_kW": 50,
+    "producator": "Huawei",
+    "model": "SUN2000-50KTL-M3",
+    "tgd": 1
+   },
+   {
+    "n": 3,
+    "Pn_kW": 50,
+    "producator": "Huawei",
+    "model": "SUN2000-50KTL-M3",
+    "tgd": 2
+   }
+  ]
+ },
+ "verificari": [
+  "AV V41 Q PT vs QG1: amonte = aval = 250 A — fără selectivitate",
+  "AV V21 INV-1: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-2: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-3: ΔU cumulat 1,49 % > 1 %",
+  "AV V42 QG1 vs INV-1: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG1 vs INV-2: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG1 vs INV-3: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V41 Q PT vs QG2: amonte = aval = 250 A — fără selectivitate",
+  "AV V21 INV-4: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-5: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-6: ΔU cumulat 1,49 % > 1 %",
+  "AV V42 QG2 vs INV-4: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG2 vs INV-5: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG2 vs INV-6: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V41 Q PT vs QG1: amonte = aval = 250 A — fără selectivitate",
+  "AV V21 INV-1: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-2: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-3: ΔU cumulat 1,49 % > 1 %",
+  "AV V42 QG1 vs INV-1: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG1 vs INV-2: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG1 vs INV-3: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V41 Q PT vs QG2: amonte = aval = 250 A — fără selectivitate",
+  "AV V21 INV-4: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-5: ΔU cumulat 1,49 % > 1 %",
+  "AV V21 INV-6: ΔU cumulat 1,49 % > 1 %",
+  "AV V42 QG2 vs INV-4: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG2 vs INV-5: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului",
+  "AV V42 QG2 vs INV-6: selectivitate parțială până la 2 kA (Ik3max 15,81 kA) — confirmă cu tabelele producătorului"
+ ],
+ "presupus": [
+  "S\"kQ = 500 MVA, R/X = 0,1 (rețea MT, majorant)",
+  "cabluri invertoare Al PVC în tub în pământ (D1)",
+  "lungime cablu invertor CEF 30 m",
+  "plecare nouă în tabloul JT al PT-ului existent (Q PT nou, loc de rezervă în tablou) — de confirmat la releveu; protecția C0 la capătul sursă",
+  "cablu C0 Al PVC, metoda D1",
+  "izolație PVC (Iz mai mic, conservator)",
+  "temperatura de referință: aer 30 °C, sol 20 °C",
+  "rezistivitatea termică a solului 2,5 K·m/W (sol uscat, conservator)",
+  "aceeași lungime C0 (60 m) pentru toate cele 2 TGD-CF"
+ ]
+}

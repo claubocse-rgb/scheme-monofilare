@@ -517,6 +517,8 @@ def _val(v, s, cale, defs, err, domenii=True):
             err.append(f"{cale}: {v} trebuie ≤ {s['maximum']}")
     if isinstance(v, dict) and "properties" in s:
         for k, x in v.items():
+            if k.startswith("_"):
+                continue                       # r11: metadate ale interpretorului („_deduse”) — nu sunt date de intrare
             if k not in s["properties"]:
                 err.append(f"{cale}.{k}: cheie necunoscută" if cale else f"{k}: cheie necunoscută")
             elif x is not None:

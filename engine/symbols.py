@@ -219,6 +219,31 @@ def ats(p, d):
     p.append(Text((8, HALF + 1), "B", 2.0, True, align="middle"))
 
 
+def ups(p, d):
+    """r11: UPS online dublă conversie — redresor (~/=) + invertor (=/~) pe axă, bypass static (BS) și bypass manual de
+    mentenanță (QBM, separator) în paralel, în dreapta; bateria se arată lateral (legătura iese sub bypass-uri)"""
+    p.append(Line((0, HALF), (0, 6.5), "FORTA"))
+    p.append(Rect((-6, 0.4), 12, 6.1)); p.append(Line((-6, 0.4), (6, 6.5)))
+    p.append(Text((-3.6, 3.6), "~", 2.2, True, align="middle")); p.append(Text((3.6, 1.0), "=", 2.2, True, align="middle"))
+    p.append(Line((0, 0.4), (0, -0.4), "FORTA"))
+    p.append(Rect((-6, -6.5), 12, 6.1)); p.append(Line((-6, -6.5), (6, -0.4)))
+    p.append(Text((-3.6, -3.4), "=", 2.2, True, align="middle")); p.append(Text((3.6, -6.0), "~", 2.2, True, align="middle"))
+    p.append(Line((0, -6.5), (0, -HALF), "FORTA"))
+    # bypass static
+    p.append(Line((0, 7.4), (8.6, 7.4), "FORTA")); p.append(Circle((0, 7.4), 0.45, "HASURA"))
+    p.append(Line((8.6, 7.4), (8.6, 2.8), "FORTA")); p.append(Rect((7.2, -2.8), 2.8, 5.6))
+    p.append(Text((8.6, -0.7), "BS", 1.3, True, align="middle"))
+    p.append(Line((8.6, -2.8), (8.6, -7.4), "FORTA")); p.append(Line((8.6, -7.4), (0, -7.4), "FORTA"))
+    p.append(Circle((0, -7.4), 0.45, "HASURA"))
+    if d.get("bypass_manual", True):
+        # bypass manual de mentenanță (separator)
+        p.append(Line((8.6, 7.4), (12.4, 7.4), "FORTA")); p.append(Line((12.4, 7.4), (12.4, 2.4), "FORTA"))
+        p.append(Line((10.8, 2.4), (14.0, 2.4)))
+        p.append(Line((12.4, -2.4), (14.6, 2.0), "FORTA")); p.append(Line((11.2, -2.4), (13.6, -2.4)))
+        p.append(Line((12.4, -2.4), (12.4, -7.4), "FORTA")); p.append(Line((12.4, -7.4), (8.6, -7.4), "FORTA"))
+    p.anc["masura"] = (15.5, 4.6); p.anc["comanda"] = (15.5, 4.6)
+
+
 def contact(p, d):
     """contactor (semicerc pe contactul fix)"""
     _switch(p, "semicerc"); p.anc["masura"] = (3.6, 0); p.anc["comanda"] = (3.6, 0)
@@ -359,6 +384,7 @@ SYMBOLS = {
  "invertor":      (invertor, "Invertor fotovoltaic", "serie"),
  "convertor_bess":(convertor_bess, "Convertor bidirecțional BESS", "serie"),
  "ats":           (ats, "Comutator automat de sursă (AAR / ATS)", "serie"),
+ "ups":           (ups, "UPS online (redresor + invertor) cu bypass static și bypass manual", "serie"),
  "contact":       (contact, "Contactor", "serie"),
  "releu_termic":  (releu_termic, "Releu termic de suprasarcină", "serie"),
  "convertizor":   (convertizor, "Convertizor de frecvență / soft-starter", "serie"),

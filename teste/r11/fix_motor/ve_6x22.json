@@ -1,0 +1,49 @@
+{
+ "intrare": {
+  "tip_schema": "tablou",
+  "origine": "tg_existent",
+  "schema_pamant": "TN-S",
+  "Ik3_sursa_kA": 15,
+  "titlu_tablou": "TD Parcare VE",
+  "L_alimentare_m": 40,
+  "plecari": [
+   {
+    "nume": "Stație VE",
+    "P_kW": 22,
+    "n": 6,
+    "retea": "tri",
+    "ddr": {
+     "tip": "B"
+    },
+    "L_m": 25
+   }
+  ]
+ },
+ "verificari": [
+  "AV V32 Q1/C1: Ik1min 977 A < Ia 3000 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+  "AV V42 P1·Stație VE 1 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·Stație VE 2 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·Stație VE 3 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Stație VE 4 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P5·Stație VE 5 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P6·Stație VE 6 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V32 Q1/C1: Ik1min 977 A < Ia 3000 A cu impedanța OD IMPLICITĂ — cere valoarea reală",
+  "AV V42 P1·Stație VE 1 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·Stație VE 2 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·Stație VE 3 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Stație VE 4 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P5·Stație VE 5 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P6·Stație VE 6 vs amonte: selectivitate parțială până la 2 kA (Ik3max 12,02 kA) — confirmă cu tabelele producătorului"
+ ],
+ "presupus": [
+  "ks = 1 (stații VE fără gestionare dinamică a sarcinii — încărcare simultană); cu DLM declară ks",
+  "Zbuclă la tabloul existent 0,18 + j0,09 Ω (implicită) — se confirmă din calculul instalației existente",
+  "sursa: tablou existent, fără DDR declarat în amonte — nu se contează pe un DDR din amonte",
+  "alimentare Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²",
+  "izolație PVC (Iz mai mic, conservator)",
+  "temperatura de referință: aer 30 °C, sol 20 °C",
+  "rezistivitatea termică a solului 2,5 K·m/W (sol uscat, conservator)",
+  "cosφ 0,9 (forță, iluminat, prize, tablou)",
+  "plecări Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²"
+ ]
+}

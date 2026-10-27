@@ -371,7 +371,7 @@ IND = {
     63: [T, PLEC("2 compresoare 55 VFD", lambda p: p.get("P_kW") == 55 and p.get("pornire") == "convertizor"),
          PLEC("uscător 3 kW", lambda p: p.get("P_kW") == 3), eq("L_alimentare_m", 70)],
     64: [T] + EI[64],
-    65: [T, NP(5), ("Q1 80", lambda c: 80 in (I(c).get("In_Q1_A"), I(c).get("In_Q_amonte_A"))),
+    65: [T, NP(5), ("Q1 80", lambda c: 80 in (I(c).get("In_Q1_A"), I(c).get("In_Q_amonte_A"), I(c).get("_In_Q_amonte_A"))),
          ("friteuze 2 × 9 kW", lambda c: n_sum([p for p in pl(c) if p.get("P_kW") == 9]) == 2)],
     66: [T, SP("TT"), eq("RA_ohm", 30)],
     67: [INTREABA_ORI_REFUZ],

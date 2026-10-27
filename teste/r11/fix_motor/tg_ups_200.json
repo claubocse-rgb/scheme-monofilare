@@ -1,0 +1,82 @@
+{
+ "intrare": {
+  "tip_schema": "tablou",
+  "origine": "pt_propriu",
+  "pt_Sn_kVA": 1000,
+  "schema_pamant": "TN-S",
+  "L_alimentare_m": 30,
+  "titlu_tablou": "TG Data center",
+  "plecari": [
+   {
+    "nume": "UPS 200 kVA",
+    "ups": true,
+    "Sn_kVA": 200,
+    "bypass": true,
+    "L_m": 20,
+    "copii": [
+     {
+      "nume": "PDU A",
+      "P_kW": 60,
+      "L_m": 15
+     },
+     {
+      "nume": "PDU B",
+      "P_kW": 60,
+      "L_m": 15
+     },
+     {
+      "nume": "Rack-uri rând C",
+      "P_kW": 5,
+      "n_circuite": 4,
+      "L_m": 20
+     }
+    ]
+   },
+   {
+    "nume": "Climatizare",
+    "P_kW": 120,
+    "L_m": 40
+   },
+   {
+    "nume": "Iluminat",
+    "P_kW": 8,
+    "L_m": 30
+   }
+  ]
+ },
+ "verificari": [
+  "AV V41 P1·UPS 200 kVA vs amonte: raport Ip amonte/aval 1,34 < 1,6 — selectivitate nesigură la suprasarcină",
+  "AV V42 P1·UPS 200 kVA vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 23,55 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.1·PDU A vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.2·PDU B vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.3·Rack-uri rând C 1 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.4·Rack-uri rând C 2 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.5·Rack-uri rând C 3 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.6·Rack-uri rând C 4 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·Climatizare vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 23,55 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·Iluminat vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 23,55 kA) — confirmă cu tabelele producătorului",
+  "AV V41 P1·UPS 200 kVA vs amonte: raport Ip amonte/aval 1,34 < 1,6 — selectivitate nesigură la suprasarcină",
+  "AV V42 P1·UPS 200 kVA vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 23,55 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.1·PDU A vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.2·PDU B vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.3·Rack-uri rând C 1 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.4·Rack-uri rând C 2 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.5·Rack-uri rând C 3 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·UPS 200 kVA.6·Rack-uri rând C 4 vs amonte: selectivitate parțială până la 4,5 kA (Ik3max 22,09 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·Climatizare vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 23,55 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·Iluminat vs amonte: selectivitate parțială până la 6,05 kA (Ik3max 23,55 kA) — confirmă cu tabelele producătorului"
+ ],
+ "presupus": [
+  "P1·UPS 200 kVA: circuitele din aval de UPS verificate cu Ik al rețelei prin bypass-ul static (majorant pentru Icu; în regim invertor Ik ≈ 2…3·In UPS, deconectarea prin bypass) — de confirmat cu fișa UPS",
+  "ks = 0,9 (IEC 61439-2 tab. 101, 3 plecări)",
+  "ks = 1 pe plecările de iluminat (funcționare simultană); ks din IEC 61439-2 doar pe celelalte plecări",
+  "S\"kQ = 500 MVA, R/X = 0,1 (rețea MT, majorant)",
+  "sursa: bara JT a PT propriu 1000 kVA",
+  "alimentare Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²",
+  "izolație PVC (Iz mai mic, conservator)",
+  "temperatura de referință: aer 30 °C, sol 20 °C",
+  "rezistivitatea termică a solului 2,5 K·m/W (sol uscat, conservator)",
+  "cosφ 0,9 (forță, iluminat, prize, tablou)",
+  "plecări Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²"
+ ]
+}

@@ -195,7 +195,7 @@ def test_clasa6_topologii():
     i = I("PT cu 2 transformatoare 630 kVA in paralel, TG 2000 A, 4 plecari de 250 A")
     assert i["n_trafo"] == 2 and i["cupla"] == "inchisa" and i["In_Q_JT_A"] == 2000
     i = I("ATS intre cele doua transformatoare 1000 kVA, TG cu 3 plecari de 200 kW")
-    assert i["sursa_rezerva"] == "trafo" and i["n_trafo"] == 2 and not i.get("Sn_GE_kVA") and len(pl(i)) == 3
+    assert i["aar"] is True and i["cupla"] == "deschisa" and i["n_trafo"] == 2 and not i.get("Sn_GE_kVA") and len(pl(i)) == 3
     i = I("GE 250 kVA ca unica sursa, fara retea, TN-S, plecari: moara 90 kW, iluminat 4 kW")
     assert i["fara_retea"] is True and "sursa_retea" not in i
     i = I("TG cu GE 150 kVA si ATS, din PT propriu 400 kVA. Vitali: pompe 2x15 kW. Nevitali: cuptoare 3x40 kW.")

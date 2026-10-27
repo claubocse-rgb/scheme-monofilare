@@ -162,6 +162,28 @@ def cauta(producator=None, model=None):
     return None
 
 
+# r11 (fotovoltaic #6 / #39): puterea aparentă maximă c.a. [kVA] din fișa producătorului, unde diferă de Pn sau e
+# confirmată (V67 nu mai folosește 1,1·Pn); lipsă → Smax = Pn (cosφ 1 la puterea nominală)
+_SMAX_KVA = [
+    (r"\bSG\s*110\s*CX", 110.0),
+    (r"\bSUN\s*2000\s*-?\s*115\s*KTL", 125.0),
+]
+
+
+def smax_kva(producator=None, model=None):
+    """Smax c.a. din catalog (fișa producătorului) sau None."""
+    t = _txt(producator, model)
+    if not t:
+        return None
+    for rx, v in _SMAX_KVA:
+        if re.search(rx, t):
+            return v
+    m = re.search(r"\bSUN\s*2000\s*-?\s*(\d+(?:[.,]\d+)?)\s*KTL\s*-?\s*H\d\b", t)
+    if m:                       # seria -H…: cifra din cod este Smax [kVA]
+        return float(m.group(1).replace(",", "."))
+    return None
+
+
 def e_hibrid(producator=None, model=None):
     d = cauta(producator, model)
     return bool(d and d.get("hibrid"))

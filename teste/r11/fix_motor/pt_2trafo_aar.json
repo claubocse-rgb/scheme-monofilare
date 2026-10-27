@@ -1,0 +1,69 @@
+{
+ "intrare": {
+  "tip_schema": "pt",
+  "Sn_kVA": 800,
+  "n_trafo": 2,
+  "cupla": "deschisa",
+  "aar": true,
+  "trafo_izolatie": "uscat",
+  "ucc_pct": 6,
+  "grupa_conexiuni": "Dyn11",
+  "U_MT_kV": 20,
+  "schema_pamant": "TN-S",
+  "masura_pt": "MT",
+  "celule_mt": {
+   "linie": 2,
+   "masura": true
+  },
+  "plecari": [
+   {
+    "nume": "TD Hală 1",
+    "P_kW": 220,
+    "L_m": 60,
+    "sectie": 1
+   },
+   {
+    "nume": "TD Compresoare",
+    "receptor": "tablou",
+    "P_kW": 160,
+    "L_m": 40,
+    "sectie": 1
+   },
+   {
+    "nume": "TD Hală 2",
+    "P_kW": 200,
+    "L_m": 80,
+    "sectie": 2
+   },
+   {
+    "nume": "TD Birouri",
+    "P_kW": 60,
+    "L_m": 50,
+    "sectie": 2
+   }
+  ]
+ },
+ "verificari": [
+  "AV V42 P1·TD Hală 1 vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·TD Compresoare vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·TD Hală 2 vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·TD Birouri vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P1·TD Hală 1 vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·TD Compresoare vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·TD Hală 2 vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·TD Birouri vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului",
+  "AV V42 PT·P1·Servicii proprii PT vs amonte: selectivitate parțială până la 12 kA (Ik3max 20,39 kA) — confirmă cu tabelele producătorului"
+ ],
+ "presupus": [
+  "S\"kQ = 500 MVA, R/X = 0,1 (rețea MT, majorant)",
+  "ks = 0,8 (IEC 61439-2 tab. 101, 4 plecări)",
+  "servicii proprii PT: plecare 16 A, L = 10 m (iluminat, prize, încălzire în post)",
+  "plecări Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²",
+  "izolație PVC (Iz mai mic, conservator)",
+  "temperatura de referință: aer 30 °C, sol 20 °C",
+  "rezistivitatea termică a solului 2,5 K·m/W (sol uscat, conservator)",
+  "cosφ 0,9 (forță, iluminat, prize, tablou)",
+  "Ib presupus = In (plecare dată prin calibru) (PT·P1·Servicii proprii PT)"
+ ]
+}

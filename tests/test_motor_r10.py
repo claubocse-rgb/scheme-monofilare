@@ -142,7 +142,7 @@ def test_ge_izolat_subdimensionat_v86():
 def test_ge_izolat_cu_retea_declarata_avertisment_nu_desenata():
     m, r = constructor.genereaza({"tip_schema": "ge_ats", "Sn_GE_kVA": 200, "fara_retea": True, "sursa_retea": "tgd",
                                   "consumatori": [{"nume": "Bandă", "P_kW": 30}]})
-    assert _cod(r, "V12", "AVERTISMENT") and len(m["intrari"]) == 1
+    assert _cod(r, "V12", "BLOCANT") and len(m["intrari"]) == 1          # r11: combinație nesuportată → BLOCANT
 
 
 def test_vitali_nevitali_ge_dimensionat_pe_vitali():

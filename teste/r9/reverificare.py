@@ -231,7 +231,7 @@ IND = {
     49: [T, NU_REFUZ, NPL_P(90, 2, pornire="soft"), ("rezerva marcată", lambda c: any(p.get("rezerva") or "rezerv" in _f(p.get("nume")) for p in pl(c))),
          NPL_P(45, 1, pornire="convertizor"), NP(3)],
     50: [T, NPL_P(22, 4), NPL_P(50, 1), FARA_NEC],
-    52: [T, NP(4), ("BMPT 160 A cu TC (origine)", lambda c: I(c).get("origine") == "bmpt" or "160" in str(I(c).get("In_Q_amonte_A")))],
+    52: [T, NP(4), ("BMPT 160 A cu TC (origine)", lambda c: I(c).get("origine") == "bmpt" or "160" in str(I(c).get("In_Q_amonte_A") or I(c).get("_In_Q_amonte_A")))],
     53: [T, eq("pt_Sn_kVA", 630), SP("TN-S"), NPL_P(30, 2, pornire="stea_triunghi"), NPL_P(4, 4, pornire="directa"),
          NPL_P(10, 1), ("6 circuite prize", lambda c: n_sum(gaseste(pl(c), "priz")) == 6)],
     54: [T, RET("tri"), NP(3), ("P tablou ≠ 1,5", lambda c: I(c).get("P_kW") != 1.5)],

@@ -1319,6 +1319,45 @@ după corectură = total, „N invertoare (A … și B …)” = lista din paran
    verificări C/P/G): înainte 106/73/25 → după 204/0/0, P0/P1 94/94; r5–r9 fără regresii (r6 N55: invertorul monofazat
    pe casă trifazată = trifazat, decizie r10).
 
+### F.15 (r11) Dicționarul central de sinonime + clasele r11 — regulile locale
+Concluzia r11: reparațiile anterioare acopereau cuvântul testat, nu sinonimele lui. De aceea:
+
+1. **Dicționarul central** `engine/interp_sinonime.py` (`SINONIME[concept]`, `RX`, `are` / `cauta`, `alternanta`,
+   `canonizeaza`, `fara_retea`, `grupa_conexiuni`): uk (Ucc / usc / u_k / tensiunea / impedanța de scurtcircuit / Zk /
+   impedance voltage); fără rețea (izolat / insular / off-grid / autonom / stand-alone / singura sursă / no grid — „izolat”,
+   „autonom”, „stand-alone” doar lângă GE, nu „neutru / cablu izolat”, „BESS stand-alone”); BMPT (contor / firidă / cutie
+   de branșament / grup de măsură / DNO cut-out — doar cu calibru: „contor 3x63A” = BMPT 3x63A, „1x32A” / „monofazat” =
+   BMPM); ATS (AAR / A.A.R. / anclanșare automată a rezervei / comutator / inversor automat / transfer automat); GE (grup
+   electrogen / generator / genset / grup diesel / DG / motogenerator); PT (post trafo / post de transformare / cabină de
+   transformare / substation); grupa de conexiuni (Dyn11 / Dyn 11 / DYn-11 / D/yn-11 / Δyn11 / Yzn5 / Yyn0 →
+   `grupa_conexiuni`); iluminat („N lumini / spoturi / corpuri de iluminat / lights / ilum / l” = N circuite; „8p 6l”);
+   tablou (sub-tablou / subpanel / panou electric secundar); VE (wallbox / charger / stație EV / punct de încărcare); UPS
+   (U.P.S. / sursă neîntreruptibilă); fără GE; fără PV; limitarea injecției (export cap / limit / plafon); ks; ku.
+   `canonizeaza` rulează în `rescrie` după engleză / mesaj scurt; regulile noi folosesc dicționarul (nu cuvinte fixe).
+2. **Clase r11** (`engine/interp_r11.py`: `rescrie_inainte`, `rescrie_dupa`, `corecteaza_tip`, `post`): paranteza
+   „N invertoare (k × A și m × B)” cu Σk = N; „N tablouri TGD-CF, fiecare cu k × M” → N·k în `n_tgd_cf` / `invertoare[].tgd`;
+   „N stații EV de P kW” = N plecări; „AAR / ATS între T1 și T2” fără GE = `n_trafo: 2`, cupla deschisă, `aar: true`;
+   UPS … kVA = plecare `receptor: "ups"` (Sn_kVA, bypass, intrari_separate, copii), nu PT; vitali / nevitali („pe bara
+   vitală: …; pe bara normală: …”, „ATS pe consumatorii vitali (…). Nevitalii (…) doar pe rețea”) → `vital` +
+   `bara_vitala`; cascade („->”, „X alimentează Y”, „TE din TD-2 care e din TG, iar TG din PT” = o sursă); liste numerotate,
+   tabel „cod;destinație;P;faze;L”, „N plecări NH: a × I, b × I”, „N circuite de iluminat de câte P”, „N pompe în schema
+   a+b”; CSV cu virgulă; ku × Pi; autocorecturi pe racord / existent / rețea / schema de pământ; „3 noi și 2 existente”;
+   „(75 kW)” = suma de control (Pn din catalog); fișa în paranteză („SG350HX (320 kW, …)”) = Pn declarat; „fără panouri” =
+   BESS fără câmp PV (PCS = hibridul); „N baterii MODEL X kWh” = N·X; „N stringuri a câte M module” → kWp din Pmax (fără
+   Pmax → întrebare); „Avem PT propriu” = `pt_existent`; cablul solar = `cablu_cc` (nu C0); „fiecare invertor cu cablu …”
+   = `cablu_inv`; Ik3 / impedanța buclei la racord = `Ik3_OD_kA` / `Zb_OD_ohm`. Locuință: „pompa … e la 120 m” = L-ul
+   circuitului; „prizele pe C25 cu 2,5 mm²” = circuitele de prize; CEE trifazată = circuit 3F; „doar TE baie” / „TE nou din
+   tabloul existent cu C32” = tablou secundar; vilă cu N apartamente → întrebare; generator pe intrarea GEN ≠ invertor;
+   mărire mono → tri; contradicția mono / tri doar pe ALIMENTARE (TE / receptoarele monofazate dintr-o casă trifazată nu).
+3. **Rețeaua dedusă:** dedusă (din „3 × … A”, 400 V, BMPT, model, putere, PT) → mențiune „REȚEA DEDUSĂ” în `presupus[]`
+   și `_deduse: ["retea"]` (în `intrare_fizica` și în rezultat; panoul o marchează); doar din „BMPT” și cu o putere care
+   încape în monofazat → și întrebare; tablou fără sursă → `_deduse` include „origine”.
+4. **Cheile motorului (engine/calc/chei.py):** la final, cheile nefolosite de schema aleasă se mapează (PT: ATS între trafo
+   → `aar`, măsura semidirectă → `masura: JT`) sau rămân doar ca metadate `_cheie` (nu V96 „nesuportat”).
+   Întrebările din blocajele V46 / V53 folosesc `remediere` / `propunere` din verificare; „altă fază” doar la trifazat.
+5. **Teste / reverificare:** `tests/test_interpretor_r11.py` (P0/P1 r11, plasa + blocaj întrebat + chei acceptate pe tot r11,
+   sinonimele pe concept, 5–10 formulări noi pe clasă), `teste/r11/reverificare.py` (r5…r11).
+
 ### F.8 Răspunsul
 Totdeauna conține:
 1. „Am înțeles:” cu tipul schemei, puterile, numărul și lista plecărilor, lungimile și cartușul;

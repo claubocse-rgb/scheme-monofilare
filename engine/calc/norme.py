@@ -707,6 +707,10 @@ Q_JT_IR_MAX_IN_T = 1.10
 PROSUMATOR_COMERCIAL_KW = 27.0           # cerință OD (confirmat proiectant): Σ Pn > 27 kW → TD-PV separat cu QG (nu tablou de casă)
 PROSUMATOR_PI_EXTERNA_KW = 27.0          # cerință OD (confirmat proiectant): Σ Pn > 27 kW → tablou cu releu anti-insularizare (PI externă pe QG); ATR are prioritate
 DDR_INVERTOR_PRAG_KW = 30.0              # DECIZIE: DDR implicit pe invertor doar ≤ 30 kW (TN); peste — doar la cerere (fișă / ATR)
+# DECIZIE r11 (locuințe #8 / #26 / #64, aliniată cu fișele Huawei / SMA / Fronius / Sungrow): curentul capacitiv de
+# scurgere al câmpului PV crește cu kWp — 30 mA doar până la 10 kW; între 10 și 30 kW DDR 100 mA tip A (sau valoarea
+# din fișă, `IdN_min_mA`; tip B dacă fișa nu exclude componenta c.c. > 6 mA); peste 30 kW (TN) fără DDR, la cerere
+DDR_INVERTOR_30MA_MAX_KW = 10.0
 DDR_INVERTOR_IDN_MARE_MA = 100           # TT, invertor > 30 kW: IΔn ≥ 100 mA (curentul capacitiv de scurgere al câmpului PV)
 SPD_CA_INVERTOR_L_M = 10.0               # SR HD 60364-7-712 (712.534): SPD c.a. și la invertor dacă cablul > 10 m
 SIGURANTE_CC_BATERIE_A = [16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630]   # gBat / NH c.c.

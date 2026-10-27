@@ -257,7 +257,7 @@ CATALOG = {
     "V53": ("Monofazat > 40 A",
             {"": "Ib = {Ib} A > 40 A: nu există BMPM; branșament trifazat (BMPT)",
              "inv": "Iac,max = {Ib} A > 40 A (BMPM): invertor monofazat prea mare — trifazat"},
-            "branșament / invertor trifazat"),
+            "branșament trifazat (BMPT) sau, la prosumator, invertor trifazat"),
     "V54": ("Borne BMPTi", {"": "C2 {S} mm² > 150 mm² (bornele BMPTi-250)"}, "cabluri în paralel de secțiune mai mică"),
     "V55": ("TC", {"B": "TC: Ib = {Ib} A > primar maxim {p} A", "AV": "TC: sarcina secundară {S} VA > Sn {Sn} VA"},
             "conductor 2,5 mm² sau TC 10 VA"),

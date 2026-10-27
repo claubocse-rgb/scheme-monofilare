@@ -1,0 +1,105 @@
+{
+ "intrare": {
+  "tip_schema": "ge_ats",
+  "Sn_GE_kVA": 400,
+  "bara_vitala": true,
+  "sursa_retea": "pt",
+  "pt_Sn_kVA": 1000,
+  "schema_pamant": "TN-S",
+  "consumatori": [
+   {
+    "nume": "Pompă incendiu",
+    "P_kW": 75,
+    "pornire": "stea_triunghi",
+    "siguranta": true
+   },
+   {
+    "nume": "Sprinklere jockey",
+    "P_kW": 3,
+    "siguranta": true
+   },
+   {
+    "nume": "Desfumare",
+    "P_kW": 11,
+    "n": 2,
+    "siguranta": true
+   },
+   {
+    "nume": "Iluminat siguranță",
+    "P_kW": 3,
+    "vital": true
+   },
+   {
+    "nume": "Servere",
+    "P_kW": 20,
+    "vital": true
+   },
+   {
+    "nume": "HVAC",
+    "P_kW": 150,
+    "vital": false
+   },
+   {
+    "nume": "Iluminat",
+    "P_kW": 40,
+    "vital": false
+   },
+   {
+    "nume": "Prize",
+    "P_kW": 30,
+    "vital": false
+   }
+  ]
+ },
+ "verificari": [
+  "AV V42 P1·HVAC vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·Iluminat vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·Prize vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS) vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V41 P4·Bara vitală (ATS).1·Pompă incendiu vs amonte: raport Ip amonte/aval 1,47 < 1,6 — selectivitate nesigură la suprasarcină",
+  "AV V42 P4·Bara vitală (ATS).1·Pompă incendiu vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).2·Sprinklere jockey vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).3·Desfumare 1 vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).4·Desfumare 2 vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).5·Iluminat siguranță vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).6·Servere vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V85 QG/C2: în regim GE Ik1 ≈ 576 A < Ia 1020,6 A — fără DDR, deconectarea automată nu este asigurată",
+  "AV V97 schema: regim GE: Ik1 ≈ 545 A < Ia(Q_G) 1020,6 A, iar circuitele de siguranță nu pot trece prin DDR — contactul indirect se asigură prin legături echipotențiale suplimentare (SR HD 60364-4-41 art. 415.2) și RCM cu alarmă; de confirmat (sau GE cu excitație susținută și Q_G electronic)",
+  "AV V42 P1·HVAC vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P2·Iluminat vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P3·Prize vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS) vs amonte: selectivitate parțială până la 4,8 kA (Ik3max 21,21 kA) — confirmă cu tabelele producătorului",
+  "AV V41 P4·Bara vitală (ATS).1·Pompă incendiu vs amonte: raport Ip amonte/aval 1,47 < 1,6 — selectivitate nesigură la suprasarcină",
+  "AV V42 P4·Bara vitală (ATS).1·Pompă incendiu vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).2·Sprinklere jockey vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).3·Desfumare 1 vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).4·Desfumare 2 vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).5·Iluminat siguranță vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V42 P4·Bara vitală (ATS).6·Servere vs amonte: selectivitate parțială până la 1,91 kA (Ik3max 20 kA) — confirmă cu tabelele producătorului",
+  "AV V85 QG/C2: în regim GE Ik1 ≈ 576 A < Ia 1020,6 A — fără DDR, deconectarea automată nu este asigurată",
+  "AV V97 schema: regim GE: Ik1 ≈ 545 A < Ia(Q_G) 1020,6 A, iar circuitele de siguranță nu pot trece prin DDR — contactul indirect se asigură prin legături echipotențiale suplimentare (SR HD 60364-4-41 art. 415.2) și RCM cu alarmă; de confirmat (sau GE cu excitație susținută și Q_G electronic)"
+ ],
+ "presupus": [
+  "ATS în TG: legătura bara normală → QV → ATS → bara vitală ≈ 5 m Cu; plecările vitale dimensionate în regim rețea, deconectarea în regim GE prin blocul diferențial de pe QG",
+  "circuitele de siguranță pe bara vitală (rețea + GE prin ATS); legătura spre ATS după Q1 general — racordul înaintea Q1 general se declară separat, dacă avizul ISU îl cere",
+  "ks = 0,8 (IEC 61439-2 tab. 101, 4 plecări)",
+  "ks = 1 pe plecările de iluminat (funcționare simultană); ks din IEC 61439-2 doar pe celelalte plecări",
+  "S\"kQ = 500 MVA, R/X = 0,1 (rețea MT, majorant)",
+  "sursa: bara JT a PT propriu 1000 kVA",
+  "alimentare Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²",
+  "lungime alimentare tablou 50 m",
+  "izolație PVC (Iz mai mic, conservator)",
+  "temperatura de referință: aer 30 °C, sol 20 °C",
+  "rezistivitatea termică a solului 2,5 K·m/W (sol uscat, conservator)",
+  "cosφ 0,9 (forță, iluminat, prize, tablou)",
+  "plecări Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²",
+  "lungime plecări 50 m (P1·HVAC, P2·Iluminat, P3·Prize)",
+  "lungime circuite finale 25 m (Cu PVC, metoda C) (P4·Bara vitală (ATS).1·Pompă incendiu, P4·Bara vitală (ATS).2·Sprinklere jockey, P4·Bara vitală (ATS).3·Desfumare 1, P4·Bara vitală (ATS).4·Desfumare 2, P4·Bara vitală (ATS).5·Iluminat siguranță, P4·Bara vitală (ATS).6·Servere)",
+  "motor 75 kW: η 0,95, cosφ 0,85 — valori tipice IE3 4 poli (SR EN IEC 60034-30-1); se înlocuiesc cu datele de pe plăcuța motorului (P4·Bara vitală (ATS).1·Pompă incendiu)",
+  "motor 3 kW: η 0,877, cosφ 0,81 — valori tipice IE3 4 poli (SR EN IEC 60034-30-1); se înlocuiesc cu datele de pe plăcuța motorului (P4·Bara vitală (ATS).2·Sprinklere jockey)",
+  "motor cu pornire directă (contactor + releu termic) — pornirea nedeclarată (P4·Bara vitală (ATS).2·Sprinklere jockey)",
+  "x\"d = 0,12 (lipsește din fișa GE)",
+  "cabluri GE/ATS Al PVC în tub în pământ (D1), cu trecere pe Cu sub 16 mm²",
+  "lungime C2 (GE → ATS) 20 m"
+ ]
+}

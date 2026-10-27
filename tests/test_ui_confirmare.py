@@ -217,6 +217,176 @@ def test_e2e_inapoi_la_text_si_mobil(srv, browser):
     assert not pg.erori
 
 
+# --------------------------------------------------------------------------- r11: ce nu se putea corecta în panou (teste/r11/*.md)
+CAPTURI = ROOT / "teste" / "r11" / "ui_confirmare"
+VIEWPORTS = [pytest.param((1440, 900), id="desktop"), pytest.param((390, 844), id="mobil")]
+
+
+@pytest.mark.parametrize("fn", ["confDeduse", "confPtMod", "confInGE", "confQWarn", "confStringuri", "confCabluri",
+                                "confWarnUpd", "confPrevLater"])
+def test_r11_functii(fn):
+    assert re.search(r"(async\s+)?function " + fn + r"\(", HTML), fn
+
+
+def test_r11_campuri_si_etichete():
+    i = HTML.index("function confCampuri("); corp = HTML[i:HTML.index("\nfunction confFld(", i)]
+    # CEF: post de transformare existent / nou / nu e cazul, racordul cu PT existent / nou, TGD-CF
+    for t in ("'Post de transformare'", "'existent (sursă, fără trafo nou)'", "'nou (se proiectează)'", "'nu e cazul (racord JT)'",
+              "'Racord'", "'TG existent'", "'BMPT'", "'PT existent'", "'PT nou'", "'Tablouri TGD-CF'", "'Măsura de decontare'",
+              # tablou / PT / GE: n trafo + cuplă + AAR + uk + grupa; sursa (inclusiv GE izolat)
+              "'Cupla longitudinală JT'", "'AAR pe cuplă", "'uk trafo [%]'", "'Grupa de conexiuni'", "'grup electrogen izolat (fără rețea)'",
+              "'fără rețea — GE izolat (sursă unică)'", "'Comutarea sursei'",
+              # locuință: branșament nou / existent, Q cu atenționare, generator, EPS
+              "'nou (se proiectează)'", "warnId: 'cf-qwarn'", "'Generator de rezervă'", "'Sn generator [kVA]'", "'Tablou EPS (rezervat)'"):
+        assert t in corp, t
+    i = HTML.index("const cabG = "); corp = HTML[i:HTML.index("\nfunction confBlocaj(", i)]
+    for t in ("label: 'Vital'", "label: 'UPS'", "label: 'Siguranță'", "label: 'Cablu impus'", "label: 'S [mm²]'", "label: 'n ∥'", "label: 'Nr. circ.'",
+              "label: 'Buc.'", "label: 'TGD'", "'Tablouri secundare'", "`Circuitele ${", "'Tablou EPS — circuite'", "'Cabluri impuse'", "'Stringuri (c.c.)'",
+              "'Module pe string'", "'Stringuri în paralel / MPPT'", "'Pmax modul [W]'", "'cablu_C0'", "'cablu_inv'", "'cablu_cc'"):
+        assert t in corp, t
+    # bifele au etichetă legată, atenționarea e anunțată (role status) și legată de câmp
+    i = HTML.index("function confFld("); corp = HTML[i:HTML.index("\nfunction confTabel(", i)]
+    assert "el('label', { for: id }, inp," in corp and "role: 'status'" in corp and "aria-describedby" in corp
+    assert ".cf-chk.cf-pres>label" in HTML and ".cf-warn{" in HTML
+    assert "/api/chat/verifica" in HTML
+
+
+def test_r11_retea_dedusa_regex_si_deduse(browser, srv):
+    pg = _pagina(browser, srv)
+    r = pg.evaluate("""() => [
+      'rețea nedeclarată, dar tabloul e alimentat din PT → trifazat 3 × 400/230 V',
+      'rețea mixtă: invertor trifazat + invertor monofazat → instalație trifazată 3 × 400 V',
+      'rețea nedeclarată → trifazat 3 × 400 V din modelul invertorului (fișa tehnică)',
+      'S"kQ = 500 MVA (rețea MT 20 kV, valoare implicită)',
+      'sursa: rețea publică prin BMPT (declarată), RCCB 300 mA în BMPT conform ST 4-JT'].map(t => CONF_PRES[0][0].test(t))""")
+    assert r == [True, True, True, False, False]
+    assert pg.evaluate("() => [confDeduse(['retea']), confDeduse({retea: 'din 3x25A'}), confDeduse('retea'), confDeduse([{camp: 'retea', motiv: 'BMPT'}]), confDeduse(null)]") \
+        == ([[["retea", ""]], [["retea", "din 3x25A"]], [["retea", ""]], [["retea", "BMPT"]], []])
+    assert not pg.erori
+
+
+def test_r11_api_verifica_q_declarat():
+    intr = {"tip_schema": "locuinta", "retea": "tri", "alimentare": {"tip": "bransament_nou", "In_Q_bransament_A": 16, "P_aprobata_kW": 15},
+            "circuite": [{"nume": "Plită", "receptor": "plita"}]}
+    st, d = _H("POST", "/api/chat/verifica", {"intrare": intr})
+    assert st == 200 and d["schimbari"] and d["schimbari"][0]["camp"] == "alimentare.In_Q_bransament_A" and d["schimbari"][0]["declarat"] == 16
+    intr["alimentare"]["In_Q_bransament_A"] = d["schimbari"][0]["calculat"]
+    st, d2 = _H("POST", "/api/chat/verifica", {"intrare": intr})
+    assert st == 200 and d2["schimbari"] == []
+    st, e = _H("POST", "/api/chat/verifica", {"intrare": {}})
+    assert st == 400 and "eroare" in e
+
+
+def _captura(pg, nume, vp):
+    CAPTURI.mkdir(parents=True, exist_ok=True)
+    pg.wait_for_timeout(250)
+    pg.screenshot(path=str(CAPTURI / f"{nume}_{'mobil' if vp[0] < 600 else 'desktop'}.png"))
+
+
+def _fara_scroll_pagina(pg):
+    return pg.evaluate("() => document.documentElement.scrollWidth <= document.documentElement.clientWidth")
+
+
+@pytest.mark.parametrize("vp", VIEWPORTS)
+def test_e2e_r11_cef_pt_existent(srv, browser, vp):
+    """CEF cu PT existent selectat în panou → planșa fără transformator nou; cablul C0 impus ajunge în motor."""
+    pg = _pagina(browser, srv, *vp)
+    _chat(pg, "CEF 400 kWp cu 4 invertoare SUN2000-100KTL de 100 kW, PT propriu 630 kVA, racord în PT")
+    assert pg.is_visible("#cf-_pt") and pg.is_visible("#cf-cab-0-tip") and pg.is_visible("#cf-string-n_module")
+    pg.select_option("#cf-_pt", "existent")
+    assert pg.input_value("#cf-pt_Sn_kVA") == "630" and pg.input_value("#cf-racord") in ("", "pt_ex")
+    pg.select_option("#cf-racord", "pt_ex")
+    pg.select_option("#cf-masura", "MT")
+    pg.fill("#cf-cab-0-tip", "na2xy"); pg.fill("#cf-cab-0-S", "240"); pg.fill("#cf-cab-0-L", "80")
+    pg.fill("#cf-string-n_module", "20"); pg.fill("#cf-string-n_stringuri_paralel", "2"); pg.fill("#cf-modul-Pmax_W", "550")
+    pg.fill("#cf-n_tgd_cf", "2"); pg.press("#cf-n_tgd_cf", "Tab")
+    pg.select_option("#cf-inv-0-tgd", "1")
+    assert _fara_scroll_pagina(pg)
+    pg.evaluate("() => $('#cf-cab-h').scrollIntoView()"); _captura(pg, "cef_pt_existent", vp)
+    ex = pg.evaluate("() => confExport()")
+    assert ex["pt_existent"] is True and ex["racord"] == "pt" and ex["pt_Sn_kVA"] == 630 and ex["masura"] == "MT"
+    assert ex["cablu_C0"] == {"tip_cablu": "NA2XY", "S_fortat": 240} and ex["L_racord_m"] == 80
+    assert ex["string"]["n_module"] == 20 and ex["modul"]["Pmax_W"] == 550 and ex["n_tgd_cf"] == 2 and ex["invertoare"][0]["tgd"] == 1
+    pg.click("#cf-ok")
+    svg = _planse(pg)
+    m = pg.evaluate("() => JSON.stringify(MODEL)")
+    assert pg.evaluate("() => MODEL.calc.pt_existent") is True
+    assert '"tip":"trafo"' not in m.replace(" ", ""), "trafo nou desenat deși PT-ul e existent"
+    assert "EXISTENT" in svg.upper() and not pg.erori
+
+
+@pytest.mark.parametrize("vp", VIEWPORTS)
+def test_e2e_r11_tg_doua_trafo_cupla_deschisa(srv, browser, vp):
+    """TG din PT propriu cu 2 trafo + cupla deschisă + AAR, coloanele noi ale plecărilor → planșa cu 2 secții de bare."""
+    pg = _pagina(browser, srv, *vp)
+    _chat(pg, "tablou general alimentat din PT propriu, plecări: hală 250 A, birouri 100 A, pompă incendiu 30 kW")
+    # rețeaua nedeclarată (dedusă din PT) e marcată galben
+    assert pg.evaluate("() => $('#cf-retea').closest('.fld').classList.contains('cf-pres')")
+    pg.select_option("#cf-pt_Sn_kVA", "630"); pg.select_option("#cf-n_trafo", "2")
+    assert pg.is_visible("#cf-cupla") and pg.evaluate("() => $('#cf-grupa_conexiuni').closest('.fld').classList.contains('cf-pres')")
+    pg.select_option("#cf-cupla", "deschisa"); pg.check("#cf-aar"); pg.fill("#cf-uk_pct", "6"); pg.select_option("#cf-grupa_conexiuni", "Dyn11")
+    nume = pg.evaluate("() => CONF.ed.plecari.map(p => p.nume)")
+    i = nume.index("Birouri")
+    pg.check(f"#cf-pl-{i}-vital"); pg.check(f"#cf-pl-{i}-ups"); pg.fill(f"#cf-pl-{i}-n_circuite", "2")
+    pg.fill(f"#cf-pl-{i}-cab_tip", "CYABY"); pg.fill(f"#cf-pl-{i}-cab_S", "50"); pg.fill(f"#cf-pl-{i}-cab_n", "2")
+    assert _fara_scroll_pagina(pg)
+    pg.evaluate("() => $('#cf-n_trafo').scrollIntoView()"); _captura(pg, "tg_2trafo_cupla", vp)
+    ex = pg.evaluate("() => confExport()")
+    assert ex["n_trafo"] == 2 and ex["cupla"] == "deschisa" and ex["aar"] is True and ex["uk_pct"] == 6 and ex["grupa_conexiuni"] == "Dyn11"
+    b = ex["plecari"][i]
+    assert b["vital"] is True and b["ups"] is True and b["n_circuite"] == 2 and b["cablu"] == {"tip_cablu": "CYABY", "S_fortat": 50, "n_paralel": 2}
+    pg.click("#cf-ok")
+    _planse(pg)
+    c = pg.evaluate("() => MODEL.calc")
+    assert c["n_trafo"] == 2 and c["cupla"] == "deschisa" and not pg.erori
+    doua = pg.evaluate("() => !!(MODEL.bara && MODEL.bara.cupla) || JSON.stringify(MODEL).split('\"tip\": \"trafo\"').length - 1 >= 2 || JSON.stringify(MODEL).split('\"tip\":\"trafo\"').length - 1 >= 2")
+    assert doua          # r11: motorul desenează TG-ul din PT cu 2 trafo + cuplă deschisă ca 2 secții de bare
+
+
+@pytest.mark.parametrize("vp", VIEWPORTS)
+def test_e2e_r11_locuinta_retea_dedusa(srv, browser, vp):
+    """Locuință cu rețea dedusă (`_deduse`) → câmpul Rețea marcat galben; Q declarat cu atenționare; TD-uri, GE, EPS editabile."""
+    pg = _pagina(browser, srv, *vp)
+
+    def ruta(route):                        # contractul `_deduse` al interpretorului, impus aici ca să nu depindă de reguli
+        r = route.fetch(); d = r.json()
+        i = (d.get("interpretare") or {}).get("intrare_fizica")
+        if i and i.get("tip_schema") == "locuinta":
+            i.setdefault("retea", "tri"); i.setdefault("_deduse", ["retea"])
+        route.fulfill(response=r, json=d)
+    pg.route("**/api/chat", ruta)
+    _chat(pg, "casă cu branșament nou, Pa 15 kW, Q 16 A, plită, cuptor, boiler, coloană 20 m, tablou secundar la garaj cu prize la 30 m")
+    assert pg.input_value("#cf-retea") == "tri"
+    assert pg.evaluate("() => $('#cf-retea').closest('.fld').classList.contains('cf-pres')")
+    assert "dedus" in (pg.get_attribute("#cf-retea", "title") or "")
+    assert "dedus" in pg.text_content(".cf-presl")
+    assert pg.input_value("#cf-alimentare-tip") == "bransament_nou"
+    # Q declarat 16 A sub Ib din Pa 15 kW → atenționare vizibilă (locală, apoi și cea a motorului)
+    pg.wait_for_function("() => !$('#cf-qwarn').hidden && /16/.test($('#cf-qwarn').textContent)", timeout=10000)
+    pg.wait_for_function("() => /Motorul ar folosi Q/.test($('#cf-qwarn').textContent)", timeout=15000)
+    assert "cf-qwarn" in (pg.get_attribute("#cf-alimentare-In_Q_bransament_A", "aria-describedby") or "")
+    # tablou secundar: sub-tabel editabil; generator; EPS
+    if not pg.evaluate("() => CONF.ed.tablouri_secundare.length"):
+        pg.click("#cf-td-add")
+    pg.fill("#cf-td-0-nume", "TD Garaj"); pg.fill("#cf-td-0-L_m", "35"); pg.fill("#cf-td-0-cab_tip", "CYABY"); pg.fill("#cf-td-0-cab_S", "6")
+    pg.click("#cf-td0c-add")
+    pg.select_option("#cf-_ge", "ATS"); pg.fill("#cf-ge_rezerva-Sn_kVA", "10")
+    pg.select_option("#cf-_eps", "circ")
+    assert pg.is_visible("#cf-eps-h") and pg.is_visible("#cf-_eps-w")
+    assert _fara_scroll_pagina(pg)
+    pg.evaluate("() => $('#cf-retea').scrollIntoView()"); _captura(pg, "locuinta_retea_dedusa", vp)
+    pg.evaluate("() => $('#cf-td-h').scrollIntoView()"); _captura(pg, "locuinta_td_ge_eps", vp)
+    ex = pg.evaluate("() => confExport()")
+    td = ex["tablouri_secundare"][0]
+    assert td["nume"] == "TD Garaj" and td["L_m"] == 35 and td["cablu"] == {"tip_cablu": "CYABY", "S_fortat": 6} and len(td["circuite"]) >= 2
+    assert ex["ge_rezerva"] == {"comutare": "ATS", "Sn_kVA": 10} and len(ex["backup"]["circuite"]) == 3 and ex["_deduse"] == ["retea"]
+    # rețeaua aleasă de proiectant nu mai e „dedusă”: marcajul dispare și cheia nu mai pleacă la motor
+    pg.select_option("#cf-retea", "tri")
+    assert not pg.evaluate("() => $('#cf-retea').closest('.fld').classList.contains('cf-pres')")
+    assert "_deduse" not in pg.evaluate("() => confExport()")
+    assert not pg.erori
+
+
 # --------------------------------------------------------------------------- versiunea web (Pyodide), opțional
 @pytest.mark.skipif(not os.environ.get("SM_WEB_VENDOR"), reason="SM_WEB_VENDOR nu e setat (Pyodide + roți)")
 def test_web_static_confirmare(browser, tmp_path):

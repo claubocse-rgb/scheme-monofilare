@@ -41,7 +41,7 @@ LAT_W = {"contor": 28, "cleme": 12, "cutie": 28, "fuzibil": 8}
 LEFT_EXT = {"string_pv": 11, "invertor": 9, "convertor_bess": 9, "trafo": 6, "contor_direct": 9, "sep_mt": 13, "generator": 7, "motor": 7,
             "sep_fuzibil": 2.5, "mcb": 2.5, "mccb": 2.5, "rccb": 3.5, "mccb_dif": 3.5, "rcbo": 3.5, "acb": 2.5, "separator": 2.5,
             "separator_cc": 2.5, "intreruptor_mt": 2.5, "fuzibil": 2.5, "gpv": 2.5, "contact": 2.5, "sigurante_mt": 2.5,
-            "releu_termic": 3.5, "convertizor": 9, "pornitor_yd": 8}
+            "releu_termic": 3.5, "convertizor": 9, "pornitor_yd": 8, "ups": 7}
 POZ_DX = {"tc": 9.0}
 BN_DX = 34.0              # distanța baretei de nul / traseului PE față de coloană
 CH = 1.45                 # lățime medie caracter (mm) la 2,1 mm înălțime text
@@ -173,6 +173,10 @@ class Layout:
                 right = max(right, 5 + _tw(cab.get("cond", ""), 2.3) + 2)
         box = br.get("sursa") or br.get("sarcina") or {}
         bw = max(28.0 if (plecare or br.get("compact")) else 40.0, max(text_width(box.get("titlu", ""), 3.0, True), text_width(box.get("sub", ""), 2.0)) + 5)
+        for a in br.get("aparate_tablou") or []:        # r11: aparatele de la intrarea tabloului secundar (UPS)
+            lw = max([text_width(a.get("ref", ""), 2.8, True)] + [text_width(s, 2.1) for s in a.get("spec", [])] + [0])
+            left = max(left, 2 + LEFT_EXT.get(a.get("tip", ""), 4) + lw + 3.5)
+            right = max(right, self._dreapta(a) + 1.0)
         copii = br.get("copii") or []
         if copii:
             wc = sum(max(l, b / 2 + 1) + max(r, b / 2 + 1) for (l, r, b) in (self._col_dims(ch, True) for ch in copii)) + 8
@@ -213,7 +217,7 @@ class Layout:
         best = max((self._adancime(ch) for ch in copii), key=lambda t: t[0] * 20 + t[1])
         if br.get("grup"):          # grupă (ex. DDR + circuitele lui) în același tablou: doar o bară scurtă, fără cablu
             return (n + best[0], GRUP_GAP + best[1])
-        return (n + best[0], self.seg_out + SUB_HEAD + best[1])
+        return (n + len(br.get("aparate_tablou") or []) + best[0], self.seg_out + SUB_HEAD + best[1])
 
     # ------------------------------------------------------------ schema
     def _schema(self):
@@ -260,7 +264,8 @@ class Layout:
         if cup and dims_out:
             # r7 (PT 2 trafo): coloana fantomă a cuplei longitudinale între cele două secții de bare
             n1 = max(0, min(int(cup.get("n1", len(dims_out) // 2)), len(dims_out)))
-            lq, rq, _ = self._col_dims({"aparate": [cup["aparat"]]}, True) if cup.get("aparat") else (12.0, 12.0, 0)
+            ap_cup = cup.get("aparate") or ([cup["aparat"]] if cup.get("aparat") else [])
+            lq, rq, _ = self._col_dims({"aparate": ap_cup}, True) if ap_cup else (12.0, 12.0, 0)
             ph = (lq + 8.0, rq + 20.0, 0.0)
             xin, win = place(dims_in)
             xo, wo = place(dims_out[:n1] + [ph] + dims_out[n1:])
@@ -388,7 +393,18 @@ class Layout:
             st = min([xmin - 10] + [x - d[0] for d, x in zip(dims_out, xout)])
             x1 = (st - 9 - 22 * n_lat_bus - ext_rz) if n_lat_bus else xmin - 10
             x2 = max(xs_all) + 10
-            if cup:
+            if cup and cup.get("fara_legatura"):
+                # r11: două bare separate (două tablouri TGD-CF), fără cuplă între ele
+                xc = self.x_cupla
+                xa_, xb_ = xc - 4.0, xc + 4.0
+                for (u1, u2) in ((x1, xa_), (xb_, x2)):
+                    c.line((u1, y_bus), (u2, y_bus), "FORTA"); c.line((u1, y_bus - 0.7), (u2, y_bus - 0.7), "FORTA")
+                self.bus_segs = [((x1, y_bus), (xa_, y_bus)), ((xb_, y_bus), (x2, y_bus))]
+                c.line((xc, y_bus + 14), (xc, y_bus - 30), "CARCASA")
+                for k_, t_ in enumerate(cup.get("etichete") or []):
+                    c.text((x1 + xa_) / 2 if k_ == 0 else (xb_ + x2) / 2, y_bus - 3.2, t_, 1.9, align="middle", layer="TEXT_GRI")
+                grow(xa_, xb_, y_bus - 2, y_bus)
+            elif cup:
                 # r7: două secții de bare + cupla longitudinală QC (în „U”, sub bare), stare NO / NI pe aparat
                 xc = self.x_cupla
                 xa_, xb_ = xc - 7.0, xc + 12.0
@@ -398,8 +414,15 @@ class Layout:
                 yc_q = y_bus - 3.0 - step / 2
                 c.dot((xa_, y_bus), 0.9); c.dot((xb_, y_bus), 0.9)
                 c.line((xa_, y_bus), (xa_, yc_q + S.HALF), "FORTA")
-                if cup.get("aparat"):
-                    self._aparat(xa_, yc_q, cup["aparat"])
+                ap_cup = cup.get("aparate") or ([cup["aparat"]] if cup.get("aparat") else [])
+                for k_a, a_c in enumerate(ap_cup):
+                    # r11: mai multe aparate în serie pe legătura dintre secții (QV → ATS·I la TG cu bară vitală)
+                    if k_a:
+                        c.line((xa_, yc_q - S.HALF), (xa_, yc_q - step + S.HALF), "FORTA")
+                        yc_q -= step
+                    self._aparat(xa_, yc_q, a_c)
+                    if a_c.get("interblocaj"):
+                        self._ilk_cupla = (xa_, yc_q, a_c["interblocaj"])
                 y_u = yc_q - S.HALF - 3.0
                 c.line((xa_, yc_q - S.HALF), (xa_, y_u), "FORTA"); c.line((xa_, y_u), (xb_, y_u), "FORTA")
                 c.line((xb_, y_u), (xb_, y_bus), "FORTA")
@@ -507,6 +530,16 @@ class Layout:
             c.line((x, y), (x, y_ct - SUB_HEAD), "FORTA")
             self._cabluri.append({"x": x, "hi": y, "lo": y_ct, "d": b.get("cablu"), "rot": True, "carcasa": parinte})
             y_sub = y_ct - SUB_HEAD
+            ext_ap = []
+            for a in b.get("aparate_tablou") or []:
+                # r11: aparatele de la intrarea tabloului secundar (UPS → Q ieșire), în carcasa lui, înaintea barei
+                yc = y_sub - step / 2
+                c.line((x, y_sub), (x, yc + S.HALF), "FORTA"); self._aparat(x, yc, a)
+                c.line((x, yc - S.HALF), (x, y_sub - step), "FORTA")
+                ext_ap.append((x - 2 - LEFT_EXT.get(a.get("tip", ""), 4) - 3.5 - max(
+                    [text_width(a.get("ref", ""), 2.8, True)] + [text_width(s_, 2.1) for s_ in a.get("spec", [])] + [0]),
+                    x + self._dreapta(a), yc - S.HALF, yc + S.HALF))
+                y_sub -= step
             dims_c = [self._col_dims(ch, True) for ch in copii]
             offs = [max(l, bw / 2 + 1) for (l, r, bw) in dims_c]
             ws = [off + max(r, bw / 2 + 1) for (l, r, bw), off in zip(dims_c, offs)]; tot = sum(ws); k = min(1.0, (w - 2) / tot) if tot else 1.0
@@ -517,9 +550,9 @@ class Layout:
             c.line((bx1, y_sub), (bx2, y_sub), "FORTA"); c.line((bx1, y_sub - 0.7), (bx2, y_sub - 0.7), "FORTA")
             for cx in xs: c.dot((cx, y_sub), 0.9)
             c.dot((x, y_sub), 0.9)
-            rest = (tinta[0] - len(b.get("aparate", [])), tinta[1] - self.seg_out - SUB_HEAD)
+            rest = (tinta[0] - len(b.get("aparate", [])) - len(b.get("aparate_tablou") or []), tinta[1] - self.seg_out - SUB_HEAD)
             nume = sar.get("titlu", "") or "TD"
-            ext_td = [(bx1, bx2, y_sub - 1, y_sub)]
+            ext_td = [(bx1, bx2, y_sub - 1, y_sub)] + ext_ap
             for ch, cx, (l, r, bw), wc in zip(copii, xs, dims_c, ws):
                 plecare(ch, cx, wc * k, l, y_sub, rest, nivel + 1, nume, ext_td)
             sub_ext_ = ext_td

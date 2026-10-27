@@ -197,7 +197,7 @@ ENUMERARI = {
                 "y_d": "stea_triunghi", "soft": "soft", "soft_starter": "soft", "softstarter": "soft", "vfd": "vfd",
                 "convertizor": "vfd"},
     "receptor": {"iluminat": "iluminat", "prize": "prize", "priza": "prize", "forta": "forta", "motor": "motor",
-                 "tablou": "tablou", "invertor": "invertor", "pcs": "pcs"},
+                 "tablou": "tablou", "invertor": "invertor", "pcs": "pcs", "ups": "ups"},
     "origine": {"retea_publica": "retea_publica", "pt_propriu": "pt_propriu", "pt": "pt_propriu",
                 # r5: sursa tabloului declarată explicit (nu se presupune „BMPT cu RCCB” în tăcere)
                 "bmpt": "bmpt", "retea": "retea_publica", "tg_existent": "tg_existent", "tg": "tg_existent",
@@ -555,7 +555,17 @@ def _nota_spl(rez, inp, tip):
     if spl is None:
         spl = "TN-C-S" if tip in ("bransament",) else ("TN-S" if tip in ("pt", "ge_ats") or inp.get("pt_Sn_kVA")
                                                        or inp.get("origine") == "pt_propriu" else "TN-C-S")
+    if tip == "cef" and _bool(inp.get("pt_od")) and inp.get("schema_pamant") is None:
+        spl = "TN-C-S"            # r11: PT al OD — rețea publică (TN-C-S), nu „TN-S din PT propriu”
     rez["schema_pamant"] = spl
+    if tip == "cef" and _bool(inp.get("pt_od")) and spl != "TT":
+        rez["nota_schema_pamant"] = (f"Schemă de legare la pământ: {spl}, racord pe bara JT a PT-ului OD (rețea "
+                                     f"publică); TN-S în aval de separarea PEN în TGD-CF. Rp ≤ 4{NB}Ω.")
+        return
+    if tip == "tablou" and str(inp.get("separare_PEN") or "").upper() in ("TG", "TABLOU") and spl != "TT":
+        rez["nota_schema_pamant"] = (f"Schemă de legare la pământ: TN-C-S — PEN pe cablul C1, separarea PEN în N + PE "
+                                     f"în TG, TN-S în aval. Rp ≤ 4{NB}Ω.")
+        return
     rez["nota_schema_pamant"] = nota_schema_pamant(tip, spl, rez.get("bloc"), inp.get("RA_ohm"),
                                                    pt=bool(tip == "pt" or inp.get("pt_Sn_kVA")),
                                                    idn_mA=rez.get("DDR_TT_IdN_mA"),
@@ -765,6 +775,10 @@ def _plecari(plecari, ctx_bara, amonte, j, prefix="", final=False, ctx_sig=None,
             intrare.update({"compensare": True, "Q_kvar": pl["_Q_kvar"], "In_cap_A": pl["_In_cap_A"]})
         if not rr["blocat"] and r.get("receptor") == "motor" and not copii:
             intrare["aparataj_motor"] = aparataj_motor(pl, intrare, j, obiect)
+        if pl.get("_ups"):
+            intrare["ups"] = _ups_iesire(pl["_ups"], rr, j, obiect)
+        if pl.get("_ups_bypass"):
+            intrare["ups_bypass"] = True
         if sig:
             intrare.update({"siguranta": True, "rezistent_foc": True})
             if pl.get("_rezerva"):
@@ -788,6 +802,29 @@ def _plecari(plecari, ctx_bara, amonte, j, prefix="", final=False, ctx_sig=None,
         else:
             proceseaza(pl, 0, ctx_bara, amonte, f"{prefix}P{i}·{pl.get('nume', '')}")
     return lista
+
+
+def _ups_iesire(meta, rr, j, obiect):
+    """r11: Q ieșire UPS — MCB (≤ 63 A) / MCCB, In ≥ In ieșire, Icu ≥ Ik3 la bornele UPS (prin bypass = Ik rețea)."""
+    meta = dict(meta)
+    ik = (rr.get("ctx_aval") or {}).get("Ik3_kA") or 25.0
+    in_o = meta["In_iesire_A"]
+    tip = "MCB" if in_o <= 63 else ("MCCB" if in_o <= 1600 else "ACB")
+    In = pr.alege_calibru(tip, in_o)
+    if In is None:
+        emite(j, "V06", BLOCANT, obiect + "·Q ieșire UPS", Ib=in_o, tip=tip)
+        return meta
+    q = pr.construieste(tip, In, in_o, are_aval=True)
+    q["Icu_kA"], ok = pr.alege_icu(tip, ik)
+    meta["Q_iesire"] = {k: q.get(k) for k in ("tip", "In_A", "Ir_A", "Ir_multiplu", "Icu_kA", "curba", "decl")
+                        if q.get(k) is not None}
+    if tip == "MCB":
+        meta["Q_iesire"].setdefault("curba", "C")
+    if not ok:
+        emite(j, "V33", BLOCANT, obiect + "·Q ieșire UPS", icu=q["Icu_kA"], ik3=ik)
+    j.pas(f"{obiect}: Q ieșire UPS {tip} {In} A (In ieșire {fmt_ro(in_o)} A), Icu {fmt_ro(q['Icu_kA'])} kA ≥ Ik3 "
+          f"{fmt_ro(ik)} kA (prin bypass)")
+    return meta
 
 
 def _ks_bilant(inp, n):
@@ -865,6 +902,10 @@ def _bransament(inp, j):
     if retea == "mono":
         if gt(ib, norme.BMPM["I_max_A"]):
             emite(j, "V53", BLOCANT, "schema", Ib=ib)
+            # r11 (locuințe #3 mono): fără invertor în schemă, remedierea nu vorbește de invertor
+            j.verificari[-1]["remediere"] = ("branșament trifazat (BMPT, ATR pentru trecerea pe trifazat) sau reducerea "
+                                             "sarcinii simultane sub 40 A (ks / DLM)")
+            j.verificari[-1]["intrebare"] = True
             return rez
         In_q = prima_din_serie(norme.BMPM["Q_in_A"], ib)
         q_f = inp.get("Q_In_A")
@@ -1090,12 +1131,147 @@ def expandeaza_plecari(plecari):
         if pl.get("copii"):
             pl["copii"] = expandeaza_plecari(pl["copii"])
         n = pl.pop("n_circuite", None)
+        n_alias = pl.pop("n", None)          # r11 (industrial j46): `n` pe plecare = n_circuite (6 stații VE identice)
+        if n is None:
+            n = n_alias
+        if isinstance(n, float) and n.is_integer():
+            n = int(n)
+        in_tab = pl.pop("in_tablou", None)
         if isinstance(n, int) and not isinstance(n, bool) and n > 1:
             baza = (pl.get("nume") or "Circuit").strip()
-            for k in range(1, n + 1):
-                out.append(dict(copy.deepcopy(pl), nume=f"{baza} {k}"))
+            circ = [dict(copy.deepcopy(pl), nume=f"{baza} {k}") for k in range(1, n + 1)]
+            if in_tab:
+                # r11: cele n circuite identice într-un tablou dedicat (TD-VE cu n circuite), alimentat dintr-o plecare
+                for c_ in circ:
+                    c_.pop("cablu", None) if isinstance(in_tab, dict) else None
+                td = {"nume": in_tab.get("nume") if isinstance(in_tab, dict) and in_tab.get("nume") else
+                      (f"TD-VE ({n} × {baza})" if e_plecare_ve(pl) else f"TD {baza} ({n} circuite)"),
+                      "receptor": "tablou", "copii": circ}
+                if isinstance(in_tab, dict):
+                    td.update({k: v for k, v in in_tab.items() if k != "nume"})
+                if e_plecare_ve(pl) and td.get("ks") is None:
+                    td["ks"] = 1.0       # stații VE fără DLM: toate pot încărca simultan
+                out.append(td)
+            else:
+                out.extend(circ)
         else:
             out.append(pl)
+    return out
+
+
+_NR_IN_NUME = re.compile(r"\b(\d{1,3})\s*(?:x\s*)?(?:statii|stații|stati|statiuni|wallbox(?:uri)?|incarcatoare|încărcătoare|"
+                         r"puncte de incarcare|puncte de încărcare|chargers?|ev chargers?|borne|prize ve|pompe|motoare|"
+                         r"circuite|ups(?:-uri)?|rack(?:-uri)?)\b", re.I)
+
+
+def plecari_multiple_tacute(plecari, j, obiect="P"):
+    """r11 (industrial j46): „Parcare cu 6 stații EV” cu o singură putere și fără `n` — numele spune mai multe unități,
+    datele descriu una: nu se desenează tăcut o singură plecare → BLOCANT cu remediere (n / n_circuite pe plecare).
+    Întoarce True dacă a emis."""
+    emis = False
+    for i, pl in enumerate(plecari or [], 1):
+        if not isinstance(pl, dict):
+            continue
+        if pl.get("copii"):
+            emis = plecari_multiple_tacute(pl["copii"], j, f"{obiect}{i}.") or emis
+            continue
+        m = _NR_IN_NUME.search(_fara_diacritice(str(pl.get("nume") or "")))
+        if m and int(m.group(1)) > 1 and pl.get("n") is None and pl.get("n_circuite") is None:
+            k = int(m.group(1))
+            emite(j, "V96", BLOCANT, f"{obiect}{i}·{pl.get('nume', '')}",
+                  ce=f"plecarea „{pl.get('nume')}” descrie {k} unități, dar are o singură putere / un singur circuit",
+                  detaliu=f"nu se desenează o singură plecare în locul a {k}",
+                  remediere=f"n: {k} pe plecare (puterea P_kW pe unitate) → {k} plecări, sau in_tablou: true → un tablou "
+                            f"cu {k} circuite; dacă P_kW e totalul, declarați P_kW pe unitate")
+            emis = True
+    return emis
+
+
+
+UPS_K_INTRARE = 1.15        # DECIZIE r11: Ib intrare redresor ≈ In ieșire / η (0,95) + încărcarea bateriilor (~10 %)
+UPS_PF_IESIRE = 0.9         # DECIZIE r11: puterea activă disponibilă la ieșire = 0,9·Sn (fișa poate da 1,0)
+
+
+def e_plecare_ups(pl):
+    """r11 (industrial j15 / j33): plecare spre un UPS (`ups: true` sau receptor „ups”)."""
+    return isinstance(pl, dict) and (pl.get("ups") is True or pl.get("receptor") == "ups")
+
+
+def pregateste_ups(plecari, retea, j, obiect="P"):
+    """r11: UPS ca plecare a tabloului — intrarea redresorului (Q intrare + cablu, Ib = 1,15·In ieșire) → UPS online
+    (redresor / invertor + bypass static + bypass manual) → Q ieșire → tabloul alimentat din UPS (`copii` = PDU /
+    rack-uri / circuite). `Sn_kVA` (alias `S_kVA`) obligatoriu; sarcina ieșirii ≤ 0,9·Sn; `intrari_separate: true` =
+    intrare de bypass separată (a doua plecare din aceeași bară). Întoarce lista nouă sau None (BLOCANT emis)."""
+    out = []
+    for i, pl in enumerate(plecari or [], 1):
+        if not isinstance(pl, dict):
+            out.append(pl)
+            continue
+        ob = f"{obiect}{i}·{pl.get('nume', '')}"
+        if pl.get("copii"):
+            c2 = pregateste_ups(pl["copii"], pl.get("retea", retea), j, ob + ".")
+            if c2 is None:
+                return None
+            pl = dict(pl, copii=c2)
+        if not e_plecare_ups(pl):
+            out.append(pl)
+            continue
+        sn = pl.get("Sn_kVA", pl.get("S_kVA"))
+        if not _numar(sn) or sn <= 0:
+            emite(j, "V07", BLOCANT, ob, "param", camp="Sn_kVA", x=sn if sn is not None else "—",
+                  conditie="puterea aparentă a UPS-ului (kVA) lipsește")
+            j.verificari[-1]["remediere"] = "Sn_kVA al UPS-ului (din fișă) pe plecare"
+            # planșa rămâne desenabilă (plecarea fără UPS), exportul e blocat până la declararea puterii UPS-ului
+            out.append({k: v for k, v in pl.items() if k not in ("ups", "bypass", "bypass_manual", "intrari_separate")
+                        and not (k == "receptor" and v == "ups")})
+            continue
+        sn = float(sn)
+        r_ = pl.get("retea", retea)
+        u = SQRT3 * norme.U_N_V if r_ != "mono" else norme.U_0_V
+        in_out = sn * 1000.0 / u
+        bypass = _bool(pl.get("bypass"))
+        if bypass is None:
+            j.presupune(f"{ob}: UPS cu bypass static automat + bypass manual de mentenanță (nedeclarat — UPS online uzual)")
+            bypass = True
+        p = {k: v for k, v in pl.items() if k not in ("ups", "receptor", "Sn_kVA", "S_kVA", "P_kW", "In_A", "bypass",
+                                                       "bypass_manual", "intrari_separate", "autonomie_min")}
+        # intrarea se dimensionează la puterea UPS-ului (nu la sarcina actuală a ieșirii), cosφ ≈ 1 (redresor PFC)
+        p.update({"receptor": "tablou", "P_kW": sn * UPS_K_INTRARE, "cosfi": 1.0, "ddr": False})
+        meta = {"Sn_kVA": sn, "In_iesire_A": in_out, "Ib_intrare_A": in_out * UPS_K_INTRARE, "bypass": bypass,
+                "bypass_manual": _bool(pl.get("bypass_manual")) is not False, "retea": r_}
+        if pl.get("autonomie_min") is not None:
+            meta["autonomie_min"] = pl["autonomie_min"]
+        copii = p.get("copii") or []
+        if copii:
+            ks = pl.get("ks") or norme.ks_implicit(len(copii))
+            ps = float(ks) * sum(_pi(c, 1) for c in copii)
+            meta["P_iesire_kW"] = ps
+            if gt(ps, UPS_PF_IESIRE * sn):
+                j.emite("V62", BLOCANT, ob, f"sarcina ieșirii UPS {fmt_ro(ps)} kW (ks {fmt_ro(ks)}) > {fmt_ro(UPS_PF_IESIRE)}·Sn"
+                                           f" = {fmt_ro(UPS_PF_IESIRE * sn)} kW — UPS-ul {fmt_ro(sn)} kVA e subdimensionat",
+                        f"UPS ≥ {fmt_ro(ps / UPS_PF_IESIRE, 0)} kVA, sau mai puține circuite pe ieșirea UPS")
+            p.pop("ks", None)
+        else:
+            j.presupune(f"{ob}: circuitele ieșirii UPS nedeclarate — tabloul de ieșire desenat fără plecări")
+        p["_ups"] = meta
+        j.pas(f"{ob}: UPS {fmt_ro(sn)} kVA — In ieșire = {fmt_ro(in_out)} A; intrare redresor Ib ≈ {fmt_ro(UPS_K_INTRARE)}·In "
+              f"= {fmt_ro(in_out * UPS_K_INTRARE)} A (η ≈ 0,95 + încărcare baterii)")
+        j.presupune(f"{ob}: circuitele din aval de UPS verificate cu Ik al rețelei prin bypass-ul static (majorant pentru Icu; "
+                    f"în regim invertor Ik ≈ 2…3·In UPS, deconectarea prin bypass) — de confirmat cu fișa UPS")
+        if not bypass:
+            j.emite("V96", AVERTISMENT, ob, "UPS fără bypass static: la scurtcircuit în aval curentul e limitat de invertor "
+                                            f"(≈ 2…3·In = {fmt_ro(2 * in_out, 0)}…{fmt_ro(3 * in_out, 0)} A) — deconectarea "
+                                            "circuitelor din aval nu e verificată de motor",
+                    "UPS cu bypass static, sau verificarea deconectării cu curba Ik a invertorului din fișă")
+        out.append(p)
+        if _bool(pl.get("intrari_separate")):
+            out.append({"nume": f"{pl.get('nume') or 'UPS'} — intrare bypass", "receptor": "tablou", "P_kW": 0.0001,
+                        "In_minim": in_out,
+                        "cosfi": 1.0, "ddr": False, "L_m": pl.get("L_m"), "_ups_bypass": True,
+                        **({"cablu": dict(pl["cablu"])} if isinstance(pl.get("cablu"), dict) else {})})
+            if out[-1].get("L_m") is None:
+                out[-1].pop("L_m")
+            j.pas(f"{ob}: intrare de bypass separată — plecare proprie dimensionată la In ieșire {fmt_ro(in_out)} A")
     return out
 
 
@@ -1499,16 +1675,75 @@ def _verifica_q1_tablou(inp, j, rr, pc, p_decl, rez):
                                             "reglați Ir ≤ In_T (trafo neprotejat la suprasarcină de Q1)"))
 
 
+def _sectii_tablou_pt(inp, j):
+    """r11 (panoul de confirmare: TG din PT propriu cu 2 trafo, cupla deschisă, AAR): TG cu două secții de bare —
+    T1 → Q1.1 → secția 1, T2 → Q1.2 → secția 2, cupla QC normal deschisă (interblocaj 2 din 3, opțional AAR). Fiecare
+    intrare se dimensionează pe toată sarcina (cu cupla închisă un trafo alimentează ambele secții); Ik pe secție = un
+    trafo. Întoarce dict (secțiile), None (un singur trafo / paralel) sau False (BLOCANT emis)."""
+    n = inp.get("n_trafo", inp.get("pt_n_trafo"))
+    aar = _bool(inp.get("aar"))
+    cupla = _fd(inp.get("cupla")).lower() if isinstance(inp.get("cupla"), str) else None
+    doua = (inp.get("origine") == "pt_propriu" and _numar(n) and int(n) == 2 and cupla in _CUPLA_NO
+            and inp.get("bara") is None and inp.get("bara_racord") is None)
+    if aar and not doua:
+        emite(j, "V96", BLOCANT, "schema", ce="AAR declarat fără două secții de bare alimentate din două trafo",
+              detaliu="AAR-ul închide cupla dintre secțiile a două trafo (cuplă normal deschisă)",
+              remediere="origine „pt_propriu”, n_trafo 2, cupla „deschisa”, aar true — sau GE + ATS (tip „ge_ats”)")
+        return False
+    if not doua:
+        return None
+    j.pas("TG cu două secții de bare din PT propriu 2 trafo: intrările Q1.1 (T1) și Q1.2 (T2) dimensionate fiecare pe "
+          "toată sarcina (cu cupla închisă un trafo alimentează ambele secții); Ik3 pe secție = un trafo")
+    if aar:
+        j.pas("AAR pe cupla QC: lipsă tensiune pe o secție → deschide Q1.k → închide QC; interblocaj 2 din 3")
+    elif inp.get("aar") is None:
+        j.presupune("cupla QC fără AAR (nedeclarat) — închidere manuală cu interblocaj 2 din 3; cu AAR declarați aar: true")
+    return {"aar": bool(aar)}
+
+
+def _vitali_tablou(plecari, inp, j, sectii_tg):
+    """r11 (panoul de confirmare): `vital` pe plecările unui tablou are sens doar cu o rezervă — la TG cu 2 secții + AAR
+    plecările nevitale (vital: false) se deconectează la comanda AAR (descărcarea sarcinii). Fără rezervă → BLOCANT
+    „nesuportat” (nu se ignoră tăcut). Întoarce False dacă a blocat."""
+    vit = [p for p in plecari if isinstance(p, dict) and p.get("vital") is not None]
+    if not vit:
+        return True
+    if sectii_tg and sectii_tg.get("aar"):
+        for p in plecari:
+            if p.get("vital") is False:
+                p["_descarcare_aar"] = True
+        j.pas("plecările nevitale se deconectează la comanda AAR (descărcarea sarcinii): "
+              + ", ".join(p.get("nume", "") for p in plecari if p.get("_descarcare_aar")))
+        return True
+    emite(j, "V96", BLOCANT, "schema", ce="plecări marcate vital / nevital într-un tablou fără sursă de rezervă",
+          detaliu="fără GE / AAR, marcajul vital nu schimbă schema — nu se ignoră tăcut",
+          remediere="GE + ATS cu bară vitală (tip „ge_ats”, bara_vitala true, consumatori vital true/false) sau TG din "
+                    "PT cu 2 trafo + AAR (n_trafo 2, cupla „deschisa”, aar true)")
+    return True
+
+
 def schema_tablou(inp, j):
     """SPEC §C.2: bilanțul de puteri, Q1 + alimentarea C1, bara TG și plecările (cu cascade)."""
     rez = {}
+    plecari_multiple_tacute(inp.get("plecari") or [], j)
     plecari = expandeaza_plecari(inp.get("plecari") or [])
+    plecari = pregateste_ups(plecari, inp.get("retea", "tri"), j)
+    if plecari is None:
+        return rez
     inp["plecari"] = plecari
     if tensiune_jt_nesuportata(inp, j, plecari):
         return rez
     if not plecari:
         # v1.2: tablou fără plecări → nimic de dimensionat (nu se exportă o schemă goală)
         emite(j, "V07", BLOCANT, "schema", "plecari", tablou="tabloul")
+        return rez
+    sectii_tg = _sectii_tablou_pt(inp, j)
+    if sectii_tg:
+        plecari = _sectii_pt(plecari, inp, j)
+        inp["plecari"] = plecari
+    elif sectii_tg is False:
+        return rez
+    if not _vitali_tablou(plecari, inp, j, sectii_tg):
         return rez
     retea_tg = inp.get("retea", "tri")
     if retea_tg == "tri":
@@ -1534,7 +1769,12 @@ def schema_tablou(inp, j):
             rez["fara_ddr_amonte_siguranta"] = True
             j.presupune("consumatori de siguranță: tabloul racordat înaintea DDR-ului general al branșamentului (fără "
                         "RCCB 300 mA în amonte, I7/2011, P118-3) — de confirmat cu OD / proiectul de branșament")
-        if mod_sig == "mixt":
+        if mod_sig == "mixt" and (inp.get("_bara_vitala_ge") or sectii_tg):
+            # r11: TG cu bară vitală — circuitele de siguranță au sursa de rezervă (GE prin ATS) pe bara vitală; legătura
+            # bara normală → ATS rămâne după Q1 (desenul TG cu două bare)
+            j.presupune("circuitele de siguranță pe bara vitală (rețea + GE prin ATS); legătura spre ATS după Q1 general — "
+                        "racordul înaintea Q1 general se declară separat, dacă avizul ISU îl cere")
+        elif mod_sig == "mixt":
             for pl in plecari:
                 if pl.get("_siguranta"):
                     pl["_inainte_Q1"] = True
@@ -1551,6 +1791,9 @@ def schema_tablou(inp, j):
     if mod_sig == "tot" and ks_impl:
         ks = 1.0          # r8: tablou de siguranță — toți consumatorii funcționează simultan
         j.presupune("ks = 1 (tablou de siguranță la incendiu — consumatorii funcționează simultan)")
+    elif ks_impl and plecari and all(e_plecare_ve(p_) for p_ in plecari):
+        ks = 1.0          # r11: stații VE fără DLM declarat — pot încărca toate simultan
+        j.presupune("ks = 1 (stații VE fără gestionare dinamică a sarcinii — încărcare simultană); cu DLM declarați ks")
     elif ks_impl:
         j.presupune(f"ks = {fmt_ro(ks)} (IEC 61439-2 tab. 101, {len(plecari)} plecări)")
     j.ipoteza("ks", ks, ks_impl)
@@ -1597,6 +1840,11 @@ def schema_tablou(inp, j):
             ctx = sc.context_pt(t)
             rez["PT_sursa"] = {"Sn_kVA": int(sn), "n_trafo": nt[0], "paralel": nt[1], "uk_pct": t["uk_pct"],
                                "Ik3max_bara_kA": t["Ik3max_bara_kA"]}
+            gr_ = grupa_conexiuni(inp, j)
+            if gr_ is None:
+                return rez
+            if inp.get("grupa_conexiuni") is not None or inp.get("pt_grupa_conexiuni") is not None:
+                rez["PT_sursa"]["grupa"] = gr_
             if nt[0] > 1:
                 j.pas(f"Sursa: PT {nt[0]} × {int(sn)} kVA " + (f"în paralel pe bara JT → Ik3max bară = "
                       f"{fmt_ro(t['Ik3max_bara_kA'])} kA (toate trafo în funcțiune)" if nt[1] else
@@ -1743,7 +1991,7 @@ def schema_tablou(inp, j):
     ctx_tg = rr["ctx_aval"]
     rez["bara_TG"] = {"Ik3max_kA": ctx_tg["Ik3_kA"], "dU_pct": ctx_tg["dU_pct"]}
     amonte_n, ctx_sig = rr["prot"], None
-    if mod_sig == "mixt":
+    if mod_sig == "mixt" and not (inp.get("_bara_vitala_ge") or sectii_tg):
         # r8 (P0 #64): consumatorii de siguranță se racordează ÎNAINTEA întreruptorului general Q1 (bornele de intrare
         # ale tabloului): C1 îi alimentează pe toți, protejat în tabloul sursă (Q1/C1 = protecția C1); Q1 general
         # (întreruptorul tabloului) poartă doar consumatorii normali și nu deconectează circuitele de siguranță
@@ -1770,6 +2018,25 @@ def schema_tablou(inp, j):
                   f"{pq['tip']} {pq['In_A']} A; Q1/C1 = protecția cablului C1 în tabloul sursă")
         ctx_sig = dict(ctx_tg)
     rez["plecari"] = _plecari(plecari, ctx_tg, amonte_n, j, final=final, ctx_sig=ctx_sig, amonte_sig=rr["prot"])
+    if sectii_tg:
+        it = iter(plecari)
+        for z in rez["plecari"]:
+            if int(z.get("nivel") or 0) == 0:
+                pl_ = next(it, {})
+                z["sectie"] = pl_.get("sectie", 1)
+                if pl_.get("_descarcare_aar"):
+                    z["descarcare_aar"] = True
+        rez["sectii_tg"] = dict(sectii_tg, n1=sum(1 for p_ in plecari if p_.get("sectie", 1) == 1))
+        sn_t = inp.get("pt_Sn_kVA")
+        if sectii_tg.get("aar") and sn_t:
+            p_v = sum(p_ for pl_, p_ in zip(plecari, pis) if not pl_.get("_descarcare_aar"))
+            s_v = ks * p_v / 0.9
+            rez["sectii_tg"]["Sc_AAR_kVA"] = s_v
+            if gt(s_v, float(sn_t)):
+                emite(j, "V62", AVERTISMENT, "schema", x=s_v, y=sn_t)
+                j.verificari[-1]["mesaj"] = (f"regim AAR (un trafo pe ambele secții): Sc = {fmt_ro(s_v)} kVA > Sn = {sn_t} kVA"
+                                             " — descărcarea automată a plecărilor nevitale la închiderea QC")
+                j.verificari[-1]["remediere"] = "marcați plecările nevitale (vital: false) sau trafo mai mari"
     if inp.get("schema_pamant") == "TT":
         _nota_spl(rez, inp, "tablou")            # v1.3 R5: nota 3 cu DDR-urile reale ale plecărilor
     return rez
@@ -1782,10 +2049,22 @@ _CUPLA_NI = ("inchisa", "ni", "nc", "normal_inchisa", "paralel", "in_paralel", "
 _CUPLA_NO = ("deschisa", "no", "normal_deschisa", "open", "separat", "separate")
 
 
+CHEI_UK = ("uk_pct", "pt_uk_pct", "ucc_pct", "pt_ucc_pct")     # r11 (industrial j41): „Ucc” = uk (tensiunea de scurtcircuit)
+
+
 def _uk_declarat(inp, j):
     """r10 (industrial i65): uk declarat (`uk_pct`, alias `pt_uk_pct`) — None dacă lipsește, False dacă e invalid
-    (V12 BLOCANT cu remediere)."""
-    uk = inp.get("uk_pct", inp.get("pt_uk_pct"))
+    (V12 BLOCANT cu remediere). r11 (j41): alias `ucc_pct` / `pt_ucc_pct` (Ucc din plăcuță = uk); două valori diferite
+    declarate → BLOCANT (nu se alege tăcut una)."""
+    vals = [(k, inp.get(k)) for k in CHEI_UK if inp.get(k) is not None]
+    if not vals:
+        return None
+    if len({float(v) if _numar(v) else repr(v) for _, v in vals}) > 1:
+        emite(j, "V12", BLOCANT, "schema", "camp", camp=" / ".join(k for k, _ in vals),
+              valoare=" ≠ ".join(str(v) for _, v in vals))
+        j.verificari[-1]["remediere"] = "o singură valoare uk (Ucc) din plăcuța / fișa transformatorului"
+        return False
+    uk = vals[0][1]
     if uk is None:
         return None
     if not _numar(uk) or not 2.0 <= float(uk) <= 12.0:
@@ -1794,6 +2073,28 @@ def _uk_declarat(inp, j):
                                          "6 % peste)")
         return False
     return float(uk)
+
+
+_GRUPA_RE = re.compile(r"^([DYZ])([YZD])(N?)(\d{1,2})$")
+
+
+def grupa_conexiuni(inp, j):
+    """r11 (industrial j41): grupa de conexiuni declarată (`grupa_conexiuni`, alias `pt_grupa_conexiuni`) — „Dyn11”,
+    „Dyn5”, „Yzn11” … (indicele orar 0…11) → textul normalizat (desen + listă); nedeclarată → Dyn5 (implicit, presupus);
+    invalidă → V12 BLOCANT. Întoarce textul sau None (BLOCANT emis)."""
+    g = inp.get("grupa_conexiuni", inp.get("pt_grupa_conexiuni"))
+    if g is None:
+        return norme.TRAFO_GRUPA_CONEXIUNI
+    t = re.sub(r"[\s\-_]", "", str(g)).upper() if isinstance(g, str) else ""
+    m = _GRUPA_RE.match(t)
+    if not m or not 0 <= int(m.group(4)) <= 11:
+        emite(j, "V12", BLOCANT, "schema", "camp", camp="grupa_conexiuni", valoare=g)
+        j.verificari[-1]["remediere"] = "grupa de conexiuni din plăcuța trafo (ex. „Dyn11”, „Dyn5”, „Yzn11”)"
+        return None
+    txt = f"{m.group(1)}{m.group(2).lower()}{'n' if m.group(3) else ''}{int(m.group(4))}"
+    if txt != norme.TRAFO_GRUPA_CONEXIUNI:
+        j.pas(f"grupa de conexiuni {txt} (declarată) — pe planșă și în listă")
+    return txt
 
 
 def trafo_sursa(inp, j, sn, izolatie=None, n_t=1, paralel=False):
@@ -1990,6 +2291,11 @@ def schema_pt(inp, j):
     t = trafo_sursa(inp, j, sn, izt)
     if t is None:
         return rez
+    grupa = grupa_conexiuni(inp, j)
+    if grupa is None:
+        return rez
+    if inp.get("grupa_conexiuni") is None and inp.get("pt_grupa_conexiuni") is None:
+        j.presupune(f"grupa de conexiuni {grupa} (nedeclarată) — se confirmă cu OD / plăcuța trafo (Dyn11 la unele OD)")
     cupla = None
     if n_t == 2:
         cupla = _fd(inp.get("cupla") or "deschisa")
@@ -2002,12 +2308,38 @@ def schema_pt(inp, j):
             j.presupune("cupla longitudinală de bare JT normal DESCHISĂ (NO), cu interblocaj „2 din 3” (Q JT T1, Q JT T2, "
                         "QC — niciodată două trafo în paralel); fiecare trafo alimentează secția lui de bare — "
                         "cupla închisă se declară (cupla: „inchisa”)")
+    aar = _bool(inp.get("aar"))
+    if aar and n_t != 2:
+        emite(j, "V96", BLOCANT, "schema", ce="AAR la un PT cu un singur transformator",
+              detaliu="AAR-ul de cuplă comută între două secții de bare alimentate din două trafo — cu un trafo nu are "
+                      "ce rezerva (rezerva cu GE: schema „ge_ats”)",
+              remediere="n_trafo: 2, cupla: „deschisa”, aar: true — sau GE + ATS (tip „ge_ats”)")
+        return rez
+    if aar and cupla == "NI":
+        _contradictie(j, BLOCANT, "schema", "AAR declarat pe o cuplă normal ÎNCHISĂ (trafo în paralel) — AAR-ul închide "
+                                            "o cuplă normal deschisă la pierderea unei secții",
+                      "cupla „deschisa” + aar: true (secții separate cu anclanșarea rezervei) sau cupla „inchisa” fără AAR")
+        return rez
     if n_t == 2 and cupla == "NO":
         rez["n_trafo"] = 2
         rez["cupla"] = {"stare": "NO", "interblocaj": "2 din 3 (Q3.1, Q3.2, QC)"}
         rez["Ik3max_bara_kA"] = t["Ik3max_bara_kA"]
         j.pas(f"2 × {sn} kVA, cuplă longitudinală JT normal deschisă cu interblocaj 2 din 3: fiecare secție de bare e "
               f"alimentată de un singur trafo → Ik3max bară = {fmt_ro(t['Ik3max_bara_kA'])} kA (un trafo)")
+        if aar:
+            # r11 (industrial j05 / j57): AAR pe cupla JT — la dispariția tensiunii pe o secție, Q JT al trafo-ului
+            # căzut deschide și QC închide (temporizat, cu blocare la defect pe bară); niciodată 3 din 3 închise
+            rez["cupla"]["AAR"] = {
+                "logica": "lipsă tensiune pe secția k (relee 27) → deschide Q3.k → închide QC (temporizat); revenire "
+                          "manuală sau automată cu verificarea tensiunii",
+                "blocare": "AAR blocat la declanșarea prin protecție (defect pe bară / plecare)",
+                "interblocaj": "2 din 3: Q3.1, Q3.2, QC — trafo niciodată în paralel",
+                "actionari": "Q3.1, Q3.2 și QC motorizate, cu bobine de deschidere / închidere"}
+            j.pas("AAR pe cupla JT: relee de minimă tensiune 27 pe fiecare secție, Q3.1 / Q3.2 / QC motorizate, "
+                  "interblocaj 2 din 3; la pierderea unui trafo, celălalt preia ambele secții (Ik3 bară rămâne cel al unui trafo)")
+        elif inp.get("aar") is None:
+            j.presupune("cupla JT normal deschisă FĂRĂ anclanșare automată a rezervei (AAR nedeclarat) — închiderea QC se "
+                        "face manual, cu interblocaj 2 din 3; cu AAR declarați aar: true")
     if n_t == 2 and cupla == "NI":
         # paralel: Zk = Z_Q + K_T·Z_T/2 → Ik3max la bară (Icu); Ik1min cu un singur trafo în funcțiune (prudent)
         t = dict(t)
@@ -2028,7 +2360,10 @@ def schema_pt(inp, j):
     j.ipoteza("skq", t["SkQ_MVA"], inp.get("SkQ_MVA") is None)
     j.ipoteza("trafo", (t["uk_pct"], t["Pk_W"]), not t.get("uk_declarat"))
     rez["trafo"] = {"Sn_kVA": sn, "In_T_A": t["In_T_A"], "uk_pct": t["uk_pct"], "Pk_W": t["Pk_W"], "P0_W": t["P0_W"],
-                    "izolatie": izt, "Ik3max_bara_kA": t["Ik3max_bara_kA"], "Ik1min_bara_A": t["Ik1min_bara_A"]}
+                    "izolatie": izt, "Ik3max_bara_kA": t["Ik3max_bara_kA"], "Ik1min_bara_A": t["Ik1min_bara_A"],
+                    "grupa": grupa}
+    if t.get("uk_declarat"):
+        rez["trafo"]["uk_declarat"] = True
     # r5 (P1-12): celulele MT cerute explicit — celule de linie (intrare / intrare-ieșire în buclă) și celula de măsură
     cel_mt = _celule_mt(inp.get("celule_mt"), j)
     if cel_mt is None:
@@ -2083,7 +2418,11 @@ def schema_pt(inp, j):
     if not plecari:
         emite(j, "V07", BLOCANT, "schema", "plecari", tablou="TGJT")
         return rez
+    plecari_multiple_tacute(plecari, j)
     plecari = expandeaza_plecari(plecari)
+    plecari = pregateste_ups(plecari, "tri", j)
+    if plecari is None:
+        return rez
     mod_sig = marcheaza_siguranta(plecari, inp, j, "TGJT")
     if mod_sig:
         rez["siguranta"] = mod_sig
@@ -2118,6 +2457,13 @@ def schema_pt(inp, j):
                 emite(j, "V62", AVERTISMENT, "schema", x=sc_k, y=sn)
                 j.verificari[-1]["mesaj"] = (f"secția {k}: Sc = {fmt_ro(sc_k)} kVA > Sn T{k} = {sn} kVA (cupla normal "
                                              f"deschisă — fiecare trafo își poartă secția)")
+        if aar and cupla == "NO" and gt(scal, sn):
+            # r11: în regim AAR un singur trafo alimentează ambele secții
+            emite(j, "V62", AVERTISMENT, "schema", x=scal, y=sn)
+            j.verificari[-1]["mesaj"] = (f"regim AAR (un trafo pe ambele secții): Sc total = {fmt_ro(scal)} kVA > Sn = "
+                                         f"{sn} kVA — descărcarea automată a consumatorilor nevitali la închiderea QC")
+            j.verificari[-1]["remediere"] = ("deconectarea automată a plecărilor nevitale la comanda AAR (declarați-le) sau "
+                                             "trafo dimensionate fiecare pe toată sarcina")
     # C.5 pct. 7 (v1.2, C5): punctul de măsură și serviciile proprii sunt GENERATE în rezultat (și desenate)
     loc = str(inp.get("masura_pt") or inp.get("masura") or ("MT" if (cel_mt.get("masura") or n_t == 2) else "JT")).upper()
     if inp.get("masura_pt") is None and inp.get("masura") is None and not cel_mt.get("masura"):
@@ -2414,7 +2760,7 @@ def _ddr_invertor_mare(j, u, res):
     """v1.9 (R5 P0-6): un DDR de 30 mA pe un invertor > 30 kW declanșează la curentul capacitiv de scurgere al câmpului
     PV — V73 AVERTISMENT (IΔn ≥ 100 mA conform fișei / ATR)."""
     d = (res or {}).get("DDR")
-    if d and not u.get("pcs") and gt(u["Pn_kW"], norme.DDR_INVERTOR_PRAG_KW) and d.get("IdN_mA", 0) < norme.DDR_INVERTOR_IDN_MARE_MA:
+    if d and not u.get("pcs") and gt(u["Pn_kW"], norme.DDR_INVERTOR_30MA_MAX_KW) and d.get("IdN_mA", 0) < norme.DDR_INVERTOR_IDN_MARE_MA:
         emite(j, "V73", AVERTISMENT, u["obiect"], "mare", P=u["Pn_kW"], IdN=d["IdN_mA"])
 
 
@@ -2546,6 +2892,9 @@ def _fara_neutru(res):
                               monopolar=bool(res.get("monopolar")), fara_N=True)
 
 
+TGD_CF_MAX = 2        # r11: tablouri TGD-CF desenate de motor (fiecare cu QG și C0 proprii); mai multe → V96
+
+
 def _schema_cef(inp, j):
     """SPEC §C.3: invertoare și PCS (ramuri B.21), sume, QG, praguri de racord, PT propriu, categoria RfG, TC,
     partea de c.c. (Uoc la Tmin, gPV, SPD c.c.). v1.2: Iac,max din fișă verificat (V64), S_total = max(√3·U·ΣIac; ΣPn),
@@ -2626,6 +2975,14 @@ def _schema_cef(inp, j):
         return rez
     for u in unitati:
         u["Iac"] = u["Iac_max_A"] or norme.FACTOR_SMAX_INVERTOR * u["Pn_kW"] * 1000.0 / u_calcul(u.get("retea", retea))
+        # r11 (fotovoltaic #6 / #39): S pentru trafo (V67) = Smax real: din Iac,max al fișei, din catalog (Smax) sau
+        # Pn (cosφ 1) — nu 1,1·Pn (acela rămâne majorantul curentului pentru protecții / cabluri)
+        g_ = u.get("grup") or {}
+        if u["Iac_max_A"]:
+            u["S_trafo_kVA"] = u_calcul(u.get("retea", retea)) * float(u["Iac_max_A"]) / 1000.0
+        else:
+            u["S_trafo_kVA"] = (cat_inv.smax_kva(g_.get("producator"), g_.get("model")) if not u["pcs"] else None) \
+                or u["Pn_kW"]
     s_iac = sum(u["Iac"] for u in unitati)
     s_iac_kva = U * s_iac / 1000.0
     i_faze = None if mono else _repartitie_faze(unitati, j)
@@ -2637,7 +2994,9 @@ def _schema_cef(inp, j):
     pn_tot = sum(u["Pn_kW"] for u in unitati)
     pn_inv = sum(u["Pn_kW"] for u in unitati if not u["pcs"])
     s_tot = max(s_iac_kva, pn_tot)
-    rez["sume"] = {"Pn_total_kW": pn_tot, "Iac_total_A": s_iac, "S_total_kVA": s_tot, "S_din_Iac_kVA": s_iac_kva}
+    s_v67 = sum(u["S_trafo_kVA"] for u in unitati)
+    rez["sume"] = {"Pn_total_kW": pn_tot, "Iac_total_A": s_iac, "S_total_kVA": s_tot, "S_din_Iac_kVA": s_iac_kva,
+                   "S_trafo_kVA": s_v67}
     if inp.get("kWp") is not None and pn_inv > 0:
         rez["raport_DC_AC"] = float(inp["kWp"]) / pn_inv
     if i_faze:
@@ -2707,6 +3066,14 @@ def _schema_cef(inp, j):
         # v1.9 (R5 P0-4): PT existent = sursa (Ik din trafo), nu trafo nou desenat în serie între două tablouri JT.
         # Racord în TG existent + PT propriu → PT-ul e cel existent care alimentează TG-ul.
         existent = _bool(inp.get("pt_existent"))
+        if _bool(inp.get("pt_od")):
+            # r11 (fotovoltaic #1): PT-ul e al OD — sursa existentă (Ik din trafo), nimic nou desenat amonte de racord
+            if existent is False:
+                _contradictie(j, BLOCANT, "schema", "PT al OD declarat și PT nou (pt_existent false)",
+                              "PT al OD (racord pe bara lui JT) sau PT propriu nou")
+                return rez
+            existent = True
+            j.pas(f"PT {int(sn)} kVA al OD: sursa racordului (Ik3 din trafo), nu face obiectul proiectului")
         if existent is None and inp.get("racord") == "tg_existent":
             existent = True
             j.presupune(f"PT propriu {int(sn)} kVA = PT existent care alimentează TG-ul (racord în TG existent) — "
@@ -2766,12 +3133,17 @@ def _schema_cef(inp, j):
             rez["PT"], q_pt = _pt_nou_cef(inp, j, int(sn), t, n_t, masura)
         if n_t > 1 and not existent:
             pass        # r8: Sn față de S se verifică pe fiecare secție (trafo cu grupul lui de invertoare), mai jos
-        elif lt((1 if bara_un_trafo else n_t) * sn, s_tot):
-            # și la PT existent: trafo sub injecție; r7: Σ Sn la n trafo
+        elif lt((1 if bara_un_trafo else n_t) * sn, s_v67):
+            # și la PT existent: trafo sub injecție; r7: Σ Sn la n trafo; r11: S = Smax real (fișă / catalog / Pn)
             if n_t > 1 and not bara_un_trafo:
-                emite(j, "V67", BLOCANT, "schema", "n", n=n_t, sn=int(sn), x=n_t * sn, y=s_tot)
+                emite(j, "V67", BLOCANT, "schema", "n", n=n_t, sn=int(sn), x=n_t * sn, y=s_v67)
             else:
-                emite(j, "V67", BLOCANT, "schema", x=sn, y=s_tot)
+                emite(j, "V67", BLOCANT, "schema", x=sn, y=s_v67)
+        elif lt((1 if bara_un_trafo else n_t) * sn, s_tot):
+            # r11: doar majorantul 1,1·Pn depășește Sn — la limită, nu blocant
+            emite(j, "V67", AVERTISMENT, "schema", x=(1 if bara_un_trafo else n_t) * sn, y=s_tot)
+            j.verificari[-1]["mesaj"] += (f" (majorant 1,1·Pn; Smax real {fmt_ro(s_v67)} kVA ≤ Sn) — trafo la limită, "
+                                          f"confirmați Smax / Iac,max din fișa invertoarelor")
         ctx = sc.context_pt(t)
         racord = {"tip": "MT prin PT propriu" + (" existent" if existent else " nou"), "Sn_kVA": int(sn)}
         if n_t > 1:
@@ -2881,6 +3253,30 @@ def _schema_cef(inp, j):
 
     lim_inj = None
     sectii_pt = bool(n_t > 1 and rez.get("PT") and q_pt is not None)
+    # r11 (fotovoltaic #44): mai multe tablouri TGD-CF (`n_tgd_cf`, `invertoare[].tgd` 1…n), fiecare cu invertoarele
+    # lui, cu QGk → C0.k racordate pe bara JT a punctului de racord (PT / TG existent / PCC)
+    n_tgd = inp.get("n_tgd_cf")
+    tgd_g = [g.get("tgd") for g in inp.get("invertoare") or [] if isinstance(g, dict) and g.get("tgd") is not None]
+    if n_tgd is None and tgd_g and all(_numar(x) for x in tgd_g):
+        n_tgd = int(max(tgd_g))
+    if n_tgd is not None and (isinstance(n_tgd, bool) or not _numar(n_tgd) or n_tgd != int(n_tgd)
+                              or not 1 <= int(n_tgd) <= TGD_CF_MAX):
+        emite(j, "V96", BLOCANT, "schema", ce=f"CEF cu n_tgd_cf = {n_tgd!r}",
+              detaliu=f"motorul desenează 1…{TGD_CF_MAX} tablouri TGD-CF", remediere=f"n_tgd_cf întreg 1…{TGD_CF_MAX}")
+        return rez
+    tgd = bool(n_tgd and int(n_tgd) > 1)
+    if tgd:
+        n_tgd = int(n_tgd)
+        motiv = ("PT nou cu 2 trafo (secții)" if sectii_pt else "CEF monofazat" if mono else
+                 "invertoare de 800 V c.a." if norme.u_n() != norme.U_N_V else None)
+        if motiv:
+            emite(j, "V96", BLOCANT, "schema", ce=f"{n_tgd} tablouri TGD-CF la {motiv}",
+                  detaliu="combinația nu e desenată de motor", remediere="un singur TGD-CF sau proiect de specialitate")
+            return rez
+        if any(not _numar(x) or not 1 <= x <= n_tgd or x != int(x) for x in tgd_g):
+            emite(j, "V12", BLOCANT, "schema", "camp", camp="invertoare[].tgd", valoare=tgd_g)
+            j.verificari[-1]["remediere"] = f"tgd 1…{n_tgd} pe fiecare grup de invertoare"
+            return rez
 
     def sectiune(unit_s, suf, ctx_s, rz, i_fz=None):
         """QG, C0, invertoarele / PCS și TC-ul unei bare TGD-CF (r8: o secție = un trafo al PT-ului nou, `suf` = „1”, „2”;
@@ -2898,10 +3294,15 @@ def _schema_cef(inp, j):
             s_s = max(s_kva_s, pn_s)
             rz["sume"] = {"Pn_total_kW": pn_s, "Iac_total_A": s_iac_s, "S_total_kVA": s_s}
             rz["unitati"] = [u["obiect"] for u in unit_s]
-            j.pas(f"Secția {suf} (T{suf} {int(sn)} kVA): {', '.join(rz['unitati'])} — Σ Pn = {fmt_ro(pn_s)} kW, "
+            j.pas((f"TGD-CF{suf}" if tgd else f"Secția {suf} (T{suf} {int(sn)} kVA)")
+                  + f": {', '.join(rz['unitati'])} — Σ Pn = {fmt_ro(pn_s)} kW, "
                   f"Σ Iac = {fmt_ro(s_iac_s)} A, S = {fmt_ro(s_s)} kVA")
-            if lt(sn, s_s):
-                emite(j, "V67", BLOCANT, f"T{suf}", "sectie", k=suf, x=int(sn), y=s_s, inv=", ".join(rz["unitati"]))
+            s_s67 = sum(u["S_trafo_kVA"] for u in unit_s)
+            if not tgd and lt(sn, s_s67):
+                emite(j, "V67", BLOCANT, f"T{suf}", "sectie", k=suf, x=int(sn), y=s_s67, inv=", ".join(rz["unitati"]))
+            elif not tgd and lt(sn, s_s):
+                emite(j, "V67", AVERTISMENT, f"T{suf}", "sectie", k=suf, x=int(sn), y=s_s, inv=", ".join(rz["unitati"]))
+                j.verificari[-1]["mesaj"] += " (majorant 1,1·Pn; Smax real ≤ Sn) — trafo la limită"
         else:
             s_iac_s, pn_s = s_iac, pn_tot
         # QG (pct. 3): Ip,min = max(Σ Iac; Ip invertoare) — protecțiile invertoarelor se calculează întâi (doar Ip)
@@ -2946,9 +3347,9 @@ def _schema_cef(inp, j):
             # r8 (P1 selectivitate): QG și Q JT al trafo în serie pe C0 — reglajele cresc spre amonte (Ir Q JT ≥ Ir QG);
             # Q JT se poate ridica până la 1,1·In_T (DECIZIE) dacă Σ Iac ≤ In_T, altfel V41 AVERTISMENT „inversat”
             n_par = 1 if sectii_pt else n_t
-            _selectivitate_qg_qjt(j, qg, q_pt, rez["PT"], t, s_iac_s, n_par, f"{oqg} / QJT{suf}")
+            _selectivitate_qg_qjt(j, qg, q_pt, rez["PT"], t, s_iac_s, n_par, f"{oqg} / QJT{'' if tgd else suf}")
             sum_qjt = n_par * pr.ip(q_pt)
-            if gt(s_iac_s, sum_qjt):
+            if gt(s_iac if tgd else s_iac_s, sum_qjt):
                 emite(j, "V60", AVERTISMENT, "schema" if not suf else oqg, "sigma", x=round(s_iac_s, 1), y=sum_qjt, n=n_par)
             if n_par == 1 and lt(pr.ip(q_pt), norme.RAPORT_SELECTIVITATE_SUPRASARCINA * pr.ip(qg)) and q_pt.get("decl") == "EL":
                 t_qjt = round(max((qg.get("tsd_s") or 0.0) + 0.1, q_pt.get("tsd_s") or 0.0), 2)
@@ -3054,6 +3455,8 @@ def _schema_cef(inp, j):
             rez["contor"] = "contor de decontare pe MT (TT + TC MT în celula de măsură), furnizat și sigilat de OD"
             if not pt_nou and not suf:
                 j.presupune("măsura de decontare în celula de măsură MT a PT-ului existent (nedesenată) — conform ATR")
+        elif tgd:
+            pass            # r11: măsura de decontare e una singură, la punctul de racord comun (după bucla TGD-CF)
         else:
             p = prima_din_serie(norme.TC_PRIMAR_A, max(s_iac_s, In / norme.TC_FACTOR_EXTINDERE))
             if p is None:
@@ -3082,6 +3485,55 @@ def _schema_cef(inp, j):
             if len(pcs_l) > 1:
                 rez["PCS_lista"] = pcs_l
         lim_inj = _limitare_injectie(inp, j, rez, pn_tot, len(unitati), retea)
+        qg = None
+    elif tgd:
+        grupe = [[] for _ in range(n_tgd)]
+        fara = [u for u in unitati if (u.get("grup") or {}).get("tgd") is None and not u["pcs"]]
+        pcs_u = [u for u in unitati if u["pcs"]]
+        for u in unitati:
+            x = (u.get("grup") or {}).get("tgd")
+            if x is not None and not u["pcs"]:
+                grupe[int(x) - 1].append(u)
+        if fara:
+            # repartiția nedeclarată: tranșe consecutive de putere cât mai egală (ca la secțiile PT), declarat
+            for k, g_ in enumerate(_repartitie_sectii(fara, n_tgd, Jurnal())):
+                grupe[k].extend(g_)
+            j.presupune(f"invertoarele fără `tgd` repartizate pe cele {n_tgd} TGD-CF în tranșe de putere egală — declarați "
+                        f"invertoare[].tgd")
+        tb = (bess or {}).get("tgd") if isinstance(bess, dict) else None
+        for u in pcs_u:
+            grupe[(int(tb) - 1) if _numar(tb) and 1 <= tb <= n_tgd else 0].append(u)
+        rez["tgd_cf"] = []
+        for k, unit_s in enumerate(grupe, 1):
+            rz = {"tgd": k}
+            rez["tgd_cf"].append(rz)
+            if not unit_s:
+                emite(j, "V07", BLOCANT, f"TGD-CF{k}", "plecari", tablou=f"TGD-CF{k}")
+                j.verificari[-1]["remediere"] = f"invertoare pe TGD-CF{k} (invertoare[].tgd = {k}) sau n_tgd_cf mai mic"
+                continue
+            if sectiune(unit_s, str(k), ctx_pcc, rz) is None:
+                return rez
+        j.pas(f"{n_tgd} tablouri TGD-CF, fiecare cu QGk → C0.k spre bara de racord comună; Σ Iac = {fmt_ro(s_iac)} A")
+        if L0 is not None and inp.get("L_racord_m") is not None:
+            j.presupune(f"aceeași lungime C0 ({fmt_ro(float(L0), 0)} m) pentru toate cele {n_tgd} TGD-CF")
+        rez["invertoare"] = [x for rz in rez["tgd_cf"] for x in rz.get("invertoare") or []]
+        pcs_l = [x for rz in rez["tgd_cf"] for x in (rz.get("PCS_lista") or ([rz["PCS"]] if rz.get("PCS") else []))]
+        if pcs_l:
+            rez["PCS"] = pcs_l[0]
+            if len(pcs_l) > 1:
+                rez["PCS_lista"] = pcs_l
+        lim_inj = _limitare_injectie(inp, j, rez, pn_tot, len(unitati), retea)
+        q_max = max(pr.ip(rz["QG"]) for rz in rez["tgd_cf"] if rz.get("QG"))
+        _verifica_iac_q_existent(inp, j, s_iac, lim_inj, q_max)
+        if masura != "MT" and not mono:
+            p = prima_din_serie(norme.TC_PRIMAR_A, s_iac)
+            if p is None:
+                emite(j, "V55", BLOCANT, "TC", "B", Ib=s_iac, p=max(norme.TC_PRIMAR_A))
+            else:
+                rez["TC"] = f"3 {X} {p}/5{NB}A, cl. 0,5S"
+                rez["TC_primar_A"] = p
+        if racord and racord.get("In_Q_max_A") is not None and gt(s_iac, racord["In_Q_max_A"]):
+            emite(j, "V66", BLOCANT, "schema", "bmpt", x=s_iac, y=racord["In_Q_max_A"])
         qg = None
     else:
         qg = sectiune(unitati, "", ctx_pcc, rez)
@@ -3128,10 +3580,67 @@ def _schema_cef(inp, j):
             w = max((c for c in cc if c.get("Voc_Tmin_V")), key=lambda c: c["Voc_Tmin_V"])
             rez["Uoc_Tmin_V"] = rez["Voc_Tmin_V"] = w["Voc_Tmin_V"]
             rez["Umax_inv_V"] = w.get("Umax_inv_V")
+    if not _cablu_cc(inp, j, rez):
+        return rez
     if not ok:
         return rez
     _nota_spl(rez, inp, "cef")
     return rez
+
+
+# r11 (panoul de confirmare `cablu_cc`): cablu solar H1Z2Z2-K (SR EN 50618), Iz monopolar în aer liber la 60 °C,
+# pozat pe structură (tabel A.3 EN 50618, DECIZIE: fără factori de grupare suplimentari — se declară în presupus)
+IZ_CABLU_SOLAR_A = {1.5: 30, 2.5: 41, 4: 55, 6: 70, 10: 98, 16: 132, 25: 176, 35: 218}
+RHO_CU_70 = 0.0225      # Ω·mm²/m la ~70 °C
+
+
+def _cablu_cc(inp, j, rez):
+    """Cablul c.c. impus (`cablu_cc`: S_fortat [mm²], L_m [m] dus, material Cu) pe circuitul string → invertor:
+    Iz ≥ 1,25·Isc·n_paralel (SR HD 60364-7-712) și ΔU c.c. ≤ 1 % la Umpp. Fără Isc din fișă → BLOCANT (nu se
+    desenează un cablu neverificat). Întoarce False dacă a blocat."""
+    c = inp.get("cablu_cc")
+    if c is None:
+        return True
+    if not isinstance(c, dict) or not _numar(c.get("S_fortat")):
+        emite(j, "V07", BLOCANT, "cablu c.c.", "param", camp="cablu_cc.S_fortat", x=repr(c)[:40],
+              conditie="secțiunea cablului solar (mm²)")
+        return False
+    S = float(c["S_fortat"])
+    if str(c.get("material") or "Cu").capitalize() != "Cu":
+        emite(j, "V96", BLOCANT, "cablu c.c.", ce="cablu c.c. din aluminiu", detaliu="motorul verifică doar cablu solar Cu "
+              "H1Z2Z2-K", remediere="cablu solar Cu H1Z2Z2-K sau verificare separată")
+        return False
+    st = inp.get("string") if isinstance(inp.get("string"), dict) else {}
+    md = fise.modul_din(inp) or {}
+    isc = st.get("Isc_A") or md.get("Isc_A")
+    npar = int(st.get("n_stringuri_paralel") or 1)
+    if not isc:
+        emite(j, "V07", BLOCANT, "cablu c.c.", "param", camp="string.Isc_A", x="—",
+              conditie="cablul c.c. impus nu se poate verifica fără Isc al modulului (fișă)")
+        j.verificari[-1]["remediere"] = "fișa modulului (Isc_A) sau string.Isc_A"
+        return False
+    ib = 1.25 * float(isc) * npar
+    iz = IZ_CABLU_SOLAR_A.get(S)
+    rez["cablu_cc"] = {"S_mm2": S, "L_m": c.get("L_m", c.get("L")), "Iz_A": iz, "Ib_A": ib, "tip": c.get("tip_cablu") or "H1Z2Z2-K"}
+    j.presupune("cablu c.c. H1Z2Z2-K monopolar pe structură, în aer, 60 °C, fără grupare (Iz tabel EN 50618)")
+    if iz is None:
+        emite(j, "V05", BLOCANT, "cablu c.c.", In=S, tip="cablu solar (mm²)", vecini="4 / 6 / 10 mm²")
+        return False
+    if lt(iz, ib):
+        j.emite("V02", BLOCANT, "cablu c.c.", f"cablu c.c. {fmt_ro(S)} mm²: Iz {fmt_ro(iz)} A < 1,25·Isc·n = {fmt_ro(ib)} A",
+                f"secțiune ≥ {next((k for k, v in sorted(IZ_CABLU_SOLAR_A.items()) if v >= ib), 35)} mm²")
+    L = c.get("L_m", c.get("L"))
+    nm, vmp = st.get("n_module"), md.get("Vmpp_V")
+    if _numar(L) and nm and vmp:
+        du = 2 * float(L) * (ib / 1.25) * RHO_CU_70 / S / (float(nm) * float(vmp)) * 100.0
+        rez["cablu_cc"]["dU_pct"] = du
+        j.pas(f"Cablu c.c. {fmt_ro(S)} mm², L {fmt_ro(L, 0)} m: Iz {fmt_ro(iz)} A ≥ {fmt_ro(ib)} A; ΔU c.c. = {fmt_ro(du)} %")
+        if gt(du, 1.0):
+            j.emite("V03", AVERTISMENT, "cablu c.c.", f"ΔU c.c. {fmt_ro(du, 2)} % > 1 % (pierderi pe partea c.c.)",
+                    "secțiune mai mare sau traseu mai scurt")
+    else:
+        j.presupune("ΔU pe cablul c.c. neverificată (lipsesc L, numărul de module pe string sau Vmpp)")
+    return True
 
 
 def _repartitie_sectii(unitati, n_t, j):
@@ -3646,15 +4155,18 @@ def _ddr_prosumator(u, tt, ra):
         return int(d["IdN_mA"]), str(d.get("tip") or tip).upper()
     fisa = g.get("IdN_min_mA")
     mare = gt(u["Pn_kW"], norme.DDR_INVERTOR_PRAG_KW)
+    mediu = gt(u["Pn_kW"], norme.DDR_INVERTOR_30MA_MAX_KW)       # r11: > 10 kW → 100 mA (curent de scurgere PV)
     if tt:
-        idn = norme.DDR_INVERTOR_IDN_MARE_MA if mare else 30
+        idn = norme.DDR_INVERTOR_IDN_MARE_MA if (mare or mediu) else 30
         idn = max(idn, int(fisa)) if fisa else idn
         while ra is not None and gt(ra * idn / 1000.0, 50.0) and idn > 30:
             idn = {300: 100, 100: 30}.get(idn, 30)
         return idn, tip
     if mare and not fisa:
         return None
-    return (int(fisa) if fisa else 30), tip
+    if fisa:
+        return int(fisa), tip
+    return (norme.DDR_INVERTOR_IDN_MARE_MA if mediu else 30), tip
 
 
 _EPS_MIC = ("ilumin", "lumin", "led", "central", "router", "internet", "alarm", "camer", "supraveghere", "poarta",
@@ -4221,6 +4733,129 @@ def _consumatori_plecari(inp, j):
     return out
 
 
+L_LEGATURA_ATS_M = 5.0       # DECIZIE r11: ATS montat în TG — legătura bara normală → ATS → bara vitală ≈ 5 m
+
+
+def _schema_tg_normal_vital(inp, j):
+    """r11 (industrial j30 / j08 / j57): TG cu DOUĂ bare — bara NORMALĂ alimentată doar din rețea (C1 → Q1), cu
+    consumatorii nevitali, și bara VITALĂ alimentată prin ATS: poziția I din bara normală (QV), poziția II din GE (QG,
+    C2). Consumatorii se distribuie automat după `vital` / `siguranta` / `pe_ge` (nedeclarat = normal dacă lista
+    declară vitalii). Bara normală + legătura spre ATS se calculează ca un tablou (cascada „bara vitală” = plecare cu
+    copiii vitali); GE (In_G, QG, C2, ATS, V86 pe sarcina vitală) ca la schema GE + ATS, doar pe consumatorii vitali."""
+    rez = {"mod": "tg_normal_vital"}
+    cons = inp.get("consumatori")
+    if not isinstance(cons, list) or not all(isinstance(c, dict) for c in cons) or not cons:
+        emite(j, "V07", BLOCANT, "schema", "param", camp="consumatori", x=repr(cons)[:60],
+              conditie="bara normală + bara vitală cer lista consumatorilor (nume, P_kW, vital true/false)")
+        return rez
+    if _bool(inp.get("fara_retea")):
+        _contradictie(j, BLOCANT, "schema", "bară normală (doar rețea) declarată la un GE fără rețea",
+                      "fără bara normală (GE izolat: fara_retea) sau cu rețea (bara_vitala)")
+        return rez
+    if inp.get("Sn_GE_kVA") is None:
+        emite(j, "V07", BLOCANT, "schema", "param", camp="Sn_GE_kVA", x="—", conditie="lipsește puterea GE (kVA)")
+        return rez
+    if not any(c.get("vital") is not None or c.get("pe_ge") is not None or c.get("normal") is not None
+               or e_consumator_siguranta(c) for c in cons):
+        emite(j, "V07", BLOCANT, "schema", "param", camp="consumatori[].vital", x="—",
+              conditie="nu e declarat care consumatori sunt pe bara vitală")
+        j.verificari[-1]["remediere"] = "vital: true pe consumatorii alimentați și din GE, vital: false pe cei doar din rețea"
+        j.verificari[-1]["intrebare"] = True
+        return rez
+    normali = [c for c in cons if _doar_retea(c, cons)]
+    vitali = [c for c in cons if c not in normali]
+    if not vitali or not normali:
+        emite(j, "V96", BLOCANT, "schema", ce="TG cu bară normală + bară vitală, cu " + (
+              "bara vitală goală" if not vitali else "bara normală goală"),
+              detaliu="o bară fără consumatori nu se desenează",
+              remediere="consumatori pe ambele bare (vital true / false), sau schema GE + ATS fără bara_vitala")
+        return rez
+    # ---- bara normală (+ legătura QV spre ATS) = tablou alimentat din rețea
+    sr = inp.get("sursa_retea")
+    t = {"tip_schema": "tablou", "schema_pamant": inp.get("schema_pamant"), "retea": "tri",
+         "titlu_tablou": inp.get("titlu_tablou"), "_bara_vitala_ge": True}
+    if sr == "pt" or inp.get("origine") == "pt_propriu":
+        t.update(origine="pt_propriu", pt_Sn_kVA=inp.get("pt_Sn_kVA"))
+        for k in ("n_trafo", "cupla", "bara", "SkQ_MVA", "trafo_izolatie") + CHEI_UK:
+            if inp.get(k) is not None:
+                t[k] = inp[k]
+    elif sr == "tgd":
+        t["origine"] = "tg_existent"
+        if inp.get("Ik3_sursa_kA") is not None:
+            t["Ik3_sursa_kA"] = inp["Ik3_sursa_kA"]
+    else:
+        t["origine"] = "bmpt"
+        if sr is None:
+            j.presupune("rețeaua normală: BMPT (sursa rețelei nedeclarată) — declarați sursa_retea „pt” / „tgd” / „bmpt”")
+    for k in ("Zb_OD_ohm", "Ik3_OD_kA", "RA_ohm", "cablu", "ks"):
+        if inp.get(k) is not None:
+            t[k] = inp[k]
+    L1 = inp.get("L_C1_m", inp.get("L_alimentare_m"))
+    if L1 is not None:
+        t["L_alimentare_m"] = L1
+    pl_n = _consumatori_plecari({"consumatori": normali}, j)
+    pl_v = _consumatori_plecari({"consumatori": vitali}, j)
+    t["plecari"] = pl_n + [{"nume": "Bara vitală (ATS)", "receptor": "tablou", "L_m": L_LEGATURA_ATS_M,
+                            "cablu": {"material": "Cu", "metoda": "C"}, "copii": pl_v, "_bara_vitala": True}]
+    j.presupune(f"ATS în TG: legătura bara normală → QV → ATS → bara vitală ≈ {fmt_ro(L_LEGATURA_ATS_M, 0)} m Cu; "
+                "plecările vitale dimensionate în regim rețea, deconectarea în regim GE prin blocul diferențial de pe QG")
+    for c in t["plecari"][-1]["copii"]:
+        c.pop("_bara_vitala", None)
+    rt = schema_tablou(t, j)
+    rez.update(rt)
+    rez["tablou_intrare"] = t
+    try:
+        p_n = sum(_n_rezerva(c)[0] * float(c["P_kW"]) for c in normali)
+        p_v = sum((_n_rezerva(c)[0] - _n_rezerva(c)[1]) * float(c["P_kW"]) for c in vitali)
+    except (KeyError, TypeError, ValueError):
+        emite(j, "V07", BLOCANT, "schema", "param", camp="consumatori[].P_kW", x="—", conditie="fiecare consumator are P_kW")
+        return rez
+    rez["P_retea_normali_kW"] = p_n
+    rez["P_vitali_kW"] = p_v
+    rez["consumatori_retea"] = [{"nume": c.get("nume") or "Consumator", "P_kW": float(c["P_kW"]),
+                                 "n": _n_rezerva(c)[0]} for c in normali]
+    rez["consumatori_vitali"] = [c.get("nume") for c in vitali]
+    j.pas("Bara normală (doar rețea): " + ", ".join(f"{c.get('nume')} {fmt_ro(c['P_kW'])} kW" for c in normali)
+          + f"; bara vitală (rețea + GE prin ATS): " + ", ".join(f"{c.get('nume')} {fmt_ro(c['P_kW'])} kW" for c in vitali))
+    # ---- GE pe sarcina vitală (calculul GE + ATS cu consumatorii vitali; QR/C1/C3 ai acelui calcul nu se folosesc)
+    g = {k: v for k, v in inp.items() if k not in ("bara_vitala", "consumatori", "P_sarcina_kW", "plecari")}
+    g.update(consumatori=[dict(c) for c in vitali], sursa_retea=sr or "bmpt")
+    jg = Jurnal()
+    rg = schema_ge(g, jg)
+    pastrate = ("Q_G", "C2", "In_G_A", "Ik3_GE_kA", "Sn_GE_minim_kVA", "Ik1_regim_GE_A", "neutru_GE", "siguranta_tot")
+    rez.update({k: rg[k] for k in pastrate if k in rg})
+    for v in jg.verificari:
+        ob = str(v.get("obiect") or "")
+        if (v["cod"] in ("V86", "V85", "V87", "V97") or ob.startswith(("Q_G", "QG", "C2"))) and not (
+                v["cod"] == "V86" and v["nivel"] != BLOCANT):
+            j.verificari.append(v)
+    for x in jg.presupus:
+        if "GE" in x or "x\"d" in x or "C2" in x:
+            j.presupune(x)
+    for x in jg.pasi:
+        if "GE" in x or "Q_G" in x or "QG" in x:
+            j.pas(x)
+    # ATS: In ≥ max(QV, QG)
+    fv = next((z for z in rt.get("plecari") or [] if z.get("nume") == "Bara vitală (ATS)" and int(z.get("nivel") or 0) == 0),
+              None)
+    qv = (fv or {}).get("protectie") or {}
+    qg = rez.get("Q_G") or {}
+    if qv.get("In_A") and qg.get("In_A"):
+        in_ats = max(qv["In_A"], qg["In_A"])
+        in_ats = prima_din_serie(sorted(set(pr.SERII["MCCB"]) | set(pr.SERII["ACB"])), in_ats) or in_ats
+        manual = str(inp.get("comutare") or "").strip().lower() in ("manual", "manuala", "inversor", "i-0-ii")
+        rez["ATS"] = {"poli": inp.get("ATS_poli", 4), "In_A": in_ats, "categorie": "AC-23B" if manual else "AC-33B",
+                      "interblocaj": "mecanic (poziția 0 între I și II)" if manual else "mecanic + electric",
+                      "intrari": {"I": "bara normală (QV)", "II": "GE (QG, C2)"}, "iesire": "bara vitală"}
+        if manual:
+            rez["ATS"]["comutare"] = "manual"
+        j.pas(f"ATS 4P In ≥ max(QV {qv['In_A']} A; QG {qg['In_A']} A) → {in_ats} A; I = bara normală, II = GE, ieșire = "
+              f"bara vitală")
+        if isinstance(rez["ATS"]["poli"], (int, float)) and rez["ATS"]["poli"] < 4:
+            emite(j, "V87", BLOCANT, "schema", detaliu=f"cu {rez['ATS']['poli']} poli în TN-S (sunt necesari 4 poli)")
+    return rez
+
+
 def _schema_ge_izolat(inp, j):
     """r10 (industrial i43): GE care alimentează singur tabloul (site izolat, `fara_retea: true`) — fără ramură de rețea,
     fără ATS: GE → Q_G (Ir ≤ In_G, bloc diferențial 300 mA S) → C1 → bara TG → plecările reale (dimensionate în regim GE).
@@ -4229,9 +4864,10 @@ def _schema_ge_izolat(inp, j):
     U = SQRT3 * norme.U_N_V
     inventat = [k for k in ("sursa_retea", "pt_Sn_kVA", "In_Q_retea_A") if inp.get(k) is not None]
     if inventat:
-        emite(j, "V12", AVERTISMENT, "schema", "contradictie",
-              detaliu=f"GE fără rețea (site izolat), dar este declarată și o ramură de rețea ({', '.join(inventat)}) — "
-                      f"ramura de rețea NU se desenează")
+        # r11: combinație pe care motorul nu o desenează fidel → BLOCANT (desenul rămâne GE izolat, exportul e blocat)
+        emite(j, "V12", BLOCANT, "schema", "contradictie",
+              detaliu=f"nesuportat: GE fără rețea (site izolat), dar este declarată și o ramură de rețea "
+                      f"({', '.join(inventat)}) — ramura de rețea NU se desenează")
         j.verificari[-1]["remediere"] = "confirmați: GE izolat (fara_retea) sau GE de rezervă cu ATS (sursa_retea)"
     if inp.get("retea") == "mono":
         emite(j, "V96", BLOCANT, "schema", ce="GE monofazat izolat", detaliu="motorul calculează GE izolat trifazat",
@@ -4379,6 +5015,8 @@ def schema_ge(inp, j):
         emite(j, "V12", BLOCANT, "schema", "camp", camp="sursa_rezerva", valoare=inp.get("sursa_rezerva"))
         j.verificari[-1]["remediere"] = "sursa de rezervă „ge” (grup electrogen) sau „trafo” (ATS între două transformatoare)"
         return rez
+    if _bool(inp.get("bara_vitala")):
+        return _schema_tg_normal_vital(inp, j)
     if _bool(inp.get("fara_retea")):
         return _schema_ge_izolat(inp, j)
     p_normali = _separa_consumatori_retea(inp, j, rez)
@@ -5007,6 +5645,21 @@ def _trafo_neacoperit(inp, j, tip):
     return True
 
 
+def _chei_nesuportate(inp, j, tip):
+    """r11: cheile de intrare pe care schema `tip` nu le folosește → V96 BLOCANT „nesuportat: …” cu remediere (nu se
+    ignoră în tăcere); calculul continuă, exportul e blocat. Lista cheilor: `engine/calc/chei.py`."""
+    from .chei import chei_nefolosite
+    nf = chei_nefolosite(inp, tip)
+    if not nf:
+        return
+    txt = ", ".join(f"„{c + '.' if c else ''}{k}”" for c, k in nf[:8]) + (f" (+{len(nf) - 8})" if len(nf) > 8 else "")
+    emite(j, "V96", BLOCANT, "schema", ce=f"date pe care schema „{tip}” nu le folosește: {txt}",
+          detaliu="s-ar pierde în tăcere — planșa nu le-ar reprezenta",
+          remediere="eliminați datele respective sau alegeți tipul de schemă care le reprezintă (ex. UPS / bară vitală / "
+                    "PT cu 2 trafo — vezi cheile acceptate în engine/calc/chei.py)")
+    j.verificari[-1]["chei"] = [f"{c + '.' if c else ''}{k}" for c, k in nf]
+
+
 def _ruleaza(inp):
     """Validarea și calculul schemei (fără nota de ipoteze); întoarce (jurnal, rezultat)."""
     j = Jurnal()
@@ -5029,6 +5682,7 @@ def _ruleaza(inp):
     elif _trafo_neacoperit(inp, j, tip):
         rez = {}
     else:
+        _chei_nesuportate(inp, j, tip)
         try:
             rez = f(inp, j)
         except (KeyError, TypeError, ValueError, ZeroDivisionError, AttributeError, IndexError) as e:

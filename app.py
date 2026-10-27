@@ -200,6 +200,36 @@ def _genereaza_chat(intrare, cart, pastreaza):
     return {"model": m, "validare": validare.valideaza(m)}
 
 
+def _verifica_declarate(intrare):
+    """r11 (panoul de confirmare): generare de probă, fără desen — ce valori declarate ar schimba motorul.
+    Deocamdată: Q-ul branșamentului la locuință (alimentare.In_Q_bransament_A față de Q-ul ales)."""
+    import copy
+    out = {"schimbari": []}
+    try:
+        _, r = constructor.genereaza(copy.deepcopy(intrare))
+    except Exception as e:                                   # previzualizarea nu trebuie să blocheze panoul
+        out["eroare"] = type(e).__name__
+        return out
+    rz = (r or {}).get("rezultat") or {}
+    out["blocante"] = sum(1 for v in (r or {}).get("verificari") or [] if v.get("nivel") == "BLOCANT")
+    if intrare.get("tip_schema") == "locuinta":
+        q_d = (intrare.get("alimentare") or {}).get("In_Q_bransament_A")
+        q_c = (((rz.get("alimentare") or {}).get("Q")) or {}).get("In_A")
+        if q_d is not None and q_c is not None and abs(float(q_c) - float(q_d)) > 1e-6:
+            ib = (rz.get("alimentare") or {}).get("Ib_A")
+            out["schimbari"].append({"camp": "alimentare.In_Q_bransament_A", "declarat": q_d, "calculat": q_c,
+                                     "motiv": f"Ib de calcul {ib:.1f} A".replace(".", ",") if isinstance(ib, (int, float)) else ""})
+        # r11: motorul păstrează Q-ul declarat și BLOCHEAZĂ (V46) dacă e prea mic — propunerea lui (cel mai mare calibru
+        # propus) se arată ca schimbare sugerată, nu aplicată
+        prop = [v for v in (r or {}).get("verificari") or [] if v.get("nivel") == "BLOCANT"
+                and (v.get("propunere") or {}).get("camp") == "alimentare.In_Q_bransament_A"]
+        if q_d is not None and prop and not out["schimbari"]:
+            v = max(prop, key=lambda x: x["propunere"]["valoare"])
+            out["schimbari"].append({"camp": "alimentare.In_Q_bransament_A", "declarat": q_d,
+                                     "calculat": v["propunere"]["valoare"], "motiv": v.get("mesaj", "")})
+    return out
+
+
 def _fara_uid(o):
     """scoate cheile interne ale interfeței (_uid etc.) înainte de export"""
     if isinstance(o, dict): return {k: _fara_uid(v) for k, v in o.items() if not k.startswith("_")}
@@ -415,6 +445,11 @@ class H(BaseHTTPRequestHandler):
                     return self._send(400, json.dumps({"eroare": "Lipsește intrarea confirmată (tip_schema)."}, ensure_ascii=False))
                 cart = model.get("cartus_chat") if isinstance(model.get("cartus_chat"), dict) else {}
                 return self._send(200, json.dumps(_genereaza_chat(intr, cart, model.get("model")), ensure_ascii=False, default=str))
+            if p == "/api/chat/verifica":    # r11: previzualizarea valorilor declarate pe care motorul le-ar schimba (fără desen)
+                intr = model.get("intrare")
+                if not isinstance(intr, dict) or not intr.get("tip_schema"):
+                    return self._send(400, json.dumps({"eroare": "Lipsește intrarea (tip_schema)."}, ensure_ascii=False))
+                return self._send(200, json.dumps(_verifica_declarate(intr), ensure_ascii=False, default=str))
         except (TypeError, AttributeError, KeyError, ValueError, IndexError) as e:
             import traceback; traceback.print_exc()          # formă neașteptată a datelor primite → 400, fără text Python
             return self._send(400, json.dumps({"eroare": "Datele trimise au un câmp de tip neașteptat (ex. text în loc de obiect / listă). "

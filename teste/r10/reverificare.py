@@ -284,7 +284,7 @@ IND = {
     43: [GE, eq("fara_retea", True), eq("Sn_GE_kVA", 500)],
     45: [T, ("plecarea VE: DDR tip B", lambda c: any("B" in (_g(p, "ddr.tip"), _g(p, "DDR.tip")) for p in pl(c))),
          ("45 m pe plecare", lambda c: any(p.get("L_m") == 45 for p in pl(c))), NPL_P(22, 1)],
-    47: [eq("sursa_rezerva", "trafo"), ("fără GE inventat", lambda c: not I(c).get("Sn_GE_kVA")), eq("n_trafo", 2)],
+    47: [("ATS între trafo = aar (r11: sursa_rezerva → aar)", lambda c: I(c).get("aar") is True or I(c).get("sursa_rezerva") == "trafo"), ("fără GE inventat", lambda c: not I(c).get("Sn_GE_kVA")), eq("n_trafo", 2)],
     61: [SIG_NUME("incendiu"), NPL_P(45, 1)],
     65: [eq("uk_pct", 4)],
     67: [GE, NU_REFUZ, ("cuptoarele vital: false", lambda c: all(x.get("vital") is False for x in gaseste(I(c).get("consumatori") or [], "cupto"))

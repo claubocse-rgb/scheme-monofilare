@@ -173,7 +173,7 @@ IND6 = {
     24: [_tip("pt"), _eq("Sn_kVA", 630), _eq("n_trafo", 2), _np(2)],
     25: [_tip("pt"), _eq("Sn_kVA", 630), _eq("trafo_izolatie", "uscat"), _eq("masura", "MT"), _eq("compensare_kvar", 150),
          _eq("celula_trafo", "intreruptor")],
-    26: [_tip("pt"), _eq("Sn_kVA", 160), _eq("masura_ceruta", "directa")],
+    26: [_tip("pt"), _eq("Sn_kVA", 160), ("măsura directă (masura_ceruta / metadatele _masura_ceruta — r11: cheia nu e a PT-ului)", lambda r: "directa" in (r["in"].get("masura_ceruta"), r["in"].get("_masura_ceruta")))],
     27: [_tip("pt"), _eq("Sn_kVA", 400), _eq("SkQ_MVA", 350)],
     28: [_tip("pt"), _eq("Sn_kVA", 1250), _eq("celula_trafo", "sigurante")],
     29: [_tip("pt"), _eq("Sn_kVA", 630), _eq("U_MT_kV", 6)],
