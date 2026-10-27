@@ -541,6 +541,7 @@ details>summary{min-height:24px}
       <div class="menu" id="exp-menu" role="menu" hidden>
         <button role="menuitem" data-exp="pachet"><span>Pachet de predare (.zip)<small>DXF + PDF + memoriu + listă + deviz + proiect, într-un singur fișier</small></span></button>
         <hr>
+        <button role="menuitem" data-exp="planse"><span>Pachet de planșe A3 (.zip)<small>CEF: IE 07.x c.c. pe invertor, IE 08 bloc, IE 09 c.a., IE 09.1 releu, IE 11 smart meter — SVG + DXF + PDF</small></span></button>
         <button role="menuitem" data-exp="dxf"><span>DXF<small>AutoCAD 2018+ · blocuri cu atribute, layere</small></span><kbd>Ctrl E</kbd></button>
         <button role="menuitem" data-exp="pdf"><span>PDF<small>planșa la scară, pentru tipar sau depunere</small></span></button>
         <button role="menuitem" data-exp="svg"><span>SVG<small>vectorial, pentru documente sau web</small></span></button>
@@ -1430,6 +1431,14 @@ function tabCalc(root) {
         cf(iv, 'L_m', 'Cablu c.a. [m]', { num: true, ph: '30', id: `c-inv${i}l` }),
         el('div', { class: 'fld', style: 'justify-content:flex-end' }, el('button', { class: 'btn ghost sm danger', type: 'button', onclick: () => { pushHistory(); c.invertoare.splice(i, 1); scheduleRegen(0); render(); } }, 'Șterge'))));
       li.append(echipUI(iv, 'invertor', `Invertor ${c.invertoare.length > 1 ? 'grup ' + (i + 1) : ''}`.trim(), `c-inv${i}e`));
+      // r12: tipul protecției invertorului (separator cu siguranțe gG / MPR, MCB curba C, MCCB), calibrul și tabloul intermediar
+      const pq = Object.assign({}, iv.protectie || {});
+      const setP = () => { const cl = Object.fromEntries(Object.entries(pq).filter(([, v]) => v != null && v !== '')); if (Object.keys(cl).length) iv.protectie = cl; else delete iv.protectie; scheduleRegen(); };
+      const nTI = (c.tablouri_intermediare || []).length;
+      li.append(el('div', { class: 'g3e' }, cf(iv, 'prot_tip', 'Protecția c.a. a invertorului', { select: [['', 'automat'], ['gG', 'separator cu siguranțe gG / MPR'], ['MCB', 'MCB curba C'], ['MCCB', 'MCCB']], id: `c-inv${i}pt` }),
+        field(pq, 'In_A', 'Calibru impus [A]', { num: true, always: true, ph: 'automat', id: `c-inv${i}pin`, onChange: setP }),
+        nTI ? cf(iv, 'tablou', 'Tabloul intermediar', { select: [['', 'automat'], ['0', 'direct pe TEG'], ...Array.from({ length: nTI }, (_, k) => [String(k + 1), (c.tablouri_intermediare[k].nume || 'TE-' + (k + 1))])], numVal: true, id: `c-inv${i}ti` })
+          : field(pq, 'Ir_A', 'Ir reglat [A sau ·In]', { num: true, always: true, ph: 'automat', id: `c-inv${i}pir`, onChange: setP })));
       // stringurile proprii ale grupului (dacă diferă de stringul comun de mai jos)
       const tmp = Object.assign({}, iv.string || {});
       const setS = () => { const cl = Object.fromEntries(Object.entries(tmp).filter(([, v]) => v != null && v !== '')); if (Object.keys(cl).length) iv.string = cl; else delete iv.string; scheduleRegen(); };
@@ -1440,6 +1449,7 @@ function tabCalc(root) {
     });
     li.append(el('button', { class: 'btn-add', type: 'button', html: ICON.plus + 'Grup de invertoare', onclick: () => { pushHistory(); c.invertoare.push({ n: 1, Pn_kW: 50 }); render(); scheduleRegen(0); } }));
     g.append(li);
+    g.append(cefR12UI(c));
     const hasB = !!c.bess;
     g.append(field({ v: hasB }, 'v', 'Are stocare BESS', { always: true, bool: true, id: 'c-hasb', onChange: () => { pushHistory(); if (c.bess) delete c.bess; else c.bess = { P_kW: 50, kWh: 100 }; render(); scheduleRegen(0); } }));
     if (hasB) { g.append(el('div', { class: 'g4' }, cf(c.bess, 'cuplaj', 'Cuplaj', { select: [['', 'automat (c.c. la invertor hibrid, altfel c.a.)'], ['cc', 'c.c. — port invertor hibrid (fără PCS)'], ['ca', 'c.a. — PCS propriu']], id: 'c-bc' }),
@@ -1466,6 +1476,12 @@ function tabCalc(root) {
     g.append(g3e(cf(c, 'P_aprobata_kW', 'P aprobată / evacuată ATR [kW]', { num: true, ph: 'nedeclarată', id: 'c-ppa' }),
       el('div'), el('div')));
     if (typeof c.PI_externa === 'string') c.PI_externa = c.PI_externa === 'true';
+    // r12: contorul de producție separat (BMPM / BMPT „energie produsă”) și smart meter-ul cu RS485 la invertor
+    const mon = Object.assign({}, c.monitorizare || {});
+    g.append(g3e(cf(c, 'contor_productie', 'Contor de producție separat (cerut de OD)', { bool: true, deleteFalse: true, id: 'c-pcp' }),
+      field({ v: !!mon.smart_meter }, 'v', 'Smart meter (RS485 la invertor)', { bool: true, always: true, id: 'c-psm', onChange: () => {
+        const m2 = Object.assign({}, c.monitorizare || {}); if (m2.smart_meter) delete m2.smart_meter; else { m2.smart_meter = {}; m2.rs485 = {}; }
+        if (Object.keys(m2).length) c.monitorizare = m2; else delete c.monitorizare; scheduleRegen(0); } }), el('div')));
     if (c.racord === 'pt') g.append(g2(cf(c, 'pt_Sn_kVA', 'PT existent [kVA]', { select: [['', '—'], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], numVal: true, id: 'c-ppt' }), el('div')));
     g.append(pvComunUI(c, 'p'));
     if (multi) {
@@ -2107,6 +2123,7 @@ function tabProiect(root) {
   firm.append(el('div', { style: 'height:8px' }));
   firm.append(g2(field(c, 'sef_proiect', 'Șef proiect', { always: true }), field(c, 'proiectat', 'Proiectat', { always: true })));
   firm.append(g2(field(c, 'desenat', 'Desenat', { always: true }), field(c, 'verificat', 'Verificat', { always: true })));
+  firm.append(g2(field(c, 'aprobat', 'Aprobat', { always: true }), el('div')));
   firm.append(g3e(field(c, 'atestat_anre', 'Nr. atestat ANRE', { always: true }), field(c, 'atestat_tip', 'Tip atestat', { always: true, select: [['', '—'], ['Bp', 'Bp'], ['Ap', 'Ap'], ['Bp + Ap', 'Bp + Ap']] }), el('div')));
   const din = () => { const p = {}; PROFILE_KEYS.forEach(k => p[k] = c[k] || ''); return p; };
   const prof = el('div', { class: 'prof-list', role: 'list', 'aria-label': 'Profile de firmă' });
@@ -2142,7 +2159,7 @@ function tabProiect(root) {
   firm.insertBefore(profBox, firm.children[1] || null);
   root.append(firm);
 }
-const PROFILE_KEYS = ['proiectant', 'adresa_proiectant', 'reg', 'sef_proiect', 'proiectat', 'desenat', 'verificat', 'atestat_anre', 'atestat_tip'];
+const PROFILE_KEYS = ['proiectant', 'adresa_proiectant', 'reg', 'sef_proiect', 'proiectat', 'desenat', 'verificat', 'aprobat', 'atestat_anre', 'atestat_tip'];
 function applyProfile(m = MODEL) { const p = profilActiv(); if (!p) return false; PROFILE_KEYS.forEach(k => { if (p[k]) m.cartus[k] = p[k]; }); return true; }
 
 /* =========================================================================== deviz estimativ */
@@ -3038,6 +3055,49 @@ function confTabele() {
       cols: [{ k: 'nume', label: 'Circuit', cls: 'w-n' }, { k: 'P_kW', label: 'P [kW]', num: true, ph: 'uzual', cls: 'w-s' }] }));
   }
   return out;
+}
+/** r12 (proiecte reale): CEF — întreruptorul de interfață QG (tip, electronic, motorizat, Ir / Isd reglate, Icu), tablourile
+ *  intermediare (TE secundare → TEG comun), protecția de interfață (releu, UPS, ordin), monitorizarea (smart meter, SmartLogger,
+ *  RS485), DG cu întreruptor / punct de conexiune și pachetul de planșe A3 */
+function cefR12UI(c) {
+  const box = el('div', { class: 'stack' });
+  const sub = (k) => { const o = Object.assign({}, c[k] || {}); const set = () => { const cl = Object.fromEntries(Object.entries(o).filter(([, v]) => v != null && v !== '' && v !== false)); if (Object.keys(cl).length) c[k] = cl; else delete c[k]; scheduleRegen(); }; return [o, set]; };
+  const [qg, setQ] = sub('QG');
+  box.append(el('div', { class: 'label-line' }, 'Întreruptorul de interfață QG'));
+  box.append(el('div', { class: 'g4' }, field(qg, 'tip', 'Tip', { always: true, select: [['', 'automat'], ['MCCB', 'MCCB'], ['ACB', 'ACB']], id: 'c-qgt', onChange: setQ }),
+    field(qg, 'Ir_reglat', 'Ir reglat [·In sau A]', { num: true, always: true, ph: 'automat', id: 'c-qgir', onChange: setQ }),
+    field(qg, 'Isd_reglat', 'Isd reglat [·Ir sau A]', { num: true, always: true, ph: 'după Ik1min', id: 'c-qgisd', onChange: setQ }),
+    field(qg, 'Icu_kA', 'Icu [kA]', { num: true, always: true, ph: 'automat', id: 'c-qgicu', onChange: setQ })));
+  box.append(el('div', { class: 'g3e' }, field(qg, 'electronic', 'Declanșator electronic', { bool: true, always: true, id: 'c-qgel', onChange: setQ }),
+    field(qg, 'motorizat', 'Motorizat (comandat de PI)', { bool: true, always: true, id: 'c-qgmot', onChange: setQ }),
+    cf(c, 'racord_Ir_A', 'Ir reglat Q racord [·In sau A]', { num: true, ph: 'In', id: 'c-rir' })));
+  // tablourile intermediare
+  const ti = c.tablouri_intermediare || [];
+  box.append(el('div', { class: 'label-line' }, 'Tablouri intermediare (TE secundare → TEG comun)'));
+  ti.forEach((t, k) => {
+    box.append(el('div', { class: 'g4' }, cf(t, 'nume', 'Nume', { ph: 'TE-' + (k + 1), id: `c-ti${k}n` }), cf(t, 'L_m', 'Cablu spre TEG [m]', { num: true, ph: '30', id: `c-ti${k}l` }),
+      cf(t, 'prot_tip', 'Protecție plecare', { select: [['', 'automat'], ['gG', 'separator cu siguranțe gG'], ['MCCB', 'MCCB'], ['ACB', 'ACB']], id: `c-ti${k}p` }),
+      el('div', { class: 'fld', style: 'flex-direction:row;gap:6px;align-items:flex-end' }, cf(t, 'In_A', 'In [A]', { num: true, ph: 'automat', id: `c-ti${k}i` }),
+        el('button', { class: 'btn ghost sm danger', type: 'button', onclick: () => { pushHistory(); ti.splice(k, 1); if (!ti.length) delete c.tablouri_intermediare; render(); scheduleRegen(0); } }, 'Șterge'))));
+  });
+  box.append(el('button', { class: 'btn-add', type: 'button', html: ICON.plus + 'Tablou intermediar', onclick: () => { pushHistory(); c.tablouri_intermediare = ti.concat([{ nume: 'TE-' + (ti.length + 1) }]); delete c.n_tgd_cf; render(); scheduleRegen(0); } }));
+  // protecția de interfață și monitorizarea
+  const [pi, setPI] = sub('protectie_interfata');
+  box.append(el('div', { class: 'label-line' }, 'Protecția de interfață și monitorizarea'));
+  box.append(el('div', { class: 'g3e' }, field(pi, 'releu', 'Releu PI (model)', { always: true, ph: 'conform ATR', id: 'c-pir', onChange: setPI }),
+    field(pi, 'ups_VA', 'UPS releu [VA]', { num: true, always: true, ph: 'fără', id: 'c-pups', onChange: setPI }),
+    field(pi, 'ordin', 'Ordinul ANRE (reglaje PI)', { always: true, select: [['', '208/2018 (implicit)'], ['208/2018', '208/2018'], ['228/2018', '228/2018']], id: 'c-pord', onChange: setPI })));
+  const mon = Object.assign({}, c.monitorizare || {});
+  const tog = (k, extra) => () => { const m2 = Object.assign({}, c.monitorizare || {}); if (m2[k]) delete m2[k]; else { m2[k] = {}; Object.assign(m2, extra || {}); } if (Object.keys(m2).length) c.monitorizare = m2; else delete c.monitorizare; render(); scheduleRegen(0); };
+  box.append(el('div', { class: 'g3e' }, field({ v: !!mon.smart_meter }, 'v', 'Smart meter la punctul de racord', { bool: true, always: true, id: 'c-msm', onChange: tog('smart_meter') }),
+    field({ v: !!mon.smartlogger }, 'v', 'SmartLogger + magistrală RS485', { bool: true, always: true, id: 'c-msl', onChange: tog('smartlogger', { rs485: {} }) }),
+    mon.smart_meter ? field(mon.smart_meter, 'TC_primar_A', 'TC smart meter [A]', { num: true, always: true, ph: 'după racord', id: 'c-mtc', onChange: () => { c.monitorizare = mon; scheduleRegen(); } }) : el('div')));
+  if (c.pt_Sn_kVA) box.append(el('div', { class: 'g3e' }, cf(c, 'dg_intreruptor', 'DG cu întreruptor + 50/51/51N + tor (ATR / E-Distribuție)', { bool: true, deleteFalse: true, id: 'c-dg' }),
+    cf(c, 'OD', 'Operatorul de distribuție', { select: [['', 'nedeclarat'], ['e-distributie', 'E-Distribuție'], ['delgaz', 'Delgaz Grid'], ['deer', 'DEER'], ['ppc', 'PPC / Distribuție Energie Oltenia']], id: 'c-od' }),
+    field({ v: !!c.punct_conexiune }, 'v', 'Punct de conexiune (2 celule de linie + AAR)', { bool: true, always: true, id: 'c-pc', onChange: () => { pushHistory(); if (c.punct_conexiune) delete c.punct_conexiune; else c.punct_conexiune = { celule_linie: 2, aar: true, servicii_proprii_kVA: 5 }; render(); scheduleRegen(0); } })));
+  box.append(cf(c, 'planse', 'Pachet de planșe A3 (IE 07.x c.c. pe invertor … IE 11) — implicit la CEF cu mai multe invertoare', { select: [['', 'automat'], ['true', 'da'], ['false', 'nu']], id: 'c-plan' }));
+  if (typeof c.planse === 'string') c.planse = c.planse === 'true';
+  return box;
 }
 /** r11: stringurile (c.c.) — compact: module pe string, stringuri în paralel, MPPT, Pmax modul; puterea rezultată ca indiciu */
 function confStringuri() {
