@@ -92,9 +92,9 @@ header{flex:none;display:flex;align-items:center;gap:var(--s2);height:52px;paddi
 .brand{display:flex;align-items:center;gap:9px;flex:none}
 .brand svg{width:26px;height:26px;flex:none}
 .brand h1{margin:0;font:600 var(--fs-lg)/1 var(--font-c);letter-spacing:.01em;white-space:nowrap}
-.proj{min-width:0;flex:1 1 0;display:flex;flex-direction:column;padding-left:var(--s3);margin-left:var(--s1);border-left:1px solid var(--rule);line-height:1.2}
-.proj span{font-size:var(--fs-sm);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:38vw}
-.proj small{font-size:var(--fs-xs);color:var(--ink-3)}
+.proj{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;padding-left:var(--s3);margin-left:var(--s1);border-left:1px solid var(--rule);line-height:1.2}
+.proj span{font-size:var(--fs-sm);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj small{font-size:var(--fs-xs);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 header .sp{flex:1}
 .hgroup{display:flex;align-items:center;gap:var(--s1)}
 .vsep{width:1px;height:22px;background:var(--rule);margin:0 var(--s1)}
@@ -165,7 +165,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .ghead p{margin:0}
 .desc{margin:-4px 0 var(--s2);font-size:var(--fs-sm);color:var(--ink-3)}
 .fld{display:flex;flex-direction:column;gap:3px;min-width:0}
-.fld>label{font-size:var(--fs-xs);font-weight:500;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fld>label{font-size:var(--fs-xs);font-weight:500;color:var(--ink-2);white-space:normal;overflow-wrap:anywhere;line-height:1.3}
 .fld input[type=text],.fld input[type=number],.fld select,.fld textarea,.inp{width:100%;min-width:0;height:30px;padding:0 9px;border:1px solid var(--rule-2);border-radius:var(--r-sm);background:var(--surface)}
 .fld textarea{height:auto;min-height:30px;padding:6px 9px;line-height:1.35;resize:vertical}
 .fld input:hover,.fld select:hover,.fld textarea:hover{border-color:var(--ink-3)}
@@ -174,9 +174,10 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .fld input::placeholder,.fld textarea::placeholder{color:var(--ink-3);opacity:1}
 .check{display:flex;align-items:center;gap:8px;min-height:30px;font-size:var(--fs-sm);cursor:pointer}
 .check input{width:16px;height:16px;margin:0;accent-color:var(--ink)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2) var(--s2);margin-bottom:var(--s2)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2) var(--s2);margin-bottom:var(--s2);align-items:end}
 .g3{display:grid;grid-template-columns:2fr 1fr 64px;gap:var(--s2);margin-bottom:var(--s2)}
-.g3e{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s2);margin-bottom:var(--s2)}
+.g3e{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s2);margin-bottom:var(--s2);align-items:end}
+.g2>div:empty,.g3e>div:empty,.g4>div:empty{display:none}
 .stack>*+*{margin-top:var(--s2)}
 .card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:var(--s3)}
 .card+.card{margin-top:var(--s2)}
@@ -279,7 +280,10 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ===================================================================== calcul și verificări */
-.g4{display:grid;grid-template-columns:1.6fr 1.2fr 1fr .8fr;gap:var(--s2);margin-bottom:var(--s2)}
+.g4{display:grid;grid-template-columns:1.6fr 1.2fr 1fr .8fr;gap:var(--s2);margin-bottom:var(--s2);align-items:end}
+/* D1: în panoul îngust al editorului (≤ 560 px) grilele trec pe 2 coloane, ca select-urile să nu fie tăiate */
+@container (max-width:560px){.g3e,.g4{grid-template-columns:1fr 1fr}.g2>.fld:only-child{grid-column:1/-1}}
+@container (max-width:300px){.g2,.g3e,.g4{grid-template-columns:1fr}}
 .unit{display:flex;align-items:center;gap:4px}.unit span{font-size:var(--fs-xs);color:var(--ink-3)}
 .banner{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:var(--s3);padding:10px 12px;border-radius:var(--r);background:var(--sig-soft);font-size:var(--fs-sm)}
 .banner span{flex:1 1 200px;color:var(--ink-2)}
@@ -288,6 +292,11 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .vbadge{height:28px;padding:0 10px;border-radius:14px;border:1px solid var(--rule-2);background:var(--surface);font:600 var(--fs-xs) var(--font);cursor:pointer;white-space:nowrap}
 .vbadge.b{background:#b42318;border-color:#b42318;color:#fff}.vbadge.a{border-color:var(--sig-line);color:var(--warn)}
 .vbadge.ok{border-color:var(--ok);color:var(--ok)}.vbadge.m{border-style:dashed;color:var(--ink-2)}
+.vbadge.a{background:var(--warn-soft)}
+.vbadge{display:inline-flex;align-items:center;gap:0;padding:0}
+.vbadge>span{display:inline-block;line-height:26px;padding:0 10px}
+.vbadge .vb-pr{border-left:1px dashed var(--sig-line);background:var(--sig-soft);color:var(--ink);border-radius:0 14px 14px 0;font-weight:600}
+.vbadge.b .vb-pr{border-left-color:rgba(255,255,255,.6)}
 .btn.blocked{background:var(--sunk,var(--surface));border-color:var(--rule-2);color:var(--ink-3)}
 .vcard{border-width:2px}
 .vsum{font-weight:600;margin-bottom:6px}.vsum.b{color:var(--danger)}.vsum.a{color:var(--warn)}.vsum.ok{color:var(--ok)}
@@ -297,15 +306,30 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 @keyframes flash{0%,60%{box-shadow:0 0 0 3px var(--sig-line)}100%{box-shadow:0 0 0 0 transparent}}
 .flash{animation:flash 1.6s ease-out}
 .vlist li.ok{background:var(--sunk,var(--surface));border-color:var(--ok);opacity:.85}
-.vlist .conf{margin-top:4px;font-size:var(--fs-xs);color:var(--ink-2)}
+.vlist .vconf{display:inline-flex;align-items:center;gap:8px;margin-top:6px;min-height:28px;font-size:var(--fs-sm);font-weight:500;color:var(--ink);cursor:pointer}
+.vlist .vconf input{width:16px;height:16px;margin:0;flex:none;accent-color:var(--ink)}
+.vlist .vt{display:block;font-weight:600}
+.vlist .vobj{color:var(--ink-2);font-weight:500}
+.vlist .vdetc{margin-top:4px;font-size:var(--fs-xs);color:var(--ink-2)}
+.vlist .vdetc>summary{cursor:pointer;width:max-content;max-width:100%}
+.vlist .vdetc p{margin:4px 0 0;font-family:var(--mono);font-size:11.5px;overflow-wrap:anywhere}
+.vlist .vacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.vacc{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0}
+.vacc .msg{margin:0}
 .vlist li small{display:block;color:var(--ink-2);margin-top:2px}
-.vdet{margin-top:6px}.vdet>summary{cursor:pointer;font-size:var(--fs-sm);font-weight:600;color:var(--ink-2)}
+.vdet{margin-top:6px}.vdet>summary{cursor:pointer;font-size:var(--fs-sm);font-weight:600;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:6px}
+.vdet>summary::-webkit-details-marker{display:none}
+.vdet>summary::after{content:"";width:7px;height:7px;margin-left:auto;border-right:1.6px solid var(--ink-3);border-bottom:1.6px solid var(--ink-3);transform:rotate(45deg);transition:transform .15s}
+.vdet[open]>summary::after{transform:rotate(-135deg)}
 .plist{margin:4px 0;padding-left:18px;font-size:var(--fs-sm);color:var(--ink-2)}
+.plist .btn{margin-left:6px;vertical-align:middle}
 .adv>summary{cursor:pointer;font-size:var(--fs-sm);color:var(--ink-2);margin:4px 0;list-style:none;display:flex;align-items:center;gap:6px}
 .adv>summary::-webkit-details-marker{display:none}
 .adv>summary::after{content:"";width:7px;height:7px;margin-left:auto;border-right:1.6px solid var(--ink-3);border-bottom:1.6px solid var(--ink-3);transform:rotate(45deg);transition:transform .15s}
 .adv[open]>summary::after{transform:rotate(-135deg)}
 .adv[open]>summary{margin-bottom:8px}
+.adv>summary h3{margin:0!important;line-height:1.3}
+.adv>summary .cf-tag{margin-left:8px}
 .dv-head{position:sticky;top:-12px;z-index:2;display:grid;grid-template-columns:1fr 64px 84px 60px 84px;gap:6px;padding:6px 10px;margin:0 0 4px;background:var(--panel,var(--surface));border-bottom:1px solid var(--rule-2);font-size:var(--fs-xs);font-weight:600;color:var(--ink-2)}
 .dv-head span:not(:first-child){text-align:right}
 .dv-row{display:grid;grid-template-columns:1fr 64px 84px 60px 84px;gap:2px 6px;padding:7px 10px;border-bottom:1px solid var(--rule);align-items:center;font-size:var(--fs-sm)}
@@ -326,7 +350,8 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .dv-new input:first-child{flex:1}
 .dv-row.lipsa input.pr{border-color:var(--sig-line);background:var(--warn-soft)}
 .dv-row input.orient{color:var(--ink-2)}
-.dv-rec{display:grid;grid-template-columns:1fr auto;gap:3px 12px;font-size:var(--fs-sm);margin-top:6px}
+.dv-rec{display:grid;grid-template-columns:1fr auto;gap:3px 0;font-size:var(--fs-sm);margin-top:6px}
+.dv-rec>b{padding-left:12px}
 .dv-rec b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 .dv-rec .sep{border-top:1px solid var(--rule);padding-top:5px;margin-top:3px}
 .dv-rec .tot{font:600 var(--fs-lg)/1.3 var(--font-c);border-top:2px solid var(--ink);padding-top:6px;margin-top:4px}
@@ -351,6 +376,24 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .ech-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.ech-row>label{font-weight:600;min-width:96px}
 .ech-row input[type=text]{flex:1 1 220px;min-width:0}
 .ech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2);margin-bottom:var(--s2)}
+/* D4: dialoguri native (<dialog> + showModal): capcană de focus, Esc, focusul revine pe butonul care l-a deschis */
+dialog.dlg{padding:0;border:0;border-radius:var(--r-lg);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-pop);width:min(900px,calc(100% - 32px));max-height:calc(100dvh - 32px)}
+dialog.dlg[open]{display:flex;flex-direction:column}
+dialog.dlg::backdrop{background:rgba(0,0,0,.5)}
+dialog.dlg.mare{width:min(1100px,calc(100% - 32px));height:calc(100dvh - 32px)}
+.dlg-h{display:flex;align-items:center;gap:8px;padding:12px 12px 8px 18px;border-bottom:1px solid var(--rule)}
+.dlg-h h2{margin:0;flex:1;font:600 var(--fs-lg)/1.2 var(--font-c)}
+.dlg-b{flex:1;min-height:0;overflow:auto;padding:12px 18px;display:flex;flex-direction:column;gap:var(--s2)}
+.dlg-b p{margin:0}
+.dlg-a{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--rule)}
+.dlg .h-fgrid{grid-template-columns:1fr 1fr}
+@media (max-width:600px){.dlg .h-fgrid{grid-template-columns:1fr}}
+.ac-r{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px solid var(--rule);border-radius:var(--r)}
+.ac-l{align-items:flex-start;font-size:var(--fs);line-height:1.45}.ac-l input{margin-top:3px}
+.ac-det{margin-left:24px}.ac-clauze{max-height:260px;overflow:auto;font-size:var(--fs-sm);padding:4px 8px;background:var(--sunk);border-radius:var(--r-sm)}
+.ac-clauze h2{font:600 var(--fs)/1.3 var(--font-c);margin:8px 0 4px}
+.leg{font-size:var(--fs-xs);color:var(--ink-3)}.leg a{color:inherit}
+.h-leg{padding:4px 6px 0}
 .ech-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px}
 .ech-dlg{background:var(--surface);color:var(--ink);border-radius:var(--r-lg,12px);box-shadow:var(--shadow-pop);width:min(900px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column}
 .ech-dlg h3{margin:0;padding:14px 18px 6px}.ech-body{overflow:auto;padding:4px 18px}.ech-acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--rule)}
@@ -372,13 +415,17 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .psub{margin:6px 0 0 8px}
 .res-chat{white-space:pre-wrap}
 
+h2[tabindex="-1"]:focus:not(:focus-visible),h1[tabindex="-1"]:focus:not(:focus-visible){outline:none;box-shadow:none}
+.wz-h:focus-visible{outline-offset:4px}
+/* D17: placeholder lizibil în ambele teme */
+input::placeholder,textarea::placeholder{color:var(--ink-3);opacity:1}
 .skip{position:absolute;left:8px;top:-60px;z-index:100;padding:8px 12px;background:var(--ink);color:var(--surface);border-radius:var(--r)}
 .skip:focus{top:8px}
 /* ===================================================================== asistent pas cu pas (ecran de editor, planșa la final) */
 body.wiz main{grid-template-columns:1fr}
 body.wiz #splitter,body.wiz #viewer,body.wiz .tabs,body.wiz #assist,body.wiz .mswitch{display:none!important}
 body.wiz #side{display:flex!important}
-body.wiz0 header .split,body.wiz0 #vbadge,body.wiz0 #save-btn{visibility:hidden}
+body.wiz0 header .split,body.wiz0 #vbadge,body.wiz0 #save-btn,body.wiz0 header .vsep{visibility:hidden}
 body.wiz #pane{padding:var(--s4) max(16px,calc((100% - 1040px)/2)) 40px}
 #wizbar{flex:none;display:flex;align-items:center;gap:var(--s3);padding:10px max(16px,calc((100% - 1040px)/2));border-bottom:1px solid var(--rule);background:var(--surface)}
 #wizbar ol{display:flex;gap:4px;margin:0;padding:0;list-style:none;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
@@ -425,6 +472,11 @@ details>summary{min-height:24px}
 .lc-row .del{width:30px;height:30px;padding:0;border:0;background:none;color:var(--ink-3);cursor:pointer;border-radius:var(--r)}
 .lc-row .del:hover{background:var(--danger-soft);color:var(--danger)}
 .lc-row.mono{grid-template-columns:minmax(140px,1.5fr) minmax(140px,1.2fr) 92px 80px minmax(180px,1.2fr) 32px}
+.dv-tag{display:inline-block;margin-left:6px;padding:0 6px;border-radius:var(--r-sm);background:var(--sunk);border:1px solid var(--rule);color:var(--ink-2);font-size:var(--fs-xs);font-weight:500;white-space:nowrap}
+.lc-ve{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:4px 2px 8px 24px;border-bottom:1px solid var(--rule);font-size:var(--fs-sm)}
+.lc-ve .unit{display:flex;align-items:center;gap:4px;width:130px}
+.lc-ve input{width:100%;height:var(--h-ctl-sm);padding:0 6px;border:1px solid var(--rule-2);border-radius:var(--r-sm);background:var(--surface)}
+.lc-ve input[aria-invalid="true"]{border-color:var(--danger)}
 .lc-head.mono{grid-template-columns:minmax(140px,1.5fr) minmax(140px,1.2fr) 92px 80px minmax(180px,1.2fr) 32px}
 .lc-faze{display:grid;grid-template-columns:28px 1fr 64px;gap:4px 8px;align-items:center;font-size:var(--fs-sm)}
 .lc-faze .bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
@@ -455,7 +507,7 @@ details>summary{min-height:24px}
 .cf-q li{padding:8px 10px;border-radius:var(--r);background:var(--warn-soft)}
 .cf-q li p{margin:0 0 6px;font-size:var(--fs-sm);color:var(--ink)}
 .cf-q li .fld{max-width:320px}
-.cf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2);align-items:end}
+.cf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--s2);align-items:end}
 .cf-grid .fld>label,.cf-q .fld>label{white-space:normal;overflow:visible}
 .cf-tag{margin-left:6px;padding:0 5px;border-radius:var(--r-sm);background:var(--sig-soft);color:var(--ink);font-size:10.5px;font-weight:600;vertical-align:1px}
 .cf-pres input,.cf-pres select,td.cf-pres input,td.cf-pres select{border-color:var(--sig-line)!important;box-shadow:0 0 0 1px var(--sig-line);background:var(--sig-soft)}
@@ -469,7 +521,7 @@ details>summary{min-height:24px}
 .cf-tab input[type=text],.cf-tab select{width:100%;height:var(--h-ctl-sm);padding:0 6px;border:1px solid var(--rule-2);border-radius:var(--r-sm);background:var(--surface)}
 .cf-tab input[aria-invalid="true"]{border-color:var(--danger);background:var(--danger-soft)}
 .cf-tab input[type=checkbox]{width:18px;height:18px;margin:0 auto;display:block}
-.cf-tab .w-n{min-width:150px}.cf-tab .w-r{min-width:130px}.cf-tab .w-s{min-width:72px;width:80px}.cf-tab .w-u{min-width:96px}.cf-tab .w-b{width:64px;text-align:center}
+.cf-tab .w-f{min-width:104px}.cf-tab .w-n{min-width:150px}.cf-tab .w-r{min-width:130px}.cf-tab .w-s{min-width:72px;width:80px}.cf-tab .w-u{min-width:96px}.cf-tab .w-b{width:64px;text-align:center}
 .cf-tab .cf-ro{font-size:var(--fs-xs);color:var(--ink-3);white-space:nowrap}
 .cf-tab .cf-del{width:34px}
 .cf-tab .w-t{min-width:110px}.cf-tab .w-xs{min-width:52px;width:58px}.cf-tab .w-c{min-width:84px}.cf-tab td.w-c .cf-ro{white-space:normal}
@@ -480,7 +532,7 @@ details>summary{min-height:24px}
 .cf-sub{margin-left:var(--s3);border-left:3px solid var(--rule-2)}
 .cf-tdesc{margin:0 0 var(--s2)}
 .cf-grid .fld:has(> .cf-warn:not([hidden])){grid-column:1/-1}
-#pane.confm{padding-bottom:0}
+#pane.confm{padding-bottom:0!important}
 .cf-oblig input,.cf-oblig select{border-color:var(--danger)!important;box-shadow:0 0 0 1px var(--danger);background:var(--danger-soft)}
 .cf-tag.ob{background:var(--danger);color:var(--surface)}
 .cf-q li.cf-oblig-li{background:var(--danger-soft);box-shadow:inset 3px 0 0 var(--danger)}
@@ -489,17 +541,23 @@ details>summary{min-height:24px}
 .lucru{display:inline-flex;align-items:center;gap:8px;font-weight:500;color:var(--ink);font-size:var(--fs-sm)}
 .spin{width:14px;height:14px;flex:none;border:2px solid var(--ink-3);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
 .msg.neint{margin:0;font-size:var(--fs-sm);line-height:1.4}
-.cf-act{position:sticky;bottom:0;z-index:2;margin:0 calc(-1 * var(--s3));padding:var(--s2) var(--s3);background:var(--panel);border-top:1px solid var(--rule)}
+.cf-act{position:sticky;bottom:0;z-index:2;margin:0 calc(-1 * var(--s3));padding:var(--s2) var(--s3) var(--s3);background:var(--panel);border-top:1px solid var(--rule);box-shadow:0 -6px 12px -8px rgba(20,30,40,.25)}
+.cf-intel{margin:0;font-size:var(--fs-md);font-weight:500}
+.cf-orig{margin:4px 0 0;font-size:var(--fs-xs);color:var(--ink-3)}
+.cf-q .cf-qb{display:flex;flex-wrap:wrap;gap:6px}
 .cf-act .msg{margin:0 0 var(--s2)}
 .cf-btns{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
 .cf-btns .sp{flex:1}
 .cf-btns .hint{font-size:var(--fs-xs);color:var(--ink-3)}
 /* ===================================================================== mobil / îngust */
 .mswitch{display:none}
-@media (max-width:1320px){.proj{display:none}}
+header .mlbl{display:none}
+.vhint-m{display:none;position:absolute;left:50%;bottom:72px;transform:translateX(-50%);pointer-events:none;font-size:var(--fs-xs);color:var(--ink-2);background:color-mix(in srgb,var(--surface) 85%,transparent);padding:4px 10px;border-radius:12px;white-space:nowrap}
+@media (max-width:1100px){.proj{display:none}}
+@media (min-width:1101px){header>.sp{flex:0 0 0}}
 @media (max-width:1180px){.hide-md{display:none}}
 @media (max-width:900px){
-  header{height:auto;flex-wrap:wrap;padding:8px var(--s3);row-gap:8px}
+  header{height:auto;flex-wrap:wrap;padding:6px var(--s2);row-gap:6px}
   .brand h1{font-size:var(--fs-md)}
   .mswitch{display:inline-flex;order:3;width:100%;border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden}
   .mswitch button{flex:1;height:32px;border:0;background:var(--surface);cursor:pointer;font-weight:500}
@@ -519,6 +577,33 @@ details>summary{min-height:24px}
   .vbadge .lg{display:none}
   .dv-set{grid-template-columns:repeat(2,1fr)}
   .dv-head,.dv-row{grid-template-columns:1fr 56px 72px 52px 72px}
+  /* telefon: etichete sub iconițe, ținte ≥ 44 px */
+  header .hgroup>.btn,header .hgroup>.menu-wrap>.btn,header .split>.btn{height:44px;min-width:44px}
+  header .mlbl{display:block;font-size:10.5px;line-height:1;font-weight:500;margin-top:2px}
+  header .btn.mic{flex-direction:column;gap:2px;padding:0 6px;width:auto}
+  .vbadge{height:36px}
+  .mswitch button{height:40px}
+  .vbar .btn{min-width:40px;height:40px}
+  /* notificările sus, sub antet: nu acoperă cartușul planșei */
+  #toasts{bottom:auto;top:calc(var(--hdr,120px) + 8px)}
+  body.home #toasts{top:60px}
+  /* meniurile antetului: foaie jos, cu titlu */
+  .menu,.menu.left{position:fixed;left:0;right:0;top:auto;bottom:0;min-width:0;margin:0;max-height:75dvh;border-radius:14px 14px 0 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+  .menu button{min-height:44px}
+  .tabs button{padding:0 9px}
+  #wizfoot{flex-wrap:wrap}
+  #wizfoot .st{order:-1;flex:1 1 100%}
+}
+@media (max-width:480px){#wizfoot .sp{display:none}#wizfoot .btn.pri{flex:1}}
+@media (hover:none){.menu kbd,#chat-kbd,.cf-btns .hint,.h-row .hint{display:none}}
+@media (max-height:480px){#wizbar{padding-top:4px;padding-bottom:4px}#wizbar li button .t{display:none}#wizfoot{padding-top:6px;padding-bottom:6px}}
+/* telefon: antetul pe un rând — Anulează · Fișier · stare · Exportă (cu etichete); refacerea e în notificarea „Anulează”, tema în Setări */
+@media (max-width:600px){
+  .brand h1,#redo,#theme,#exp-dxf,header .vsep{display:none!important}
+  header .split .btn:last-child{width:auto;border-radius:var(--r);border-left:0;padding:0 10px}
+  header .hgroup{flex-wrap:nowrap;gap:6px;flex:1;justify-content:flex-end}
+  .vbadge{min-width:0;max-width:170px;overflow:hidden}
+  .vhint-m{display:block}
 }
 
 /* ===================================================================== pagina de start */
@@ -666,6 +751,8 @@ p.h-gol{display:block}
   .h-ex{grid-template-columns:1fr}
 }
 @media (max-width:360px){.h-tiles{grid-template-columns:1fr}}
+/* telefon: descrierea în cuvinte înaintea celor 9 carduri (altfel e la 3 ecrane distanță) */
+@media (max-width:900px){.h-sec.s-nou{display:flex;flex-direction:column}.h-sec.s-nou>.h-desc{order:-1;margin:0 0 var(--s4)}.h-sec.s-nou>.h-h,.h-sec.s-nou>.h-lead{order:-2}}
 </style>
 </head>
 <body>
@@ -678,11 +765,11 @@ p.h-gol{display:block}
   <div class="proj" id="proj" title="Planșa curentă"><span id="proj-name">—</span><small id="proj-save">salvat automat în acest browser</small></div>
   <span class="sp"></span>
   <div class="hgroup">
-    <button class="btn ghost icon" id="undo" title="Anulează (Ctrl+Z)" aria-label="Anulează"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M5 3 2 6l3 3"/><path d="M2 6h7.5a4 4 0 0 1 0 8H7"/></svg></button>
-    <button class="btn ghost icon" id="redo" title="Refă (Ctrl+Shift+Z)" aria-label="Refă"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="m11 3 3 3-3 3"/><path d="M14 6H6.5a4 4 0 0 0 0 8H9"/></svg></button>
+    <button class="btn ghost icon mic" id="undo" title="Anulează (Ctrl+Z)" aria-label="Anulează"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M5 3 2 6l3 3"/><path d="M2 6h7.5a4 4 0 0 1 0 8H7"/></svg><span class="mlbl" aria-hidden="true">Anulează</span></button>
+    <button class="btn ghost icon mic" id="redo" title="Refă (Ctrl+Shift+Z)" aria-label="Refă"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="m11 3 3 3-3 3"/><path d="M14 6H6.5a4 4 0 0 0 0 8H9"/></svg><span class="mlbl" aria-hidden="true">Refă</span></button>
     <span class="vsep hide-sm"></span>
     <div class="menu-wrap">
-      <button class="btn" id="new-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Schemă nouă, recente, deschide, salvează" title="Schemă nouă · Recente · Deschide · Salvează"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M3 2h6l4 4v8H3z"/><path d="M9 2v4h4"/></svg><span class="hide-sm">Schemă nouă</span></button>
+      <button class="btn mic" id="new-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Planșă nouă, recente, deschide, salvează" title="Planșă nouă · Recente · Deschide · Salvează"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M3 2h6l4 4v8H3z"/><path d="M9 2v4h4"/></svg><span class="hide-sm">Planșă nouă</span><span class="mlbl" aria-hidden="true">Fișier</span></button>
       <div class="menu" id="new-menu" role="menu" hidden></div>
     </div>
     <button class="btn hide-sm" id="open-btn" title="Deschide un proiect salvat (.json) — Ctrl+O"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M2 4h4l1.5 1.5H14V13H2z"/></svg><span class="hide-md">Deschide</span></button>
@@ -692,12 +779,12 @@ p.h-gol{display:block}
     <span class="vsep hide-sm"></span>
     <button class="vbadge" id="vbadge" type="button" hidden onclick="setTab('calc')" aria-live="polite"></button>
     <div class="menu-wrap split">
-      <button class="btn pri" id="exp-dxf" title="Exportă DXF pentru AutoCAD 2018 și mai nou — Ctrl+E"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10"/></svg><span class="lbl">Exportă DXF</span></button>
-      <button class="btn pri" id="exp-more" aria-label="Alte formate de export" aria-haspopup="menu" aria-expanded="false"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></svg></button>
+      <button class="btn pri mic" id="exp-dxf" title="Exportă DXF pentru AutoCAD 2018 și mai nou — Ctrl+E"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10"/></svg><span class="lbl">Exportă DXF</span><span class="mlbl" aria-hidden="true">DXF</span></button>
+      <button class="btn pri mic" id="exp-more" aria-label="Alte formate de export" aria-haspopup="menu" aria-expanded="false"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></svg><span class="mlbl" aria-hidden="true">Export</span></button>
       <div class="menu" id="exp-menu" role="menu" hidden>
         <button role="menuitem" data-exp="pachet"><span>Pachet de predare (.zip)<small>DXF + PDF + memoriu + listă + deviz + proiect, într-un singur fișier</small></span></button>
         <hr>
-        <button role="menuitem" data-exp="planse"><span>Pachet de planșe A3 (.zip)<small>CEF: IE 07.x c.c. pe invertor, IE 08 bloc, IE 09 c.a., IE 09.1 releu, IE 11 smart meter — SVG + DXF + PDF</small></span></button>
+        <button role="menuitem" data-exp="planse" hidden><span>Pachet de planșe A3 — CEF (.zip)<small>câte o planșă A3: c.c. pe invertor, schema bloc, c.a., releul PI — SVG + DXF + PDF</small></span></button>
         <button role="menuitem" data-exp="dxf"><span>DXF<small>AutoCAD 2018+ · blocuri cu atribute, layere</small></span><kbd>Ctrl E</kbd></button>
         <button role="menuitem" data-exp="pdf"><span>PDF<small>planșa la scară, pentru tipar sau depunere</small></span></button>
         <button role="menuitem" data-exp="svg"><span>SVG<small>vectorial, pentru documente sau web</small></span></button>
@@ -706,9 +793,10 @@ p.h-gol{display:block}
         <button role="menuitem" data-exp="deviz"><span>Deviz estimativ (.xlsx)<small>prețuri din catalogul tău, manoperă, recapitulație cu TVA</small></span></button>
         <button role="menuitem" data-exp="memoriu"><span>Memoriu de calcul (PDF)<small>ipoteze, tabel de calcul pe ramuri, verificări</small></span></button>
         <button role="menuitem" data-exp="json"><span>Proiect (.json)<small>se poate redeschide și edita</small></span><kbd>Ctrl S</kbd></button>
+        <hr><p class="leg" id="exp-leg" style="margin:4px 10px 6px">Exportul înseamnă acceptarea <a href="/static/termeni.html" target="_blank" rel="noopener">Termenilor</a> · <a href="/static/confidentialitate.html" target="_blank" rel="noopener">Confidențialitate</a></p>
       </div>
     </div>
-    <button class="btn ghost icon" id="theme" title="Temă luminoasă / întunecată" aria-label="Schimbă tema"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5v11" /><path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor"/></svg></button>
+    <button class="btn ghost icon mic" id="theme" title="Temă luminoasă / întunecată" aria-label="Schimbă tema"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5v11" /><path d="M8 2.5a5.5 5.5 0 0 1 0 11z" fill="currentColor"/></svg><span class="mlbl" aria-hidden="true">Temă</span></button>
   </div>
   <div class="mswitch" role="group" aria-label="Afișare">
     <button id="mv-edit" aria-pressed="true">Editor</button><button id="mv-plan" aria-pressed="false">Planșă</button>
@@ -729,7 +817,7 @@ p.h-gol{display:block}
           <span class="hint" id="chat-kbd">Ctrl + Enter</span>
         </div>
         <details class="llm" id="llm-set">
-          <summary id="llm-stare">Citire avansată: indisponibilă (fără cheie API) — se folosesc regulile locale</summary>
+          <summary id="llm-stare">Citire simplă (fără Claude) — se folosesc regulile locale</summary>
           <div class="llm-row">
             <label for="llm-cheie" class="sr">Cheia API Anthropic</label>
             <input type="password" id="llm-cheie" autocomplete="off" spellcheck="false" placeholder="cheia API Anthropic (sk-ant-…)">
@@ -737,7 +825,7 @@ p.h-gol{display:block}
             <button class="btn ghost sm" type="button" id="llm-sterge">Șterge</button>
           </div>
           <label class="check hint"><input type="checkbox" id="llm-tine"> Ține minte pe acest calculator</label>
-          <p id="llm-avert">Cu cheie, descrierea e citită de Claude, iar regulile locale o verifică: diferențele importante îți sunt puse ca întrebare. Cheia se ține în memoria aplicației locale; dacă bifezi „ține minte”, în ~/.config/scheme-monofilare (niciodată în proiect sau în exporturi).</p>
+          <p id="llm-avert">Cu cheie, descrierea e citită de Claude, iar regulile locale o verifică: diferențele importante îți sunt puse ca întrebare. Cheia se ține în memoria aplicației locale; dacă bifezi „ține minte”, în ~/.config/scheme-monofilare (niciodată în proiect sau în exporturi). <a class="leg-anth" href="/static/confidentialitate.html#5-citirea-avansata-cu-cheia-ta-anthropic" target="_blank" rel="noopener">Ce se trimite la Anthropic</a></p>
         </details>
         <div class="chips" id="chips" aria-label="Exemple"></div>
         <div class="result" id="chat-res" role="status" aria-live="polite" hidden></div>
@@ -759,6 +847,7 @@ p.h-gol{display:block}
     <div id="stage" tabindex="0" aria-label="Planșa — rotiță pentru zoom, trage pentru deplasare, dublu-clic pentru încadrare"><div id="paper"></div></div>
     <div id="blocov" role="alert" hidden></div>
     <div class="vhint hide-sm" id="vhint">Clic pe un aparat din planșă ca să ajungi la datele lui</div>
+    <div class="vhint-m" aria-hidden="true">Ciupește pentru zoom · dublu-tap: toată planșa</div>
     <div class="vstat" id="vstat"><span class="dot"></span><span id="vstat-t">Se încarcă…</span></div>
     <div class="vbar" role="toolbar" aria-label="Zoom planșă">
       <button class="btn ghost icon sm" id="z-out" aria-label="Micșorează" title="Micșorează (−)"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M3.5 8h9"/></svg></button>
@@ -777,6 +866,7 @@ p.h-gol{display:block}
       <button class="btn ghost icon sm h-close" id="h-close" type="button" aria-label="Închide meniul"><svg aria-hidden="true" focusable="false" class="i" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
     <nav aria-label="Secțiuni"><ul class="h-menu" id="h-menu"></ul></nav>
     <button class="h-cartus" id="h-cartus" type="button" aria-label="Datele din cartuș — deschide Setări"></button>
+    <p class="leg h-leg" id="h-leg"><a href="/static/termeni.html" target="_blank" rel="noopener">Termeni</a> · <a href="/static/confidentialitate.html" target="_blank" rel="noopener">Confidențialitate</a></p>
   </aside>
   <div class="h-scrim" id="h-scrim" hidden></div>
   <div class="h-body" id="h-body">
@@ -1107,7 +1197,11 @@ function payload(withUid) {
   delete m.carcasa_on;
   return m;
 }
-function projName() { $('#proj-name').textContent = WIZ_START ? 'Schemă nouă — alege tipul lucrării' : docName(MODEL); }
+function projName() {
+  const n = $('#proj-name');
+  n.textContent = CONF ? `${TIP_ETI[CONF.ed.tip_schema] || 'Planșă nouă'} — verifică descrierea` : WIZ_START ? 'Planșă nouă — alege tipul lucrării' : docName(MODEL);
+  $('#proj').title = n.textContent;
+}
 
 /* =========================================================================== câmpuri */
 let fid = 0;
@@ -1384,10 +1478,10 @@ function showCalc(out, r, p) {
 
 /* =========================================================================== calcul (intrarea fizică → motorul de dimensionare) */
 const TABS = [['calc', 't-calc'], ['schema', 't-schema'], ['deviz', 't-deviz'], ['proiect', 't-proiect'], ['note', 't-note'], ['json', 't-json']];
-const TIP_SCHEMA = [['locuinta', 'Casă / apartament (tabloul locuinței)'], ['bransament', 'Branșament (BMPT / BMPM)'], ['tablou', 'Tablou general cu plecări'], ['pt', 'Post de transformare 20/0,4 kV'],
-  ['cef', 'CEF fotovoltaic (+ BESS)'], ['prosumator', 'Prosumator'], ['ge_ats', 'Grup electrogen + ATS']];
+const TIP_SCHEMA = [['locuinta', 'Casă / apartament'], ['bransament', 'Branșament BMPT/BMPM'], ['tablou', 'Tablou general'], ['pt', 'Post de transformare'],
+  ['cef', 'CEF / BESS'], ['prosumator', 'Prosumator'], ['ge_ats', 'Grup electrogen + ATS']];
 const RECEPTOR = [['', 'automat (după nume)'], ['tablou', 'tablou secundar'], ['forta', 'forță'], ['motor', 'motor'], ['iluminat', 'iluminat'], ['prize', 'prize']];
-const MATERIAL = [['', 'implicit (Al în pământ, Cu < 16 mm²)'], ['Al', 'Aluminiu'], ['Cu', 'Cupru']];
+const MATERIAL = [['', 'implicit (Al; Cu < 16 mm²)'], ['Al', 'Aluminiu'], ['Cu', 'Cupru']];
 const METODA = [['', 'implicit'], ['D1', 'D1 · în tub în pământ'], ['D2', 'D2 · direct în pământ'], ['E', 'E · pe pat perforat / în aer'], ['C', 'C · pe perete']];
 const IZOLATIE = [['', 'implicit (PVC)'], ['PVC', 'PVC'], ['XLPE', 'XLPE']];
 const PROT = [['', 'automat'], ['gG', 'siguranțe gG'], ['MCB', 'MCB'], ['MCCB', 'MCCB'], ['ACB', 'ACB']];
@@ -1432,11 +1526,15 @@ function setValid(v) {
   const b = $('#vbadge'); if (!b) return;
   const nb = (v.verificari || []).filter(x => x.nivel === 'BLOCANT').length, na = (v.verificari || []).filter(x => x.nivel === 'AVERTISMENT' && !x.confirmat).length;
   b.hidden = false;
-  b.className = 'vbadge ' + (nb ? 'b' : !v.calculat ? 'm' : na ? 'a' : 'ok');
+  // echipa 1: „Verificat” (verde) doar fără erori și fără atenționări; valorile presupuse au segmentul lor, galben
+  const doarRetea = nb && reteaNeutra() && wizDoarRetea();
+  const naG = grupe(unice((v.verificari || []).filter(x => x.nivel === 'AVERTISMENT' && !x.confirmat))).length;
+  b.className = 'vbadge ' + (doarRetea ? 'm' : nb ? 'b' : !v.calculat ? 'm' : naG ? 'a' : 'ok');
   const np = (v.presupus || []).length;
-  const pl = (n, unu, multe) => `${n} ${n === 1 ? unu : multe}`;
-  const ext = [na ? pl(na, 'atenționare', 'atenționări') : '', np ? pl(np, 'valoare presupusă', 'valori presupuse') : ''].filter(Boolean).join(' · ');
-  b.replaceChildren(...(nb ? [pl(nb, 'eroare', 'erori'), el('span', { class: 'lg' }, ' — export blocat')] : !v.calculat ? ['Desen manual', el('span', { class: 'lg' }, ' — neverificat')] : ext ? ['Verificat', el('span', { class: 'lg' }, ' · ' + ext)] : ['Verificat']));
+  const pl = (n, unu, multe) => `${n}\u00a0${n === 1 ? unu : multe}`;
+  const st = doarRetea ? ['De completat: rețeaua'] : nb ? [pl(nb, 'eroare', 'erori'), el('span', { class: 'lg' }, ' — export blocat')] : !v.calculat ? ['Desen manual', el('span', { class: 'lg' }, ' — neverificat')]
+    : naG ? [pl(naG, 'atenționare', 'atenționări')] : ['Verificat'];
+  b.replaceChildren(el('span', { class: 'vb-st' }, ...st), v.calculat && np && !doarRetea ? el('span', { class: 'vb-pr', title: 'Valori presupuse de aplicație — marcate cu galben în Calcul' }, String(np) + '\u00a0', el('span', { class: 'lg' }, np === 1 ? 'valoare\u00a0' : 'valori\u00a0'), np === 1 ? 'presupusă' : 'presupuse', el('span', { class: 'lg' }, '\u00a0de confirmat')) : null);
   b.title = nb ? 'Exportul e blocat până se rezolvă verificările marcate cu roșu. Clic pentru detalii.' : 'Rezultatul verificărilor — clic pentru detalii';
   for (const id of ['exp-dxf', 'exp-more']) $('#' + id).classList.toggle('blocked', !!nb);
   if (nb) $('#exp-dxf').setAttribute('aria-disabled', 'true'); else $('#exp-dxf').removeAttribute('aria-disabled');   // meniul rămâne deschis: JSON e permis
@@ -1446,16 +1544,16 @@ function setValid(v) {
   em.querySelectorAll('.mblock').forEach(n => n.remove());
   em.querySelectorAll('[data-exp]').forEach(n => { if (n.dataset.exp !== 'json') { if (nb) n.setAttribute('aria-disabled', 'true'); else n.removeAttribute('aria-disabled'); } });
   if (nb) { const b0 = v.verificari.find(x => x.nivel === 'BLOCANT');
-    em.prepend(el('div', { class: 'mblock', role: 'note' }, `Export blocat — ${b0.cod} ${b0.obiect}.`, el('button', { type: 'button', onclick: () => { em.hidden = true; $('#exp-more').setAttribute('aria-expanded', 'false'); setTab('calc'); } }, 'Vezi în Calcul'))); }
+    em.prepend(el('div', { class: 'mblock', role: 'note' }, `Export blocat — ${vTitlu(b0)}.`, el('button', { type: 'button', onclick: () => { em.hidden = true; $('#exp-more').setAttribute('aria-expanded', 'false'); setTab('calc'); } }, 'Vezi în Calcul'))); }
   const box = document.getElementById('vres'); if (box) box.replaceChildren(...rezultatUI(v));
-  ppRes();
+  ppRes(); marcheazaPresupuse();
   const ov = document.getElementById('blocov');
   if (ov) {
     const bl = (v.verificari || []).filter(x => x.nivel === 'BLOCANT');
     const gol = v.calculat && bl.length && !((MODEL && ((MODEL.intrari || []).length || (MODEL.plecari || []).length)));
     ov.hidden = !gol;
     if (gol) ov.replaceChildren(el('h3', {}, 'Schema nu poate fi realizată cu datele introduse'),
-      el('ul', {}, ...bl.slice(0, 5).map(x => el('li', {}, el('b', {}, x.cod + ' · '), x.mesaj, x.remediere ? el('div', { class: 'rem' }, '→ ' + x.remediere) : ''))));
+      el('ul', {}, ...unice(bl).slice(0, 5).map(x => el('li', {}, el('b', {}, vTitlu(x)), x.remediere ? el('div', { class: 'rem' }, '→ ' + hum(x.remediere)) : '', el('div', { class: 'rem' }, `${x.cod}: ${hum(x.mesaj)}`)))));
   }
   document.querySelectorAll('[data-obiect]').forEach(n => decoreazaRand(n));
 }
@@ -1476,33 +1574,245 @@ function rezRamura(obiect) {
 }
 function sumarRamura(r) {
   const p = r.protectie || {};
-  const prot = p.tip ? `${p.tip === 'MCB' ? 'MCB ' + (p.curba || '') : p.tip + ' '}${p.In_A} A` : '';
-  return [prot, r.cablu, r.dU_cumulat_pct != null ? `ΔU ${fmt(r.dU_cumulat_pct, 2)} %` : ''].filter(Boolean).join(' · ');
+  const prot = p.tip ? `${p.tip === 'MCB' ? 'MCB ' + (p.curba || '') : p.tip + ' '}${p.In_A}\u00a0A` : '';
+  return [prot, r.cablu, r.dU_cumulat_pct != null ? `ΔU\u00a0${fmt(r.dU_cumulat_pct, 2)}\u00a0%` : ''].filter(Boolean).join(' · ');
 }
+/* =========================================================================== valori presupuse vizibile pe câmp (echipa 1, ux problema 4)
+   Sursele: lista `presupus` a motorului (și atenționările „nedeclarat”), `_deduse` din interpretor și implicitele motorului
+   (select-urile goale „implicit / nedeclarat / presupus”, câmpurile goale cu „implicit” în exemplu). Marcajul = contur galben + „presupus”;
+   dispare când scrii valoarea. */
+const PRES_RE = [
+  [/Ik3max (OD|la bara TG)/i, ['Ik3_OD_kA']],
+  [/Zbuclă OD|zona alimentării nedeclarată/i, ['Zb_OD_ohm', 'alimentare.zona']],
+  [/^cosφ\s*[\d,]+/i, ['cosfi']],
+  [/schema de legare la pământ nedeclarată|^schema TN-C-S, separare/i, ['schema_pamant']],
+  [/sursa tabloului nedeclarată/i, ['origine']],
+  [/sursa (rețelei )?nedeclarată|^rețeaua normală: rețea publică/i, ['sursa_retea']],
+  [/^ks = |^ks după|bilanț locuință: Pc/i, ['ks']],
+  [/^(coloană C2|alimentare|plecări|cabluri GE\/ATS) Al PVC/i, ['cablu.material', 'cablu.metoda']],
+  [/^izolație PVC/i, ['cablu.izolatie']],
+  [/tensiunea MT 20 kV/i, ['U_MT_kV']],
+  [/grupa de conexiuni/i, ['grupa_conexiuni']],
+  [/S"kQ/i, ['SkQ_MVA']],
+  [/trafo în ulei/i, ['trafo_izolatie']],
+  [/celulă MT de linie/i, ['celule_mt']],
+  [/punctul de măsură în JT/i, ['masura']],
+  [/rețea trifazată .*nu a fost declarată|^rețea(ua)? (nedeclarat|dedus|presupus)/i, ['retea']],
+  [/Q branșament (existent )?nedeclarat|calibrul Q din BMPT nedeclarat/i, ['alimentare.In_Q_bransament_A']],
+  [/putere(a)? aprobată( \(ATR\))? nedeclarată/i, ['alimentare.P_aprobata_kW']],
+  [/coloana C2 pozată/i, ['alimentare.pozare_coloana']],
+  [/lungime coloană BMPM|coloana BMPT → tabloul locuinței: lungime implicită/i, ['alimentare.L_coloana_m']],
+  [/DDR-ul 300 mA din BMPT: tip A/i, ['alimentare.DDR_bransament_tip']],
+  [/lungime cablu invertor/i, ['invertoare.L_m', 'L_inv_m']],
+  [/lungime C2 \(GE → ATS\)/i, ['L_GE_ATS_m']],
+  [/RCCB 300 mA în amonte/i, ['IdN_amonte_mA']],
+  [/^lungime plecări \d/i, ['plecari.L_m']],
+];
+// calea din intrarea fizică → câmpurile din tab-ul Calcul (asistent pasul 2 = același formular)
+const PRES_ID = {
+  Ik3_OD_kA: ['c-ik3', 'lc-ik'], Zb_OD_ohm: ['c-zr', 'c-zx', 'lc-zb'], 'alimentare.zona': ['lc-zona'], cosfi: ['c-cos'], schema_pamant: ['c-spl', 'lc-sp'],
+  origine: ['c-orig'], sursa_retea: ['c-sr'], ks: ['c-ks', 'lc-ks'], 'cablu.material': ['c-mat'], 'cablu.metoda': ['c-met'], 'cablu.izolatie': ['c-iz'],
+  U_MT_kV: ['c-umt'], SkQ_MVA: ['c-skq'], trafo_izolatie: ['c-tiz'], celule_mt: ['c-cml'], masura: ['c-mas', 'c-cmas'], retea: ['c-retea', 'lc-retea'],
+  'alimentare.In_Q_bransament_A': ['lc-qb'], 'alimentare.P_aprobata_kW': ['lc-pa'], 'alimentare.pozare_coloana': ['lc-poz'], 'alimentare.L_coloana_m': ['lc-lc'],
+  'alimentare.DDR_bransament_tip': ['lc-ddrb'], L_GE_ATS_m: ['c-lga'], IdN_amonte_mA: ['c-idna'], bmpt_fortat: ['c-bloc'], P_kW: ['c-p'], L_coloana_m: ['c-l'],
+};
+/** textele presupunerilor → Map(cale → text) */
+function presDin(texte) {
+  const m = new Map();
+  for (const t of texte) for (const [re, ps] of PRES_RE) if (re.test(t)) ps.forEach(p => { if (!m.has(p)) m.set(p, hum(t)); });
+  return m;
+}
+/** câmpul existent acum în pagină pentru o cale */
+const idPentru = p => (PRES_ID[p] || []).find(id => document.getElementById(id)) || null;
+function campPresupus(t) { for (const [re, ps] of PRES_RE) if (re.test(t)) for (const p of ps) { const id = idPentru(p); if (id) return id; } return null; }
+const golVal = v => v === undefined || v === null || v === '' || (Array.isArray(v) && !v.length);
+/** implicitul motorului citit din câmp: select gol cu „implicit / nedeclarat / presupus”, text gol cu „implicit / presupus” în exemplu */
+function implicitDom(inp) {
+  if (inp.tagName === 'SELECT') { if (inp.value !== '') return null; const t = inp.options[inp.selectedIndex]?.textContent || ''; return /implicit|nedeclarat|presupus|nespecificat/i.test(t) ? t : null; }
+  if (inp.type === 'text' && inp.value.trim() === '') return /implicit|presupus|majorant/i.test(inp.placeholder || '') ? inp.placeholder : null;
+  return null;
+}
+const tagPres = () => el('span', { class: 'cf-tag pz' }, 'presupus');
+function marcheazaCamp(inp, motiv, cale) {
+  const f = inp.closest('.fld'); if (!f || f.classList.contains('cf-oblig')) return false;
+  f.classList.add('cf-pres');
+  const lab = f.querySelector(':scope>label'); if (lab && !lab.querySelector('.cf-tag')) lab.append(tagPres());
+  inp.title = 'Presupus: ' + motiv + ' — scrie valoarea reală ca să o confirmi.';
+  if (cale && !inp.dataset.pzAsc) { inp.dataset.pzAsc = '1'; const scoate = () => scoateDedus(cale); inp.addEventListener('change', scoate, { once: true }); inp.addEventListener('input', scoate, { once: true }); }
+  return true;
+}
+/** un câmp dedus de interpretor, atins de proiectant, nu mai e „dedus” */
+function scoateDedus(cale) {
+  const c = MODEL && MODEL.calc; if (!c || c._deduse === undefined) return;
+  const d = c._deduse;
+  if (typeof d === 'string') { if (d === cale) delete c._deduse; }
+  else if (Array.isArray(d)) { c._deduse = d.filter(x => (typeof x === 'string' ? x : (x && (x.camp || x.cale))) !== cale); if (!c._deduse.length) delete c._deduse; }
+  else if (d && typeof d === 'object') { delete d[cale]; if (!Object.keys(d).length) delete c._deduse; }
+}
+/** tab-ul Calcul (și pasul „Date de intrare” al asistentului): contur galben + „presupus” pe fiecare câmp presupus */
+function marcheazaPresupuse() {
+  const pane = $('#pane'); if (!pane || CONF || !MODEL || !MODEL.calc || (!wizActiv() && TAB !== 'calc') || WIZ_START) return 0;
+  pane.querySelectorAll('.pz').forEach(n => n.remove());
+  pane.querySelectorAll('.cf-pres').forEach(n => n.classList.remove('cf-pres'));
+  const c = MODEL.calc, v = VALID || {};
+  const motive = presDin([...(v.presupus || []), ...(v.verificari || []).filter(x => x.nivel === 'AVERTISMENT' && /nedeclarat|presupus/i.test(x.mesaj || '')).map(x => x.mesaj)]);
+  confDeduse(c._deduse).forEach(([p, m]) => motive.set(p, 'dedus din descriere, nescris explicit' + (m ? ' — ' + m : '')));
+  const dedus = new Set(confDeduse(c._deduse).map(x => x[0]));
+  let n = 0;
+  for (const [p, motiv] of motive) {
+    if (p === 'invertoare.L_m') { (c.invertoare || []).forEach((iv, i) => { const inp = document.getElementById(`c-inv${i}l`) || document.getElementById(`c-pinv${i}l`); if (inp && golVal(iv.L_m) && marcheazaCamp(inp, motiv)) n++; }); continue; }
+    if (!dedus.has(p) && !golVal(getP(c, p))) continue;
+    for (const id of PRES_ID[p] || []) { const inp = document.getElementById(id); if (inp && marcheazaCamp(inp, motiv, dedus.has(p) ? p : null)) n++; }
+  }
+  pane.querySelectorAll('.fld select, .fld input[type=text]').forEach(inp => {
+    if (inp.closest('.cf-pres') || !/^(c|lc)-/.test(inp.id)) return;
+    const m = implicitDom(inp); if (m && marcheazaCamp(inp, 'implicitul aplicației (' + m + ')')) n++;
+  });
+  // circuitele locuinței: puterea / lungimea goale = valoarea uzuală a receptorului (apare cu „≈”)
+  pane.querySelectorAll('.lc-row .unit input').forEach(inp => {
+    if (inp.value.trim() === '' && /^≈/.test(inp.placeholder || '')) { inp.parentElement.classList.add('cf-pres'); inp.title = 'Presupus: valoarea uzuală pentru receptorul ales (' + inp.placeholder + ') — scrie valoarea reală ca să o confirmi.'; n++; }
+  });
+  // secțiunile pliate spun câte valori presupuse conțin
+  pane.querySelectorAll('details.adv').forEach(d => { const k = d.querySelectorAll('.cf-pres').length; const s = d.querySelector(':scope>summary'); if (k && s) s.append(el('span', { class: 'cf-tag pz' }, `${k} ${k === 1 ? 'presupusă' : 'presupuse'}`)); });
+  return n;
+}
+/* =========================================================================== verificări pentru om (echipa 1): titlu simplu, formula în „detalii”, fără dubluri */
+const V_TITLU = {
+  V01: 'Niciun cablu nu poate duce curentul cerut', V02: 'Cablul impus e prea mic pentru protecția aleasă', V03: 'Cablul nu e protejat corect la suprasarcină',
+  V04: 'Protecția impusă e sub curentul de calcul', V05: 'Calibrul ales nu există în serie', V06: 'Curentul cerut depășește cel mai mare calibru',
+  V07: 'Lipsește o dată sau are o valoare imposibilă', V08: 'Factor de putere (cos φ) neobișnuit', V09: 'Lungime de cablu neobișnuită',
+  V10: 'Condiții de pozare în afara tabelelor de calcul', V12: 'Date contradictorii', V13: 'Secțiune de cablu inexistentă sau nepermisă',
+  V14: 'Puterea declarată e sub bilanțul de puteri', V15: 'Datele de scurtcircuit nu se potrivesc între ele', V20: 'Căderea de tensiune depășește limita',
+  V21: 'Căderea de tensiune până la tablou e mare', V22: 'Căderea de tensiune la pornirea motorului e mare', V23: 'Protecția motorului poate declanșa la pornire',
+  V24: 'Neutrul trebuie protejat (armonici)', V25: 'Neutrul e prea subțire', V26: 'Conductorul de protecție (PE) e prea subțire', V27: 'Conductorul PEN nu e conform',
+  V28: 'Schema de legare la pământ nu e acoperită', V29: 'Circuit de prize fără diferențial de 30 mA', V30: 'Deconectarea automată la defect nu e asigurată',
+  V31: 'Deconectarea la defect se bazează pe diferențialul din amonte', V32: 'Deconectarea la defect e nesigură cu impedanța implicită a rețelei',
+  V33: 'Aparatul nu rezistă la curentul de scurtcircuit', V34: 'Schema TT nu e conformă', V35: 'Cablul nu rezistă termic la scurtcircuit',
+  V36: 'Conductorul PE nu rezistă termic la scurtcircuit', V37: 'Priza de pământ', V40: 'Protecția din amonte e mai mică decât cea din aval',
+  V41: 'Selectivitate insuficientă între protecții', V42: 'Selectivitate parțială la scurtcircuit', V43: 'Diferențialele în serie nu sunt selective',
+  V44: 'Protecția din tabloul existent nu se potrivește cu centrala', V45: 'Materialul cablului a fost schimbat automat',
+  V46: 'Consumul depășește puterea aprobată sau siguranța branșamentului', V47: 'Fazele sunt încărcate inegal', V48: 'Aluminiul a fost înlocuit cu cupru',
+  V49: 'Circuitul trebuie protejat de diferențial', V50: 'Blocul de măsură nu se potrivește cu puterea', V51: 'Măsura semidirectă e cerută sub 100 A',
+  V52: 'Protecția Q e mai mare decât siguranța SF', V53: 'Puterea nu încape în branșament monofazat', V54: 'Cablul e prea gros pentru bornele BMPTi',
+  V55: 'Transformatoarele de curent nu se potrivesc', V56: 'Contor direct peste 100 A', V57: 'Circuitul de tensiune al contorului e legat greșit',
+  V60: 'Întreruptorul general e sub puterea transformatorului', V61: 'Siguranțe MT la un transformator prea mare', V62: 'Consumul depășește puterea transformatorului',
+  V63: 'Postul de transformare e incomplet', V64: 'Curentul maxim din fișa invertorului e neplauzibil', V65: 'Întreruptorul general QG e sub suma invertoarelor',
+  V66: 'Racordul de joasă tensiune nu e permis la această putere', V67: 'Transformatorul centralei e sub puterea invertoarelor',
+  V68: 'Tensiunea stringului depășește limita invertorului la frig', V69: 'Nu există siguranță gPV potrivită', V70: 'Categoria RfG a centralei',
+  V71: 'Invertor monofazat peste 3,68 kW', V72: 'Injecția depășește siguranța branșamentului', V73: 'Tipul diferențialului pentru invertor',
+  V74: 'Descărcătorul c.c. nu e potrivit pentru tensiunea stringului', V75: 'Ordinul ANRE pentru protecția de interfață',
+  V80: 'Lista de echipamente nu se potrivește cu desenul', V81: 'O notă nu se potrivește cu modelul', V82: 'Un tablou e desenat în carcasa altuia',
+  V83: 'Legătură de comandă inversată', V85: 'Deconectarea în regim de grup electrogen', V86: 'Grupul electrogen e prea mic', V87: 'ATS-ul nu e conform',
+  V88: 'Lipsesc protecțiile de c.c. la invertor', V89: 'Modulele nu se potrivesc cu invertorul', V91: 'Puterea declarată diferă de suma invertoarelor', V92: 'Limitarea injecției',
+};
+const nrRO = t => Math.round(parseRO(t) || 0);
+// mesajele cu numere pe care le putem spune în cuvinte (formula rămâne în „Detalii de calcul”)
+const V_SPUS = [
+  [/Ib de calcul pe (L\d) ([\d,.]+) A > 1,13·In Q branșament = [\d,.]+ A \(In (\d+) A\)/, m => `Siguranța de la branșament (${m[3]} A) ar sări la consumul calculat pe faza ${m[1]} (≈ ${nrRO(m[2])} A)`],
+  [/Pc din bilanț ([\d,.]+) kW > puterea aprobată \(ATR\) ([\d,.]+) kW/, m => `Consumul calculat (${m[1]} kW) depășește puterea aprobată (${m[2]} kW)`],
+  [/Q branșament (existent )?nedeclarat — presupus (\d+) A/, m => `Siguranța branșamentului (Q) nu e declarată — am presupus ${m[2]} A`],
+  [/puterea aprobată \(ATR\) nedeclarată/, () => 'Puterea aprobată din ATR nu e declarată — am folosit bilanțul'],
+  [/încărcătorul VE de ([\d,.]+) kW nu se poate alimenta monofazat/, m => `Încărcătorul de mașină de ${m[1]} kW nu merge pe branșament monofazat`],
+  [/receptorul „(.+?)” de ([\d,.]+) kW depășește singur puterea aprobată ([\d,.]+) kW/, m => `„${m[1]}” (${m[2]} kW) depășește singur puterea aprobată (${m[3]} kW)`],
+  [/Ib ([\d,.]+) A cere un Q peste limita blocului BMPM/, m => `Consumul (≈ ${nrRO(m[1])} A) nu încape în branșamentul monofazat (max. 40 A)`],
+  [/(\S+) impus are Imax (\d+) A < Ib = ([\d,.]+) A/, m => `Blocul impus ${m[1]} (max. ${m[2]} A) e prea mic pentru consum (≈ ${nrRO(m[3])} A)`],
+  [/MCB (\S+) In (\d+) A > In Q branșament (\d+) A/, m => `Protecția circuitului (${m[1]}) e mai mare decât siguranța branșamentului (${m[3]} A)`],
+  [/rețeaua nu este specificată/, () => 'Alege rețeaua: monofazată sau trifazată'],
+];
+function vTitlu(v) {
+  const t = hum(v.mesaj || '');
+  for (const [re, f] of V_SPUS) { const m = re.exec(t); if (m) return f(m); }
+  return V_TITLU[v.cod] || t;
+}
+/** aceeași verificare (cod + obiect + mesaj) o singură dată */
+function unice(lst) { const vz = new Set(); return lst.filter(v => { const k = `${v.cod}|${v.obiect}|${v.mesaj}`; if (vz.has(k)) return false; vz.add(k); return true; }); }
+/** câmpul din Calcul care trebuie corectat pentru o verificare („Du-mă la câmp”) */
+function campVerif(v) {
+  const c = (MODEL && MODEL.calc) || {}, ob = v.obiect || '', cp = v.camp || '';
+  const pref = c.tip_schema === 'locuinta' ? 'lc-' : 'c-';
+  const din = p => (PRES_ID[p] || []).find(id => id.startsWith(pref)) || null;
+  if (cp && din(cp)) return din(cp);
+  if (ob === 'retea') return c.tip_schema === 'locuinta' ? 'lc-retea' : 'c-retea';
+  if (ob === 'Q' && c.tip_schema === 'locuinta') return 'lc-qb';
+  if (v.cod === 'V46' && ob === 'schema' && c.tip_schema === 'locuinta') return 'lc-pa';
+  if (v.cod === 'V50') return c.bmpt_fortat ? 'c-bloc' : 'c-p';
+  const mc = /^C(\d+)·/.exec(ob); if (mc && c.tip_schema === 'locuinta') return 'lc' + (+mc[1] - 1) + 'n';
+  return null;
+}
+function laCamp(id) {
+  if (document.body.dataset.mview === 'plan') setMView('edit');
+  if (!document.getElementById(id)) { if (wizActiv()) wizGo(1); else setTab('calc'); }
+  const n = document.getElementById(id); if (!n) return;
+  n.closest('details')?.setAttribute('open', '');
+  n.scrollIntoView({ block: 'center' }); n.focus({ preventScroll: true });
+  const f = n.closest('.fld,.lc-row') || n; f.classList.add('flash'); setTimeout(() => f.classList.remove('flash'), 1600);
+}
+/** acțiunea sigură, cu un singur clic, când remedierea e una singură */
+function actiuniVerif(v) {
+  const c = MODEL && MODEL.calc, out = [];
+  const id = c ? campVerif(v) : null;
+  if (id) out.push(el('button', { class: 'btn sm', type: 'button', onclick: () => laCamp(id) }, 'Du-mă la câmp'));
+  if (c && v.cod === 'V50' && c.bmpt_fortat) out.push(el('button', { class: 'btn sm', type: 'button', onclick: () => { pushHistory(); delete c.bmpt_fortat; render(); scheduleRegen(0); toast('Blocul de măsură se alege din nou automat, după curent.'); } }, 'Revino la blocul automat'));
+  const pv = v.propunere_ve;
+  if (c && pv && pv.limitare_kW > 0 && Array.isArray(c.circuite)) {
+    const m = /^C(\d+)·/.exec(pv.obiect || ''); const k = m ? +m[1] - 1 : c.circuite.findIndex(x => x.receptor === 'vehicul_electric' && (x.nume || 'VE') === pv.nume);
+    const ci = c.circuite[k];
+    if (ci && ci.receptor === 'vehicul_electric') out.push(el('button', { class: 'btn sm', type: 'button', title: 'Pune limitarea în câmpul „Limitare putere VE” al circuitului; setează-o și în stație',
+      onclick: () => { pushHistory(); ci.limitare_kW = pv.limitare_kW; render(); scheduleRegen(0); toast(`Am limitat stația „${ci.nume || 'VE'}” la ${numRO(pv.limitare_kW)} kW. Setează aceeași limită în stație.`); } }, `Limitează stația la ${numRO(pv.limitare_kW)} kW`));
+  }
+  const pr = v.propunere;
+  if (c && pr && pr.camp && pr.valoare != null) out.push(el('button', { class: 'btn sm', type: 'button', title: 'Aplică valoarea propusă de calcul; verifică-o în ATR',
+    onclick: () => { pushHistory(); setP(c, pr.camp, pr.valoare); render(); scheduleRegen(0); toast(`Am pus ${hum(pr.camp)} = ${numRO(pr.valoare)}. Verifică valoarea în ATR.`); } }, `Folosește ${hum(pr.camp)} = ${numRO(pr.valoare)}`));
+  return out.length ? el('div', { class: 'vacts' }, ...out) : null;
+}
+/** un rând din lista de verificări: titlul în cuvinte, obiectul, remedierea, acțiunile și formula în „Detalii” */
+function vItem(grup, o = {}) {
+  const x = grup[0], titlu = vTitlu(x);
+  const ob = [...new Set(grup.map(g => hum(g.obiect)).filter(Boolean))];
+  const msgs = [...new Set(grup.map(g => hum(g.mesaj)))];
+  const rem = [...new Set(grup.map(g => g.remediere).filter(Boolean).map(hum))];
+  let conf = null;
+  if (x.nivel === 'AVERTISMENT' && MODEL && MODEL.calc) {
+    const chei = grup.map(g => `${g.cod}|${g.obiect}`);
+    const cb = el('input', { type: 'checkbox' }); cb.checked = grup.every(g => g.confirmat);
+    cb.addEventListener('change', () => { pushHistory(); const L = new Set(MODEL.confirmari || []); chei.forEach(k => cb.checked ? L.add(k) : L.delete(k)); MODEL.confirmari = [...L]; scheduleRegen(); });
+    conf = el('label', { class: 'vconf', title: 'Ai analizat atenționarea și o accepți: nu mai apare în notele planșei; memoriul o arată ca analizată.' }, cb,
+      el('span', {}, grup.length > 1 ? `Analizat — accept toate ${grup.length}` : 'Analizat — accept'));
+  }
+  const det = msgs.length && !(msgs.length === 1 && msgs[0] === titlu)
+    ? el('details', { class: 'vdetc' }, el('summary', {}, `Detalii de calcul (${x.cod})`), ...msgs.map(m => el('p', {}, m))) : null;
+  return el('li', { class: (x.nivel === 'BLOCANT' ? 'b' : 'a') + (grup.every(g => g.confirmat) ? ' ok' : '') },
+    el('span', { class: 'vt' }, titlu), ob.length ? el('span', { class: 'vobj' }, (ob.length > 1 ? `${ob.length} locuri: ` : '') + ob.join(', ')) : null,
+    rem.length ? el('small', {}, 'Ce poți face: ' + rem[0]) : null, (x.nivel === 'BLOCANT' || x.propunere_ve) && !o.faraActiuni ? actiuniVerif(x) : null, conf, det);
+}
+/** atenționările cu același cod și același titlu (ex. V21 pe INV-1…4) = un singur rând */
+function grupe(lst) { const m = new Map(); lst.forEach(v => { const k = v.cod + '|' + vTitlu(v); if (!m.has(k)) m.set(k, []); m.get(k).push(v); }); return [...m.values()]; }
 function rezultatUI(v) {
   const out = [];
-  const bl = (v.verificari || []).filter(x => x.nivel === 'BLOCANT'), avTot = (v.verificari || []).filter(x => x.nivel === 'AVERTISMENT');
+  const bl = unice((v.verificari || []).filter(x => x.nivel === 'BLOCANT' && !(reteaNeutra() && x.obiect === 'retea'))), avTot = unice((v.verificari || []).filter(x => x.nivel === 'AVERTISMENT'));
   const av = avTot.filter(x => !x.confirmat), avOk = avTot.filter(x => x.confirmat);
+  const gAv = grupe(av), gOk = grupe(avOk);
   out.push(el('div', { class: 'vsum ' + (bl.length ? 'b' : av.length ? 'a' : 'ok') },
-    bl.length ? `Export blocat: ${bl.length} ${bl.length === 1 ? 'verificare neîndeplinită' : 'verificări neîndeplinite'}.` : av.length ? `Toate verificările blocante sunt îndeplinite · ${av.length} ${av.length === 1 ? 'atenționare' : 'atenționări'} de verificat.` : 'Toate verificările sunt îndeplinite.'));
-  const item = x => {
-    let conf = null;
-    if (x.nivel === 'AVERTISMENT' && MODEL && MODEL.calc) {
-      const k = `${x.cod}|${x.obiect}`;
-      const cb = el('input', { type: 'checkbox' }); cb.checked = !!x.confirmat;
-      cb.addEventListener('change', () => { pushHistory(); const L = new Set(MODEL.confirmari || []); cb.checked ? L.add(k) : L.delete(k); MODEL.confirmari = [...L]; scheduleRegen(); });
-      conf = el('label', { class: 'check conf', title: 'Ai analizat atenționarea și o accepți: nu mai apare în notele planșei; memoriul o arată ca analizată.' }, cb, ' Analizat — accept');
-    }
-    return el('li', { class: (x.nivel === 'BLOCANT' ? 'b' : 'a') + (x.confirmat ? ' ok' : '') }, el('b', {}, `${x.cod} · ${hum(x.obiect)}`), el('div', {}, hum(x.mesaj)), x.remediere ? el('small', {}, 'Remediere: ' + hum(x.remediere)) : null, conf);
-  };
-  if (bl.length) out.push(el('ul', { class: 'vlist' }, bl.map(item)));
-  if (av.length) out.push(el('details', { class: 'vdet', open: bl.length ? null : true }, el('summary', {}, `Atenționări (${av.length})`), el('ul', { class: 'vlist' }, av.map(item))));
-  if (avOk.length) out.push(el('details', { class: 'vdet' }, el('summary', {}, `Atenționări analizate (${avOk.length})`), el('ul', { class: 'vlist' }, avOk.map(item))));
-  if ((v.presupus || []).length) out.push(el('details', { class: 'vdet' }, el('summary', {}, `Valori presupuse — de confirmat (${v.presupus.length})`), el('ul', { class: 'plist' }, v.presupus.map(x => el('li', {}, hum(x))))));
+    bl.length ? `Export blocat: ${bl.length} ${bl.length === 1 ? 'verificare neîndeplinită' : 'verificări neîndeplinite'}.` : av.length ? `Fără erori blocante · ${gAv.length} ${gAv.length === 1 ? 'atenționare' : 'atenționări'} de analizat.` : 'Toate verificările sunt îndeplinite.'));
+  if (bl.length) out.push(el('ul', { class: 'vlist' }, bl.map(x => vItem([x]))));
+  if (av.length) {
+    const acc = el('div', { class: 'vacc' });
+    const btn = el('button', { class: 'btn sm', type: 'button', id: 'v-acc-tot', onclick: () => {
+      // confirmare pe loc (fără fereastră nativă — merge și în versiunea web)
+      acc.replaceChildren(el('p', { class: 'msg warn', role: 'alert' }, `Accepți toate cele ${av.length} atenționări ca analizate? Nu mai apar în notele planșei; memoriul le arată ca analizate.`),
+        el('button', { class: 'btn pri sm', type: 'button', id: 'v-acc-da', onclick: () => { pushHistory(); const L = new Set(MODEL.confirmari || []); av.forEach(g => L.add(`${g.cod}|${g.obiect}`)); MODEL.confirmari = [...L]; scheduleRegen(0); toast(`Am marcat ${av.length} atenționări ca analizate.`, undoAction(HIST.past.length - 1)); } }, 'Da, le-am analizat'),
+        el('button', { class: 'btn ghost sm', type: 'button', id: 'v-acc-nu', onclick: () => { acc.replaceChildren(btn); btn.focus(); } }, 'Anulează'));
+      acc.querySelector('#v-acc-nu').focus(); } }, 'Accept toate atenționările analizate');
+    acc.append(btn);
+    out.push(el('details', { class: 'vdet', open: bl.length ? null : true }, el('summary', {}, `Atenționări (${gAv.length})`), MODEL && MODEL.calc ? acc : null, el('ul', { class: 'vlist' }, gAv.map(g => vItem(g)))));
+  }
+  if (avOk.length) out.push(el('details', { class: 'vdet' }, el('summary', {}, `Atenționări analizate (${gOk.length})`), el('ul', { class: 'vlist' }, gOk.map(g => vItem(g)))));
+  if ((v.presupus || []).length) out.push(el('details', { class: 'vdet', open: v.presupus.length <= 5 ? true : null }, el('summary', {}, `Valori presupuse — de confirmat (${v.presupus.length})`),
+    el('ul', { class: 'plist' }, v.presupus.map(x => { const id = campPresupus(x); return el('li', {}, hum(x), id ? el('button', { class: 'btn ghost sm', type: 'button', onclick: () => laCamp(id) }, 'Completează') : null); }))));
   if ((v.info || []).length) out.push(el('details', { class: 'vdet' }, el('summary', {}, `Verificări îndeplinite (${v.info.length})`), el('ul', { class: 'plist' }, v.info.map(x => el('li', {}, `${x.cod} · ${hum(x.obiect)}: ${hum(x.mesaj)}`)))));
   if (v.calculat) out.push(el('div', { style: 'display:flex;gap:8px;margin-top:8px;flex-wrap:wrap' },
     el('button', { class: 'btn sm', type: 'button', onclick: deschideMemoriu }, 'Deschide memoriul de calcul'),
-    el('button', { class: 'btn ghost sm', type: 'button', onclick: () => exportAs('memoriu', $('#exp-more')) }, window.SM_WEB ? 'Descarcă (.html)' : 'Descarcă PDF')));
+    el('button', { class: 'btn sm', type: 'button', onclick: () => exportAs('memoriu', $('#exp-more')) }, window.SM_WEB ? 'Descarcă memoriul (.html)' : 'Descarcă memoriul (PDF)')));
   return out;
 }
 async function deschideMemoriu() {
@@ -1510,13 +1820,11 @@ async function deschideMemoriu() {
     try {
       const r = await fetch('/api/memoriu', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload(false)) });
       const t = await r.text(); if (!r.ok) throw new Error(t);
-      const fr = el('iframe', { title: 'Memoriu de calcul', style: 'flex:1;border:0;background:#fff;border-radius:8px' }); fr.srcdoc = t;
-      const ov = el('div', { role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Memoriu de calcul', style: 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);display:flex;flex-direction:column;gap:8px;padding:16px' },
-        el('div', { style: 'display:flex;gap:8px;justify-content:flex-end' },
-          el('button', { class: 'btn sm', type: 'button', onclick: () => exportAs('memoriu', $('#exp-more')) }, 'Descarcă (.html)'),
-          el('button', { class: 'btn pri sm', type: 'button', onclick: () => ov.remove() }, 'Închide')), fr);
-      ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
-      document.body.append(ov); ov.querySelector('.btn.pri').focus();
+      const fr = el('iframe', { title: 'Memoriu de calcul', style: 'flex:1;min-height:0;border:1px solid var(--rule);background:#fff;border-radius:8px' }); fr.srcdoc = t;
+      const d = dialogNou('Memoriu de calcul', [fr], [
+        el('button', { class: 'btn', type: 'button', onclick: () => exportAs('memoriu', $('#exp-more')) }, 'Descarcă (.html)'),
+        el('button', { class: 'btn pri', type: 'button', id: 'mem-inchide', onclick: () => d.close() }, 'Închide')], { cls: 'mare' });
+      d.querySelector('#mem-inchide').focus();
     } catch (e) { toast('Memoriul nu a putut fi generat: ' + e.message, { kind: 'err' }); }
     return;
   }
@@ -1538,7 +1846,7 @@ function tabCalc(root) {
   if (!m.calc) {
     root.append(el('div', { class: 'card' }, el('h3', {}, 'Schemă desenată manual'),
       el('p', { class: 'desc' }, 'Această schemă nu are date de calcul, deci aplicația nu poate verifica dimensionarea, reglajele, scurtcircuitul sau selectivitatea. La export, planșa primește o notă de avertizare.'),
-      el('div', { style: 'display:flex;gap:8px;flex-wrap:wrap' }, el('button', { class: 'btn pri sm', type: 'button', onclick: () => $('#new-btn').click() }, 'Pornește o schemă calculată'),
+      el('div', { style: 'display:flex;gap:8px;flex-wrap:wrap' }, el('button', { class: 'btn pri sm', type: 'button', onclick: () => $('#new-btn').click() }, 'Planșă nouă, calculată'),
         el('button', { class: 'btn sm', type: 'button', onclick: () => { MODEL.calc = { tip_schema: 'tablou', plecari: [{ nume: 'TD-1', In_A: 63 }] }; regen(); } }, 'Creează date de calcul (tablou)'))));
     if (VALID) root.append(el('div', { id: 'vres', class: 'card' }, ...rezultatUI(VALID)));
     return;
@@ -1546,28 +1854,30 @@ function tabCalc(root) {
   const c = m.calc;
   const tip = c.tip_schema;
   if (tip === 'locuinta') return tabLocuinta(root);
-  if (wizActiv()) root.append(el('h2', { class: 'wz-h', id: 'wz-h', tabindex: '-1' }, 'Date de intrare'), el('p', { class: 'desc' }, 'Completează datele instalației. Aplicația dimensionează și verifică pe măsură ce scrii; rezultatul complet îl vezi la pasul Verificare.'));
+  if (wizActiv()) root.append(el('h2', { class: 'wz-h', id: 'wz-h', tabindex: '-1' }, 'Date de intrare'), el('p', { class: 'desc' }, 'Completează datele instalației — aplicația dimensionează și verifică pe măsură ce scrii. Apoi „Generează planșa”; câmpurile cu galben sunt valori presupuse.'));
   else root.append(el('div', { id: 'vres', class: 'card vcard' }, ...(VALID ? rezultatUI(VALID) : [el('div', { class: 'desc' }, 'Se verifică…')])));
   const g = el('div', { class: 'card' }, el('h3', {}, 'Instalația'));
   g.append(g2(cf(c, 'tip_schema', 'Tipul schemei', { select: TIP_SCHEMA, id: 'c-tip' }),
     ['bransament', 'prosumator'].includes(tip) ? cf(c, 'retea', 'Rețea (obligatoriu)', { select: [['', '— alege: mono sau trifazat —'], ['tri', 'trifazată 3 × 400/230 V'], ['mono', 'monofazată 230 V']], id: 'c-retea' }) : el('div')));
   if (['bransament', 'prosumator'].includes(tip) && !['mono', 'tri'].includes(c.retea)) {
-    g.querySelector('#c-retea')?.setAttribute('aria-invalid', 'true'); g.querySelector('#c-retea')?.setAttribute('aria-describedby', 'c-retea-err');
-    g.append(el('p', { class: 'msg err', id: 'c-retea-err' }, 'Alege rețeaua din ATR — nu o presupunem (monofazat BMPM / trifazat BMPT schimbă aparatele și cablurile).')); }
+    const neutru = reteaNeutra();          // quick win 7: nicio eroare înainte de prima încercare
+    if (!neutru) g.querySelector('#c-retea')?.setAttribute('aria-invalid', 'true');
+    g.querySelector('#c-retea')?.setAttribute('aria-describedby', 'c-retea-err');
+    g.append(el('p', { class: neutru ? 'hint' : 'msg err', id: 'c-retea-err' }, 'Alege rețeaua din ATR — nu o presupunem (monofazat BMPM / trifazat BMPT schimbă aparatele și cablurile).')); }
   if (['bransament', 'prosumator'].includes(tip) && c._retea_dedusa && c.retea === 'tri')
     g.append(el('p', { class: 'hint' }, 'Rețeaua trifazată e dedusă din putere (nu încape în monofazat, BMPM max. 40 A) — verific-o în ATR.'));
   if (tip === 'bransament') {
     const src = c.Ib_A != null ? 'Ib_A' : c.S_kVA != null ? 'S_kVA' : 'P_kW';
-    g.append(g3e(field({ v: src }, 'v', 'Puterea dată ca', { always: true, id: 'c-src', select: [['P_kW', 'P [kW] din ATR'], ['S_kVA', 'S [kVA]'], ['Ib_A', 'curent [A]']],
+    g.append(g3e(field({ v: src }, 'v', 'Puterea dată ca', { always: true, id: 'c-src', select: [['P_kW', 'P [kW] (ATR)'], ['S_kVA', 'S [kVA]'], ['Ib_A', 'curent [A]']],
       onChange: () => { const val = c[src]; delete c.P_kW; delete c.S_kVA; delete c.Ib_A; c[document.getElementById('c-src').value] = val; scheduleRegen(0); } }),
       cf(c, src, src === 'P_kW' ? 'Pa [kW]' : src === 'S_kVA' ? 'S [kVA]' : 'Ib [A]', { num: true, id: 'c-p' }),
       cf(c, 'L_coloana_m', 'Coloana C2 [m]', { num: true, ph: '50', id: 'c-l' })));
     g.append(g2(cf(c, 'masura_ceruta', 'Măsura cerută', { select: [['', 'automat după curent'], ['directa', 'directă'], ['semidirecta', 'semidirectă (TC)']], id: 'c-mas' }),
-      cf(c, 'bmpt_fortat', 'Bloc impus', { select: [['', 'automat (ST 4-JT / ST 3-JT)'], ['BMPTd-16', 'BMPTd-16'], ['BMPTd-40', 'BMPTd-40'], ['BMPTd-100', 'BMPTd-100'], ['BMPTi-250', 'BMPTi-250']], id: 'c-bloc' })));
+      cf(c, 'bmpt_fortat', 'Bloc impus', { select: [['', 'automat'], ['BMPTd-16', 'BMPTd-16'], ['BMPTd-40', 'BMPTd-40'], ['BMPTd-100', 'BMPTd-100'], ['BMPTi-250', 'BMPTi-250']], id: 'c-bloc' })));
   } else if (tip === 'tablou') {
     g.append(g3e(cf(c, 'P_kW', 'Pa declarată [kW]', { num: true, ph: 'din bilanț', id: 'c-p' }), cf(c, 'In_Q1_A', 'Q1 impus [A]', { num: true, ph: 'automat', id: 'c-q1' }),
       cf(c, 'L_alimentare_m', 'Alimentare C1 [m]', { num: true, ph: '50', id: 'c-l' })));
-    g.append(g3e(cf(c, 'ks', 'ks', { num: true, ph: 'IEC 61439-2', id: 'c-ks' }), cf(c, 'origine', 'Sursa tabloului', { select: [['', 'nedeclarată (presupus BMPT)'], ['bmpt', 'rețea publică prin BMPT'], ['tg_existent', 'tablou existent (TGD)'], ['pt_propriu', 'PT propriu']], id: 'c-orig' }),
+    g.append(g3e(cf(c, 'ks', 'ks', { num: true, ph: 'IEC 61439-2', id: 'c-ks' }), cf(c, 'origine', 'Sursa tabloului', { select: [['', 'nedeclarată (BMPT)'], ['bmpt', 'rețea publică prin BMPT'], ['tg_existent', 'tablou existent (TGD)'], ['pt_propriu', 'PT propriu']], id: 'c-orig' }),
       c.origine === 'pt_propriu' ? cf(c, 'pt_Sn_kVA', 'Sn trafo [kVA]', { select: [['', '—'], ...TRAFO_SN.map(x => [String(x), `${x} kVA`])], numVal: true, id: 'c-ptsn' })
         : c.origine === 'tg_existent' ? cf(c, 'Ik3_sursa_kA', 'Ik3 la bara sursei [kA]', { num: true, ph: '25 (majorant)', id: 'c-ik3s' }) : el('div')));
     g.append(g3e(cf(c, 'retea', 'Rețea', { select: [['', 'trifazată 3 × 400/230 V'], ['mono', 'monofazată 230 V']], id: 'c-retea' }),
@@ -1657,9 +1967,12 @@ function tabCalc(root) {
     g.append(g3e(cf(c, 'racord', 'Se leagă în', { select: [['', 'tabloul existent (branșament OD)'], ['tg_existent', 'TG existent'], ['bmpt', 'BMPT existent'], ['pt', 'PT existent']], id: 'c-prac' }),
       cf(c, 'PI_externa', 'Protecție de interfață', { select: [['', 'automat (> 27 kW externă)'], ['true', 'externă (ATR)'], ['false', 'integrată în invertor']], id: 'c-ppi' }),
       cf(c, 'L_racord_m', 'Cablul C0 [m] (comercial)', { num: true, ph: 'fără', id: 'c-pl0' })));
+    // Î5 (proiectant 28.10.2026): TD-PV separat la toți prosumatorii; se întreabă dacă există protecții pe c.c. și pe c.a.
     g.append(g3e(cf(c, 'P_aprobata_kW', 'P aprobată / evacuată ATR [kW]', { num: true, ph: 'nedeclarată', id: 'c-ppa' }),
-      el('div'), el('div')));
+      cf(c, 'protectii_cc', 'Protecții pe c.c. (separator + SPD c.c.)', { select: [['', 'nedeclarat (desenate)'], ['true', 'da'], ['false', 'nu']], id: 'c-pcc' }),
+      cf(c, 'protectii_ca', 'Protecții pe c.a. (SPD c.a.)', { select: [['', 'nedeclarat (desenate)'], ['true', 'da'], ['false', 'nu']], id: 'c-pca' })));
     if (typeof c.PI_externa === 'string') c.PI_externa = c.PI_externa === 'true';
+    for (const k of ['protectii_cc', 'protectii_ca']) if (typeof c[k] === 'string') { if (c[k] === '') delete c[k]; else c[k] = c[k] === 'true'; }
     // r12: contorul de producție separat (BMPM / BMPT „energie produsă”) și smart meter-ul cu RS485 la invertor
     const mon = Object.assign({}, c.monitorizare || {});
     g.append(g3e(cf(c, 'contor_productie', 'Contor de producție separat (cerut de OD)', { bool: true, deleteFalse: true, id: 'c-pcp' }),
@@ -1819,12 +2132,30 @@ function lipesteTextFisa(tip, eticheta, aplica) {
     el('button', { class: 'btn pri sm', type: 'button', onclick: () => { const t = ta.value.trim(); if (!t) return ta.focus(); ov.remove(); importaFisa(new TextEncoder().encode(t), tip, eticheta, aplica); } }, 'Citește valorile')]);
   ta.focus();
 }
-function modalFisa(titlu, corp, butoane) {
-  const ov = el('div', { class: 'ech-ov', role: 'dialog', 'aria-modal': 'true', 'aria-label': titlu },
-    el('div', { class: 'ech-dlg' }, el('h3', {}, titlu), el('div', { class: 'ech-body' }, ...corp), el('div', { class: 'ech-acts' }, ...butoane)));
-  ov.addEventListener('keydown', e => { if (e.key === 'Escape') ov.remove(); });
-  document.body.append(ov); return ov;
+/** D4: dialog modal nativ — titlu vizibil (aria-labelledby), butoanele în cutie, focusul ținut înăuntru, Esc închide, focusul revine.
+ *  `.remove()` pe dialog îl închide (compatibil cu apelurile vechi). */
+let DLG_SEQ = 0;
+function dialogNou(titlu, corp, butoane, o = {}) {
+  const id = 'dlg-' + (++DLG_SEQ), opener = document.activeElement;
+  const d = el('dialog', { class: 'dlg' + (o.cls ? ' ' + o.cls : ''), 'aria-labelledby': id + '-t', id },
+    el('div', { class: 'dlg-h' }, el('h2', { id: id + '-t' }, titlu), el('button', { class: 'btn ghost icon sm', type: 'button', 'aria-label': 'Închide', onclick: () => d.close() }, '✕')),
+    el('div', { class: 'dlg-b' }, ...corp), butoane && butoane.length ? el('div', { class: 'dlg-a' }, ...butoane) : null);
+  const scoate = HTMLElement.prototype.remove.bind(d);
+  d.remove = () => { if (d.open) d.close(); else scoate(); };
+  d.addEventListener('close', () => { scoate(); if (o.onClose) o.onClose(d.returnValue); if (opener && opener.isConnected && opener.focus) opener.focus(); });
+  // capcana de focus: Tab / Shift+Tab rămân în dialog (showModal face restul paginii inert, dar Tab poate ieși în browser)
+  d.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const f = [...d.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),iframe,summary,[tabindex]:not([tabindex="-1"])')].filter(n => n.offsetParent !== null || n.tagName === 'IFRAME');
+    if (!f.length) return;
+    const i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && (i === f.length - 1 || i < 0)) { e.preventDefault(); f[0].focus(); }
+  });
+  document.body.append(d); d.showModal();
+  return d;
 }
+function modalFisa(titlu, corp, butoane) { return dialogNou(titlu, corp, butoane); }
 /** confirmarea valorilor extrase din fișă: varianta (coloana), câmpurile cu nivelul de încredere, corectură manuală */
 function dialogFisa(r, tip, eticheta, aplica) {
   const st = { v: r.implicit || 0, producator: r.producator || '', vals: {} };
@@ -1935,7 +2266,7 @@ async function newFromSablon(k, o = {}) {
     const r = await (await fetch('/api/genereaza', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ calc: clone(SABLOANE[k].calc), model: { cartus: profileCartus() } }) })).json();
     if (r.eroare) throw new Error(r.eroare);
     if (o.wiz) { r.model._wiz = 1; WIZ_START = null; PENDING_FOCUS = 'wz-h'; }
-    replaceModel(r.model, o.primul || o.wiz ? null : `Schemă nouă: ${SABLOANE[k].nume}.`, { primul: o.primul });
+    replaceModel(r.model, o.primul || o.wiz ? null : `Planșă nouă: ${SABLOANE[k].nume}.`, { primul: o.primul });
     setValid(r.validare); setTab('calc'); $('#assist').open = false;
     return true;
   } catch (e) { toast('Schema nu a putut fi generată: ' + e.message, { kind: 'err' }); return false; }
@@ -1945,26 +2276,40 @@ function profileCartus() { const p = profilActiv() || {}; const o = {}; PROFILE_
 /* =========================================================================== asistent pas cu pas
    Schema nouă se completează pe un ecran mare de editor; planșa apare abia după „Generează planșa”. */
 let WIZ_START = null;           // { renunta: bool } cât timp se alege tipul lucrării (pasul 1)
-const PASI = ['Ce proiectezi', 'Date de intrare', 'Proiect și firmă', 'Verificare'];
+let WIZ_INCERCAT = false;       // „Generează planșa” a fost apăsat: abia de acum câmpurile obligatorii goale se arată ca erori
+// echipa 1: asistentul are doar doi pași — tipul lucrării și datele; cartușul se cere o singură dată, la primul export
+const PASI = ['Ce proiectezi', 'Date de intrare'];
 const wizActiv = () => !!WIZ_START || !!(MODEL && MODEL._wiz);
-const wizPas = () => WIZ_START ? 0 : (MODEL && MODEL._wiz) || 0;
+const wizPas = () => WIZ_START ? 0 : Math.min((MODEL && MODEL._wiz) || 0, 1);
 function startWizard(o = {}) { acasaInchide(); CONF = null; WIZ_START = { renunta: o.renunta !== false }; $('#pane').scrollTop = 0; render(); }
 function wizGo(p) {
   if (p === 0) { WIZ_START = { renunta: true, inapoi: true }; }
+  else if (p >= PASI.length) return wizFinish();
   else { WIZ_START = null; MODEL._wiz = p; autosave(); }
   $('#pane').scrollTop = 0; render();
   requestAnimationFrame(() => document.getElementById('wz-h')?.focus?.());
 }
 function wizFinish() {
+  WIZ_INCERCAT = true;
   const fara = ((VALID && VALID.verificari) || []).find(v => v.nivel === 'BLOCANT' && v.obiect === 'retea');
   if (fara) { toast('Alege întâi rețeaua (monofazat sau trifazat) — fără ea schema nu se poate desena.', { kind: 'err' });
-    if (MODEL._wiz !== 1) wizGo(1); requestAnimationFrame(() => (document.getElementById('lc-retea') || document.getElementById('c-retea'))?.focus()); return; }
+    if (MODEL._wiz !== 1) wizGo(1); else render(); requestAnimationFrame(() => (document.getElementById('lc-retea') || document.getElementById('c-retea'))?.focus()); return; }
   WIZ_START = null; delete MODEL._wiz; autosave();
+  plansaGata();
+}
+/** echipa 1: după „Generează planșa” / „Confirmă și desenează” — editorul cu planșa desenată, o singură notificare */
+function plansaGata(o = {}) {
   VIEW.fitted = false; VIEW.user = false;
   setTab('calc');
   requestAnimationFrame(() => { redraw(0); });
-  const nb = ((VALID && VALID.verificari) || []).filter(v => v.nivel === 'BLOCANT').length;
-  toast(nb ? `Planșa e generată, dar are ${nb === 1 ? 'o eroare' : nb + ' erori'} de rezolvat înainte de export.` : 'Planșa e generată. Poți continua să modifici datele în stânga; planșa se actualizează imediat.', { kind: nb ? 'warn' : '' });
+  const v = VALID || {}, nb = (v.verificari || []).filter(x => x.nivel === 'BLOCANT').length, np = (v.presupus || []).length;
+  const ingust = innerWidth <= 900;
+  const unde = ingust ? 'în Editor' : 'în stânga';
+  toast(nb ? `Planșa e desenată, dar are ${nb === 1 ? 'o eroare' : nb + ' erori'} de rezolvat înainte de export — vezi Calcul.`
+    : `Planșa e desenată${o.corectat ? ' cu corecturile tale' : ''}.` + (np ? ` Valorile presupuse sunt marcate cu galben ${unde}, la Calcul.` : ` Datele le modifici ${unde}; planșa se actualizează imediat.`),
+    { kind: nb ? 'warn' : '', tag: 'gata', ms: 6000 });
+  if (ingust) setMView('plan');
+  requestAnimationFrame(() => (ingust ? $('#mv-plan') : $('#t-calc'))?.focus({ preventScroll: true }));      // D6: focusul nu rămâne pe <body>
 }
 function wizChrome() {
   const on = wizActiv(); document.body.classList.toggle('wiz', on); document.body.classList.toggle('wiz0', !!WIZ_START); projName();
@@ -1974,33 +2319,34 @@ function wizChrome() {
   const ol = el('ol', {});
   PASI.forEach((t, i) => ol.append(el('li', {}, el('button', { type: 'button', class: i < p ? 'gata' : '', 'aria-current': i === p ? 'step' : null, disabled: i > 0 && !MODEL._wiz && !(i <= p),
     onclick: () => { if (i !== p) wizGo(i); } }, el('span', { class: 'n', 'aria-hidden': 'true' }, i < p ? '✓' : String(i + 1)), el('span', { class: 't' }, t)))));
-  bar.replaceChildren(...[el('b', { class: 'hide-sm', style: 'white-space:nowrap' }, 'Schemă nouă'), ol,
-    p > 0 ? el('button', { class: 'btn ghost sm', type: 'button', title: 'Închide asistentul și arată planșa acum', onclick: wizFinish }, 'Sari la planșă') : null,
+  bar.replaceChildren(...[el('b', { class: 'hide-sm', style: 'white-space:nowrap' }, 'Planșă nouă'), ol,
     p === 0 && WIZ_START && WIZ_START.renunta ? el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { WIZ_START = null; render(); redraw(0); } }, 'Renunță') : null].filter(Boolean));
   const nb = ((VALID && VALID.verificari) || []).filter(v => v.nivel === 'BLOCANT').length;
   const kids = [];
   if (p > 0) kids.push(el('button', { class: 'btn', type: 'button', onclick: () => wizGo(p - 1) }, '← Înapoi'));
   kids.push(el('span', { class: 'sp' }));
   const na = ((VALID && VALID.verificari) || []).filter(v => v.nivel === 'AVERTISMENT' && !v.confirmat).length;
-  if (p > 0 && VALID) kids.push(el('span', { class: 'st', role: 'status' }, nb ? `⛔ ${nb === 1 ? 'o eroare' : nb + ' erori'} de rezolvat` : VALID.calculat ? (na ? `fără erori · ${na === 1 ? 'o atenționare' : na + ' atenționări'}` : '✓ fără erori') : ''));
+  const doarRetea = nb && !WIZ_INCERCAT && wizDoarRetea();
+  if (p > 0 && VALID) kids.push(el('span', { class: 'st', role: 'status' }, doarRetea ? 'Alege rețeaua (mono sau trifazat) ca să poți genera planșa' : nb ? `⛔ ${nb === 1 ? 'o eroare' : nb + ' erori'} de rezolvat` : VALID.calculat ? (na ? `fără erori · ${na === 1 ? 'o atenționare' : na + '\u00a0atenționări'}` : '✓ fără erori') : ''));
   if (p === 0) kids.push(el('span', { class: 'st' }, 'Alege tipul lucrării ca să continui'));
-  else if (p < 3) kids.push(el('button', { class: 'btn pri', type: 'button', onclick: () => wizGo(p + 1) }, `Continuă: ${PASI[p + 1]} →`));
   else kids.push(el('button', { class: 'btn pri', type: 'button', id: 'wz-gen', onclick: wizFinish }, 'Generează planșa'));
   foot.replaceChildren(...kids);
 }
 function wizRender(root) {
   const p = wizPas();
   if (p === 0) return wizTip(root);
-  if (p === 1) return MODEL.calc && MODEL.calc.tip_schema === 'locuinta' ? tabLocuinta(root) : tabCalc(root);
-  if (p === 2) { root.append(el('h2', { class: 'wz-h', id: 'wz-h', tabindex: '-1' }, 'Proiect și firmă'), el('p', { class: 'desc' }, 'Datele din cartușul planșei. Datele firmei le salvezi o singură dată, ca profil.')); return tabProiect(root); }
-  return wizVerif(root);
+  return MODEL.calc && MODEL.calc.tip_schema === 'locuinta' ? tabLocuinta(root) : tabCalc(root);
 }
-const WZ_ORD = ['locuinta', 'bmpm', 'bmptd', 'bmpt', 'prosumator', 'tg', 'cef', 'pt', 'ge'];
+/** singura eroare blocantă e rețeaua neleasă — înainte de „Generează planșa” nu o arătăm ca eroare */
+const wizDoarRetea = () => { const bl = ((VALID && VALID.verificari) || []).filter(v => v.nivel === 'BLOCANT'); return bl.length > 0 && bl.every(v => v.obiect === 'retea'); };
+const reteaNeutra = () => wizActiv() && !WIZ_INCERCAT;
+// D7: o singură ordine a tipurilor de lucrare peste tot (Acasă, Exemple, meniul „Planșă nouă”, asistent) — cea din TIPURI_LUCRARE
+const ordineSabloane = () => { const o = TIPURI_LUCRARE.map(t => t[0]).filter(k => SABLOANE[k]); return [...o, ...Object.keys(SABLOANE).filter(k => !o.includes(k))]; };
 function wizTip(root) {
   root.append(el('h2', { class: 'wz-h', id: 'wz-h', tabindex: '-1' }, 'Ce proiectezi?'),
-    el('p', { class: 'desc' }, 'Alege tipul lucrării. Pe ecranul următor introduci datele; planșa se generează la final, după verificare.'));
+    el('p', { class: 'desc' }, 'Alege tipul lucrării. Pe ecranul următor introduci datele, apoi „Generează planșa”.'));
   const g = el('div', { class: 'wz-grid' });
-  const keys = [...WZ_ORD.filter(k => SABLOANE[k]), ...Object.keys(SABLOANE).filter(k => !WZ_ORD.includes(k))];
+  const keys = ordineSabloane();
   keys.forEach(k => { const v = SABLOANE[k];
     g.append(el('button', { class: 'wz-card' + (k === 'locuinta' ? ' main' : ''), type: 'button', onclick: () => {
       if (WIZ_START && WIZ_START.inapoi && MODEL._wiz && MODEL.calc && MODEL.calc.tip_schema === v.calc.tip_schema) {
@@ -2051,36 +2397,14 @@ function neinteles(res, it) {
   res.replaceChildren(el('div', { class: 'msg err neint', role: 'alert' },
     el('b', {}, 'Nu am recunoscut tipul lucrării.'),
     el('span', {}, ' ' + (q || 'Scrie ce proiectezi și puterea, de exemplu „branșament trifazat 20 kW”, „casă trifazată” sau „CEF 100 kW cu 2 invertoare de 50 kW”.'))));
-}
-function wizVerif(root) {
-  root.append(el('h2', { class: 'wz-h', id: 'wz-h', tabindex: '-1' }, 'Verificare înainte de planșă'),
-    el('p', { class: 'desc' }, 'Aplicația a dimensionat instalația din datele tale. Erorile marcate cu roșu blochează exportul; le poți corecta și după ce apare planșa.'));
-  const c = MODEL.calc || {}, k = MODEL.cartus || {};
-  const tip = (TIP_SCHEMA.find(t => t[0] === c.tip_schema) || [, 'desen manual'])[1];
-  const miss = missingCartus();
-  const dl = el('dl', {}, el('dt', {}, 'Lucrare'), el('dd', {}, tip),
-    el('dt', {}, 'Beneficiar'), el('dd', {}, PLACEHOLDER(k.beneficiar) ? '— necompletat' : k.beneficiar),
-    el('dt', {}, 'Amplasament'), el('dd', {}, PLACEHOLDER(k.adresa) ? '— necompletat' : k.adresa),
-    el('dt', {}, 'Proiectant'), el('dd', {}, PLACEHOLDER(k.proiectant) ? '— necompletat' : k.proiectant));
-  if (c.tip_schema === 'locuinta') {
-    const rz = (VALID && VALID.rezultat) || {}; const b = rz.bilant || {};
-    const al = c.alimentare || {}, ra = rz.alimentare || {};
-    dl.append(el('dt', {}, 'Rețea'), el('dd', {}, { mono: 'monofazată 230 V', tri: 'trifazată 3 × 400 V' }[c.retea] || '— nespecificată (obligatoriu)'),
-      el('dt', {}, 'Putere aprobată'), el('dd', {}, al.P_aprobata_kW != null ? `${fmt(al.P_aprobata_kW)} kW (ATR)` : '— nedeclarată'),
-      el('dt', {}, 'Q branșament'), el('dd', {}, al.In_Q_bransament_A != null ? `${fmt(al.In_Q_bransament_A)} A` : (ra.Q && ra.Q.In_A ? `— nedeclarat (presupus ${ra.Q.In_A} A)` : '— nedeclarat')));
-    dl.append(el('dt', {}, 'Circuite'), el('dd', {}, `${(c.circuite || []).length}` + ((rz.grupe_DDR || []).length ? ` în ${rz.grupe_DDR.length} grupe DDR` : '')));
-    if (b.Pc_kW != null) dl.append(el('dt', {}, 'Putere'), el('dd', {}, `Pi ${fmt(b.Pi_kW)} kW · Pc ${fmt(b.Pc_kW)} kW` + (c.alimentare && c.alimentare.P_aprobata_kW ? ` · aprobată ${fmt(c.alimentare.P_aprobata_kW)} kW` : '')));
-  }
-  root.append(el('div', { class: 'card wz-sum' }, el('h3', {}, 'Rezumat'), dl,
-    miss.length ? el('p', { class: 'msg warn', style: 'margin-top:8px' }, '⚠ În cartuș mai lipsesc: ' + miss.join(', ') + '. ', el('button', { class: 'btn ghost sm', type: 'button', onclick: () => wizGo(2) }, 'Completează')) : null));
-  root.append(el('div', { id: 'vres', class: 'card vcard' }, ...(VALID ? rezultatUI(VALID) : [el('div', { class: 'desc' }, 'Se verifică…')])));
+  requestAnimationFrame(() => res.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));   // D3: mesajul nu rămâne sub fold
 }
 
 /* =========================================================================== tabloul unei locuințe (TE) */
 /** mesajele motorului fără chei interne */
 const CHEI_RO = [[/alimentare\.P_aprobata_kW|P_aprobata_kW/g, 'puterea aprobată (ATR)'], [/alimentare\.In_Q_bransament_A|In_Q_bransament_A/g, 'Q branșament'],
   [/alimentare\.L_coloana_m|L_coloana_m/g, 'lungimea coloanei'], [/\bP_kW\b/g, 'puterea'], [/\bL_m\b/g, 'lungimea'], [/\bIn_A\b/g, 'calibrul'], [/\bRA_ohm\b/g, 'RA'],
-  [/circuite\[(\d+)\]\.?/g, (m0, n) => `circuitul ${Number(n) + 1} `]];
+  [/circuite\[(\d+)\]\.?/g, (m0, n) => `circuitul ${Number(n) + 1} `], [/\s*\(?norme\.LOCUINTA_RECEPTORI\)?/g, ''], [/\bbmpt_fortat\b/g, 'blocul impus']];
 const hum = t => RECEPTOR_LOC.reduce((a, [k, lab]) => k.includes('_') ? a.replace(new RegExp('\\b' + k + '\\b', 'g'), lab.toLowerCase()) : a,
   CHEI_RO.reduce((a, [re, r]) => a.replace(re, r), String(t || '')));
 const RECEPTOR_LOC = [['iluminat', 'Iluminat'], ['prize', 'Prize'], ['prize_bucatarie', 'Prize bucătărie'], ['prize_baie', 'Prize baie'], ['prize_exterior', 'Prize exterior'],
@@ -2155,17 +2479,17 @@ function tabLocuinta(root) {
     a.append(el('p', { class: 'msg warn' }, '⚠ ' + [c.alimentare.P_aprobata_kW == null ? 'puterea aprobată' : null, c.alimentare.In_Q_bransament_A == null ? 'Q-ul din branșament' : null].filter(Boolean).join(' și ')
       + (c.alimentare.P_aprobata_kW == null && c.alimentare.In_Q_bransament_A == null ? ' lipsesc' : ' lipsește') + ' — se completează din ATR. Până atunci aplicația folosește valori presupuse'
       + (qpres ? ` (Q ${qpres} A)` : '') + ', marcate la Verificare.'));
-  if (farar) { const sel = a.querySelector('#lc-retea'); if (sel) { sel.setAttribute('aria-invalid', 'true'); sel.setAttribute('aria-describedby', 'lc-retea-err'); }
-    a.append(el('p', { class: 'msg err', id: 'lc-retea-err' }, 'Alege rețeaua din ATR sau de la branșamentul existent — nu o presupunem, pentru că schimbă tot tabloul (BMPM / BMPT, diferențiale 2P / 4P, faze).')); }
+  if (farar) { const neutru = reteaNeutra(); const sel = a.querySelector('#lc-retea'); if (sel) { if (!neutru) sel.setAttribute('aria-invalid', 'true'); sel.setAttribute('aria-describedby', 'lc-retea-err'); }
+    a.append(el('p', { class: neutru ? 'hint' : 'msg err', id: 'lc-retea-err' }, 'Alege rețeaua din ATR sau de la branșamentul existent — nu o presupunem, pentru că schimbă tot tabloul (BMPM / BMPT, diferențiale 2P / 4P, faze).')); }
   a.append(g3e(cf(c.alimentare, 'L_coloana_m', 'Coloana până la tablou [m]', { num: true, ph: '15', id: 'lc-lc' }),
     cf(c.alimentare, 'tip', 'Branșamentul', { select: [['bransament_existent', 'existent'], ['bransament_nou', 'nou (se proiectează)']], id: 'lc-btip' }),
     cf(c, 'schema_pamant', 'Legarea la pământ', { select: [['TN-C-S', 'TN-C-S (rețea publică)'], ['TT', 'TT (priză de pământ proprie)']], id: 'lc-sp' })));
-  a.append(g3e(cf(c.alimentare, 'pozare_coloana', 'Coloana e pozată', { select: [['', 'în pământ (implicit — confirmă)'], ['pamant', 'în pământ, în tub (D1)'], ['cladire', 'în clădire, în tub / în perete (B2)'], ['aparent', 'aparent, pe perete (C)']], id: 'lc-poz' }),
-    cf(c.alimentare, 'zona', 'Zona rețelei', { select: [['', 'nespecificat (Zb 0,2 Ω)'], ['urban', 'urban'], ['rural', 'rural (Zb 0,45 Ω)']], id: 'lc-zona' }),
+  a.append(g3e(cf(c.alimentare, 'pozare_coloana', 'Coloana e pozată', { select: [['', 'în pământ (implicit)'], ['pamant', 'în pământ, în tub (D1)'], ['cladire', 'în clădire, în tub / în perete (B2)'], ['aparent', 'aparent, pe perete (C)']], id: 'lc-poz' }),
+    cf(c.alimentare, 'zona', 'Zona rețelei', { select: [['', 'nespecificată (urban)'], ['urban', 'urban'], ['rural', 'rural (Zb 0,45 Ω)']], id: 'lc-zona' }),
     c.schema_pamant === 'TT' ? cf(c, 'RA_ohm', 'Rezistența prizei RA [Ω]', { num: true, ph: 'măsurată sau estimată', id: 'lc-ra' }) : el('div')));
   if (c.circuite.some(x => x.receptor === 'vehicul_electric') || c.alimentare.DDR_bransament_tip)
-    a.append(g3e(cf(c.alimentare, 'DDR_bransament_tip', 'DDR-ul din branșament (BMPM/BMPT) e de tip', { select: [['', 'nedeclarat (presupus A)'], ['AC', 'AC'], ['A', 'A'], ['F', 'F'], ['B', 'B']], id: 'lc-ddrb' }),
-      el('p', { class: 'hint', style: 'grid-column:span 2;align-self:end' }, 'Contează la încărcătorul de mașină: un defect în c.c. poate „orbi” un DDR AC din amonte. Ia tipul de pe aparatul din bloc sau din ATR.')));
+    a.append(g3e(cf(c.alimentare, 'DDR_bransament_tip', 'DDR-ul din branșament (BMPM/BMPT) e de tip', { select: [['', 'nedeclarat (A)'], ['AC', 'AC'], ['A', 'A'], ['F', 'F'], ['B', 'B']], id: 'lc-ddrb' }),
+      el('p', { class: 'hint', style: 'grid-column:span 2;align-self:end' }, 'Contează la încărcătorul de mașină: un defect în c.c. poate „orbi” un DDR de tip AC din amonte. Tipul îl găsești pe aparatul din bloc sau în ATR.')));
   c.alimentare.cablu = c.alimentare.cablu || {};
   a.append(el('details', { class: 'adv' }, el('summary', {}, 'Coloana și rețeaua (opțional)'),
     g3e(cf(c.alimentare.cablu, 'material', 'Material coloană', { select: MATERIAL, id: 'lc-cm' }), el('div'),
@@ -2225,7 +2549,7 @@ function tabLocuinta(root) {
     if (vs.length && /\bP\b|putere|kW/i.test(vs[0].mesaj + ' ' + (vs[0].camp || ''))) PINV.add(id + 'P_kW');
     if (vs.length && /lungime|\bL\b| m\b/i.test(vs[0].mesaj + ' ' + (vs[0].camp || ''))) PINV.add(id + 'L_m');
     const rawBad = ['P_kW', 'L_m'].find(k => LC_RAW.has(id + k));
-    const rzTxt = rawBad ? `⛔ „${LC_RAW.get(id + rawBad)}” nu e un număr — scrie cifre, ex. 2,5` : vs.length ? '⛔ ' + hum(vs[0].mesaj) + (vs[0].remediere ? ' → ' + hum(vs[0].remediere) : '') : r ? [pr && pr.In_A ? `${pr.curba || ''}${pr.In_A} A` : null, cab, r._grupa && (r._grupa.obiect || r._grupa.ref), r.dU_cumulat_pct != null ? `ΔU ${fmt(r.dU_cumulat_pct, 1)} %` : null].filter(Boolean).join(' · ') : '';
+    const rzTxt = rawBad ? `⛔ „${LC_RAW.get(id + rawBad)}” nu e un număr — scrie cifre, ex. 2,5` : vs.length ? '⛔ ' + hum(vs[0].mesaj) + (vs[0].remediere ? ' → ' + hum(vs[0].remediere) : '') : r ? [pr && pr.In_A ? `${pr.curba || ''}${pr.In_A} A` : null, cab, r._grupa && (r._grupa.obiect || r._grupa.ref), r.dU_cumulat_pct != null ? `ΔU\u00a0${fmt(r.dU_cumulat_pct, 1)}\u00a0%` : null].filter(Boolean).join(' · ') : '';
     const del = el('button', { class: 'del', type: 'button', 'aria-label': `Șterge circuitul ${ci.nume || i + 1}`, title: 'Șterge circuitul', html: '✕',
       onclick: () => { const n = HIST.past.length; pushHistory(); c.circuite.splice(i, 1);
         PENDING_FOCUS = c.circuite.length ? 'lc' + Math.min(i, c.circuite.length - 1) + 'n' : 'lc-add0';
@@ -2233,6 +2557,18 @@ function tabLocuinta(root) {
     const row = el('div', { class: 'lc-row' + cols }, nume, rec, num('P_kW', p_imp, 'putere kW'), num('L_m', l_imp, 'lungime m'), faza, el('div', { class: 'rz' + (vs.length || rawBad ? ' bad' : ''), id: id + 'rz', role: vs.length ? 'alert' : null }, rzTxt), del);
     row.querySelectorAll('[aria-invalid="true"]').forEach(n => n.setAttribute('aria-describedby', id + 'rz'));
     b.append(row);
+    // echipa: limitarea puterii stației VE (câmpul `limitare_kW` al circuitului; remedierea V46 „Limitează stația la X kW”)
+    if (ci.receptor === 'vehicul_electric') {
+      const li = el('input', { type: 'text', id: id + 'lim', inputmode: 'decimal', autocomplete: 'off', placeholder: 'fără limitare', 'aria-label': `Circuitul ${i + 1}: limitare putere VE kW` });
+      li.value = ci.limitare_kW == null ? '' : numRO(ci.limitare_kW);
+      li.addEventListener('input', () => { if (!typingPushed.has(li)) { pushHistory(); typingPushed.add(li); }
+        const v = li.value.trim() === '' ? undefined : parseRO(li.value);
+        if (v === null || (v != null && !(v > 0))) { li.setAttribute('aria-invalid', 'true'); return; }
+        li.removeAttribute('aria-invalid'); if (v === undefined) delete ci.limitare_kW; else ci.limitare_kW = v; scheduleRegen(); });
+      li.addEventListener('blur', () => typingPushed.delete(li));
+      b.append(el('div', { class: 'lc-ve' }, el('label', { for: id + 'lim' }, 'Limitare putere VE (setare stație) [kW]'), el('div', { class: 'unit' }, li, el('span', {}, 'kW')),
+        el('span', { class: 'hint' }, 'Stația încarcă cel mult această putere — circuitul și bilanțul se calculează cu ea.')));
+    }
   });
   const pal = el('div', { class: 'lc-pal', role: 'group', 'aria-label': 'Adaugă circuit' }, el('span', { class: 'hint', style: 'align-self:center' }, 'Adaugă:'));
   RECEPTOR_LOC.forEach(([k, t], ii) => pal.append(el('button', { class: 'chip', type: 'button', id: ii ? null : 'lc-add0', onclick: () => {
@@ -2248,10 +2584,11 @@ function tabLocuinta(root) {
   if (rz.bilant || rz.grupe_DDR || rz.faze || ((VALID && VALID.verificari) || []).some(v => v.nivel === 'BLOCANT')) {
     const k = el('div', { class: 'card', id: 'lc-rez' }, el('h3', {}, '3. Ce a ieșit din calcul'));
     const vv = (VALID && VALID.verificari) || [];
-    const er = vv.filter(v => v.nivel === 'BLOCANT'), av = vv.filter(v => v.nivel === 'AVERTISMENT' && !v.confirmat);
-    er.forEach(v => k.append(el('div', { class: 'msg err', style: 'margin-bottom:6px' }, `⛔ ${hum(v.mesaj)}` + (v.remediere ? ` → ${hum(v.remediere)}` : ''))));
-    if (av.length) k.append(el('div', { class: 'msg warn', style: 'margin-bottom:8px' }, `⚠ ${av.length === 1 ? 'O atenționare' : av.length + ' atenționări'}: ${av.slice(0, 2).map(v => hum(v.mesaj)).join('; ')}${av.length > 2 ? '…' : ''} `,
-      inWiz ? el('button', { class: 'btn ghost sm', type: 'button', onclick: () => wizGo(3) }, 'Vezi toate') : null));
+    const er = unice(vv.filter(v => v.nivel === 'BLOCANT' && !(inWiz && !WIZ_INCERCAT && v.obiect === 'retea'))), av = vv.filter(v => v.nivel === 'AVERTISMENT' && !v.confirmat);
+    er.forEach(v => k.append(el('div', { class: 'msg err', style: 'margin-bottom:6px' }, el('b', {}, '⛔ ' + vTitlu(v)), v.remediere ? ` → ${hum(v.remediere)}` : '',
+      el('details', { class: 'vdetc' }, el('summary', {}, `Detalii de calcul (${v.cod})`), el('p', {}, hum(v.mesaj))))));
+    if (av.length) k.append(el('div', { class: 'msg warn', style: 'margin-bottom:8px' }, `⚠ ${av.length === 1 ? 'O atenționare' : av.length + ' atenționări'}: ${[...new Set(av.map(vTitlu))].slice(0, 2).join('; ')}${av.length > 2 ? '…' : ''} `,
+      null));
     const bl = rz.bilant || {};
     if (bl.Pi_kW != null) k.append(el('p', { class: 'desc', style: 'margin:0 0 8px' }, `Putere instalată ${fmt(bl.Pi_kW)} kW · ks ${fmt(bl.ks, 2)} · putere cerută ${fmt(bl.Pc_kW)} kW` + (bl.Ib_A != null ? ` · Ib ${fmt(bl.Ib_A)} A` : '')
       + (c.alimentare.P_aprobata_kW ? ` · aprobată ${fmt(c.alimentare.P_aprobata_kW)} kW` : '')));
@@ -2313,7 +2650,7 @@ function tabProiect(root) {
   proj.append(el('div', { style: 'height:8px' }));
   proj.append(g2(field(c, 'denumire1', 'Denumirea planșei, rândul 1', { onInput: projName }), field(c, 'denumire2', 'Denumirea planșei, rândul 2', { onInput: projName })));
   proj.append(g3e(field(c, 'faza', 'Faza', { ph: 'PT' }), field(c, 'plansa', 'Nr. planșă', { ph: 'E01', onInput: projName }), field(c, 'rev', 'Revizia', { ph: '0' })));
-  proj.append(g3e(field(c, 'nr_pr', 'Nr. proiect'), field(c, 'data', 'Data', { ph: 'll.aaaa' }), field(c, 'scara', 'Scara', { ph: '-' })));
+  proj.append(g3e(field(c, 'nr_pr', 'Nr. proiect'), field(c, 'data', 'Data', { ph: 'ex. 10.2026' }), field(c, 'scara', 'Scara', { ph: 'ex. 1:1 sau fără scară' })));
   proj.append(g3e(field(c, 'atr', 'Nr. ATR / aviz', { always: true }), field(c, 'verificator', 'Verificator de proiecte', { always: true }), field(c, 'referat', 'Nr. referat', { always: true })));
   root.append(proj);
 
@@ -2338,7 +2675,7 @@ function tabProiect(root) {
     const more = el('div', { class: 'menu-wrap' });
     const mbtn = el('button', { class: 'btn ghost icon sm', type: 'button', 'aria-label': `Alte acțiuni pentru profilul ${p.nume}`, 'aria-haspopup': 'menu', 'aria-expanded': 'false' }, '⋯');
     const mm = el('div', { class: 'menu left', role: 'menu', hidden: true },
-      act ? null : el('button', { role: 'menuitem', type: 'button', onclick: async () => { PROFILES.activ = p.nume; await scrieProfile(); render(); toast(`„${p.nume}” se pune automat pe schemele noi.`, { tag: 'prof' }); } }, el('span', {}, 'Fă-l implicit', el('small', {}, 'se aplică pe fiecare schemă nouă'))),
+      act ? null : el('button', { role: 'menuitem', type: 'button', onclick: async () => { PROFILES.activ = p.nume; await scrieProfile(); render(); toast(`„${p.nume}” se pune automat pe planșele noi.`, { tag: 'prof' }); } }, el('span', {}, 'Fă-l implicit', el('small', {}, 'se aplică pe fiecare planșă nouă'))),
       el('button', { role: 'menuitem', type: 'button', onclick: async () => { Object.assign(p, din()); await scrieProfile(); render(); toast(`Profilul „${p.nume}” a preluat datele din cartuș.`, { tag: 'prof' }); } }, el('span', {}, 'Actualizează din cartuș', el('small', {}, 'suprascrie profilul cu câmpurile de mai jos'))),
       el('hr'),
       el('button', { role: 'menuitem', type: 'button', class: 'danger', onclick: async () => {
@@ -2349,7 +2686,7 @@ function tabProiect(root) {
     more.append(mbtn, mm); menu(mbtn, mm);
     prof.append(el('div', { class: 'prof-card' + (act ? ' act' : ''), role: 'listitem' },
       el('div', { class: 'who' }, el('b', {}, p.nume), el('small', {}, [p.proiectant, p.atestat_anre ? 'atestat ' + p.atestat_anre : '', p.proiectat].filter(Boolean).join(' · ') || '—')),
-      act ? el('span', { class: 'tag', title: 'Se aplică automat pe fiecare schemă nouă' }, 'Implicit') : null,
+      act ? el('span', { class: 'tag', title: 'Se aplică automat pe fiecare planșă nouă' }, 'Implicit') : null,
       el('button', { class: 'btn sm', type: 'button', onclick: () => { const n = mutate(() => PROFILE_KEYS.forEach(k => { c[k] = p[k] || ''; })); toast(`Am pus datele firmei „${p.nume}” în cartuș.`, Object.assign({ tag: 'prof' }, undoAction(n))); } }, 'Aplică'),
       more));
   }
@@ -2357,10 +2694,10 @@ function tabProiect(root) {
   const salveazaNou = async () => { const n = numeNou.value.trim(); if (!n) { numeNou.focus(); return toast('Scrie un nume pentru profil.', { tag: 'prof' }); }
     const exista = PROFILES.profile.some(x => x.nume === n);
     PROFILES.profile = PROFILES.profile.filter(x => x.nume !== n).concat([Object.assign({ nume: n }, din())]); if (!PROFILES.activ) PROFILES.activ = n;
-    await scrieProfile(); render(); toast(exista ? `Profilul „${n}” a fost înlocuit cu datele din cartuș.` : `Profilul „${n}” a fost salvat${PROFILES.activ === n ? ' și e implicit pentru schemele noi' : ''}.`, { tag: 'prof' }); };
+    await scrieProfile(); render(); toast(exista ? `Profilul „${n}” a fost înlocuit cu datele din cartuș.` : `Profilul „${n}” a fost salvat${PROFILES.activ === n ? ' și e implicit pentru planșele noi' : ''}.`, { tag: 'prof' }); };
   numeNou.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); salveazaNou(); } });
   const profBox = el('div', { style: 'margin-bottom:12px' },
-    el('p', { class: 'desc', style: 'margin:0 0 8px' }, PROFILES.profile.length ? 'Profilele tale de firmă — „Aplică” pune datele în cartuș; profilul implicit se pune singur pe fiecare schemă nouă.' : 'Completează datele firmei mai jos și salvează-le ca profil: se vor pune singure pe fiecare schemă nouă. Poți avea mai multe firme.'),
+    el('p', { class: 'desc', style: 'margin:0 0 8px' }, PROFILES.profile.length ? 'Profilele tale de firmă — „Aplică” pune datele în cartuș; profilul implicit se pune singur pe fiecare planșă nouă.' : 'Completează datele firmei mai jos și salvează-le ca profil: se vor pune singure pe fiecare planșă nouă. Poți avea mai multe firme.'),
     prof, el('div', { class: 'prof-new' }, numeNou, el('button', { class: 'btn sm', type: 'button', onclick: salveazaNou }, 'Salvează datele de mai jos ca profil')));
   firm.insertBefore(profBox, firm.children[1] || null);
   root.append(firm);
@@ -2416,17 +2753,24 @@ function tabDeviz(root) {
   head.append(el('label', { class: 'check', style: 'margin-top:6px' }, chk, ' Folosește ore de manoperă orientative pe categorii unde catalogul nu are norme (în cursiv)'));
   root.append(head);
 
+  // echipa 1: la prima folosire (catalog gol) nu arătăm 0,00 lei — spunem ce lipsește și ce faci
+  const nrDv = rc.nr_in_deviz ?? rc.nr_articole;     // articolele excluse (furnizat de OD / existent / generic) nu cer preț
+  const faraPreturi = nrDv > 0 && rc.fara_pret === nrDv;
+  if (faraPreturi) root.append(el('div', { class: 'card', id: 'dv-gol', role: 'status', style: 'border-color:var(--sig-line);background:var(--sig-soft)' },
+    el('h3', {}, 'Devizul nu are încă prețuri'),
+    el('p', { class: 'desc', style: 'margin:0 0 8px;color:var(--ink-2)' }, `Cele ${nrDv} articole vin din lista de echipamente a planșei; aplicația nu inventează prețuri. Importă lista furnizorului (.xlsx cu coloanele Denumire și Preț) sau scrie prețurile în coloana „Preț” — se salvează în catalog și le regăsești în toate proiectele.`),
+    el('div', { style: 'display:flex;gap:8px;flex-wrap:wrap' },
+      el('button', { class: 'btn pri sm', type: 'button', id: 'dv-imp', onclick: () => $('#imp-preturi').click() }, 'Importă lista de prețuri (.xlsx)'),
+      el('button', { class: 'btn sm', type: 'button', onclick: () => { const i = document.getElementById('dv-p-0'); if (i) { i.scrollIntoView({ block: 'center' }); i.focus(); } } }, 'Scriu prețurile în tabel'))));
   const rec = el('div', { class: 'card' }, el('h3', {}, 'Recapitulație'));
-  const R = (a, b, cls) => [el('span', { class: cls || '' }, a), el('b', { class: (cls || '') + ' n' }, b)];
+  const R = (a, b, cls) => [el('span', { class: cls || '' }, a), el('b', { class: (cls || '') + ' n' }, faraPreturi && a === 'Materiale și echipamente' ? '— fără prețuri' : b)];
   rec.append(el('div', { class: 'dv-rec' },
     ...R('Materiale și echipamente', lei(rc.materiale) + ' ' + mon), ...R(`Manoperă (${fmt(rc.ore, 1)} ore)`, lei(rc.manopera) + ' ' + mon),
     ...R('Cheltuieli indirecte', lei(rc.ch_indirecte) + ' ' + mon), ...R('Profit', lei(rc.profit) + ' ' + mon),
     ...R('Total fără TVA', lei(rc.total_fara_tva) + ' ' + mon, 'sep'), ...R('TVA', lei(rc.tva) + ' ' + mon),
     ...R(rc.fara_pret ? 'TOTAL cu TVA (incomplet)' : 'TOTAL cu TVA', lei(rc.total) + ' ' + mon, 'tot')));
   if (rc.fara_ore) rec.append(el('div', { class: 'msg warn', style: 'margin-top:8px' }, `${rc.fara_ore} articole nu au ore de manoperă — manopera nu le include.`));
-  if (rc.fara_pret && rc.fara_pret === rc.nr_articole) rec.append(el('div', { class: 'msg warn', style: 'margin-top:8px' },
-    'Catalogul tău de prețuri e gol. Cel mai rapid: importă lista de prețuri a furnizorului (.xlsx cu coloanele Denumire și Preț unitar / Preț net) sau scrie prețurile în coloana „Preț” de mai jos și apasă „Salvează prețurile în catalog” — rămân pentru toate proiectele.'));
-  else if (rc.fara_pret) rec.append(el('div', { class: 'msg warn', style: 'margin-top:8px' }, `${rc.fara_pret} din ${rc.nr_articole} articole nu au preț — totalul nu le include.`));
+  if (rc.fara_pret && !faraPreturi) rec.append(el('div', { class: 'msg warn', style: 'margin-top:8px' }, `${rc.fara_pret} din ${rc.nr_articole} articole nu au preț — totalul nu le include.`));
   rec.append(el('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px' },
     el('button', { class: 'btn pri sm', type: 'button', onclick: salveazaPreturi }, 'Salvează prețurile în catalog'),
     el('button', { class: 'btn sm', type: 'button', onclick: () => $('#imp-preturi').click() }, 'Importă listă de prețuri (.xlsx)'),
@@ -2455,12 +2799,13 @@ function tabDeviz(root) {
     if (ex) acts.append(el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { const n = HIST.past.length; pushHistory(); ds.extra.splice(a.extra_idx, 1); devizLater(); toast(`Am scos „${a.denumire}” din deviz.`, Object.assign({ tag: 'dv' }, undoAction(n))); } }, 'Șterge'));
     else {
       const cb = el('input', { type: 'checkbox' }); cb.checked = !!a.exclus;
-      cb.addEventListener('change', () => { pushHistory(); setA('exclus', cb.checked || null); });
-      acts.append(el('label', { class: 'check', title: 'Rămâne pe planșă și în listă, dar nu intră în deviz (ex. contorul furnizat de OD)' }, cb, ' nu intră în deviz'));
+      // echipa: aparatele generice / existente / furnizate de OD sunt excluse implicit (a.exclus_auto) — debifarea le include
+      cb.addEventListener('change', () => { pushHistory(); setA('exclus', cb.checked ? true : a.exclus_auto ? false : null); });
+      acts.append(el('label', { class: 'check', title: a.exclus_auto ? `Aparat ${a.exclus_auto}: rămâne pe planșă și în listă, dar nu intră în deviz — debifează ca să-l incluzi` : 'Rămâne pe planșă și în listă, dar nu intră în deviz (ex. contorul furnizat de OD)' }, cb, ' nu intră în deviz'));
       if (qMod) acts.append(el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { pushHistory(); setA('cantitate', null); } }, `cantitatea de pe planșă (${fmt(a.cantitate_plansa, 2)})`));
     }
     list.append(el('div', { class: 'dv-row' + (a.pret === null && sup.pret == null && !a.exclus ? ' lipsa' : '') + (a.exclus ? ' excl' : '') + (ex ? ' extra' : '') },
-      el('div', { class: 'den' }, el('b', {}, String(a.poz)), a.denumire),
+      el('div', { class: 'den' }, el('b', {}, String(a.poz)), a.denumire, a.exclus_auto && a.exclus ? el('span', { class: 'dv-tag', title: `Aparat ${a.exclus_auto} — nu se cumpără în această lucrare` }, `nu intră în deviz · ${a.exclus_auto}`) : null),
       el('div', { class: 'car', title: [a.ref, a.caracteristici].filter(Boolean).join(' · ') }, ex ? 'adăugat manual' : [a.ref, a.caracteristici].filter(Boolean).join(' · ')),
       el('div', { class: 'qq' + (qMod ? ' mod' : '') }, q, el('span', {}, a.um)), pr, ore,
       el('div', { class: 'n' }, a.exclus ? 'exclus' : a.valoare === null ? '—' : lei(a.valoare)), acts));
@@ -2595,7 +2940,8 @@ function render() {
     const n = document.getElementById(want);
     if (n) { n.focus({ preventScroll: true }); if (want === aid && sel && n.setSelectionRange) try { n.setSelectionRange(...sel); } catch { } if (want !== aid) n.scrollIntoView({ block: 'nearest' }); }
   }
-  projName(); autosave(); updUndo();
+  projName(); autosave(); updUndo(); marcheazaPresupuse();
+  const pl = $('#exp-menu [data-exp=planse]'); if (pl) pl.hidden = !(MODEL.calc && ['cef', 'bess'].includes(MODEL.calc.tip_schema));   // pachetul A3 există doar la CEF
 }
 function setTab(t) {
   TAB = t;
@@ -2640,11 +2986,11 @@ async function draw() {
     const box = $('#verr'); box.hidden = false;
     const canUndo = HIST.past.length > 0;
     box.replaceChildren(el('b', {}, 'Planșa nu s-a putut genera'),
-      el('div', {}, canUndo ? 'Ultima modificare a produs o eroare. Anulează modificarea sau corectează valoarea.' : 'Schema deschisă conține o valoare pe care generatorul nu o acceptă. Corecteaz-o în tab-ul JSON sau începe o schemă nouă.'),
+      el('div', {}, canUndo ? 'Ultima modificare a produs o eroare. Anulează modificarea sau corectează valoarea.' : 'Schema deschisă conține o valoare pe care generatorul nu o acceptă. Corecteaz-o în tab-ul JSON sau începe o planșă nouă.'),
       el('code', {}, e.message),
       el('div', { style: 'margin-top:10px;display:flex;gap:8px' }, canUndo ? el('button', { class: 'btn sm', type: 'button', onclick: undo }, 'Anulează ultima modificare') : null,
         el('button', { class: 'btn sm', type: 'button', onclick: () => setTab('json') }, 'Deschide JSON'),
-        el('button', { class: 'btn sm', type: 'button', onclick: () => $('#new-btn').click() }, 'Schemă nouă')));
+        el('button', { class: 'btn sm', type: 'button', onclick: () => $('#new-btn').click() }, 'Planșă nouă')));
   }
 }
 function setStat(kind, t) { const s = $('#vstat'); s.className = 'vstat' + (kind === 'busy' ? ' busy' : kind === 'err' ? ' err' : ''); $('#vstat-t').textContent = t; }
@@ -2652,12 +2998,29 @@ function applyView() {
   $('#paper').style.transform = `translate(${VIEW.x}px,${VIEW.y}px) scale(${VIEW.z})`;
   $('#z-val').textContent = Math.round(VIEW.z * 100) + '%';
 }
-function fitZ() { const st = $('#stage').getBoundingClientRect(); return Math.min((st.width - 64) / VIEW.w, (st.height - 32 - 64) / VIEW.h); }
+const FIT_SUS = 48;     // D19: loc pentru indicațiile de sus (format, „clic pe un aparat”)
+function fitZ() { const st = $('#stage').getBoundingClientRect(); return Math.min((st.width - 64) / VIEW.w, (st.height - FIT_SUS - 64) / VIEW.h); }
 function fit() {
   const st = $('#stage').getBoundingClientRect(); if (!VIEW.w || !st.width) return;
+  // telefon: planșa întreagă iese la ~10 %, ilizibilă — se încadrează schema propriu-zisă (aparatele), pe lățime; dublu-tap = toată foaia
+  if (st.width < 600 && !VIEW.tot && fitSchema(st)) return;
   VIEW.z = fitZ();
-  VIEW.x = (st.width - VIEW.w * VIEW.z) / 2; VIEW.y = 32 + (st.height - 32 - 64 - VIEW.h * VIEW.z) / 2;
+  VIEW.x = (st.width - VIEW.w * VIEW.z) / 2; VIEW.y = FIT_SUS + (st.height - FIT_SUS - 64 - VIEW.h * VIEW.z) / 2;
   VIEW.fitted = true; VIEW.user = false; applyView();
+}
+/** încadrează dreptunghiul care cuprinde aparatele (.sym) — schema, fără lista de echipamente și cartuș */
+function fitSchema(st) {
+  const syms = [...document.querySelectorAll('#paper .sym')]; if (!syms.length) return false;
+  const pr = $('#paper').getBoundingClientRect(); const k = 1 / VIEW.z;      // coordonate în pixeli de hârtie, la scara 1
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const g of syms) { const r = g.getBoundingClientRect(); if (!r.width && !r.height) continue;
+    x0 = Math.min(x0, (r.left - pr.left) * k); y0 = Math.min(y0, (r.top - pr.top) * k); x1 = Math.max(x1, (r.right - pr.left) * k); y1 = Math.max(y1, (r.bottom - pr.top) * k); }
+  if (!(x1 > x0 && y1 > y0)) return false;
+  const m = 24 * k; x0 -= m; y0 -= m; x1 += m; y1 += m;
+  const z = Math.min((st.width - 16) / (x1 - x0), (st.height - FIT_SUS - 72) / (y1 - y0), 1.5);
+  if (z <= fitZ() * 1.05) return false;
+  VIEW.z = z; VIEW.x = (st.width - (x1 - x0) * z) / 2 - x0 * z; VIEW.y = FIT_SUS - y0 * z;
+  VIEW.fitted = true; VIEW.user = false; applyView(); return true;
 }
 function clampPan() {   // nu lăsa planșa să iasă complet din ecran
   const st = $('#stage').getBoundingClientRect(); const pw = VIEW.w * VIEW.z, ph = VIEW.h * VIEW.z, keep = 80;
@@ -2714,7 +3077,7 @@ function initViewer() {
   };
   stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
   stage.addEventListener('pointerleave', () => document.querySelectorAll('#paper .sym.hov').forEach(x => x.classList.remove('hov')));
-  stage.addEventListener('dblclick', e => { if (!symAt(e.clientX, e.clientY)) fit(); });
+  stage.addEventListener('dblclick', e => { if (!symAt(e.clientX, e.clientY)) { VIEW.tot = !VIEW.tot; fit(); } });
   stage.addEventListener('keydown', e => {
     const step = 40;
     if (e.key === '+' || e.key === '=') zoomAt(1.25); else if (e.key === '-') zoomAt(0.8); else if (e.key === '0') fit();
@@ -2722,7 +3085,7 @@ function initViewer() {
     else if (e.key === 'ArrowUp') pan(0, step); else if (e.key === 'ArrowDown') pan(0, -step); else if (e.key === 'Escape') clearSelection(); else return;
     e.preventDefault();
   });
-  $('#z-in').onclick = () => zoomAt(1.25); $('#z-out').onclick = () => zoomAt(0.8); $('#z-fit').onclick = fit; $('#z-1').onclick = setReal;
+  $('#z-in').onclick = () => zoomAt(1.25); $('#z-out').onclick = () => zoomAt(0.8); $('#z-fit').onclick = () => { VIEW.tot = true; fit(); VIEW.tot = false; }; $('#z-1').onclick = setReal;
   new ResizeObserver(() => { if (!VIEW.w) return; if (!VIEW.user) fit(); else { clampPan(); applyView(); } }).observe(stage);
 }
 function setReal() { const st = $('#stage').getBoundingClientRect(); zoomAt(1 / VIEW.z, st.width / 2, st.height / 2); }
@@ -2758,20 +3121,23 @@ function selectFromPlan(uid) {
 /* =========================================================================== export / deschidere */
 async function exportAs(kind, btn) {
   btn = btn || $('#exp-dxf');
-  if (WIZ_START) { toast('Alege întâi tipul lucrării — schema nouă nu există încă.'); return; }
+  if (WIZ_START) { toast('Alege întâi tipul lucrării — planșa nouă nu există încă.'); return; }
   if (document.querySelector('header .btn.busy')) { toast('Se exportă deja un fișier — așteaptă să se termine.'); return; }
   if (kind !== 'json' && VALID && VALID.blocheaza) {
     const b0 = VALID.verificari.find(v => v.nivel === 'BLOCANT');
-    toast(`Exportul e blocat: ${b0 ? b0.obiect + ' — ' + b0.mesaj : 'există verificări neîndeplinite'}.`, { kind: 'err', action: 'Vezi toate', onAction: () => setTab('calc'), ms: 10000 });
+    toast(`Exportul e blocat: ${b0 ? vTitlu(b0) : 'există verificări neîndeplinite'}.`, { kind: 'err', action: 'Vezi toate', onAction: () => setTab('calc'), ms: 10000 });
     return;
   }
+  if (!(await cereAcord('export'))) return;                     // Termenii: acceptare la primul export (orice format, inclusiv .json)
+  if (kind !== 'json' && !(await cereProiectant())) return;      // echipa 1: datele proiectantului se cer o singură dată, la primul export
   btn.classList.add('busy'); btn.setAttribute('aria-busy', 'true');
   try {
     const r = await fetch('/api/export/' + kind, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload(false)) });
     if (r.status === 409) { const j = await r.json(); setTab('calc'); toast(`${j.eroare} ${(j.verificari || []).slice(0, 2).map(v => v.obiect + ': ' + v.mesaj).join(' · ')}`, { kind: 'err', ms: 12000 }); return; }
     if (!r.ok) { let m = await r.text(); try { m = JSON.parse(m).eroare; } catch { } throw new Error(m); }
     const blob = await r.blob(); const cd = r.headers.get('Content-Disposition') || '';
-    const mm = /filename\*=UTF-8''(.+)/.exec(cd); const name = mm ? decodeURIComponent(mm[1]) : 'schema.' + kind;
+    const mm = /filename\*=UTF-8''([^;]+)/.exec(cd) || /filename="([^"]+)"/.exec(cd);
+    const name = numeFisier(mm ? decodeURIComponent(mm[1]) : 'Schema_monofilara' + (EXT_EXPORT[kind] || '.' + kind), kind);
     if (window.SM_SAVE) { if (!(await window.SM_SAVE(name, blob))) return; }   // versiunea web: salvarea trece prin confirmarea browserului gazdă
     else { const a = el('a', { href: URL.createObjectURL(blob), download: name }); document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
     const fp = +(r.headers.get('X-Deviz-Fara-Pret') || 0);
@@ -2784,6 +3150,100 @@ async function exportAs(kind, btn) {
     const msg = kind === 'pdf' && INFO.pdf === false ? 'Exportul PDF are nevoie de Google Chrome, Chromium sau Edge instalat. Între timp poți exporta DXF sau SVG.' : `Exportul ${kind.toUpperCase()} nu a reușit: ${e.message}`;
     toast(msg, { kind: 'err', ms: 10000 });
   } finally { btn.classList.remove('busy'); btn.removeAttribute('aria-busy'); }
+}
+// numele fișierului descărcat: fără diacritice / „—” / caractere interzise, cu extensie (Windows, email, WhatsApp)
+const EXT_EXPORT = { dxf: '.dxf', pdf: '.pdf', svg: '.svg', xlsx: '_BOM.xlsx', deviz: '_deviz.xlsx', memoriu: '_memoriu.pdf', json: '.json', pachet: '_pachet.zip', planse: '_planse_A3.zip' };
+function numeFisier(t, kind) {
+  let s = String(t || '').replace(/[șş]/g, 's').replace(/[ȘŞ]/g, 'S').replace(/[țţ]/g, 't').replace(/[ȚŢ]/g, 'T').replace(/[—–]/g, '-').replace(/·/g, '_')
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9._+-]+/g, '_').replace(/_*-_*/g, '-').replace(/_{2,}/g, '_').replace(/[_-]+\./g, '.').replace(/^[._-]+|[._-]+$/g, '');
+  if (!/\.[A-Za-z0-9]{2,5}$/.test(s)) s = (s || 'Schema_monofilara') + (EXT_EXPORT[kind] || '').replace(/^_[^.]*/, '');
+  return s || 'Schema_monofilara' + (EXT_EXPORT[kind] || '');
+}
+/* =========================================================================== Termeni și confidențialitate (docs/TERMENI_DRAFT.md, E)
+   Acceptarea se cere la primul export; o versiune nouă cu `reacceptare_de_la` mai mare o cere din nou. */
+const ACORD = { termeni: '0.1', confidentialitate: '0.1', reacceptare_de_la: '0.1' };
+const LEGAL = window.SM_WEB ? '' : '/static/';                       // în build-ul web paginile stau lângă index.html
+const URL_TERMENI = LEGAL + 'termeni.html', URL_CONF = LEGAL + 'confidentialitate.html', URL_ANTHROPIC = URL_CONF + '#5-citirea-avansata-cu-cheia-ta-anthropic';
+const legLeg = (cls = 'leg') => el('span', { class: cls }, el('a', { href: URL_TERMENI, target: '_blank', rel: 'noopener' }, 'Termeni'), ' · ', el('a', { href: URL_CONF, target: '_blank', rel: 'noopener' }, 'Confidențialitate'));
+let ACORD_SESIUNE = null;                                            // localStorage blocat: acceptarea ține cât sesiunea
+const cmpVer = (a, b) => { const x = String(a || '0').split('.').map(Number), y = String(b || '0').split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d; } return 0; };
+function acordValid() {
+  let a = ACORD_SESIUNE; try { const t = localStorage.getItem('sm.acord'); if (t) a = JSON.parse(t); } catch { }
+  return !!(a && cmpVer(a.reacceptare || a.termeni, ACORD.reacceptare_de_la) >= 0);
+}
+function cereAcord(context) {
+  if (acordValid()) return Promise.resolve(true);
+  return new Promise(res => {
+    const bife = [
+      ['ac-1', [el('span', {}, 'Am citit și accept '), el('a', { href: URL_TERMENI, target: '_blank', rel: 'noopener' }, 'Termenii și condițiile'), el('span', {}, ' și am luat la cunoștință '), el('a', { href: URL_CONF, target: '_blank', rel: 'noopener' }, 'Politica de confidențialitate'), '.']],
+      ['ac-2', ['Accept în mod expres clauzele privind limitarea răspunderii, suspendarea și încetarea serviciului, modificarea Termenilor și instanța competentă (art. 5.3, 5.5, 7, 8, 9, 12, 13 din Termeni).']],
+      ['ac-3', ['Înțeleg că Aplicația este un instrument de asistare: rezultatele trebuie verificate, asumate și semnate de un proiectant atestat ANRE sau de o persoană autorizată, iar valorile presupuse trebuie confirmate.']]];
+    const ok = el('button', { class: 'btn pri', type: 'button', id: 'ac-ok', disabled: true }, 'Accept și continui');
+    const cbs = bife.map(([id]) => { const c = el('input', { type: 'checkbox', id }); c.addEventListener('change', () => { ok.disabled = !cbs.every(x => x.checked); }); return c; });
+    const clauze = el('div', { class: 'ac-clauze', id: 'ac-clauze', tabindex: '0' }, el('p', { class: 'desc' }, 'Se încarcă textul clauzelor…'));
+    const det = el('details', { class: 'adv ac-det' }, el('summary', {}, 'Textul clauzelor (art. 5.3, 5.5, 7, 8, 9, 12, 13)'), clauze);
+    det.addEventListener('toggle', () => { if (det.open && !clauze.dataset.ok) incarcaClauze(clauze); }, { once: false });
+    const rand = (i) => el('div', { class: 'ac-r' }, el('label', { class: 'check ac-l', for: bife[i][0] }, cbs[i], el('span', {}, ...bife[i][1])), i === 1 ? det : null);
+    let gata = false;
+    ok.onclick = () => {
+      const v = { termeni: ACORD.termeni, confidentialitate: ACORD.confidentialitate, reacceptare: ACORD.reacceptare_de_la, la: new Date().toISOString(), context };
+      ACORD_SESIUNE = v; try { localStorage.setItem('sm.acord', JSON.stringify(v)); } catch { }
+      gata = true; d.close(); res(true);
+    };
+    const d = dialogNou('Termenii de folosire', [
+      el('p', { class: 'desc' }, 'Înainte de primul export îți cerem acordul. Paginile se deschid într-o filă nouă; nicio bifă nu e precompletată.'),
+      rand(0), rand(1), rand(2)],
+      [el('button', { class: 'btn', type: 'button', id: 'ac-nu', onclick: () => d.close() }, 'Nu acum'), ok], { onClose: () => { if (!gata) res(false); } });
+    requestAnimationFrame(() => cbs[0].focus());
+  });
+}
+/** textul clauzelor din termeni.html (art. 5.3, 5.5, 7, 8, 9, 12, 13), afișat în panoul extensibil al bifei a doua */
+async function incarcaClauze(box) {
+  try {
+    const t = await (await fetch(URL_TERMENI)).text();
+    const doc = new DOMParser().parseFromString(t, 'text/html');
+    const out = [];
+    [...doc.querySelectorAll('p')].filter(p => /^5\.(3|5)\./.test(p.textContent.trim())).forEach(p => out.push(p));
+    for (const n of [7, 8, 9, 12, 13]) {
+      const h = [...doc.querySelectorAll('h2')].find(x => x.id.startsWith(n + '-')); if (!h) continue;
+      out.push(h); for (let x = h.nextElementSibling; x && x.tagName !== 'H2'; x = x.nextElementSibling) out.push(x);
+    }
+    if (!out.length) throw new Error('gol');
+    box.replaceChildren(...out.map(n => { const c = document.importNode(n, true); c.querySelectorAll('a[href^="#"]').forEach(a => a.setAttribute('href', URL_TERMENI + a.getAttribute('href'))); return c; }));
+    box.dataset.ok = '1';
+  } catch { box.replaceChildren(el('p', {}, 'Textul nu s-a putut încărca aici — îl găsești în ', el('a', { href: URL_TERMENI + '#7-disponibilitate-si-modificari-ale-aplicatiei', target: '_blank', rel: 'noopener' }, 'Termeni'), '.')); }
+}
+/** primul export fără datele proiectantului: le cere o singură dată, le ține minte în Setări (profilul implicit) și le pune în cartuș */
+const proiectantLipsa = () => PLACEHOLDER(((MODEL && MODEL.cartus) || {}).proiectant) && !(profilActiv() || {}).proiectant;
+function cereProiectant() {
+  if (!proiectantLipsa() || store.get('sm.cartus.cerut', false)) return Promise.resolve(true);
+  return new Promise(res => {
+    const chei = ['proiectant', 'reg', 'proiectat', 'atestat_anre', 'atestat_tip'];
+    const grid = el('div', { class: 'h-fgrid' }, ...chei.map(k => {
+      const id = 'cp-' + k;
+      const inp = k === 'atestat_tip' ? el('select', { id, class: 'inp' }, ...[['', '—'], ['Bp', 'Bp'], ['Ap', 'Ap'], ['Bp + Ap', 'Bp + Ap']].map(([v, t]) => el('option', { value: v }, t)))
+        : el('input', { type: 'text', id, class: 'inp', autocomplete: k === 'proiectant' ? 'organization' : 'off' });
+      return el('div', { class: 'fld' + (k === 'proiectant' || k === 'reg' ? ' lat' : '') }, el('label', { for: id }, PROF_ETI[k] || k), inp);
+    }));
+    let gata = false;
+    const fara = el('button', { class: 'btn', type: 'button', id: 'cp-fara', onclick: () => { store.set('sm.cartus.cerut', true); gata = true; d.close(); res(true); } }, 'Exportă fără ele');
+    const salv = el('button', { class: 'btn pri', type: 'button', id: 'cp-salv', onclick: async () => {
+      const fd = {}; chei.forEach(k => { fd[k] = (document.getElementById('cp-' + k) || {}).value?.trim() || ''; });
+      if (!fd.proiectant && !fd.proiectat) { document.getElementById('cp-proiectant').focus(); return; }
+      const vechi = profilActiv(); const p = Object.assign({}, vechi || {}, Object.fromEntries(Object.entries(fd).filter(([, v]) => v)));
+      if (!p.nume) p.nume = fd.proiectant || fd.proiectat || 'Profilul meu';
+      PROFILES.profile = vechi ? PROFILES.profile.map(x => (x === vechi ? p : x)) : PROFILES.profile.concat([p]); PROFILES.activ = p.nume;
+      await scrieProfile(); store.set('sm.cartus.cerut', true);
+      mutate(() => applyProfile());
+      gata = true; d.close(); res(true);
+      toast('Datele proiectantului sunt în cartuș și salvate în Setări — se pun singure pe planșele noi.', { ms: 5000 });
+    } }, 'Salvează și exportă');
+    const d = dialogNou('Datele proiectantului pentru cartuș', [
+      el('p', { class: 'desc' }, 'Cartușul planșei nu are încă proiectantul. Le cer o singură dată: se pun pe planșa aceasta și pe toate planșele noi; le schimbi oricând din Setări.'), grid],
+      [fara, salv], { onClose: () => { if (!gata) res(false); } });
+    d.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); salv.click(); } });
+    requestAnimationFrame(() => document.getElementById('cp-proiectant')?.focus());
+  });
 }
 function missingCartus() {
   const c = MODEL.cartus || {}; const names = { proiectant: 'firma de proiectare', proiectat: 'proiectat', beneficiar: 'beneficiar', titlu: 'titlu proiect', adresa: 'amplasament', nr_pr: 'nr. proiect', data: 'data' };
@@ -2803,7 +3263,7 @@ function replaceModel(m, msg, o = {}) {
 }
 function newFromPreset(k) {
   const m = normalize(clone(PRESETS[k].model)); const prof = applyProfile(m);
-  replaceModel(m, `Schemă nouă: ${PRESETS[k].nume}${prof ? ', cu datele firmei din profil' : ''}.`);
+  replaceModel(m, `Planșă nouă: ${PRESETS[k].nume}${prof ? ', cu datele firmei din profil' : ''}.`);
   $('#assist').open = false;
 }
 async function openFile(f) {
@@ -2824,10 +3284,10 @@ function openRecent(d) {
 function buildNewMenu() {
   const nm = $('#new-menu'); nm.replaceChildren();
   const desc = { bmpt: 'măsură semidirectă cu TC, 100–250 A', bmptd: 'măsură directă, 40–100 A', tg: 'întreruptor general, bară, plecări în cascadă', cef: 'invertoare, BESS, protecție de interfață', pt: 'celule MT, transformator, TGJT' };
-  nm.append(el('button', { role: 'menuitem', type: 'button', onclick: () => startWizard() }, el('span', {}, el('b', {}, 'Schemă nouă, pas cu pas…'), el('small', {}, 'alegi lucrarea, introduci datele, apoi se generează planșa'))));
-  nm.append(el('hr'), el('div', { class: 'mlabel' }, 'Schemă calculată și verificată'));
-  for (const [k, v] of Object.entries(SABLOANE)) nm.append(el('button', { role: 'menuitem', type: 'button', onclick: () => newFromSablon(k, { wiz: true }) }, el('span', {}, v.nume, el('small', {}, v.descriere || ''))));
-  nm.append(el('hr'), el('div', { class: 'mlabel' }, 'Desen manual — fără verificare'));
+  nm.append(el('button', { role: 'menuitem', type: 'button', onclick: () => acasaArata('nou') }, el('span', {}, el('b', {}, 'Planșă nouă…'), el('small', {}, 'alegi lucrarea sau o descrii în cuvinte'))));
+  nm.append(el('hr'), el('div', { class: 'mlabel' }, 'Șabloane calculate și verificate'));
+  for (const k of ordineSabloane()) { const v = SABLOANE[k]; nm.append(el('button', { role: 'menuitem', type: 'button', onclick: () => newFromSablon(k, { wiz: true }) }, el('span', {}, v.nume, el('small', {}, v.descriere || '')))); }
+  nm.append(el('hr'), el('div', { class: 'mlabel' }, 'Desene de exemplu (fără calcul)'));
   for (const [k, v] of Object.entries(PRESETS)) nm.append(el('button', { role: 'menuitem', type: 'button', onclick: () => newFromPreset(k) }, el('span', {}, v.nume, el('small', {}, 'exemplu de desen, nedimensionat'))));
   const rec = store.get(DOCS, []).filter(d => d.id !== MODEL._doc).slice(0, 6);
   if (rec.length) {
@@ -2852,8 +3312,9 @@ const CARTUS_KEEP = ['beneficiar', 'titlu', 'adresa', 'nr_pr', 'data', 'faza', '
 function stareLLM() {
   $('#claude-wrap').hidden = !INFO.claude;
   $('#llm-stare').textContent = INFO.claude ? 'Citire avansată: activă (Claude, verificată cu regulile locale)'
-    : 'Citire avansată: indisponibilă (fără cheie API) — se folosesc regulile locale';
-  if (window.SM_WEB) $('#llm-avert').textContent = 'Versiunea web: cheia rămâne DOAR în acest browser (în memorie; în localStorage numai dacă bifezi „ține minte”) și descrierea se trimite direct de aici la API-ul Anthropic. Nu bifa pe un calculator folosit de alții; poți șterge cheia oricând.';
+    : 'Citire simplă (fără Claude) — se folosesc regulile locale; citirea avansată se activează din Setări';
+  if (window.SM_WEB) $('#llm-avert').replaceChildren('Versiunea web: cheia rămâne DOAR în acest browser (în memorie; în localStorage numai dacă bifezi „ține minte”) și descrierea se trimite direct de aici la API-ul Anthropic. Nu bifa pe un calculator folosit de alții; poți șterge cheia oricând. ',
+    el('a', { class: 'leg-anth', href: URL_ANTHROPIC, target: '_blank', rel: 'noopener' }, 'Ce se trimite la Anthropic'));
 }
 async function salvezCheia(cheie, tine = $('#llm-tine').checked) {
   try {
@@ -2867,7 +3328,7 @@ $('#llm-salv').addEventListener('click', () => { const k = $('#llm-cheie').value
 $('#llm-sterge').addEventListener('click', () => salvezCheia(''));
 async function chatGo() {
   const text = $('#chat-text').value.trim();
-  if (!text) { $('#chat-text').focus(); toast('Scrie mai întâi ce conține instalația, de exemplu „BMPTi 120 kW, cablu 60 m”.'); return; }
+  if (!text) { const r0 = $('#chat-res'); r0.hidden = false; r0.replaceChildren(el('p', { class: 'msg warn', id: 'chat-gol' }, 'Scrie întâi ce conține instalația, de exemplu „BMPTi 120 kW, cablu 60 m”.')); $('#chat-text').setAttribute('aria-describedby', 'chat-gol'); $('#chat-text').focus(); return; }
   const btn = $('#chat-go'); if (btn.classList.contains('busy')) return;
   btn.classList.add('busy'); btn.disabled = true;
   const res = $('#chat-res'); const gata = lucruStart(res);
@@ -2879,7 +3340,7 @@ async function chatGo() {
     gata();
     if (!intelesCeva(it)) {
       neinteles(res, it);
-      if (r.citire && r.citire.mesaj) res.append(el('div', { class: 'res-citire' }, r.citire.mesaj + '.'));
+      if (r.citire && r.citire.mesaj) res.append(el('div', { class: 'res-citire' }, r.citire.mesaj.replace(/citire avansată indisponibilă — fără cheie API; s-au folosit regulile locale/i, 'citire simplă (fără Claude), cu regulile locale') + '.'));
     } else {
       // r10: nu se desenează direct — întâi panoul de confirmare (în locul tab-urilor)
       res.replaceChildren(el('div', {}, 'Verifică datele înțelese în panoul de mai jos, corectează ce nu e bine, apoi „Confirmă și desenează”.'));
@@ -2930,7 +3391,11 @@ const CONF_INTREB = [
   [/sursa tabloului|originea/i, 'origine'],
   [/puterea trafo|Sn trafo|puterea transformatorului/i, 'pt_Sn_kVA'], [/puterea trafo|Sn trafo|puterea transformatorului/i, 'Sn_kVA'],
   [/cupla longitudinală|cupla JT|normal DESCHISĂ/i, 'cupla'], [/\buk\b|Ucc/i, 'uk_pct'],
+  [/protecții pe partea de c\.c\./i, 'protectii_cc'], [/protecții pe partea de c\.a\./i, 'protectii_ca'],
 ];
+// Î5 (proiectant 28.10.2026): prosumator — există protecții pe c.c. / pe c.a.? (da / nu / nedeclarat = desenate)
+const CONF_DA_NU = [['', 'nedeclarat — se desenează'], ['true', 'da'], ['false', 'nu (nu se desenează)']];
+const boolSel = (e, k) => ({ get: () => (e[k] === true ? 'true' : e[k] === false ? 'false' : ''), set: v => { if (v === 'true') e[k] = true; else if (v === 'false') e[k] = false; else delete e[k]; } });
 const CONF_PORNIRE = [['', 'directă / —'], ['directa', 'directă'], ['stea_triunghi', 'stea-triunghi'], ['convertizor', 'convertizor'], ['soft', 'soft-starter']];
 const CONF_SPL = { locuinta: ['TN-C-S', 'TT'], bransament: ['TN-C-S', 'TT'], tablou: ['TN-C-S', 'TN-S', 'TT', 'TN-C'], prosumator: ['TN-C-S', 'TN-S', 'TT'],
   cef: ['TN-C-S', 'TN-S', 'TT'], pt: ['TN-S', 'TN-C-S', 'TN-C'], ge_ats: ['TN-S', 'TN-C-S'] };
@@ -2964,22 +3429,42 @@ function confDeschide(o) {
   const lip = confLipsa();
   PENDING_FOCUS = lip.length ? confLipsaId(lip[0]) : 'cf-h'; $('#pane').scrollTop = 0; render();
 }
-/** datele fără de care motorul nu poate desena (aceleași condiții ca refuzul I02 al interpretorului), pe tipul de schemă */
-function confLipsa() {
-  if (!CONF) return [];
-  const e = CONF.ed, t = e.tip_schema, L = [];
+/** datele fără de care motorul nu poate desena — REGULA E PE SERVER (engine/confirmare.py → `interpretare.lipsa`,
+ *  reîmprospătată de /api/chat/verifica la fiecare modificare): BESS fără invertoare PV nu mai e blocat. Local se verifică
+ *  doar dacă un câmp cerut de server a fost completat între timp (răspuns imediat la tastare). */
+const CONF_LIPSA_UI = {
+  P_kW: { msg: 'puterea aprobată din ATR (Pa, kW)', re: /putere(a)? aprobată|curentul maxim|puterea \(kW\) sau curentul|puterea tabloului|puterile|calibrele/i },
+  Sn_kVA: { re: /puterea trafo|puterea transformatorului/i }, Sn_GE_kVA: { re: /puterea GE|grupului electrogen/i },
+  invertoare: { tabel: 'cf-inv', re: /invertor/i }, circuite: { tabel: 'cf-ci', re: /circuite/i },
+};
+function confLipsaRegula(e) {
+  // rezerva locală, aceeași regulă ca engine/confirmare.campuri_lipsa — folosită doar până răspunde serverul
+  const t = e.tip_schema, L = [];
   const are = x => x != null && x !== '' && !(typeof x === 'number' && !(x > 0));
   const sarc = pl => (pl || []).some(p => are(p.In_A) || are(p.P_kW) || sarc(p.copii));
-  if (t === 'bransament' && !['P_kW', 'Ib_A', 'S_kVA'].some(k => are(e[k])))
-    L.push({ p: e.Ib_A !== undefined ? 'Ib_A' : e.S_kVA !== undefined ? 'S_kVA' : 'P_kW', msg: 'puterea aprobată din ATR (Pa, kW)', re: /putere(a)? aprobată|curentul maxim|puterea \(kW\) sau curentul/i });
-  if (t === 'tablou' && !are(e.P_kW) && !are(e.In_Q1_A) && !sarc(e.plecari))
-    L.push({ p: 'P_kW', msg: 'puterea tabloului (Pa, kW) sau valorile plecărilor', re: /puterea tabloului|puterile|calibrele/i });
-  if (t === 'pt' && !are(e.Sn_kVA)) L.push({ p: 'Sn_kVA', msg: 'puterea transformatorului (Sn trafo)', re: /puterea trafo|puterea transformatorului/i });
-  if (t === 'ge_ats' && !are(e.Sn_GE_kVA)) L.push({ p: 'Sn_GE_kVA', msg: 'puterea grupului electrogen (Sn, kVA)', re: /puterea GE|grupului electrogen/i });
-  if ((t === 'cef' || t === 'prosumator') && !(e.invertoare || []).some(r => are(r.Pn_kW)) && !are(e.Pn_inv_kW) && !are((e.invertor || {}).Pn_kW))
-    L.push({ p: 'invertoare', tabel: 'cf-inv', msg: 'invertoarele — cel puțin un rând cu puterea Pn (kW)', re: /invertor/i });
-  if (t === 'locuinta' && !(e.circuite || []).length) L.push({ p: 'circuite', tabel: 'cf-ci', msg: 'circuitele tabloului', re: /circuite/i });
+  const inv = (e.invertoare || []).some(r => are(r.Pn_kW)) || are(e.Pn_inv_kW) || are((e.invertor || {}).Pn_kW);
+  const bess = Array.isArray(e.bess) ? e.bess.some(b => b && (are(b.P_kW) || are(b.kWh))) : !!(e.bess && (are(e.bess.P_kW) || are(e.bess.kWh)));
+  if (t === 'bransament' && !['P_kW', 'Ib_A', 'S_kVA'].some(k => are(e[k]))) L.push({ camp: 'P_kW', mesaj: 'puterea aprobată din ATR (Pa, kW)' });
+  if (t === 'tablou' && !are(e.P_kW) && !are(e.In_Q1_A) && !sarc(e.plecari)) L.push({ camp: 'P_kW', mesaj: 'puterea tabloului (Pa, kW) sau valorile plecărilor' });
+  if (t === 'pt' && !are(e.Sn_kVA)) L.push({ camp: 'Sn_kVA', mesaj: 'puterea transformatorului (Sn trafo)' });
+  if (t === 'ge_ats' && !are(e.Sn_GE_kVA)) L.push({ camp: 'Sn_GE_kVA', mesaj: 'puterea grupului electrogen (Sn, kVA)' });
+  if (t === 'cef' && !inv && !bess) L.push({ camp: 'invertoare', mesaj: 'invertoarele (cel puțin un rând cu puterea Pn, kW) sau sistemul de stocare BESS (puterea P, kW)' });
+  if (t === 'prosumator' && !inv) L.push({ camp: 'invertoare', mesaj: 'invertorul — puterea Pn (kW)' });
+  if (t === 'locuinta' && !(e.circuite || []).length) L.push({ camp: 'circuite', mesaj: 'circuitele tabloului' });
   return L;
+}
+function confLipsa() {
+  if (!CONF) return [];
+  const e = CONF.ed, t = e.tip_schema;
+  const srv = CONF.lipsaSrv && CONF.lipsaSrv.tip === t ? CONF.lipsaSrv.L : (Array.isArray(CONF.it.lipsa) && !CONF.lipsaSrv ? CONF.it.lipsa : null);
+  const reg = confLipsaRegula(e);
+  // server: ce câmpuri cere regula; local: dacă au fost completate între timp (o cerință rezolvată nu mai blochează)
+  const lst = srv ? srv.filter(x => !(x.camp in CONF_LIPSA_UI) || reg.some(y => y.camp === x.camp)) : reg;
+  return lst.map(x => {
+    const ui = CONF_LIPSA_UI[x.camp] || {};
+    const p = x.camp === 'P_kW' && t === 'bransament' ? (e.Ib_A !== undefined ? 'Ib_A' : e.S_kVA !== undefined ? 'S_kVA' : 'P_kW') : x.camp;
+    return { p, msg: x.mesaj || ui.msg || x.camp, re: ui.re || new RegExp(x.camp.replace(/\W/g, '.'), 'i'), ...(ui.tabel ? { tabel: ui.tabel } : {}) };
+  });
 }
 const CONF_OBLIG = { bransament: ['P_kW', 'Ib_A', 'S_kVA'], tablou: ['P_kW'], pt: ['Sn_kVA'], ge_ats: ['Sn_GE_kVA'] };
 const confLipsaId = L => (L.tabel ? 'cf-lipsa-' + L.p : 'cf-' + L.p.replace(/\W/g, '-') + '-q');
@@ -3122,6 +3607,8 @@ function confCampuri() {
     num('limitare_injectie_kW', 'Limitare injecție [kW] (0 = zero)', 'fără');
   } else if (t === 'prosumator') {
     sel('racord', 'Se leagă în', [['', 'tabloul existent (branșament OD)'], ['tg_existent', 'TG existent'], ['bmpt', 'BMPT existent'], ['pt', 'PT existent']]);
+    sel('protectii_cc', 'Protecții pe c.c. (separator + SPD c.c.)', CONF_DA_NU, boolSel(e, 'protectii_cc'));
+    sel('protectii_ca', 'Protecții pe c.a. (SPD c.a.)', CONF_DA_NU, boolSel(e, 'protectii_ca'));
     num('P_aprobata_kW', 'P aprobată / evacuată ATR [kW]', 'nedeclarată');
     num('limitare_injectie_kW', 'Limitare injecție [kW] (0 = zero)', 'fără');
   }
@@ -3212,6 +3699,7 @@ function confTabel(o) {
       const pk = typeof c.pres === 'function' ? c.pres(row) : c.pres;
       const pres = pk && v == null && !CONF.touched.has(cid) ? confPres(pk) : null;
       if (pres) n.title = 'Presupus: ' + pres;
+      if (pk && n.tagName === 'INPUT') n.dataset.pk = pk;
       tr.append(el('td', { class: (c.cls || '') + (pres ? ' cf-pres' : '') }, n));
     });
     if (!o.fix) tr.append(el('td', { class: 'cf-del' }, el('button', { class: 'btn ghost sm icon danger', type: 'button', id: `${id}-${i}-del`, 'aria-label': `Șterge ${nr}`, title: 'Șterge rândul', html: '✕',
@@ -3220,7 +3708,7 @@ function confTabel(o) {
   });
   const box = el('div', { class: 'card cf-card' + (o.cls ? ' ' + o.cls : '') }, el('div', { class: 'ghead' }, el('h3', { style: 'margin:0', id: id + '-h' }, titlu), o.fix ? null : el('span', { class: 'count' }, String(list.length))));
   if (o.desc) box.append(el('p', { class: 'hint cf-tdesc' }, o.desc));
-  box.append(el('div', { class: 'cf-scroll', role: 'region', 'aria-labelledby': id + '-h', tabindex: '0' },
+  if (list.length) box.append(el('div', { class: 'cf-scroll', role: 'region', 'aria-labelledby': id + '-h', tabindex: '0' },
     el('table', { class: 'cf-tab', 'aria-labelledby': id + '-h' }, el('thead', {}, th), tb)));
   if (!list.length) box.append(el('p', { class: 'hint' }, o.gol || 'Niciun rând — adaugă cel puțin unul.'));
   if (!o.fix) box.append(el('button', { class: 'btn-add', type: 'button', id: id + '-add', html: ICON.plus + adauga, onclick: () => { list.push(nou(list)); CONF.touched.add(id); PENDING_FOCUS = `${id}-${list.length - 1}-${cols[0].k}`; render(); } }));
@@ -3252,8 +3740,11 @@ function confTabele() {
     e.circuite = e.circuite || [];
     const cols = [{ k: 'nume', label: 'Circuit', cls: 'w-n' }, { k: 'receptor', label: 'Receptor', select: RECEPTOR_LOC, cls: 'w-r' },
       { k: 'P_kW', label: 'P [kW]', num: true, ph: 'uzual', pres: 'circuite.P_kW', cls: 'w-s' }];
-    if (e.retea !== 'mono') cols.push({ k: 'faza', label: 'Faza', select: [['', 'automat'], ['L1', 'L1'], ['L2', 'L2'], ['L3', 'L3'], ['3F', 'trifazat']], cls: 'w-s' });
+    if (e.retea !== 'mono') cols.push({ k: 'faza', label: 'Faza', select: [['', 'automat'], ['L1', 'L1'], ['L2', 'L2'], ['L3', 'L3'], ['3F', 'trifazat']], cls: 'w-f' });
     cols.push({ k: 'L_m', label: 'L [m]', num: true, ph: 'uzual', pres: 'circuite.L_m', cls: 'w-s' });
+    if (e.circuite.some(r => r.receptor === 'vehicul_electric'))
+      cols.push({ k: 'limitare_kW', label: 'Limitare VE [kW]', title: 'Puterea maximă setată în stația VE (câmpul limitare_kW)', num: true, ph: 'fără', cls: 'w-s',
+        ro: r => (r.receptor === 'vehicul_electric' ? null : '—') });
     out.push(confTabel({ id: 'cf-ci', titlu: 'Circuitele tabloului', list: e.circuite, cols, adauga: 'Circuit', numeRand: (r, i) => `circuitul ${i + 1}${r.nume ? ' (' + r.nume + ')' : ''}`,
       nou: l => ({ nume: 'Circuit ' + (l.length + 1), receptor: 'prize' }) }));
     // r11: tablourile secundare editabile — nume, cablu, lungime și circuitele fiecăruia (sub-tabel)
@@ -3391,9 +3882,36 @@ function confStare() {
   const blk = confBlocaj();
   b.setAttribute('aria-disabled', blk ? 'true' : 'false'); b.classList.toggle('blocked', !!blk);
   if (m) { m.textContent = blk; m.hidden = !blk; }
-  confObligUpd(); confWarnUpd(); confPrevLater();
+  const ri = $('#cf-intel'); if (ri) ri.textContent = confRezumat();
+  confObligUpd(); confWarnUpd(); confPresDom(); confPrevLater();
 }
 /** atenționările de lângă câmpuri (ex. Q declarat) — recalculate fără redesenarea panoului */
+/** panoul de confirmare: contur galben + „presupus” și pe câmpurile pe care motorul le completează singur */
+function confPresDom() {
+  const C = CONF, root = $('#conf'); if (!C || !root) return;
+  root.querySelectorAll('.pz').forEach(n => n.remove());
+  root.querySelectorAll('.cf-pres[data-pzdom]').forEach(n => { n.classList.remove('cf-pres'); delete n.dataset.pzdom; });
+  const motor = presDin(C.presMotor || []);
+  const marc = (inp, motiv) => {
+    const f = inp.closest('.fld'); if (!f || f.classList.contains('cf-oblig')) return;
+    if (!f.classList.contains('cf-pres')) { f.classList.add('cf-pres'); f.dataset.pzdom = '1'; }
+    const lab = f.querySelector(':scope>label'); if (lab && !lab.querySelector('.cf-tag')) lab.append(tagPres());
+    if (!inp.title) inp.title = 'Presupus: ' + motiv;
+  };
+  root.querySelectorAll('[data-cfp]').forEach(inp => {
+    const p = inp.dataset.cfp; if (C.touched.has(p) || inp.type === 'checkbox') return;
+    if (inp.closest('.cf-pres') && !inp.closest('[data-pzdom]')) return;
+    const gol = inp.value === '';
+    const m = gol && motor.has(p) ? motor.get(p) : implicitDom(inp);
+    if (m) marc(inp, m);
+  });
+  root.querySelectorAll('[data-pk]').forEach(inp => {
+    const td = inp.closest('td'); if (!td || C.touched.has(inp.id) || inp.value !== '') return;
+    if (motor.has(inp.dataset.pk) || C.pres.has(inp.dataset.pk)) { td.classList.add('cf-pres'); td.dataset.pzdom = '1'; if (!inp.title) inp.title = 'Presupus: ' + (motor.get(inp.dataset.pk) || C.pres.get(inp.dataset.pk)); }
+  });
+  const nr = new Set([...root.querySelectorAll('.cf-pres')].map(n => n.querySelector('[data-cfp]')?.dataset.cfp || n.querySelector('input,select')?.id)).size;
+  const h = $('#cf-presn'); if (h) h.textContent = nr ? ` — ${nr === 1 ? 'un câmp marcat' : nr + ' câmpuri marcate'} cu galben mai jos` : '';
+}
 function confWarnUpd() {
   if (!CONF || !CONF.warnFns) return;
   for (const [id, fn] of CONF.warnFns) { const n = document.getElementById(id); if (!n) continue; const w = fn(); n.textContent = w || ''; n.hidden = !w; }
@@ -3402,7 +3920,7 @@ function confWarnUpd() {
 let CONF_PREV_T = null;
 function confPrevLater() {
   clearTimeout(CONF_PREV_T);
-  const C = CONF; if (!C || confTip() !== 'locuinta' || !C.ed.alimentare || C.ed.alimentare.In_Q_bransament_A == null || confBlocaj()) return;
+  const C = CONF; if (!C || C.raw.size) return;
   CONF_PREV_T = setTimeout(async () => {
     if (CONF !== C) return;
     const intrare = confExport(), cheie = JSON.stringify(intrare);
@@ -3411,9 +3929,16 @@ function confPrevLater() {
     try {
       const r = await (await fetch('/api/chat/verifica', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ intrare }) })).json();
       if (CONF !== C || C.prevCheie !== cheie) return;
+      if (Array.isArray(r.lipsa)) {
+        // echipa: regula „date obligatorii” vine de pe server (engine/confirmare.py) — la schimbarea ei, panoul se redesenează
+        const vechi = JSON.stringify(confLipsa().map(L => L.p));
+        C.lipsaSrv = { tip: intrare.tip_schema, L: r.lipsa };
+        if (JSON.stringify(confLipsa().map(L => L.p)) !== vechi && !document.activeElement?.closest('#conf input')) render(); else confStare();
+      }
       const s = (r.schimbari || []).find(x => x.camp === 'alimentare.In_Q_bransament_A');
       C.qSrv = { q: intrare.alimentare && intrare.alimentare.In_Q_bransament_A, txt: s ? `Motorul ar folosi Q ${numRO(s.calculat)} A în locul celor ${numRO(s.declarat)} A declarați${s.motiv ? ' — ' + s.motiv : ''}.` : '' };
-      confWarnUpd();
+      C.presMotor = [...(r.presupus || []), ...(r.avertismente || [])];          // echipa 1: implicitele motorului marcate pe câmp
+      confWarnUpd(); confPresDom();
     } catch { /* previzualizarea e doar un ajutor */ }
   }, 450);
 }
@@ -3426,7 +3951,7 @@ function confRender(root) {
     else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); confConfirma(); }
   });
   wrap.append(el('h2', { class: 'wz-h', id: 'cf-h', tabindex: '-1' }, 'Verifică ce am înțeles'),
-    el('p', { class: 'desc' }, 'Corectează pe loc ce nu e bine, apoi confirmă — planșa se desenează abia după confirmare.'));
+    el('p', { class: 'desc' }, 'Corectează pe loc ce nu e bine, apoi „Confirmă și desenează” — planșa apare imediat, iar datele rămân de editat în Calcul.'));
   const linii = faraI(it.intelegere).split('\n');
   const am = linii.filter(l => !/^(Am presupus|Verificări|Întrebare|Nu am înțeles|Nu pot genera)/.test(l)).join(' ') || 'Am citit descrierea.';
   const pres = (it.presupus || []).map(faraI);
@@ -3436,15 +3961,20 @@ function confRender(root) {
     const v = getP(C.ed, p), vt = p === 'retea' ? (v === 'mono' ? 'monofazată' : v === 'tri' ? 'trifazată' : '—') : v == null ? '—' : String(v);
     if (!(p === 'retea' && pres.some(x => CONF_PRES[0][0].test(x)))) pres.push(`${ETI[p] || p}: ${vt} — dedus${m ? ' (' + m + ')' : ''}, nu scris explicit în text`);
   }
-  const ai = el('div', { class: 'card cf-card' }, el('h3', {}, 'Am înțeles'), el('p', { class: 'cf-txt' }, am.replace(/^Am înțeles:\s*/, '')));
-  if (C.citire) ai.append(el('p', { class: 'hint', style: 'margin:4px 0 0' }, C.citire[0].toUpperCase() + C.citire.slice(1) + '.'));
+  const ai = el('div', { class: 'card cf-card' }, el('h3', {}, 'Am înțeles'), el('p', { class: 'cf-intel', id: 'cf-intel', 'aria-live': 'polite' }, confRezumat()),
+    el('p', { class: 'cf-orig' }, 'Din descriere: ' + am.replace(/^Am înțeles:\s*/, '')));
+  if (C.citire) { const ct = C.citire.replace(/citire avansată indisponibilă — fără cheie API; s-au folosit regulile locale/i, 'citire simplă (fără Claude), cu regulile locale').replace(/fără cheie API/gi, 'fără Claude');
+    ai.append(el('p', { class: 'hint', style: 'margin:4px 0 0' }, ct[0].toUpperCase() + ct.slice(1) + '.')); }
   if (pres.length) ai.append(el('details', { class: 'cf-presl', open: pres.length <= 5 ? true : null },
-    el('summary', {}, `Am presupus (${pres.length})`, el('span', { class: 'hint' }, ' — câmpurile presupuse au contur galben')), el('ul', {}, ...pres.map(p => el('li', {}, p)))));
+    el('summary', {}, `Am presupus (${pres.length})`, el('span', { class: 'hint', id: 'cf-presn' })), el('ul', {}, ...pres.map(p => el('li', {}, p)))));
   wrap.append(ai);
   // neînțelese / întrebări, cu câmpul de completat lângă ele
   const campuri = confCampuri();
-  const intreb = [...(it.intrebari || []).map(faraI), ...(it.avertismente || []).map(x => faraI(typeof x === 'string' ? x : (x.mesaj || '')))];
-  if ((it.neconsumat || []).length && !intreb.some(q => /Nu am folosit/.test(q))) intreb.push('Nu am folosit în schemă: ' + it.neconsumat.map(x => `„${x}”`).join('; '));
+  let intreb = [...(it.intrebari || []).map(faraI), ...(it.avertismente || []).map(x => faraI(typeof x === 'string' ? x : (x.mesaj || '')))];
+  // echipa 1: frazele nefolosite primesc răspuns pe loc (valoarea din frază → câmpul potrivit) sau „Ignoră”
+  const nefol = [...(it.neconsumat || [])];
+  intreb.filter(q => /^Nu am folosit/.test(q)).forEach(q => { for (const m of q.matchAll(/„([^”]+)”/g)) if (!nefol.includes(m[1])) nefol.push(m[1]); });
+  intreb = intreb.filter(q => !/^Nu am folosit/.test(q));
   // obligatoriu (refuzul I02 al interpretorului): câmpul de completat, evidențiat, primul în listă; „Confirmă” rămâne blocat până e completat
   const lipsa = confLipsa();
   const liO = lipsa.map(L => {
@@ -3456,9 +3986,11 @@ function confRender(root) {
   });
   const deLipsa = q => lipsa.some(L => L.re.test(q));
   const intrebRest = intreb.filter(q => q && !(lipsa.length && deLipsa(q)));
-  const nQ = liO.length + intrebRest.length;
+  C.ignorate = C.ignorate || new Set();
+  const liN = nefol.filter(f => !C.ignorate.has(f)).map(f => confNefolosit(f, campuri));
+  const nQ = liO.length + intrebRest.length + liN.length;
   if (nQ) {
-    const ul = el('ul', { class: 'cf-q' }, ...liO);
+    const ul = el('ul', { class: 'cf-q' }, ...liO, ...liN);
     const folosite = new Set(lipsa.map(L => L.p));
     intrebRest.forEach((q, i) => {
       const hit = CONF_INTREB.find(([re, p]) => re.test(q) && !folosite.has(p) && campuri.some(s => s.p === p));
@@ -3477,6 +4009,38 @@ function confRender(root) {
       el('button', { class: 'btn pri', type: 'button', id: 'cf-ok', 'aria-describedby': 'cf-block', onclick: confConfirma }, 'Confirmă și desenează'))));
   root.append(wrap);
   requestAnimationFrame(confStare);
+}
+/** „Am înțeles”, recalculat din câmpurile panoului (se schimbă când corectezi) */
+function confRezumat() {
+  const e = CONF.ed, t = confTip(), P = [];
+  const n = x => numRO(x);
+  P.push(TIP_ETI[e.tip_schema] || TIP_ETI[t] || t);
+  if (e.retea === 'mono' || e.retea === 'tri') P.push(e.retea === 'mono' ? 'monofazat' : 'trifazat');
+  if (t === 'bransament') { if (e.P_kW != null) P.push(`Pa ${n(e.P_kW)} kW`); if (e.S_kVA != null) P.push(`S ${n(e.S_kVA)} kVA`); if (e.Ib_A != null) P.push(`Ib ${n(e.Ib_A)} A`); if (e.L_coloana_m != null) P.push(`coloana C2 ${n(e.L_coloana_m)} m`); }
+  if (t === 'locuinta') { const a = e.alimentare || {}; if (a.P_aprobata_kW != null) P.push(`putere aprobată ${n(a.P_aprobata_kW)} kW`); if (a.In_Q_bransament_A != null) P.push(`Q ${n(a.In_Q_bransament_A)} A`);
+    P.push(`${(e.circuite || []).length} circuite`); if ((e.tablouri_secundare || []).length) P.push(`${e.tablouri_secundare.length} tablouri secundare`); if (a.L_coloana_m != null) P.push(`coloana ${n(a.L_coloana_m)} m`); }
+  if (t === 'tablou' || t === 'pt') { if (e.Sn_kVA) P.push(`trafo ${n(e.Sn_kVA)} kVA`); if (e.P_kW != null) P.push(`Pa ${n(e.P_kW)} kW`); P.push(`${(e.plecari || []).length} plecări`); if (e.L_alimentare_m != null) P.push(`C1 ${n(e.L_alimentare_m)} m`); }
+  if (t === 'ge_ats') { if (e.Sn_GE_kVA) P.push(`GE ${n(e.Sn_GE_kVA)} kVA`); if (e.P_sarcina_kW) P.push(`sarcina ${n(e.P_sarcina_kW)} kW`); }
+  if (t === 'cef' || t === 'prosumator') {
+    const iv = (e.invertoare || []).filter(r => r.Pn_kW != null).map(r => `${(+r.n || 1)} × ${n(r.Pn_kW)} kW`);
+    if (iv.length) P.push('invertoare ' + iv.join(' + ')); if (e.kWp) P.push(`${n(e.kWp)} kWp`);
+    const rac = { tg_existent: 'racord în TG existent', bmpt: 'racord prin BMPT', pt: 'racord în PT' }[e.racord]; if (rac) P.push(rac);
+    if (e.L_racord_m != null) P.push(`C0 ${n(e.L_racord_m)} m`); if (CONF.bat.kWh) P.push(`baterie ${n(CONF.bat.kWh)} kWh`);
+  }
+  return P.join(' · ') + '.';
+}
+/** o frază nefolosită: valoarea din ea (m / kW / A) se poate pune într-un câmp al panoului, cu un clic */
+function confNefolosit(f, campuri) {
+  const C = CONF, qb = el('div', { class: 'cf-qb' });
+  const unit = [[/(\d+(?:[.,]\d+)?)\s*m\b(?!m)/i, /(^|\.)L_|lungime/i], [/(\d+(?:[.,]\d+)?)\s*kW\b/i, /P_kW$|P_aprobata|kWp|P_evacuata|P_sarcina/], [/(\d+(?:[.,]\d+)?)\s*A\b/, /In_Q|Ib_A|In_Q1/]];
+  for (const [re, campRe] of unit) {
+    const m = re.exec(f); if (!m) continue;
+    const val = parseRO(m[1]); if (val == null) continue;
+    campuri.filter(s => s.num && campRe.test(s.p)).slice(0, 3).forEach(s => qb.append(el('button', { class: 'btn sm', type: 'button', onclick: () => {
+      confSet(s.p, val); C.ignorate.add(f); PENDING_FOCUS = 'cf-' + s.p.replace(/\W/g, '-'); render(); toast(`Am pus ${numRO(val)} la „${s.label}”.`, { ms: 4000 }); } }, `E ${s.label.replace(/\s*\[.*\]$/, '')} = ${numRO(val)}`)));
+  }
+  qb.append(el('button', { class: 'btn ghost sm', type: 'button', onclick: () => { C.ignorate.add(f); PENDING_FOCUS = 'cf-ok'; render(); } }, 'Ignoră'));
+  return el('li', {}, el('p', {}, `Nu am folosit în schemă: „${f}”. Ce reprezintă?`), qb);
 }
 function confInapoi() {
   const C = CONF; if (!C) return;
@@ -3531,18 +4095,16 @@ async function confConfirma() {
     if (CONF !== C) return;           // între timp s-a revenit la text
     CONF = null;
     const corectat = C.touched.size;
-    if (C.src === 'wiz') {
-      r.model._wiz = 1; WIZ_START = null; PENDING_FOCUS = 'wz-h';
-      if (r.model.calc && r.model.calc.retea === 'tri' && !C.touched.has('retea') && /nu încape în monofazat/.test((C.it.presupus || []).join(' '))) r.model.calc._retea_dedusa = true;
-      replaceModel(r.model, null, { chat: true }); setValid(r.validare); render();
-      const np = (r.validare && r.validare.presupus || []).length;
-      toast('Am completat datele din descrierea confirmată.' + (np ? ` ${np} valori sunt încă presupuse — verifică-le și completează ce lipsește.` : ' Verifică datele și completează ce lipsește.'), { ms: 10000 });
-    } else {
-      replaceModel(r.model, null, { chat: true }); setValid(r.validare); setTab('calc');
+    // echipa 1 (flux unificat): „Confirmă și desenează” desenează — datele confirmate devin MODEL.calc, editat apoi în Calcul
+    WIZ_START = null; WIZ_INCERCAT = true;
+    if (r.model.calc && r.model.calc.retea === 'tri' && !C.touched.has('retea') && /nu încape în monofazat/.test((C.it.presupus || []).join(' '))) r.model.calc._retea_dedusa = true;
+    replaceModel(r.model, null, { chat: true }); setValid(r.validare);
+    if (C.src !== 'wiz') {
       const res = $('#chat-res'); res.hidden = false;
       res.replaceChildren(el('div', { class: 'res-chat' }, 'Am desenat schema din datele confirmate' + (corectat ? ', cu corecturile tale.' : '.')),
         el('div', { style: 'margin-top:6px;display:flex;gap:8px' }, el('button', { class: 'btn sm', type: 'button', onclick: () => { undo(); res.hidden = true; } }, 'Revino la schema anterioară')));
     }
+    plansaGata({ corectat });
   } catch (e) {
     toast('Schema nu a putut fi desenată: ' + e.message, { kind: 'err', ms: 9000 });
     const b2 = $('#cf-ok'); if (b2) { b2.classList.remove('busy'); b2.removeAttribute('aria-busy'); }
@@ -3557,7 +4119,9 @@ function toast(text, o = {}) {
   if (o.action) t.append(el('button', { type: 'button', onclick: () => { close(); o.onAction(); } }, o.action));
   t.append(el('button', { class: 'x', type: 'button', 'aria-label': 'Închide mesajul', onclick: close }, '✕'));
   const box = $('#toasts'); box.append(t); while (box.children.length > 3) box.firstChild.remove();
-  let tm = setTimeout(close, o.ms || (o.action ? 8000 : 3500));
+  // echipa 1: notificările informative dispar singure în ≤ 6 s (cu acțiune ≤ 10 s); erorile rămân cât cere apelantul
+  const ms = o.kind === 'err' ? (o.ms || 8000) : Math.min(o.ms || (o.action ? 8000 : 4000), o.action ? 10000 : 6000);
+  let tm = setTimeout(close, ms);
   t.addEventListener('mouseenter', () => clearTimeout(tm)); t.addEventListener('mouseleave', () => { tm = setTimeout(close, 2500); });
   t.addEventListener('focusin', () => clearTimeout(tm)); t.addEventListener('focusout', () => { tm = setTimeout(close, 4000); });
 }
@@ -3625,6 +4189,9 @@ function initChrome() {
     if (n) { n.click(); n.focus(); e.preventDefault(); }
   });
   $('#mv-edit').onclick = () => setMView('edit'); $('#mv-plan').onclick = () => setMView('plan');
+  // înălțimea antetului (pe telefon are 2 rânduri): notificările se pun sub el, nu peste cartușul planșei
+  const setHdr = () => { const h = document.querySelector('header'); if (h && h.offsetHeight) document.documentElement.style.setProperty('--hdr', h.offsetHeight + 'px'); };
+  new ResizeObserver(setHdr).observe(document.querySelector('header')); setHdr();
   // asistent
   $('#chat-go').onclick = chatGo;
   $('#chat-text').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); chatGo(); } });
@@ -3744,7 +4311,7 @@ async function cloudSave(explicit) {
 }
 /** „Salvează”: în cont când ești logat; altfel fișierul .json (ca până acum) */
 async function salveazaExplicit() {
-  if (WIZ_START) { toast('Alege întâi tipul lucrării — schema nouă nu există încă.'); return; }
+  if (WIZ_START) { toast('Alege întâi tipul lucrării — planșa nouă nu există încă.'); return; }
   if (!cloudOk()) return exportAs('json', $('#save-btn'));
   const b = $('#save-btn'); if (b.classList.contains('busy')) return;
   if (MODEL._provizoriu) delete MODEL._provizoriu;
@@ -3968,7 +4535,7 @@ function acasaNav() {
   const ul = $('#h-menu'); ul.replaceChildren();
   const nLoc = store.get(DOCS, []).length;
   for (const it of HOME_SEC) {
-    if (!it) { ul.append(el('li', { class: 'sep', role: 'presentation' })); continue; }
+    if (!it) { ul.append(el('li', { class: 'sep', 'aria-hidden': 'true' })); continue; }
     const [k, t, ic] = it;
     const cnt = k === 'proiecte' && !cloudOk() && nLoc ? String(nLoc) : k === 'cont' && cloudOk() ? '●' : null;
     ul.append(el('li', {}, el('button', { type: 'button', id: 'hn-' + k, 'aria-current': HOME.sec === k ? 'page' : null, onclick: () => { HOME.sec = k; HOME.confirm = HOME.edit = null; acasaNav(); acasaRender(); navInchide(); $('#h-main').scrollTop = 0; requestAnimationFrame(() => $('#h-main h2')?.focus({ preventScroll: true })); } },
@@ -3985,8 +4552,8 @@ function acasaCartus() {
     ...rd('Salvare', sal));
   b.setAttribute('aria-label', `Cartușul tău: proiectant ${a.proiectant || 'necompletat'}, salvare ${sal}. Deschide setările.`);
 }
-function navDeschide() { document.body.classList.add('h-nav-open'); $('#h-scrim').hidden = false; $('#h-burger').setAttribute('aria-expanded', 'true'); requestAnimationFrame(() => $('#h-menu button[aria-current]')?.focus()); }
-function navInchide(refocus) { if (!document.body.classList.contains('h-nav-open')) return; document.body.classList.remove('h-nav-open'); $('#h-scrim').hidden = true; $('#h-burger').setAttribute('aria-expanded', 'false'); if (refocus) $('#h-burger').focus(); }
+function navDeschide() { document.body.classList.add('h-nav-open'); $('#h-scrim').hidden = false; $('#h-body').inert = true; $('#h-burger').setAttribute('aria-expanded', 'true'); requestAnimationFrame(() => $('#h-menu button[aria-current]')?.focus()); }
+function navInchide(refocus) { $('#h-body').inert = false; if (!document.body.classList.contains('h-nav-open')) return; document.body.classList.remove('h-nav-open'); $('#h-scrim').hidden = true; $('#h-burger').setAttribute('aria-expanded', 'false'); if (refocus) $('#h-burger').focus(); }
 function temaSet(v) {
   if (v === 'auto') { delete document.documentElement.dataset.theme; store.del('sm.theme'); }
   else { document.documentElement.dataset.theme = v; store.set('sm.theme', v); }
@@ -3995,7 +4562,7 @@ function temaSet(v) {
 function acasaRender() {
   const root = $('#h-main'); if (!root) return;
   const st = root.scrollTop; const act = document.activeElement; const aid = act && root.contains(act) ? act.id : null;
-  const sec = el('section', { class: 'h-sec', 'aria-labelledby': 'h-h' });
+  const sec = el('section', { class: 'h-sec s-' + HOME.sec, 'aria-labelledby': 'h-h' });
   const fn = { nou: secNou, proiecte: secProiecte, recente: secRecente, exemple: secExemple, catalog: secCatalog, setari: secSetari, cont: secCont }[HOME.sec] || secNou;
   fn(sec);
   root.replaceChildren(sec); root.scrollTop = st;
@@ -4006,7 +4573,7 @@ const hH = (t, lead) => [el('h2', { class: 'h-h', id: 'h-h', tabindex: '-1' }, t
 
 /* ---- Planșă nouă */
 function secNou(root) {
-  root.append(...hH('Planșă nouă', 'Alege lucrarea. Pe ecranul următor completezi datele; planșa se generează după verificare.'));
+  root.append(...hH('Planșă nouă', 'Alege lucrarea și completează datele — sau descrie-o în cuvinte: verifici ce am înțeles, confirmi și planșa se desenează imediat.'));
   const g = el('div', { class: 'h-tiles', role: 'list' });
   for (const [k, n, d, gl] of TIPURI_LUCRARE) {
     const b = el('button', { class: 'h-tile', type: 'button', id: 'ht-' + k, onclick: () => acasaSablon(k, b) }, glyph(gl), el('span', { class: 'tx' }, el('b', {}, n), el('small', {}, d)));
@@ -4214,7 +4781,7 @@ function listaCatalog() {
 const PROF_ETI = { proiectant: 'Firma de proiectare', adresa_proiectant: 'Adresa firmei', reg: 'Nr. ORC, CUI, telefon', sef_proiect: 'Șef proiect', proiectat: 'Proiectat',
   desenat: 'Desenat', verificat: 'Verificat', aprobat: 'Aprobat', atestat_anre: 'Nr. atestat ANRE', atestat_tip: 'Tip atestat' };
 function secSetari(root) {
-  root.append(...hH('Setări'));
+  root.append(...hH('Setări', 'Datele tale de proiectant, citirea avansată a descrierilor și tema. Se păstrează pe acest calculator.'));
   // datele proiectantului (profilul implicit) — se pun singure în cartușul fiecărei planșe noi
   const a = profilActiv() || {};
   const vals = {}; PROFILE_KEYS.forEach(k => { vals[k] = a[k] || ''; });
@@ -4252,7 +4819,8 @@ function secSetari(root) {
     el('div', { class: 'fld', style: 'max-width:440px' }, el('label', { for: 'hs-cheie' }, 'Cheia API Anthropic'), ch),
     el('label', { class: 'check' }, tine, window.SM_WEB ? ' Ține minte în acest browser' : ' Ține minte pe acest calculator'),
     el('p', { class: 'h-sub' }, window.SM_WEB ? 'Cheia rămâne doar în acest browser și descrierea pleacă direct de aici la Anthropic. Nu bifa „ține minte” pe un calculator folosit de alții.'
-      : 'Cheia se ține în memoria aplicației locale; cu „ține minte”, în ~/.config/scheme-monofilare — niciodată în proiect sau în exporturi.'),
+      : 'Cheia se ține în memoria aplicației locale; cu „ține minte”, în ~/.config/scheme-monofilare — niciodată în proiect sau în exporturi.', ' ',
+      el('a', { class: 'leg-anth', href: URL_ANTHROPIC, target: '_blank', rel: 'noopener' }, 'Ce se trimite la Anthropic')),
     el('div', { class: 'h-row' }, el('button', { class: 'btn pri', type: 'submit' }, 'Folosește cheia'), INFO.claude ? el('button', { class: 'btn ghost', type: 'button', onclick: () => salvezCheia('', false) }, 'Șterge cheia') : null)));
   // aspect
   const tema = store.get('sm.theme', null) || 'auto';
@@ -4267,10 +4835,14 @@ function secSetari(root) {
 
 /* ---- Cont */
 function secCont(root) {
+  secContIn(root);
+  root.append(el('p', { class: 'h-sub', style: 'margin-top:var(--s4)' }, 'Folosirea aplicației și a contului: ', legLeg()));
+}
+function secContIn(root) {
   if (!CLOUD.on) {
     root.append(...hH('Cont', 'Conturile nu sunt încă activate.'));
     root.append(el('div', { class: 'h-card-f' }, el('p', { style: 'margin-top:0' }, 'Proiectele se salvează automat în acest browser. Când conturile sunt activate, aici îți creezi un cont și îți găsești proiectele pe orice calculator.'),
-      el('p', { class: 'h-sub', style: 'margin-bottom:0' }, 'Pentru administrator: completează SUPABASE_URL și SUPABASE_ANON_KEY în config.js și rulează o dată supabase/schema.sql în proiectul Supabase.')));
+      el('details', { class: 'adv' }, el('summary', {}, 'Pentru administrator'), el('p', { class: 'h-sub', style: 'margin-bottom:0' }, 'Completează SUPABASE_URL și SUPABASE_ANON_KEY în config.js și rulează o dată supabase/schema.sql în proiectul Supabase.'))));
     return;
   }
   if (!CLOUD.gata) { root.append(...hH('Cont'), el('p', { class: 'h-load', role: 'status' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), ' Se conectează la serviciul de conturi…')); return; }
@@ -4352,6 +4924,8 @@ function initAcasa() {
 (async () => {
   // pagina de start apare imediat; editorul se pregătește dedesubt (planșa ultimei scheme, ca înainte)
   HOME.on = true; document.body.classList.add('home'); $('#home').hidden = false;
+  // Termeni / Confidențialitate: în build-ul web paginile stau lângă index.html (legături relative)
+  document.querySelectorAll('a[href^="/static/"]').forEach(x => x.setAttribute('href', x.getAttribute('href').replace('/static/', LEGAL)));
   initChrome(); initViewer(); initAcasa();
   if (/^#(cont|access_token|error)/.test(location.hash)) HOME.sec = 'cont';
   acasaNav(); acasaRender(); acasaCartus();
