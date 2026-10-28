@@ -10,4 +10,7 @@
 window.SM_CONFIG = {
   SUPABASE_URL: '',
   SUPABASE_ANON_KEY: '',
+  // Varianta gratuită: exporturile (SVG / PDF / DXF / pachet) primesc filigranul discret „kromotec · versiune gratuită”
+  // (în DXF pe un layer separat). false = fără filigran (varianta plătită).
+  FILIGRAN: true,
 };

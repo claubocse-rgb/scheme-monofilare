@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Politica de confidențialitate · Scheme monofilare</title>
-<meta name="description" content="Politica de confidențialitate a aplicației Scheme monofilare (draft v0.1).">
+<meta name="description" content="Politica de confidențialitate a aplicației Scheme monofilare (draft v0.2).">
 <meta name="robots" content="noindex">
 <script>try{var t=JSON.parse(localStorage.getItem('sm.theme')||'null');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
@@ -102,9 +102,15 @@ table{border-collapse:collapse;width:100%;font-size:var(--fs);line-height:1.45}
 th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--rule)}
 th{background:var(--sunk);font-weight:600;font-size:var(--fs-sm);color:var(--ink-2)}
 tr:last-child td{border-bottom:0}
+.accept{margin:2em 0 0;padding:16px 18px;border:1px solid var(--sig-line);border-radius:var(--r);background:var(--sig-soft)}
+.accept label{display:flex;gap:10px;align-items:flex-start;margin:0 0 12px;max-width:72ch;cursor:pointer}
+.accept input{margin-top:5px;flex:none;width:18px;height:18px}
+.accept button{font:600 var(--fs-md)/1 var(--font);padding:10px 16px;border-radius:var(--r);border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer}
+.accept button:disabled{opacity:.45;cursor:not-allowed}
+.accept .ok{margin:0 0 12px;font-weight:600}
 footer{grid-column:1/-1;font-size:var(--fs-sm);color:var(--ink-3);text-align:center}
 @media print{
-  .top,.toc,footer{display:none}
+  .top,.toc,footer,.accept{display:none}
   body{background:#fff;color:#000;font-size:11pt}
   .wrap{display:block;padding:0;max-width:none}
   article{border:0;padding:0}
@@ -117,7 +123,7 @@ footer{grid-column:1/-1;font-size:var(--fs-sm);color:var(--ink-3);text-align:cen
 <body>
 <header class="top">
   <a class="brand" href="./">Scheme monofilare</a>
-  <nav aria-label="Documente"><a href="termeni.html">Termeni</a><a href="confidentialitate.html" aria-current="page">Confidențialitate</a><a href="./">← Aplicația</a></nav>
+  <nav aria-label="Documente"><a href="termeni.html">Termeni</a><a href="confidentialitate.html" aria-current="page">Confidențialitate</a><a href="beta.html">Testare</a><a href="./">← Aplicația</a></nav>
 </header>
 <script>/* aplicația locală servește paginile din /static/, iar aplicația e la / */
 if(location.pathname.indexOf('/static/')>=0)document.querySelectorAll('a[href="./"]').forEach(function(a){a.href='/'})</script>
@@ -127,8 +133,8 @@ if(location.pathname.indexOf('/static/')>=0)document.querySelectorAll('a[href=".
 <li><a href="#1-cine-este-operatorul-de-date">1. Cine este operatorul de date</a></li>
 <li><a href="#2-pe-scurt-unde-stau-datele">2. Pe scurt: unde stau datele</a></li>
 <li><a href="#3-datele-pastrate-local-in-browserul-tau">3. Datele păstrate local, în browserul tău</a></li>
-<li><a href="#4-datele-tehnice-la-incarcarea-paginii">4. Datele tehnice la încărcarea paginii</a></li>
-<li><a href="#5-citirea-avansata-cu-cheia-ta-anthropic">5. Citirea avansată cu cheia ta Anthropic</a></li>
+<li><a href="#4-gazduirea-accesul-testerilor-si-e-mailul">4. Găzduirea, accesul testerilor și e-mailul</a></li>
+<li><a href="#5-citirea-avansata-cu-cheia-ta-anthropic">5. Citirea avansată (Claude, de la Anthropic)</a></li>
 <li><a href="#6-conturile-de-utilizator-dupa-activare">6. Conturile de utilizator (după activare)</a></li>
 <li><a href="#7-cat-timp-pastram-datele">7. Cât timp păstrăm datele</a></li>
 <li><a href="#8-cookie-uri-si-stocarea-locala">8. Cookie-uri și stocarea locală</a></li>
@@ -142,25 +148,31 @@ if(location.pathname.indexOf('/static/')>=0)document.querySelectorAll('a[href=".
 </aside>
   <article>
 <h1 id="politica-de-confidentialitate">Politica de confidențialitate</h1>
-<p><strong>Versiunea 0.1 — draft, de verificat de un avocat</strong> · ultima actualizare: 28.10.2026</p>
-<div class="draft" role="note"><b>Draft v0.1</b><span>Text de lucru, încă neverificat de un avocat. Elementele între paranteze drepte (de ex. [DENUMIRE OPERATOR]) urmează să fie completate.</span></div>
+<p><strong>Versiunea 0.2 — draft, de verificat de un avocat</strong> · ultima actualizare: 28.10.2026</p>
+<div class="draft" role="note"><b>Draft v0.2</b><span>Text de lucru, încă neverificat de un avocat. Elementele între paranteze drepte (de ex. [ADRESA APLICAȚIEI]) urmează să fie completate.</span></div>
 <blockquote>
 <p><strong>Pe scurt.</strong></p>
 <ul>
 <li>În prezent, <strong>proiectele tale rămân în browserul tău</strong>: nu le trimitem nicăieri și nu le vedem.</li>
+<li>Pagina e găzduită la <strong>Cloudflare</strong>. Testerii intră cu un <strong>cod primit pe e-mail</strong> (Cloudflare Access), deci
+  Cloudflare prelucrează adresa ta de e-mail și jurnalele de acces.</li>
 <li>Nu folosim cookie-uri de urmărire, publicitate sau statistici.</li>
-<li>Dacă îți pui <strong>propria cheie Anthropic</strong>, textul descrierii pleacă direct din browserul tău la Anthropic (SUA).
-  Scoate înainte numele, adresele și alte date personale.</li>
-<li>Când vom activa <strong>conturile</strong>, proiectele salvate în cont vor fi păstrate în UE (Frankfurt).</li>
+<li><strong>Citirea avansată:</strong> în varianta gratuită, cu cheia ta, textul pleacă direct la Anthropic (SUA). În planurile
+  plătite, trece prin serverul nostru, care scoate datele de identificare evidente și îl trimite la Anthropic în
+  numele nostru. În ambele cazuri, scoate înainte numele, adresele și alte date personale.</li>
+<li>Când vom activa <strong>conturile</strong>, proiectele salvate în cont vor fi păstrate în UE.</li>
 <li><strong>Nu introduce CNP-uri sau alte date sensibile</strong> ale clienților tăi.</li>
 </ul>
 </blockquote>
 <h2 id="1-cine-este-operatorul-de-date">1. Cine este operatorul de date</h2>
-<p>1.1. Operatorul datelor cu caracter personal descrise mai jos este <mark class="ph">[DENUMIRE OPERATOR]</mark>, cu sediul în <mark class="ph">[SEDIU]</mark>,
-CUI <mark class="ph">[CUI]</mark> („<strong>noi</strong>”). Contact pentru protecția datelor: <mark class="ph">[EMAIL CONTACT]</mark>.</p>
-<p>1.2. Politica se aplică aplicației web „Scheme monofilare” (https://claubocse-rgb.github.io/scheme-monofilare/),
-versiunii locale și, după activare, conturilor de utilizator. Ea completează
-<a href="termeni.html">Termenii și condițiile</a>.</p>
+<p>1.1. Operatorul datelor cu caracter personal descrise mai jos este <strong>KROMOSOLAR TECH S.R.L.</strong> (denumirea comercială „kromotec”), cu
+sediul social în Sântandrei, Str. Râturi nr. 18, jud. Bihor, România, Nr. ORC J2024000929057, CUI 49856341
+(„<strong>noi</strong>”). Contact pentru protecția datelor: <strong>contact@kromotec.com</strong>.</p>
+<p>1.2. Nu am desemnat un responsabil cu protecția datelor (DPO), deoarece nu ne încadrăm în cazurile în care desemnarea
+este obligatorie (art. 37 GDPR). Pentru orice întrebare privind datele tale folosește adresa de mai sus.</p>
+<p>1.3. Politica se aplică aplicației web „Scheme monofilare” (găzduită pe un subdomeniu al kromotec.com, în prezent
+<mark class="ph">[ADRESA APLICAȚIEI]</mark>), versiunii locale, programului de testare și, după activare, conturilor de utilizator. Ea
+completează <a href="termeni.html">Termenii și condițiile</a> și <a href="beta.html">Condițiile de participare la testare</a>.</p>
 <h2 id="2-pe-scurt-unde-stau-datele">2. Pe scurt: unde stau datele</h2>
 <div class="tbl"><table>
 <thead>
@@ -174,27 +186,45 @@ versiunii locale și, după activare, conturilor de utilizator. Ea completează
 <tbody>
 <tr>
 <td><strong>În browserul tău</strong> (localStorage) sau pe calculatorul tău (aplicația locală)</td>
-<td>proiecte, profiluri de firmă, cataloage de prețuri și echipamente, preferințe, cheia API (doar dacă bifezi „ține minte”)</td>
+<td>proiecte, profiluri de firmă, cataloage de prețuri și echipamente, preferințe, evidența acceptării, cheia ta API (doar dacă bifezi „ține minte”)</td>
 <td>numai tu</td>
 <td><strong>activ</strong></td>
 </tr>
 <tr>
-<td><strong>Găzduirea paginii</strong> (GitHub Pages)</td>
-<td>adresa IP și datele tehnice ale cererii (jurnale de server)</td>
-<td>GitHub</td>
+<td><strong>Cloudflare</strong> — găzduirea paginii (Pages)</td>
+<td>adresa IP și datele tehnice ale cererii (jurnale de server și de securitate)</td>
+<td>Cloudflare, ca împuternicit al nostru; noi, la nevoie</td>
 <td><strong>activ</strong></td>
 </tr>
 <tr>
-<td><strong>Contul tău</strong> (Supabase, UE — Frankfurt)</td>
+<td><strong>Cloudflare Access</strong> — accesul testerilor</td>
+<td>adresa de e-mail, codul de unică folosință, jurnalele de autentificare (data, ora, IP, țara, browserul), cookie-ul de sesiune</td>
+<td>Cloudflare, ca împuternicit; noi (lista e-mailurilor invitate și jurnalele)</td>
+<td><strong>activ pe durata testării</strong></td>
+</tr>
+<tr>
+<td><strong>Forward Email</strong> — adresa contact@kromotec.com</td>
+<td>mesajele pe care ni le trimiți (adresa, conținutul, atașamentele)</td>
+<td>Forward Email (redirecționare), noi</td>
+<td><strong>activ</strong></td>
+</tr>
+<tr>
+<td><strong>Anthropic</strong> (SUA), cu cheia ta</td>
+<td>textul descrierii trimis la citirea avansată</td>
+<td>Anthropic, în baza contractului tău</td>
+<td><strong>varianta gratuită, numai cu cheia ta</strong></td>
+</tr>
+<tr>
+<td><strong>Serverul nostru intermediar → Anthropic</strong> (SUA)</td>
+<td>textul descrierii, după filtrare; datele de consum</td>
+<td>noi; Anthropic, ca subîmputernicit</td>
+<td><strong>planificat — planurile plătite</strong></td>
+</tr>
+<tr>
+<td><strong>Contul tău</strong> (Supabase, UE)</td>
 <td>e-mail, date de profil, proiecte și versiuni</td>
 <td>tu; noi, numai pentru suport și securitate</td>
 <td><strong>pregătit, neactivat</strong></td>
-</tr>
-<tr>
-<td><strong>Anthropic</strong> (SUA)</td>
-<td>textul descrierii trimis la citirea avansată</td>
-<td>Anthropic, în baza contractului tău</td>
-<td><strong>numai cu cheia ta</strong></td>
 </tr>
 </tbody>
 </table></div>
@@ -207,32 +237,74 @@ cataloagele de prețuri și de echipamente și preferințele de afișare <strong
 setările browserului („Șterge datele site-ului”) sau din Aplicație.</p>
 <p>3.3. Documentele exportate (DXF, PDF, SVG, Excel, JSON, .zip) se salvează pe calculatorul tău și nu trec prin
 serverele noastre.</p>
-<h2 id="4-datele-tehnice-la-incarcarea-paginii">4. Datele tehnice la încărcarea paginii</h2>
-<p>4.1. Pagina este găzduită pe <strong>GitHub Pages</strong> (GitHub, Inc., SUA). Când o deschizi, browserul tău trimite către
-serverele GitHub date tehnice (adresa IP, tipul browserului, pagina cerută, ora). GitHub le prelucrează pentru livrarea
-paginii și pentru securitate, potrivit propriei declarații de confidențialitate. Noi nu primim aceste jurnale.</p>
-<p>4.2. Fișierele aplicației (inclusiv motorul de calcul și fonturile) sunt servite de pe același site. După activarea
+<h2 id="4-gazduirea-accesul-testerilor-si-e-mailul">4. Găzduirea, accesul testerilor și e-mailul</h2>
+<p>4.1. <strong>Găzduirea.</strong> Pagina este găzduită pe <strong>Cloudflare Pages</strong> (Cloudflare, Inc., SUA, cu rețea globală de servere).
+Când o deschizi, browserul tău trimite către Cloudflare date tehnice (adresa IP, tipul browserului, pagina cerută, ora).
+Cloudflare le prelucrează în numele nostru, ca persoană împuternicită, pentru livrarea paginii și pentru securitate
+(protecție împotriva atacurilor). Nu folosim instrumente de statistică ale Cloudflare.</p>
+<p>4.2. <strong>Accesul testerilor (Cloudflare Access).</strong> Cât timp Aplicația este în testare, versiunea web este accesibilă numai
+persoanelor invitate. Ne-ai dat adresa de e-mail ca să te adăugăm pe lista de acces. La intrare, Cloudflare îți trimite
+pe e-mail un cod de unică folosință; după verificare, browserul primește un cookie de sesiune (<code>CF_Authorization</code>).
+Cloudflare înregistrează autentificările (adresa de e-mail, data și ora, adresa IP, țara, browserul), iar noi putem
+vedea aceste jurnale.</p>
+<p>4.3. <strong>E-mailul.</strong> Mesajele trimise la contact@kromotec.com trec prin serviciul de redirecționare <strong>Forward Email</strong>
+(Forward Email LLC, SUA), care le transmite către căsuța noastră de e-mail <mark class="ph">[FURNIZORUL CĂSUȚEI FINALE]</mark>. După activarea
+conturilor, mesajele de serviciu (confirmarea contului, avertizarea de inactivitate, modificări ale Termenilor) vor fi
+trimise prin furnizorul de e-mail indicat în lista de la art. 6.3.</p>
+<p>4.4. Fișierele aplicației (inclusiv motorul de calcul și fonturile) sunt servite de pe același site. După activarea
 conturilor, biblioteca de conectare Supabase poate fi încărcată de pe un CDN public (jsDelivr). În acest caz, CDN-ul
 primește adresa IP și datele tehnice ale cererii.</p>
-<p>4.3. Temeiul este interesul nostru legitim de a livra pagina și de a o proteja (art. 6 alin. (1) lit. f) GDPR).</p>
-<h2 id="5-citirea-avansata-cu-cheia-ta-anthropic">5. Citirea avansată cu cheia ta Anthropic</h2>
-<p>5.1. Citirea avansată este <strong>opțională</strong> și funcționează <strong>numai</strong> dacă îți introduci propria cheie API Anthropic.</p>
-<p>5.2. În acest caz, <strong>browserul tău trimite direct</strong> la Anthropic, PBC (SUA) textul descrierii pe care îl scrii sau îl
-lipești, împreună cu instrucțiunile tehnice ale Aplicației. <strong>Noi nu primim nici textul, nici cheia.</strong></p>
-<p>5.3. Transmiterea are loc în baza contractului <strong>tău</strong> cu Anthropic și este supusă termenilor și politicii de
-confidențialitate Anthropic aplicabile contului tău (inclusiv regulilor privind păstrarea datelor și folosirea lor la
-antrenarea modelelor). Te rugăm să le verifici.</p>
-<p>5.4. <strong>Transfer în afara SEE.</strong> Anthropic prelucrează datele în SUA. Transferul se face în baza mecanismelor prevăzute
-de capitolul V din GDPR pe care Anthropic le pune la dispoziție (de exemplu, clauzele contractuale standard adoptate de
-Comisia Europeană, incluse în acordul de prelucrare a datelor al Anthropic, sau, dacă este cazul, certificarea în cadrul
-EU-U.S. Data Privacy Framework). Verifică mecanismul aplicabil în documentația contractuală Anthropic.</p>
-<p>5.5. Dacă descrierea conține date personale ale altor persoane (de exemplu, ale clientului tău), <strong>tu decizi</strong>
-transmiterea și răspunzi de temeiul ei. <strong>Recomandarea noastră:</strong> înainte de trimitere, scoate numele, adresele,
-numerele de loc de consum și orice alte date de identificare. Pentru calcul nu este nevoie de ele.</p>
-<p>5.6. Cheia API: în versiunea web, stă în memoria paginii și, numai dacă bifezi „ține minte”, în localStorage. În
-aplicația locală, stă în memoria procesului și, numai cu „ține minte”, într-un fișier din profilul tău de utilizator
-(<code>~/.config/scheme-monofilare</code>). Cheia nu intră niciodată în proiecte sau în exporturi. O poți șterge oricând din
-Aplicație.</p>
+<p>4.5. <strong>Temeiuri.</strong> Găzduirea, jurnalele de server și securitatea: interesul nostru legitim de a livra pagina și de a o
+proteja (art. 6 alin. (1) lit. f) GDPR). Accesul testerilor: executarea acordului de participare la testare (art. 6
+alin. (1) lit. b)), iar jurnalele de autentificare: interesul legitim de a controla accesul la o aplicație
+nepublicată (lit. f). Corespondența: interesul legitim de a-ți răspunde și, când ne scrii despre un contract, executarea
+lui (lit. b) și f)). Feedbackul testerilor: executarea acordului de participare la testare (lit. b) și interesul legitim
+de a îmbunătăți Aplicația (lit. f)).</p>
+<h2 id="5-citirea-avansata-cu-cheia-ta-anthropic">5. Citirea avansată (Claude, de la Anthropic)</h2>
+<p>5.1. Citirea avansată este <strong>opțională</strong>. Ea trimite textul descrierii pe care îl scrii sau îl lipești, împreună cu
+instrucțiunile tehnice ale Aplicației, la modelul Claude al Anthropic, care prelucrează datele în SUA. Funcționează în
+două moduri.</p>
+<p>5.2. <strong>Varianta gratuită — cu cheia ta.</strong></p>
+<ul>
+<li><strong>Browserul tău trimite direct</strong> la Anthropic textul descrierii. <strong>Noi nu primim nici textul, nici cheia</strong> și nu
+  suntem parte la această transmitere.</li>
+<li>Transmiterea are loc în baza contractului <strong>tău</strong> cu Anthropic și este supusă termenilor și politicii de
+  confidențialitate Anthropic aplicabile contului tău (inclusiv regulilor privind păstrarea datelor și folosirea lor la
+  antrenarea modelelor). Te rugăm să le verifici.</li>
+<li>Dacă descrierea conține date personale ale altor persoane (de exemplu, ale clientului tău), <strong>tu decizi</strong>
+  transmiterea și răspunzi de temeiul ei, iar mecanismul de transfer în afara SEE este cel din contractul tău cu
+  Anthropic.</li>
+<li>Cheia API: în versiunea web, stă în memoria paginii și, numai dacă bifezi „ține minte”, în localStorage. În aplicația
+  locală, stă în memoria procesului și, numai cu „ține minte”, într-un fișier din profilul tău de utilizator
+  (<code>~/.config/scheme-monofilare</code>). Cheia nu intră niciodată în proiecte sau în exporturi. O poți șterge oricând din
+  Aplicație.</li>
+</ul>
+<p>5.3. <strong>Planurile plătite — prin serverul nostru.</strong> <em>(Nu este încă activ; se aplică de la lansarea planurilor plătite.)</em></p>
+<ul>
+<li>Descrierea ajunge la un <strong>server intermediar operat de noi</strong> <mark class="ph">[LOCAȚIA SERVERULUI INTERMEDIAR, de ex. UE]</mark>, care o
+  trimite la Anthropic cu cheia noastră. <strong>Suntem parte la transfer</strong>: Anthropic acționează ca <strong>subîmputernicitul</strong>
+  nostru, în baza acordului de prelucrare a datelor încheiat cu Anthropic <mark class="ph">[ENTITATEA ANTHROPIC CONTRACTANTĂ]</mark>.</li>
+<li><strong>Rolurile.</strong> Pentru datele tale de cont și de consum suntem operator. Pentru datele clienților tăi care s-ar putea
+  afla în descriere, tu ești operatorul, noi suntem persoana ta împuternicită (art. 28 GDPR), iar Anthropic este
+  subîmputernicit; prin acordul de prelucrare a datelor (Termeni, art. 10.4) ne autorizezi să folosim acest
+  subîmputernicit.</li>
+<li><strong>Minimizare.</strong> Trimitem numai textul descrierii și instrucțiunile tehnice. Nu trimitem numele, e-mailul, firma sau
+  identificatorul contului tău; cererea către Anthropic poartă doar un identificator tehnic aleatoriu.</li>
+<li><strong>Pseudonimizare automată.</strong> Înainte de trimitere, serverul maschează datele de identificare evidente (CNP, adrese
+  de e-mail, numere de telefon, IBAN). Filtrul nu recunoaște orice dată personală (de exemplu, un nume sau o adresă
+  scrise liber), așa că te rugăm să le scoți tu din descriere.</li>
+<li><strong>Păstrare.</strong> Serverul intermediar nu păstrează textul descrierii și nici răspunsul după ce îl trimite înapoi
+  browserului tău. Păstrăm doar datele de consum (contul, data, numărul de cereri și volumul lor) pentru limitele
+  planului și pentru facturare. Anthropic păstrează datele potrivit acordului cu noi
+  <mark class="ph">[DURATA PĂSTRĂRII LA ANTHROPIC, conform contractului]</mark> și nu le folosește pentru antrenarea modelelor
+  <mark class="ph">[DE CONFIRMAT ÎN CONTRACTUL ANTHROPIC]</mark>.</li>
+<li><strong>Temei.</strong> Executarea contractului (planul plătit; art. 6 alin. (1) lit. b) GDPR) și, pentru datele clienților tăi,
+  instrucțiunile tale ca operator.</li>
+<li><strong>Transfer în afara SEE.</strong> Anthropic prelucrează datele în SUA. Transferul se face cu garanțiile prevăzute de
+  capitolul V din GDPR: clauzele contractuale standard adoptate de Comisia Europeană, incluse în acordul de prelucrare
+  a datelor al Anthropic, și, dacă Anthropic este certificată, cadrul EU-U.S. Data Privacy Framework. Ne poți cere o
+  copie a garanțiilor la contact@kromotec.com.</li>
+</ul>
 <h2 id="6-conturile-de-utilizator-dupa-activare">6. Conturile de utilizator (după activare)</h2>
 <p><em>Conturile sunt pregătite, dar </em><em>nu sunt încă activate</em><em>. Secțiunea descrie ce se va întâmpla după activare. Îți vom
 cere acordul pentru Termeni și te vom informa înainte.</em></p>
@@ -244,8 +316,9 @@ cere acordul pentru Termeni și te vom informa înainte.</em></p>
 <li>Proiecte: modelul schemei, titlul, tipul, o miniatură, istoricul versiunilor (în prezent, cel mult 50 de versiuni pe
   proiect), datele de creare și modificare.</li>
 <li>Evidența acceptării: versiunea Termenilor și a Politicii acceptate, data și ora, contextul (de exemplu, la crearea
-  contului).</li>
-<li>Date tehnice: adresa IP, browserul, momentele de autentificare și jurnalele de securitate ale furnizorului de găzduire.</li>
+  contului sau la export).</li>
+<li>Date tehnice: adresa IP, browserul, momentele de autentificare și jurnalele de securitate ale furnizorilor.</li>
+<li>La planurile plătite: datele de facturare și de consum.</li>
 <li>Corespondența cu noi, dacă ne scrii.</li>
 </ul>
 <p>6.2. <strong>Scopuri și temeiuri legale.</strong></p>
@@ -270,11 +343,15 @@ cere acordul pentru Termeni și te vom informa înainte.</em></p>
 <td>art. 6 alin. (1) lit. f) — interes legitim</td>
 </tr>
 <tr>
-<td>mesaje de serviciu (confirmare cont, resetare parolă, modificări ale Termenilor sau ale prețurilor)</td>
+<td>mesaje de serviciu (confirmare cont, resetare parolă, avertizare de inactivitate, modificări ale Termenilor sau ale prețurilor)</td>
 <td>art. 6 alin. (1) lit. b) și f)</td>
 </tr>
 <tr>
-<td>facturare și evidență contabilă (numai dacă vor exista planuri plătite)</td>
+<td>citirea avansată inclusă în planurile plătite (art. 5.3)</td>
+<td>art. 6 alin. (1) lit. b)</td>
+</tr>
+<tr>
+<td>facturare și evidență contabilă (numai la planurile plătite)</td>
 <td>art. 6 alin. (1) lit. c) — obligație legală</td>
 </tr>
 <tr>
@@ -283,19 +360,66 @@ cere acordul pentru Termeni și te vom informa înainte.</em></p>
 </tr>
 </tbody>
 </table></div>
-<p>6.3. <strong>Unde stau datele.</strong> La Supabase (furnizor de bază de date și autentificare), în regiunea <strong>UE — Frankfurt
-(Germania)</strong>. Supabase acționează ca persoană împuternicită și are propriii subcontractanți (de exemplu, furnizorul de
-infrastructură cloud). Deoarece Supabase, Inc. este o companie din SUA, un acces din afara SEE (de exemplu, pentru
-suport) nu poate fi exclus. Pentru această situație se aplică garanțiile din acordul de prelucrare a datelor al
-Supabase (clauzele contractuale standard ale Comisiei Europene). Lista completă a persoanelor împuternicite va fi
-publicată înainte de activare: <mark class="ph">[LISTĂ SUBÎMPUTERNICIȚI — Supabase, furnizorul de e-mail tranzacțional, după caz
-procesatorul de plăți]</mark>.</p>
+<p>6.3. <strong>Unde stau datele și cine le prelucrează în numele nostru.</strong> Datele contului stau la Supabase (furnizor de bază
+de date și autentificare), într-o regiune din <strong>UE</strong> <mark class="ph">[REGIUNEA SUPABASE, de ex. Frankfurt]</mark>. Supabase acționează ca
+persoană împuternicită și are propriii subcontractanți (de exemplu, furnizorul de infrastructură cloud). Deoarece
+Supabase, Inc. este o companie din SUA, un acces din afara SEE (de exemplu, pentru suport) nu poate fi exclus; pentru
+această situație se aplică clauzele contractuale standard din acordul de prelucrare a datelor al Supabase. Persoanele
+împuternicite pe care le folosim sau le vom folosi:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Furnizor</th>
+<th>Rol</th>
+<th>Unde</th>
+<th>Garanții la transfer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cloudflare, Inc.</td>
+<td>găzduire, securitate, controlul accesului testerilor</td>
+<td>rețea globală; companie din SUA</td>
+<td>DPF și/sau clauze contractuale standard (acordul Cloudflare)</td>
+</tr>
+<tr>
+<td>Forward Email LLC</td>
+<td>redirecționarea e-mailurilor trimise la contact@kromotec.com</td>
+<td>SUA</td>
+<td><mark class="ph">[DE VERIFICAT — clauze contractuale standard / DPF]</mark></td>
+</tr>
+<tr>
+<td>Supabase, Inc.</td>
+<td>conturi, bază de date, autentificare (după activare)</td>
+<td>UE; companie din SUA</td>
+<td>clauze contractuale standard</td>
+</tr>
+<tr>
+<td>Anthropic</td>
+<td>citirea avansată în planurile plătite (după lansare)</td>
+<td>SUA</td>
+<td>clauze contractuale standard; DPF, dacă e cazul</td>
+</tr>
+<tr>
+<td><mark class="ph">[PROCESATORUL DE PLĂȚI]</mark></td>
+<td>plăți (după lansarea planurilor plătite)</td>
+<td><mark class="ph">[DE COMPLETAT]</mark></td>
+<td><mark class="ph">[DE COMPLETAT]</mark></td>
+</tr>
+</tbody>
+</table></div>
+<p>Ne poți cere o copie a garanțiilor de transfer la contact@kromotec.com. Te anunțăm înainte de a adăuga un furnizor nou
+în afara SEE (art. 13).</p>
 <p>6.4. <strong>Accesul la proiecte.</strong> Fiecare cont își vede numai proiectele proprii (reguli de acces la nivel de rând în baza de
-date). Noi accesăm conținutul proiectelor numai dacă ne ceri asta (de exemplu, pentru suport), dacă e necesar pentru
-securitate sau dacă ne obligă legea.</p>
+date). În abonamentul pentru firme, proiectele pot fi partajate între utilizatorii aceleiași firme, după regulile
+stabilite de firmă. Noi accesăm conținutul proiectelor numai dacă ne ceri asta (de exemplu, pentru suport), dacă e
+necesar pentru securitate sau dacă ne obligă legea.</p>
 <p>6.5. <strong>Datele clienților tăi din proiecte.</strong> Pentru datele clienților tăi (beneficiari, adrese etc.) pe care le salvezi
 în cont, <strong>tu ești operatorul</strong>, iar noi suntem persoana ta împuternicită (art. 28 GDPR). Acordul de prelucrare a
 datelor va fi publicat odată cu activarea conturilor.</p>
+<p>6.6. <strong>Ce se întâmplă dacă nu ne dai datele.</strong> Adresa de e-mail este necesară pentru accesul de tester și pentru cont;
+fără ea nu putem crea accesul. Datele de profil sunt opționale (servesc doar la completarea cartușului). Aplicația
+locală poate fi folosită fără să ne dai nicio dată.</p>
 <h2 id="7-cat-timp-pastram-datele">7. Cât timp păstrăm datele</h2>
 <div class="tbl"><table>
 <thead>
@@ -319,19 +443,39 @@ datelor va fi publicat odată cu activarea conturilor.</p>
 </tr>
 <tr>
 <td>contul inactiv</td>
-<td>se șterge după <mark class="ph">[PERIOADĂ, de ex. 24 de luni]</mark> de inactivitate, cu notificare prealabilă de 30 de zile</td>
+<td>se închide și se șterge după <strong>12 luni</strong> fără autentificare, după un e-mail de avertizare trimis cu <strong>30 de zile</strong> înainte (nu și conturile cu un plan plătit în curs)</td>
 </tr>
 <tr>
-<td>evidența acceptării Termenilor</td>
-<td><mark class="ph">[DURATĂ, de ex. 3 ani]</mark> de la închiderea contului (termenul general de prescripție)</td>
+<td>evidența acceptării Termenilor și a confirmărilor de la export</td>
+<td><strong>10 ani</strong> de la data acceptării (corelat cu termenele în care pot fi formulate pretenții legate de proiecte și de</td>
 </tr>
 <tr>
-<td>jurnale tehnice și de securitate</td>
-<td><mark class="ph">[DURATĂ, de ex. 90 de zile]</mark> sau cât prevede furnizorul de găzduire</td>
+<td>răspunderea pentru produse); se păstrează separat de cont, numai datele strict necesare (identificatorul, versiunea, data, contextul)</td>
+<td></td>
+</tr>
+<tr>
+<td>adresa de e-mail din lista de acces a testerilor</td>
+<td>pe durata programului de testare și cel mult <mark class="ph">[DURATĂ, de ex. 3 luni]</mark> după încheierea lui sau după retragerea ta</td>
+</tr>
+<tr>
+<td>jurnalele Cloudflare (server, securitate, autentificări Access)</td>
+<td>cât prevede planul Cloudflare folosit <mark class="ph">[DURATĂ — conform planului Cloudflare]</mark></td>
+</tr>
+<tr>
+<td>textul trimis la citirea avansată prin serverul nostru</td>
+<td>nu se păstrează pe serverul intermediar; la Anthropic, potrivit art. 5.3</td>
+</tr>
+<tr>
+<td>datele de consum ale citirii avansate</td>
+<td>12 luni sau, dacă stau la baza facturării, cât prevede legea contabilității</td>
 </tr>
 <tr>
 <td>documente contabile (numai la planuri plătite)</td>
 <td>cât prevede legea contabilității (în prezent, de regulă, 5 ani)</td>
+</tr>
+<tr>
+<td>feedbackul testerilor</td>
+<td>cât timp e util dezvoltării Aplicației; datele de identificare din el se șterg la cerere</td>
 </tr>
 <tr>
 <td>corespondența cu noi</td>
@@ -342,8 +486,8 @@ datelor va fi publicat odată cu activarea conturilor.</p>
 <h2 id="8-cookie-uri-si-stocarea-locala">8. Cookie-uri și stocarea locală</h2>
 <p>8.1. Aplicația <strong>nu folosește cookie-uri</strong> de publicitate, de urmărire sau de statistici și nu include instrumente de
 analiză de tip Google Analytics.</p>
-<p>8.2. Aplicația folosește <strong>stocarea locală a browserului</strong> numai pentru funcții pe care le ceri explicit. Aceste
-elemente sunt strict necesare și nu necesită consimțământ separat (art. 4 alin. (5) din Legea nr. 506/2004):</p>
+<p>8.2. Aplicația folosește <strong>cookie-uri și stocarea locală a browserului</strong> numai pentru funcții strict necesare sau pe
+care le ceri explicit. Acestea nu necesită consimțământ separat (art. 4 alin. (5) din Legea nr. 506/2004):</p>
 <div class="tbl"><table>
 <thead>
 <tr>
@@ -352,6 +496,22 @@ elemente sunt strict necesare și nu necesită consimțământ separat (art. 4 a
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>CF_Authorization</code> (cookie Cloudflare Access)</td>
+<td>sesiunea de tester, după introducerea codului primit pe e-mail (numai pe durata testării)</td>
+</tr>
+<tr>
+<td>cookie-uri de securitate Cloudflare (de ex. <code>__cf_bm</code>, <code>cf_clearance</code>), dacă sunt setate</td>
+<td>protecția împotriva roboților și a atacurilor</td>
+</tr>
+<tr>
+<td><code>sm.beta</code></td>
+<td>acceptarea Condițiilor de participare la testare</td>
+</tr>
+<tr>
+<td><code>sm.acord</code></td>
+<td>acceptarea Termenilor (versiunea, data)</td>
+</tr>
 <tr>
 <td><code>sm.model</code></td>
 <td>ultima schemă la care ai lucrat (recuperare după închidere)</td>
@@ -390,7 +550,8 @@ consimțământul.</p>
 <li><strong>nu introduce</strong> CNP, serii de act de identitate, date bancare sau date despre sănătate;</li>
 <li>folosește, unde se poate, un <strong>cod de proiect</strong> în locul numelui beneficiarului și al adresei, apoi completează aceste
   date direct pe documentul final;</li>
-<li><strong>anonimizează</strong> textul înainte să folosești citirea avansată;</li>
+<li><strong>anonimizează</strong> textul înainte să folosești citirea avansată, în ambele variante;</li>
+<li>nu pune date ale clienților în feedbackul de testare sau în capturile de ecran pe care ni le trimiți;</li>
 <li>dacă trimiți proiectul altcuiva (fișier .json sau pachetul .zip), verifică ce date conține.</li>
 </ul>
 <h2 id="10-drepturile-tale">10. Drepturile tale</h2>
@@ -406,7 +567,7 @@ consimțământul.</p>
 <li>de a <strong>nu fi supus unei decizii bazate exclusiv pe prelucrare automată</strong> care te afectează în mod semnificativ.
   Aplicația nu ia astfel de decizii despre persoane; calculele ei privesc instalații electrice.</li>
 </ul>
-<p>10.2. Pentru exercitarea drepturilor, scrie-ne la <mark class="ph">[EMAIL CONTACT]</mark>. Răspundem în cel mult o lună. Termenul se poate
+<p>10.2. Pentru exercitarea drepturilor, scrie-ne la contact@kromotec.com. Răspundem în cel mult o lună. Termenul se poate
 prelungi cu încă două luni în cazurile complexe, cu informarea ta. Putem cere date suplimentare pentru a confirma
 identitatea.</p>
 <p>10.3. Pentru datele păstrate numai în browserul tău (art. 3) nu avem acces, deci nu le putem furniza sau șterge.
@@ -415,9 +576,10 @@ Le controlezi direct tu.</p>
 Personal (ANSPDCP)</strong>, B-dul G-ral. Gheorghe Magheru nr. 28–30, sector 1, București, https://www.dataprotection.ro,
 sau la autoritatea de supraveghere din statul în care locuiești ori lucrezi.</p>
 <h2 id="11-securitate">11. Securitate</h2>
-<p>Folosim conexiuni criptate (HTTPS), controlul accesului pe fiecare cont, parole stocate numai sub formă de hash și
-principiul minimizării datelor. Niciun sistem nu este însă complet sigur. Dacă vom afla de o încălcare a securității
-datelor care te poate afecta, te vom informa și vom notifica ANSPDCP, potrivit legii.</p>
+<p>Folosim conexiuni criptate (HTTPS), controlul accesului (cod pe e-mail pentru testeri, reguli de acces pe fiecare cont),
+parole stocate numai sub formă de hash, chei API păstrate numai pe server (la planurile plătite) și principiul
+minimizării datelor. Niciun sistem nu este însă complet sigur. Dacă vom afla de o încălcare a securității datelor care
+te poate afecta, te vom informa și vom notifica ANSPDCP, potrivit legii.</p>
 <h2 id="12-minori">12. Minori</h2>
 <p>Aplicația se adresează profesioniștilor și nu este destinată persoanelor sub 18 ani.</p>
 <h2 id="13-modificari-ale-politicii">13. Modificări ale Politicii</h2>
@@ -425,9 +587,10 @@ datelor care te poate afecta, te vom informa și vom notifica ANSPDCP, potrivit 
 nouă categorie de date sau un nou furnizor în afara SEE) le anunțăm în Aplicație și, pentru utilizatorii cu cont, prin
 e-mail, înainte să se aplice.</p>
 <h2 id="14-contact">14. Contact</h2>
-<p><mark class="ph">[DENUMIRE OPERATOR]</mark>, <mark class="ph">[SEDIU]</mark>, CUI <mark class="ph">[CUI]</mark> · <mark class="ph">[EMAIL CONTACT]</mark></p>
+<p>KROMOSOLAR TECH S.R.L. (denumirea comercială „kromotec”) · Sântandrei, Str. Râturi nr. 18, jud. Bihor, România · Nr. ORC
+J2024000929057 · CUI 49856341 · contact@kromotec.com</p>
   </article>
-  <footer>Scheme monofilare · Versiunea 0.1 — draft, de verificat de un avocat · 28.10.2026</footer>
+  <footer>Scheme monofilare · KROMOSOLAR TECH S.R.L. (kromotec) · Versiunea 0.2 — draft, de verificat de un avocat · 28.10.2026</footer>
 </div>
 </body>
 </html>
