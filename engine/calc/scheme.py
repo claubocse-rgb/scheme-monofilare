@@ -138,7 +138,7 @@ CAMPURI_NUMERICE = {
     "MPPT_min_V": (">0", "V07"), "MPPT_max_V": (">0", "V07"), "Idc_max_A": (">0", "V07"), "Isc_max_A": (">0", "V07"),
     "nr_MPPT": ("int>=1", "V07"), "n_MPPT": ("int>=1", "V07"), "Ucpv_V": (">0", "V07"),
     # v1.9 (R5 fotovoltaic): limitarea injecției, puterea totală declarată, bateria, gPV declarat
-    "limitare_injectie_kW": (">=0", "V07"), "Pn_total_kW": (">0", "V07"), "U_nom_V": (">0", "V07"),
+    "limitare_injectie_kW": (">=0", "V07"), "limitare_PCC_kW": (">0", "V07"), "Pn_total_kW": (">0", "V07"), "U_nom_V": (">0", "V07"),
     "gpv_In_A": (">0", "V07"), "IdN_min_mA": (">0", "V07"), "baterie_kWh": (">0", "V07"),
 }
 TEXT_CONDITIE = {">0": "trebuie > 0", ">=0": "trebuie ≥ 0", "(0,1]": "trebuie în intervalul (0; 1]",
@@ -1400,7 +1400,7 @@ def _buget_du_coloana(plecari, ctx, final, r_col):
     """r6 (#17, #4): dacă alimentarea, dimensionată la limita ei (forță − 2 %), lasă unei plecări mai puțin de 1 % din
     limita ei, bugetul ΔU al alimentării devine min(limita plecării − ΔU-ul plecării la secțiunea dimensionată singură
     de la bară), dar ≥ 1 %. Fără el, alimentarea consuma toată limita de 3 % (iluminat) și o plecare de 7 A ieșea pe
-    ACYABY 3×95 Al. None = alimentarea rămâne la limita normală."""
+    ACYAbY 3×95 Al. None = alimentarea rămâne la limita normală."""
     jt = Jurnal()
     try:
         rc = calculeaza_ramura(copy.deepcopy(r_col), ctx, jt, "tmp")
@@ -1432,7 +1432,7 @@ def _buget_du_coloana(plecari, ctx, final, r_col):
     if not rest or not strans:
         return None
     # r7 (#12, S14): bugetul nu se mai ia orbește = min(rest) — la puteri mici (chioșc 6 kW mono, 50 m) 1 % pe
-    # alimentare cerea ACYABY 3×95 la C50. Se compară economic (masa de conductor Cu-echivalent) câteva bugete ale
+    # alimentare cerea ACYAbY 3×95 la C50. Se compară economic (masa de conductor Cu-echivalent) câteva bugete ale
     # alimentării cu plecările redimensionate pe restul limitei și se alege cel mai ieftin ansamblu.
     cand = sorted({round(max(DU_COLOANA_MIN_PCT, min(rest)), 3), 1.5, 2.0})
     best = None
@@ -2682,6 +2682,74 @@ def _verifica_q_tg_c0(j, q, c0, ctx):
               "deconectare", ik1=round(c0["Ik1min_capat_A"]), ia=ia)
 
 
+INVERTOR_IMPLICIT_PN_MAX_KW = 100.0     # E2 (D4): invertorul de șir trifazat uzual la CEF comerciale (100 kW)
+
+
+def propunere_limitare_pcc(sn_kva):
+    """E2: limita propusă la PCC = Sn trafo × cosφ_PCC × factor [kW] (rotunjită în jos la 5 kW)"""
+    v = sn_kva * norme.PCC_COSFI * norme.PCC_FACTOR
+    return float(math.floor(v / 5.0 + 1e-9) * 5)
+
+
+def _v67_pcc(inp, j, rez, sn_tot, s_nec, obiect="schema", varianta="", fractie=1.0, **kw):
+    """E2 (decizia proprietarului): Sn trafo < S invertoare+PCS → BLOCANT (V67) fără limitare; cu `limitare_PCC_kW`
+    care aduce S la PCC ≤ Sn → AVERTISMENT explicit (nu BLOCANT). Propunerea automată: Sn × cosφ × factor."""
+    prop = propunere_limitare_pcc(sn_tot)
+    lim = inp.get("limitare_PCC_kW")
+    lim = float(lim) * fractie if isinstance(lim, (int, float)) and not isinstance(lim, bool) and lim > 0 else None
+    info = {"Sn_kVA": sn_tot, "S_necesar_kVA": s_nec, "propunere_kW": prop, "cosfi": norme.PCC_COSFI,
+            "factor": norme.PCC_FACTOR, "formula": f"Sn × cosφ × factor = {fmt_ro(sn_tot, 0)} × "
+                                                  f"{fmt_ro(norme.PCC_COSFI)} × {fmt_ro(norme.PCC_FACTOR)}"}
+    if lim is not None:
+        s_lim = lim / norme.PCC_COSFI
+        info.update(P_kW=lim, S_kVA=s_lim, aplicata=not gt(s_lim, sn_tot))
+        if info["aplicata"]:
+            emite(j, "V67", AVERTISMENT, obiect, "pcc", x=round(sn_tot), y=round(s_nec, 1), P=fmt_ro(lim),
+                  S=fmt_ro(s_lim, 1))
+            j.verificari[-1]["remediere"] = (
+                "confirmați limitarea cu ATR-ul (puterea aprobată la PCC); EMS / controller de putere cu funcție "
+                "fail-safe (la pierderea comunicației: reducerea invertoarelor la puterea limitată sau deconectare), "
+                "TC + analizor de rețea la PCC; protecția trafo la suprasarcină rămâne activă")
+        else:
+            emite(j, "V67", BLOCANT, obiect, "pcc_insuf", x=round(sn_tot), y=round(s_nec, 1), P=fmt_ro(lim),
+                  S=fmt_ro(s_lim, 1))
+            j.verificari[-1]["remediere"] = (f"limitarea la PCC ≤ {fmt_ro(prop)} kW (Sn × cosφ × factor) sau un "
+                                             f"transformator cu Sn ≥ {fmt_ro(s_nec, 0)} kVA")
+            j.verificari[-1]["propunere"] = {"camp": "limitare_PCC_kW", "valoare": prop}
+    else:
+        emite(j, "V67", BLOCANT, obiect, varianta, x=kw.pop("x", round(sn_tot)), y=round(s_nec, 1), **kw)
+        j.verificari[-1]["remediere"] += (f"; sau limitarea puterii la punctul de racord (limitare_PCC_kW, propus "
+                                          f"{fmt_ro(prop)} kW = {info['formula']}) cu EMS / controller de putere, "
+                                          f"TC + analizor la PCC")
+        j.verificari[-1]["propunere"] = {"camp": "limitare_PCC_kW", "valoare": prop}
+    lst = rez.setdefault("limitare_PCC", {})
+    if obiect == "schema":
+        lst.update(info)
+    else:
+        lst.setdefault("sectii", {})[obiect] = info
+    return info
+
+
+def invertoare_implicite(inp, j):
+    """E2 (D4, decizia proprietarului): CEF cu putere în kW (`Pn_total_kW`) fără invertoare declarate → Pn c.a. =
+    puterea declarată, cu invertoare de tip implicit (n = ⌈P / 100 kW⌉, egale), marcate „presupus” — nu întrebare
+    blocantă. Returnează lista creată sau None."""
+    if inp.get("invertoare") or isinstance(inp.get("bess"), dict) and not inp.get("Pn_total_kW"):
+        return None
+    try:
+        p = float(inp.get("Pn_total_kW") or 0)
+    except (TypeError, ValueError):
+        return None
+    if not gt(p, 0.0):
+        return None
+    n = max(1, math.ceil(p / INVERTOR_IMPLICIT_PN_MAX_KW - 1e-9))
+    pn = round(p / n, 3)
+    inp["invertoare"] = [{"n": n, "Pn_kW": pn, "presupus": True}]
+    j.presupune(f"CEF {fmt_ro(p)} kW fără invertoare declarate → {n} × {fmt_ro(pn)} kW c.a., invertor de tip implicit "
+                f"(trifazat, fără fișă: Iac,max = 1,1·Pn/(√3·U)) — confirmați numărul, puterea și modelul")
+    return inp["invertoare"]
+
+
 def _putere_declarata(inp, j, s_inv):
     """v1.9 (R5 P1-14): contradicția dintre Σ invertoare (n × Pn) și puterea totală declarată (`Pn_total_kW`) →
     V91 AVERTISMENT (se calculează cu lista invertoarelor); la monofazat, un grup declarat trifazat → V91."""
@@ -3109,6 +3177,14 @@ def _schema_cef(inp, j):
     rez = {}
     st_original = copy.deepcopy(inp.get("string")) if isinstance(inp.get("string"), dict) else None
     fise.aplica(inp, j, "cef")
+    invertoare_implicite(inp, j)
+    lim_pcc = inp.get("limitare_PCC_kW")
+    if isinstance(lim_pcc, (int, float)) and not isinstance(lim_pcc, bool) and lim_pcc > 0:
+        # E2: limitarea la PCC se realizează cu același lanț ca limitarea injecției (TC + analizor la PCC → EMS →
+        # invertoare / PCS); dacă ambele sunt date, se aplică valoarea mai mică
+        li = inp.get("limitare_injectie_kW")
+        if not isinstance(li, (int, float)) or isinstance(li, bool) or li > lim_pcc:
+            inp["limitare_injectie_kW"] = float(lim_pcc)
     # v1.9 (R5, regula „rețeaua nu se presupune”): la CEF trifazatul e implicit, dar declarat explicit în „Am presupus”
     if inp.get("retea") is None:
         j.presupune("rețea trifazată 3 × 400/230 V (CEF; rețeaua nu a fost declarată — confirmați)")
@@ -3344,9 +3420,9 @@ def _schema_cef(inp, j):
         elif lt((1 if bara_un_trafo else n_t) * sn, s_v67):
             # și la PT existent: trafo sub injecție; r7: Σ Sn la n trafo; r11: S = Smax real (fișă / catalog / Pn)
             if n_t > 1 and not bara_un_trafo:
-                emite(j, "V67", BLOCANT, "schema", "n", n=n_t, sn=int(sn), x=n_t * sn, y=s_v67)
+                _v67_pcc(inp, j, rez, n_t * sn, s_v67, "schema", "n", n=n_t, sn=int(sn), x=n_t * sn)
             else:
-                emite(j, "V67", BLOCANT, "schema", x=sn, y=s_v67)
+                _v67_pcc(inp, j, rez, sn, s_v67, "schema", x=sn)
         elif lt((1 if bara_un_trafo else n_t) * sn, s_tot):
             # r11: doar majorantul 1,1·Pn depășește Sn — la limită, nu blocant
             emite(j, "V67", AVERTISMENT, "schema", x=(1 if bara_un_trafo else n_t) * sn, y=s_tot)
@@ -3600,7 +3676,8 @@ def _schema_cef(inp, j):
                   f"Σ Iac = {fmt_ro(s_iac_s)} A, S = {fmt_ro(s_s)} kVA")
             s_s67 = sum(u["S_trafo_kVA"] for u in unit_s)
             if not tgd and lt(sn, s_s67):
-                emite(j, "V67", BLOCANT, f"T{suf}", "sectie", k=suf, x=int(sn), y=s_s67, inv=", ".join(rz["unitati"]))
+                _v67_pcc(inp, j, rez, sn, s_s67, f"T{suf}", "sectie", fractie=1.0 / n_t, k=suf, x=int(sn),
+                         inv=", ".join(rz["unitati"]))
             elif not tgd and lt(sn, s_s):
                 emite(j, "V67", AVERTISMENT, f"T{suf}", "sectie", k=suf, x=int(sn), y=s_s, inv=", ".join(rz["unitati"]))
                 j.verificari[-1]["mesaj"] += " (majorant 1,1·Pn; Smax real ≤ Sn) — trafo la limită"
@@ -5427,25 +5504,103 @@ def _schema_ats_trafo(inp, j):
     return rez
 
 
+# E2 (decizia proprietarului, 28.10.2026): GE fără protecție la defect asigurată în regim GE — cele două soluții
+# acceptate, fiecare explicată (când se folosește, ce implică, ce se desenează). Câmpul de alegere: `ge_protectie`.
+GE_PROTECTIE_OPTIUNI = (
+    {"valoare": "excitatie", "titlu": "Excitație susținută + Q_G electronic",
+     "cand": "GE nou sau GE al cărui alternator are excitație PMG / AREP (sau booster de excitație) și producătorul "
+             "garantează curentul de scurtcircuit susținut; varianta preferată când consumatorii din regim GE sunt "
+             "dispersați (nu se pot lega echipotențial toți).",
+     "implica": "curent de scurtcircuit susținut ≥ 3·In_G timp de ≥ 2 s (declarația producătorului GE, de anexat); "
+                "Q_G cu declanșator electronic, Isd reglat sub Ik1 minim din regim GE și tsd coordonat cu aval; "
+                "verificarea deconectării se reface cu Ik1 = 3·In_G.",
+     "desen": "pe GE: nota „excitație susținută (PMG/AREP), Ik ≥ 3·In ≥ 2 s”; pe Q_G: „declanșator electronic, "
+              "Isd = … A, tsd = … s”; în tabelul de reglaje: valorile Ir / Isd / tsd ale Q_G.",
+     "campuri": {"ge_protectie": "excitatie", "excitatie_sustinuta": True}},
+    {"valoare": "echipotential", "titlu": "Legături echipotențiale suplimentare (SR HD 60364-4-41 art. 415.2)",
+     "cand": "GE existent fără excitație susținută, consumatori de siguranță (pompe de incendiu, desfumare) care nu pot "
+             "trece prin DDR, sau încăperi / zone restrânse în care toate masele și elementele conductoare simultan "
+             "accesibile se pot lega între ele.",
+     "implica": "conductor de echipotențializare suplimentară între toate masele și elementele conductoare străine "
+                "simultan accesibile din zona alimentată în regim GE; condiția R ≤ 50 V / Ia (art. 415.2.2) "
+                "verificată prin măsurare la PIF; secțiuni conform SR HD 60364-5-54 art. 544.2; nu înlocuiește "
+                "protecția la suprasarcină / scurtcircuit.",
+     "desen": "nota „Protecție la contact indirect în regim GE prin legături echipotențiale suplimentare "
+              "(SR HD 60364-4-41 art. 415.2), R ≤ 50 V/Ia — de măsurat la PIF”; bara BEP suplimentară în zona "
+              "consumatorilor alimentați din GE.",
+     "campuri": {"ge_protectie": "echipotential", "legaturi_echipotentiale": True}},
+)
+
+
+def ge_protectie_aleasa(inp):
+    """'excitatie' | 'echipotential' | None — din `ge_protectie` sau din câmpurile vechi (excitatie_sustinuta,
+    legaturi_echipotentiale), pentru compatibilitate"""
+    v = str(inp.get("ge_protectie") or "").strip().lower()
+    if v in ("excitatie", "excitatie_sustinuta", "excitație"):
+        return "excitatie"
+    if v in ("echipotential", "echipotentiale", "legaturi_echipotentiale"):
+        return "echipotential"
+    if inp.get("legaturi_echipotentiale") is True:
+        return "echipotential"
+    if inp.get("excitatie_sustinuta") is True:
+        return "excitatie"
+    return None
+
+
+def _text_optiuni_ge():
+    return " ".join(f"({i}) {o['titlu']} — când: {o['cand']} Implică: {o['implica']} Pe planșă: {o['desen']}"
+                    for i, o in enumerate(GE_PROTECTIE_OPTIUNI, 1))
+
+
 def schema_ge(inp, j):
-    """echipa1 P1-8: în regim GE, protecția la contact indirect a circuitelor fără DDR (siguranță) trebuie ASIGURATĂ
-    explicit — altfel V85 / V97 sunt BLOCANT, cu remedieri aplicabile (excitație susținută + Q_G electronic, sau
-    legături echipotențiale suplimentare confirmate)."""
+    """echipa1 P1-8 + E2: în regim GE, protecția la contact indirect a circuitelor fără DDR (siguranță) trebuie ASIGURATĂ
+    explicit. Fără alegere → BLOCANT cu cele două soluții explicate (`optiuni`); `ge_protectie` = „excitatie” (Ik
+    susținut ≥ 3·In_G ≥ 2 s + Q_G electronic) sau „echipotential” (SR HD 60364-4-41 art. 415.2)."""
+    alegere = ge_protectie_aleasa(inp)
+    if alegere == "excitatie" and not inp.get("excitatie_sustinuta"):
+        inp = dict(inp, excitatie_sustinuta=True)
     n0 = len(j.verificari)
     rez = _schema_ge_baza(inp, j)
-    echip = inp.get("legaturi_echipotentiale") is True
-    rem = ("alege una dintre soluții: (1) GE cu excitație susținută (≥ 3·In timp de 10 s) — bifează „Excitație "
-           "susținută” — și Q_G cu declanșator electronic, Isd reglat sub curentul de defect; (2) confirmă legăturile "
-           "echipotențiale suplimentare la receptoarele de siguranță (SR HD 60364-4-41 art. 415.2) — bifează "
-           "„Legături echipotențiale suplimentare”; (3) pentru circuitele normale, DDR pe plecare")
+    echip = alegere == "echipotential"
+    optiuni = [dict(o) for o in GE_PROTECTIE_OPTIUNI]
+    rem = ("alege una dintre cele două soluții (câmpul ge_protectie): " + _text_optiuni_ge()
+           + " Pentru circuitele normale rămâne și varianta DDR pe plecare.")
+    afectat = False
     for v in j.verificari[n0:]:
-        if v.get("cod") in ("V85", "V97") and v.get("nivel") == AVERTISMENT and "regim GE" in (v.get("mesaj") or ""):
+        regim_ge = "regim GE" in (v.get("mesaj") or "")
+        if v.get("cod") in ("V85", "V97") and regim_ge and v.get("nivel") in (AVERTISMENT, BLOCANT) \
+                and not (v.get("cod") == "V85" and "bloc diferențial" in (v.get("mesaj") or "")):
+            afectat = True
             if echip:
                 v["nivel"] = INFO
-                v["mesaj"] += " — legături echipotențiale suplimentare confirmate de proiectant (art. 415.2)"
+                v["mesaj"] += (" — protecția la contact indirect se asigură prin legături echipotențiale suplimentare "
+                               "confirmate de proiectant (SR HD 60364-4-41 art. 415.2); R ≤ 50 V/Ia de măsurat la PIF")
+            elif alegere == "excitatie":
+                v["nivel"] = BLOCANT
+                v["mesaj"] += (" — chiar cu excitație susținută (Ik1 = 3·In_G) deconectarea nu se realizează")
+                v["remediere"] = ("reglează Isd al Q_G (declanșator electronic) sub Ik1 din regim GE, scurtează C2 / C3 "
+                                  "sau alege legăturile echipotențiale suplimentare (ge_protectie = „echipotential”)")
+                v["optiuni"] = optiuni
             else:
                 v["nivel"] = BLOCANT
                 v["remediere"] = rem
+                v["optiuni"] = optiuni
+                v["camp"] = "ge_protectie"
+    if alegere or afectat:
+        o = next((x for x in GE_PROTECTIE_OPTIUNI if x["valoare"] == alegere), None)
+        rez["protectie_regim_GE"] = {
+            "solutie": alegere, "necesara": afectat,
+            "titlu": o["titlu"] if o else "neleasă — de ales una dintre soluții",
+            "implica": o["implica"] if o else "", "desen": o["desen"] if o else "",
+            "Ik_sustinut_A": (norme.GE_IK_SUSTINUT_MULTIPLU * rez["In_G_A"] if alegere == "excitatie" and rez.get("In_G_A") else None),
+            "t_sustinut_s": norme.GE_IK_SUSTINUT_T_S if alegere == "excitatie" else None,
+            "optiuni": optiuni}
+        if alegere == "excitatie":
+            j.pas(f"Regim GE: excitație susținută — Ik ≥ {fmt_ro(norme.GE_IK_SUSTINUT_MULTIPLU, 0)}·In_G timp de ≥ "
+                  f"{fmt_ro(norme.GE_IK_SUSTINUT_T_S, 0)} s (declarația producătorului GE), Q_G electronic")
+        elif alegere == "echipotential":
+            j.pas("Regim GE: protecție la contact indirect prin legături echipotențiale suplimentare "
+                  "(SR HD 60364-4-41 art. 415.2), R ≤ 50 V/Ia verificat prin măsurare la PIF")
     return rez
 
 

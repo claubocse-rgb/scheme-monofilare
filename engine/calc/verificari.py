@@ -291,7 +291,12 @@ CATALOG = {
             "PT propriu"),
     "V67": ("Trafo CEF sub S", {"": "Sn trafo {x} kVA < S invertoare+PCS {y} kVA",
                                 "n": "Σ Sn trafo {n} × {sn} = {x} kVA < S invertoare+PCS {y} kVA",
-                                "sectie": "secția {k}: Sn T{k} {x} kVA < S invertoare+PCS ale secției {y} kVA ({inv})"},
+                                "sectie": "secția {k}: Sn T{k} {x} kVA < S invertoare+PCS ale secției {y} kVA ({inv})",
+                                "pcc": "Sn trafo {x} kVA < S invertoare+PCS {y} kVA — admis prin limitarea puterii la "
+                                       "punctul de racord (PCC) la {P} kW (S = {S} kVA ≤ Sn): EMS / controller de putere "
+                                       "cu TC + analizor la PCC; invertoarele nu pot debita simultan puterea instalată",
+                                "pcc_insuf": "Sn trafo {x} kVA < S invertoare+PCS {y} kVA, iar limitarea la PCC {P} kW "
+                                             "(S = {S} kVA) depășește tot Sn trafo"},
             "alege un transformator cu Sn ≥ {y} kVA (puterea PT) sau redu puterea instalată a invertoarelor / PCS"),
     "V68": ("Voc(Tmin)", {"B": "Voc la Tmin {x} V > Umax {y} V", "INFO": "Voc la Tmin {x} V ≤ Umax {y} V",
                           "beta": "β(Voc) = {x} %/K neplauzibil — coeficientul de temperatură al Voc este negativ "

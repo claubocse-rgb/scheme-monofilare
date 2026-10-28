@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Termeni de utilizare · Scheme monofilare</title>
-<meta name="description" content="Termenii și condițiile de utilizare ale aplicației Scheme monofilare (draft v0.1).">
+<meta name="description" content="Termenii și condițiile de utilizare ale aplicației Scheme monofilare (draft v0.2).">
 <meta name="robots" content="noindex">
 <script>try{var t=JSON.parse(localStorage.getItem('sm.theme')||'null');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
@@ -102,9 +102,15 @@ table{border-collapse:collapse;width:100%;font-size:var(--fs);line-height:1.45}
 th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--rule)}
 th{background:var(--sunk);font-weight:600;font-size:var(--fs-sm);color:var(--ink-2)}
 tr:last-child td{border-bottom:0}
+.accept{margin:2em 0 0;padding:16px 18px;border:1px solid var(--sig-line);border-radius:var(--r);background:var(--sig-soft)}
+.accept label{display:flex;gap:10px;align-items:flex-start;margin:0 0 12px;max-width:72ch;cursor:pointer}
+.accept input{margin-top:5px;flex:none;width:18px;height:18px}
+.accept button{font:600 var(--fs-md)/1 var(--font);padding:10px 16px;border-radius:var(--r);border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer}
+.accept button:disabled{opacity:.45;cursor:not-allowed}
+.accept .ok{margin:0 0 12px;font-weight:600}
 footer{grid-column:1/-1;font-size:var(--fs-sm);color:var(--ink-3);text-align:center}
 @media print{
-  .top,.toc,footer{display:none}
+  .top,.toc,footer,.accept{display:none}
   body{background:#fff;color:#000;font-size:11pt}
   .wrap{display:block;padding:0;max-width:none}
   article{border:0;padding:0}
@@ -117,7 +123,7 @@ footer{grid-column:1/-1;font-size:var(--fs-sm);color:var(--ink-3);text-align:cen
 <body>
 <header class="top">
   <a class="brand" href="./">Scheme monofilare</a>
-  <nav aria-label="Documente"><a href="termeni.html" aria-current="page">Termeni</a><a href="confidentialitate.html">Confidențialitate</a><a href="./">← Aplicația</a></nav>
+  <nav aria-label="Documente"><a href="termeni.html" aria-current="page">Termeni</a><a href="confidentialitate.html">Confidențialitate</a><a href="beta.html">Testare</a><a href="./">← Aplicația</a></nav>
 </header>
 <script>/* aplicația locală servește paginile din /static/, iar aplicația e la / */
 if(location.pathname.indexOf('/static/')>=0)document.querySelectorAll('a[href="./"]').forEach(function(a){a.href='/'})</script>
@@ -126,15 +132,15 @@ if(location.pathname.indexOf('/static/')>=0)document.querySelectorAll('a[href=".
 <ul>
 <li><a href="#1-cine-suntem-si-ce-acopera-acesti-termeni">1. Cine suntem și ce acoperă acești termeni</a></li>
 <li><a href="#2-ce-face-aplicatia-si-ce-nu-face">2. Ce face Aplicația și ce nu face</a></li>
-<li><a href="#3-licenta-de-utilizare">3. Licența de utilizare</a></li>
-<li><a href="#4-proprietate-intelectuala">4. Proprietate intelectuală</a></li>
+<li><a href="#3-licenta-de-utilizare-si-protectia-aplicatiei">3. Licența de utilizare și protecția Aplicației</a></li>
+<li><a href="#4-proiectele-tale-si-sugestiile-tale">4. Proiectele tale și sugestiile tale</a></li>
 <li><a href="#5-conturi-de-utilizator">5. Conturi de utilizator</a></li>
-<li><a href="#6-preturi">6. Prețuri</a></li>
+<li><a href="#6-preturi-si-planuri">6. Prețuri și planuri</a></li>
 <li><a href="#7-disponibilitate-si-modificari-ale-aplicatiei">7. Disponibilitate și modificări ale Aplicației</a></li>
 <li><a href="#8-fara-garantii">8. Fără garanții</a></li>
 <li><a href="#9-limitarea-raspunderii">9. Limitarea răspunderii</a></li>
 <li><a href="#10-datele-tale-si-datele-clientilor-tai">10. Datele tale și datele clienților tăi</a></li>
-<li><a href="#11-citirea-avansata-anthropic-si-alte-servicii-terte">11. Citirea avansată (Anthropic) și alte servicii terțe</a></li>
+<li><a href="#11-citirea-avansata-claude-de-la-anthropic-si-alte-servicii-terte">11. Citirea avansată (Claude, de la Anthropic) și alte servicii terțe</a></li>
 <li><a href="#12-modificarea-termenilor">12. Modificarea Termenilor</a></li>
 <li><a href="#13-legea-aplicabila-si-litigii">13. Legea aplicabilă și litigii</a></li>
 <li><a href="#14-dispozitii-finale">14. Dispoziții finale</a></li>
@@ -142,27 +148,41 @@ if(location.pathname.indexOf('/static/')>=0)document.querySelectorAll('a[href=".
 </aside>
   <article>
 <h1 id="termeni-si-conditii-de-utilizare">Termeni și condiții de utilizare</h1>
-<p><strong>Versiunea 0.1 — draft, de verificat de un avocat</strong> · ultima actualizare: 28.10.2026</p>
-<div class="draft" role="note"><b>Draft v0.1</b><span>Text de lucru, încă neverificat de un avocat. Elementele între paranteze drepte (de ex. [DENUMIRE OPERATOR]) urmează să fie completate.</span></div>
+<p><strong>Versiunea 0.2 — draft, de verificat de un avocat</strong> · ultima actualizare: 28.10.2026</p>
+<div class="draft" role="note"><b>Draft v0.2</b><span>Text de lucru, încă neverificat de un avocat. Elementele între paranteze drepte (de ex. [ADRESA APLICAȚIEI]) urmează să fie completate.</span></div>
 <blockquote>
 <p><strong>Pe scurt.</strong> „Scheme monofilare” te ajută să întocmești mai repede schemele electrice monofilare și documentele
 care le însoțesc. <strong>Nu este un proiectant.</strong> Tot ce produce aplicația trebuie verificat, corectat dacă e nevoie,
 asumat și semnat de un proiectant atestat ANRE (sau de o altă persoană autorizată potrivit legii). Proiectele tale
-îți aparțin. Aplicația e gratuită acum; dacă vor apărea planuri plătite, te anunțăm din timp.</p>
+îți aparțin; aplicația și codul ei ne aparțin și nu pot fi copiate. Varianta gratuită pune un filigran pe exporturi.
+Dacă vor apărea planuri plătite, te anunțăm cu cel puțin 30 de zile înainte.</p>
 </blockquote>
 <h2 id="1-cine-suntem-si-ce-acopera-acesti-termeni">1. Cine suntem și ce acoperă acești termeni</h2>
-<p>1.1. Aplicația web „Scheme monofilare” („<strong>Aplicația</strong>”) este pusă la dispoziție de <mark class="ph">[DENUMIRE OPERATOR]</mark>, cu sediul în
-<mark class="ph">[SEDIU]</mark>, CUI <mark class="ph">[CUI]</mark>, înregistrată la Registrul Comerțului sub nr. <mark class="ph">[NR. ORC]</mark> („<strong>Operatorul</strong>”, „<strong>noi</strong>”).
-Ne poți scrie la <mark class="ph">[EMAIL CONTACT]</mark>.</p>
-<p>1.2. Termenii se aplică oricărei folosiri a Aplicației: versiunea web (în prezent la
-https://claubocse-rgb.github.io/scheme-monofilare/), versiunea care rulează local pe calculatorul tău și, după ce vor fi
-activate, conturile de utilizator.</p>
-<p>1.3. Folosind Aplicația, accepți acești Termeni și confirmi că ai citit
-<a href="confidentialitate.html">Politica de confidențialitate</a>. Dacă nu ești de acord, te rugăm să nu folosești Aplicația.</p>
-<p>1.4. Dacă folosești Aplicația în numele unei firme, confirmi că ai dreptul să o reprezinți. În acest caz, Termenii se
+<p>1.1. Aplicația web „Scheme monofilare” („<strong>Aplicația</strong>”) este pusă la dispoziție de <strong>KROMOSOLAR TECH S.R.L.</strong>, societate
+cu răspundere limitată cu sediul social în comuna Sântandrei, Str. Râturi nr. 18, județul Bihor, România, înregistrată la
+Registrul Comerțului sub nr. J2024000929057, cod unic de înregistrare (CUI) 49856341 („<strong>Operatorul</strong>”, „<strong>noi</strong>”).
+Operatorul folosește denumirea comercială „kromotec” (www.kromotec.com).</p>
+<p>1.2. Ne poți scrie oricând la <strong>contact@kromotec.com</strong>. Este adresa pentru orice întrebare, reclamație, cerere privind
+datele personale sau notificare legată de acești Termeni.</p>
+<p>1.3. Termenii se aplică oricărei folosiri a Aplicației: versiunea web (găzduită pe un subdomeniu al kromotec.com, în
+prezent <mark class="ph">[ADRESA APLICAȚIEI]</mark>), versiunea care rulează local pe calculatorul tău și, după ce vor fi activate, conturile
+de utilizator. Pe durata testării, accesul la versiunea web este limitat la persoanele invitate, iar pentru ele se
+aplică în plus <a href="beta.html">Condițiile de participare la testare</a>.</p>
+<p>1.4. Acești Termeni se aplică de la prima folosire a Aplicației. Acceptarea lor expresă, inclusiv a clauzelor de la
+art. 9.5, ți-o cerem prin bife separate înainte de primul export (sau la intrarea în programul de testare ori la crearea
+contului), împreună cu confirmarea că ai citit <a href="confidentialitate.html">Politica de confidențialitate</a>. Dacă nu ești de
+acord, te rugăm să nu folosești Aplicația.</p>
+<p>1.5. Dacă folosești Aplicația în numele unei firme, confirmi că ai dreptul să o reprezinți. În acest caz, Termenii se
 aplică și firmei.</p>
-<p>1.5. Aplicația este destinată profesioniștilor din domeniul instalațiilor electrice: proiectanți, electricieni autorizați,
+<p>1.6. Aplicația este destinată profesioniștilor din domeniul instalațiilor electrice: proiectanți, electricieni autorizați,
 firme de instalații și birouri de proiectare. Trebuie să ai cel puțin 18 ani.</p>
+<p>1.7. <strong>Cum se încheie contractul.</strong> Contractul dintre tine și Operator se încheie pe cale electronică, în limba română,
+în momentul în care bifezi acceptarea în Aplicație (la primul export, la intrarea în programul de testare sau la crearea
+contului). Înainte de acceptare poți citi, salva și tipări Termenii și Politica de confidențialitate și poți renunța
+fără nicio consecință. Păstrăm o evidență a acceptării (versiunea documentelor, data și ora, contextul), iar versiunea
+în vigoare a Termenilor rămâne accesibilă permanent la această adresă; versiunile anterioare ți le trimitem la cerere.
+Pentru planurile plătite, pașii comenzii și modul de corectare a datelor introduse greșit îți vor fi arătați înainte de
+plată. Operatorul nu a aderat la niciun cod de conduită în sensul Legii nr. 365/2002 privind comerțul electronic.</p>
 <h2 id="2-ce-face-aplicatia-si-ce-nu-face">2. Ce face Aplicația și ce nu face</h2>
 <p>2.1. Aplicația este un <strong>instrument de asistare a proiectării</strong>. Din datele pe care le introduci, ea:</p>
 <ul>
@@ -187,82 +207,127 @@ coeficienți de simultaneitate). Aceste valori sunt listate pe planșă și în 
 ale echipamentelor.</p>
 <p>2.4. Verificările automate (inclusiv blocarea exportului la erorile marcate „BLOCANT”) <strong>reduc</strong> riscul de eroare, dar
 <strong>nu îl elimină</strong>. Faptul că o schemă trece de verificări nu înseamnă că proiectul este corect, complet sau conform.</p>
-<p>2.5. Interpretarea textului liber (inclusiv „citirea avansată”) poate înțelege greșit o descriere. Verifică întotdeauna
-tabelul „Am presupus / De lămurit” și datele de intrare înainte de export.</p>
+<p>2.5. Interpretarea textului liber (inclusiv „citirea avansată”, art. 11) poate înțelege greșit o descriere. Verifică
+întotdeauna tabelul „Am presupus / De lămurit” și datele de intrare înainte de export.</p>
 <p>2.6. Prețurile din deviz provin din catalogul tău. Aplicația nu garantează prețuri, cantități sau norme de manoperă.
 Orele de manoperă propuse sunt orientative.</p>
 <p>2.7. <strong>Tu rămâi responsabil</strong> pentru: corectitudinea datelor introduse, verificarea rezultatelor, alegerea soluției
 tehnice, respectarea normelor și a cerințelor OD, semnarea și depunerea documentației, precum și pentru execuția
 instalației.</p>
-<h2 id="3-licenta-de-utilizare">3. Licența de utilizare</h2>
-<p>3.1. Îți acordăm un drept <strong>neexclusiv, netransmisibil, gratuit</strong> (cât timp Aplicația este gratuită) <strong>și revocabil</strong> de a
-folosi Aplicația pentru activitatea ta profesională, în condițiile acestor Termeni.</p>
-<p>3.2. <strong>Nu ai voie</strong>:</p>
+<p>2.8. <strong>Confirmarea la export.</strong> Înainte de export îți cerem să confirmi, printr-o bifă, mențiunea
+„<strong>Am verificat și îmi asum</strong>” documentele exportate. Confirmarea se înregistrează împreună cu data, versiunea
+motorului de calcul și, unde Aplicația permite, identificatorul calculului. Bifa nu schimbă cine răspunde potrivit
+legii pentru proiect (art. 2.7 și 9.1); ea consemnează că ai înțeles că documentul trebuie verificat de tine.</p>
+<p>2.9. <strong>Filigranul.</strong> În varianta gratuită, documentele exportate poartă un filigran care arată că au fost generate cu
+Aplicația și că trebuie verificate. Nu ai voie să elimini filigranul prin ocolirea măsurilor tehnice ale Aplicației
+(art. 3.2). Dacă îl elimini ulterior din fișierul exportat (de exemplu, în AutoCAD), o faci pe răspunderea ta, iar
+documentul trebuie oricum verificat și asumat potrivit art. 2.7.</p>
+<h2 id="3-licenta-de-utilizare-si-protectia-aplicatiei">3. Licența de utilizare și protecția Aplicației</h2>
+<p>3.1. <strong>Toate drepturile sunt rezervate.</strong> Aplicația, inclusiv codul sursă și codul livrat browserului (JavaScript,
+codul Python executat în browser, fișierele de date ale motorului), motorul de calcul, regulile de dimensionare,
+biblioteca de simboluri, interfața, textele, documentația și denumirea „Scheme monofilare” sunt proprietatea Operatorului
+sau a licențiatorilor săi și sunt protejate de Legea nr. 8/1996 privind dreptul de autor și drepturile conexe și de
+celelalte legi aplicabile. Faptul că o parte din cod este vizibilă tehnic în browser nu înseamnă că poate fi folosită
+liber.</p>
+<p>3.2. Îți acordăm un drept <strong>neexclusiv, netransmisibil, fără drept de sublicențiere și revocabil</strong> (în condițiile
+art. 5 și 7) de a folosi Aplicația, prin interfața ei, pentru activitatea ta profesională, în condițiile acestor
+Termeni și ale planului pe care îl folosești. <strong>Nu ai voie</strong>:</p>
 <ul>
-<li>să copiezi, să modifici, să distribui, să vinzi sau să închiriezi Aplicația ori părți din ea (cod, motor de calcul,
-  biblioteca de simboluri, texte), cu excepția celor permise de Termeni sau de lege;</li>
-<li>să decompilezi sau să faci reverse engineering, <strong>cu excepția situațiilor în care legea permite expres acest lucru</strong>
-  (de exemplu, pentru interoperabilitate, în condițiile Legii nr. 8/1996 privind dreptul de autor);</li>
-<li>să ocolești măsurile tehnice ale Aplicației, inclusiv blocarea exportului, limitele de folosire sau mecanismele de
-  autentificare;</li>
-<li>să folosești Aplicația pentru a dezvolta un produs concurent prin copierea funcțiilor, a textelor sau a bibliotecii
-  de simboluri;</li>
-<li>să folosești roboți, scripturi sau alte mijloace automate care trimit cereri în volum excesiv ori care încarcă
-  nejustificat infrastructura (inclusiv conturile, după activare);</li>
+<li>să copiezi, să reproduci, să modifici, să traduci, să distribui, să publici, să vinzi, să închiriezi, să
+  sublicențiezi sau să revinzi Aplicația ori părți din ea (cod, motor de calcul, reguli, biblioteca de simboluri,
+  texte), inclusiv ca serviciu pentru terți;</li>
+<li>să extragi, să descarci în masă sau să salvezi separat codul livrat browserului, fișierele motorului de calcul sau
+  biblioteca de simboluri, în afara folosirii normale a Aplicației;</li>
+<li>să decompilezi, să dezasamblezi, să deobfuschezi sau să faci reverse engineering asupra codului, în afara
+  excepțiilor de la art. 3.3;</li>
+<li>să folosești roboți, scripturi, crawlere sau alte mijloace automate pentru a extrage conținut, reguli sau rezultate
+  din Aplicație (<strong>scraping</strong>) ori care trimit cereri în volum excesiv sau încarcă nejustificat infrastructura;</li>
+<li>să folosești Aplicația, codul, rezultatele ei generate în serie sau cunoștințele obținute din analiza ei pentru a
+  dezvolta, antrena sau îmbunătăți un <strong>produs ori serviciu concurent</strong>;</li>
+<li>să ocolești măsurile tehnice ale Aplicației, inclusiv filigranul, blocarea exportului, limitele planului sau
+  mecanismele de autentificare și de control al accesului;</li>
 <li>să încarci conținut ilegal, cod malițios sau date pe care nu ai dreptul să le folosești;</li>
 <li>să încerci să accesezi conturile sau datele altor utilizatori.</li>
 </ul>
-<p>3.3. Aplicația folosește componente open-source (de exemplu, fonturile Barlow — licența SIL OFL, Pyodide, ezdxf,
-openpyxl, numpy, supabase-js). Acestea rămân supuse licențelor proprii, care prevalează pentru componentele respective.</p>
-<h2 id="4-proprietate-intelectuala">4. Proprietate intelectuală</h2>
-<p>4.1. <strong>Aplicația ne aparține.</strong> Codul, motorul de calcul, biblioteca de simboluri, interfața, textele și marca
-„Scheme monofilare” sunt proprietatea Operatorului sau a licențiatorilor săi. Termenii nu îți transferă niciun drept
-asupra lor, în afara licenței de la art. 3.</p>
-<p>4.2. <strong>Proiectele tale îți aparțin.</strong> Datele pe care le introduci (date de proiect, profiluri de firmă, cataloage de
+<p>3.3. <strong>Ce permite legea.</strong> Interdicțiile de la art. 3.2 nu limitează drepturile pe care legea ți le dă în mod
+imperativ, în special: dreptul de a face o copie de siguranță în măsura în care e necesară folosirii, dreptul de a
+observa, studia și testa funcționarea programului în cursul folosirii lui normale și dreptul de a decompila codul în măsura strict necesară pentru a obține informațiile necesare interoperabilității
+unui program creat independent, în condițiile art. 5 alin. (3) și art. 6 din Directiva 2009/24/CE și ale dispozițiilor
+corespunzătoare din Legea nr. 8/1996 (art. 5 alin. (2)–(3), art. 6 și art. 8 din directivă). Informațiile obținute astfel nu pot fi folosite pentru un program substanțial
+similar ca expresie și nu pot fi comunicate terților decât în măsura în care legea permite. Înainte de a decompila
+pentru interoperabilitate, te rugăm să ne scrii: dacă informațiile îți sunt deja disponibile, ți le punem la
+dispoziție.</p>
+<p>3.4. Aplicația folosește componente open-source (de exemplu, fonturile Barlow — licența SIL OFL, Pyodide, ezdxf,
+openpyxl, numpy, supabase-js). Acestea rămân supuse licențelor proprii, care prevalează pentru componentele respective.
+Art. 3.1–3.2 nu se aplică acestor componente.</p>
+<p>3.5. Dacă încalci art. 3.2, putem suspenda sau închide accesul (art. 5.3 și 5.5) și ne rezervăm dreptul de a cere
+despăgubiri potrivit legii.</p>
+<h2 id="4-proiectele-tale-si-sugestiile-tale">4. Proiectele tale și sugestiile tale</h2>
+<p>4.1. <strong>Proiectele tale îți aparțin.</strong> Datele pe care le introduci (date de proiect, profiluri de firmă, cataloage de
 prețuri și echipamente, descrieri) și documentele exportate (planșe, liste, memorii, devize) sunt ale tale sau ale
 clienților tăi. Nu revendicăm niciun drept asupra lor.</p>
-<p>4.3. Simbolurile, cartușul și textele standard incluse automat în documentele exportate pot fi folosite de tine fără
+<p>4.2. Simbolurile, cartușul și textele standard incluse automat în documentele exportate pot fi folosite de tine fără
 limită de timp, inclusiv după încetarea folosirii Aplicației, ca parte a documentelor respective (de exemplu, le poți
-modifica în AutoCAD, depune, arhiva, retransmite clienților).</p>
-<p>4.4. Ne dai dreptul de a prelucra datele tale <strong>numai</strong> în măsura necesară ca Aplicația să funcționeze (de exemplu, să
-salveze proiectele în contul tău, după activarea conturilor). Nu folosim proiectele tale în alte scopuri și nu le
-publicăm.</p>
-<p>4.5. Dacă ne trimiți sugestii sau raportări de erori, le putem folosi liber pentru a îmbunătăți Aplicația, fără
+modifica în AutoCAD, depune, arhiva, retransmite clienților). Acest drept nu îți permite să extragi și să refolosești
+biblioteca de simboluri separat de documentele tale (art. 3.2).</p>
+<p>4.3. Ne dai dreptul de a prelucra datele tale <strong>numai</strong> în măsura necesară ca Aplicația să funcționeze (de exemplu, să
+salveze proiectele în contul tău sau să trimită descrierea la citirea avansată, art. 11). Nu folosim proiectele tale în
+alte scopuri și nu le publicăm.</p>
+<p>4.4. Dacă ne trimiți sugestii sau raportări de erori, le putem folosi liber pentru a îmbunătăți Aplicația, fără
 obligații față de tine. Nu includem în aceste îmbunătățiri date din proiectele tale fără acordul tău.</p>
 <h2 id="5-conturi-de-utilizator">5. Conturi de utilizator</h2>
 <p><em>Conturile nu sunt încă activate. Acest articol se va aplica de la activarea lor. Până atunci, proiectele se păstrează
-numai în browserul tău (vezi Politica de confidențialitate).</em></p>
-<p>5.1. Pentru unele funcții (salvarea în cloud, sincronizarea pe mai multe calculatoare, istoricul versiunilor) va fi
-nevoie de un cont. Ne dai date corecte și le actualizezi când se schimbă.</p>
-<p>5.2. Contul este personal. Păstrezi parola confidențială și ne anunți imediat la <mark class="ph">[EMAIL CONTACT]</mark> dacă bănuiești o
-folosire neautorizată. Răspunzi pentru acțiunile făcute din contul tău, dacă nu ne-ai anunțat la timp.</p>
+numai în browserul tău (vezi Politica de confidențialitate). Accesul testerilor la versiunea web e reglementat de
+Condițiile de participare la testare.</em></p>
+<p>5.1. Pentru unele funcții (salvarea în cloud, sincronizarea pe mai multe calculatoare, istoricul versiunilor, planurile
+plătite) va fi nevoie de un cont. Ne dai date corecte și le actualizezi când se schimbă.</p>
+<p>5.2. Contul este personal. Păstrezi datele de autentificare confidențiale și ne anunți imediat la contact@kromotec.com
+dacă bănuiești o folosire neautorizată. Răspunzi pentru acțiunile făcute din contul tău, dacă nu ne-ai anunțat la timp.
+În abonamentul pentru firme, fiecare utilizator al firmei are propriul cont; firma răspunde pentru utilizatorii pe care
+îi adaugă.</p>
 <p>5.3. <strong>Suspendare.</strong> Putem suspenda sau restricționa contul dacă: încalci grav Termenii (în special art. 3.2); folosirea
 contului pune în pericol securitatea Aplicației sau a altor utilizatori; ne-o cere legea sau o autoritate. Te anunțăm,
 de regulă în prealabil, cu motivul. În caz de urgență (de exemplu, un atac în curs) putem suspenda imediat și te
-anunțăm ulterior. Poți contesta decizia la <mark class="ph">[EMAIL CONTACT]</mark>.</p>
-<p>5.4. <strong>Ștergerea de către tine.</strong> Poți închide contul oricând, din aplicație sau printr-un mesaj la <mark class="ph">[EMAIL CONTACT]</mark>.
+anunțăm ulterior. Poți contesta decizia la contact@kromotec.com.</p>
+<p>5.4. <strong>Ștergerea de către tine.</strong> Poți închide contul oricând, din aplicație sau printr-un mesaj la contact@kromotec.com.
 Înainte de ștergere îți recomandăm să-ți exporți proiectele. Datele se șterg în condițiile din Politica de
 confidențialitate.</p>
 <p>5.5. <strong>Închiderea de către noi.</strong> Putem închide un cont: pentru încălcări repetate sau grave ale Termenilor; dacă
-contul a fost inactiv timp de <mark class="ph">[PERIOADĂ INACTIVITATE, de ex. 24 de luni]</mark>, după o notificare prealabilă de cel puțin 30 de
-zile; ori dacă încetăm furnizarea Aplicației (art. 7.3). Cu excepția cazurilor grave, îți lăsăm cel puțin 30 de zile ca
-să-ți exporți datele.</p>
-<h2 id="6-preturi">6. Prețuri</h2>
+contul a fost <strong>inactiv timp de 12 luni</strong> (nicio autentificare), după un e-mail de avertizare trimis cu cel puțin
+<strong>30 de zile</strong> înainte, în care îți spunem cum poți păstra contul (este suficient să te autentifici); ori dacă încetăm
+furnizarea Aplicației (art. 7.3). Un cont cu un plan plătit în curs nu se închide pentru inactivitate. Cu excepția
+cazurilor grave, îți lăsăm cel puțin 30 de zile ca să-ți exporți datele.</p>
+<h2 id="6-preturi-si-planuri">6. Prețuri și planuri</h2>
 <p>6.1. <strong>În prezent Aplicația este gratuită.</strong></p>
-<p>6.2. Putem introduce ulterior planuri plătite sau funcții plătite. Vom anunța prețurile și condițiile <strong>cu cel puțin
-30 de zile înainte</strong>, pe site și, pentru utilizatorii cu cont, prin e-mail.</p>
-<p>6.3. Nu vei fi trecut niciodată automat pe un plan plătit. Un plan plătit începe numai după ce îl alegi și accepți
+<p>6.2. <strong>Modelul pe care îl avem în vedere</strong> (orientativ; condițiile exacte se stabilesc la lansare):</p>
+<ul>
+<li><strong>Gratuit</strong> — exporturi cu filigran (art. 2.9); citirea avansată numai cu cheia ta Anthropic (art. 11.2);</li>
+<li><strong>Pachete pe proiect</strong>, pentru utilizatorii individuali — plata se face pentru un număr de proiecte; exporturi fără
+  filigran pentru proiectele respective; citirea avansată inclusă dacă pachetul o prevede;</li>
+<li><strong>Abonament pentru firme</strong> — mai mulți utilizatori, proiecte nelimitate și citirea avansată inclusă (art. 11.3), în
+  limitele de folosire ale planului.</li>
+</ul>
+<p>6.3. Vom anunța prețurile și condițiile <strong>cu cel puțin 30 de zile înainte</strong> de introducerea lor, pe site și, pentru
+utilizatorii cu cont, prin e-mail.</p>
+<p>6.4. Nu vei fi trecut niciodată automat pe un plan plătit. Un plan plătit începe numai după ce îl alegi și accepți
 expres condițiile lui (preț, durată, reînnoire, facturare, modul de încetare).</p>
-<p>6.4. Este posibil ca unele funcții gratuite astăzi să devină parte din planurile plătite. Te vom anunța în același
-termen, iar proiectele salvate vor putea fi exportate în continuare în formatele deschise (JSON, DXF, SVG).</p>
+<p>6.5. Este posibil ca unele funcții gratuite astăzi să devină parte din planurile plătite. Te vom anunța în același
+termen, iar proiectele salvate vor putea fi exportate în continuare în formatele deschise (JSON, DXF, SVG), cu filigran
+în varianta gratuită.</p>
+<p>6.6. Dacă ești <strong>consumator</strong> și cumperi un plan plătit, beneficiezi de informarea precontractuală și de dreptul de
+retragere prevăzute de OUG nr. 34/2014. Dacă ceri ca furnizarea conținutului sau a serviciului digital să înceapă
+înainte de expirarea termenului de retragere, îți vom cere acordul expres și confirmarea că știi că pierzi dreptul de
+retragere în condițiile legii.</p>
 <h2 id="7-disponibilitate-si-modificari-ale-aplicatiei">7. Disponibilitate și modificări ale Aplicației</h2>
 <p>7.1. Aplicația este oferită <strong>„ca atare”</strong> și <strong>„în măsura disponibilității”</strong>. Nu garantăm că va funcționa
 neîntrerupt, fără erori sau pe orice browser ori calculator.</p>
 <p>7.2. Putem modifica, actualiza sau retrage funcții, inclusiv regulile de calcul (de exemplu, când se schimbă normele).
 Rezultatele pentru același proiect pot fi diferite de la o versiune la alta. Versiunea motorului folosită este indicată
 în documentele generate, acolo unde Aplicația permite.</p>
-<p>7.3. Putem înceta furnizarea Aplicației. În acest caz anunțăm cu cel puțin <mark class="ph">[TERMEN, de ex. 60 de zile]</mark> înainte și îți
-lăsăm posibilitatea de a-ți exporta datele.</p>
+<p>7.3. Putem înceta furnizarea Aplicației. În acest caz anunțăm cu cel puțin <strong>60 de zile</strong> înainte, în Aplicație și,
+pentru utilizatorii cu cont, prin e-mail, și îți lăsăm posibilitatea de a-ți exporta datele. Pentru perioada plătită și
+neconsumată la data încetării îți rambursăm partea corespunzătoare din preț. Programul de testare poate fi încheiat în
+condițiile proprii (Condițiile de participare la testare).</p>
 <p>7.4. Datele stocate local (în browser) pot fi pierdute dacă ștergi datele site-ului, folosești o fereastră privată sau
 schimbi browserul ori calculatorul. <strong>Păstrează copii</strong> ale proiectelor importante (butonul „Salvează proiectul”,
 fișier .json) și ale documentelor exportate.</p>
@@ -286,8 +351,12 @@ executată revine persoanelor care, potrivit legii, întocmesc, verifică, semne
 <li>întreruperile cauzate de furnizori terți (găzduire, rețea, Anthropic, Supabase) sau de forță majoră.</li>
 </ul>
 <p>9.3. În limita permisă de lege, răspunderea totală a Operatorului față de tine, pentru orice pretenții legate de
-Aplicație, este limitată la <strong>suma plătită de tine Operatorului în ultimele 12 luni</strong> înainte de faptul care a cauzat
-prejudiciul sau, dacă nu ai plătit nimic, la <strong><mark class="ph">[SUMĂ, de ex. 500 lei]</mark></strong>.</p>
+Aplicație, este limitată:</p>
+<ul>
+<li>cât timp folosești Aplicația <strong>gratuit</strong>: la <strong>500 lei</strong>;</li>
+<li>dacă folosești un <strong>plan plătit</strong>: la <strong>suma plătită de tine Operatorului în ultimele 12 luni</strong> înainte de faptul
+  care a cauzat prejudiciul.</li>
+</ul>
 <p>9.4. <strong>Ce nu limităm.</strong> Nimic din acești Termeni nu exclude și nu limitează răspunderea Operatorului:</p>
 <ul>
 <li>pentru prejudiciile cauzate cu intenție sau din culpă gravă;</li>
@@ -297,9 +366,10 @@ prejudiciul sau, dacă nu ai plătit nimic, la <strong><mark class="ph">[SUMĂ, 
 <li>față de consumatori, în orice situație în care legea nu permite excluderea sau limitarea;</li>
 <li>în orice altă situație în care răspunderea nu poate fi exclusă sau limitată potrivit legii.</li>
 </ul>
-<p>9.5. Clauzele de la art. 5.3, 5.5, 7, 8, 9 și 12 limitează răspunderea Operatorului ori îi permit să suspende,
-să modifice sau să înceteze serviciul. <strong>Le accepți în mod expres</strong>, prin bifa separată din Aplicație (vezi și
-art. 1203 din Codul civil).</p>
+<p>9.5. Clauzele de la art. 3.2 (interdicția de a dezvolta produse concurente), 5.3, 5.5, 7, 8, 9, 12 și 13 limitează
+răspunderea Operatorului, îi permit să suspende, să modifice sau să înceteze serviciul, îți restrâng libertatea de a
+contracta ori stabilesc legea aplicabilă și instanța competentă. <strong>Le accepți în mod expres</strong>, prin bifa separată din
+Aplicație (art. 1203 din Codul civil).</p>
 <h2 id="10-datele-tale-si-datele-clientilor-tai">10. Datele tale și datele clienților tăi</h2>
 <p>10.1. Cum prelucrăm datele cu caracter personal este descris în <a href="confidentialitate.html">Politica de confidențialitate</a>.</p>
 <p>10.2. Proiectele pot conține date ale clienților tăi (beneficiari, adrese, locuri de consum). Pentru aceste date,
@@ -308,18 +378,35 @@ art. 1203 din Codul civil).</p>
 date bancare sau alte date sensibile ale clienților. Calculul nu are nevoie de nume și adrese: le poți completa direct
 pe documentul final sau le poți înlocui cu un cod de proiect. Înainte să folosești citirea avansată, scoate din
 descriere numele, adresele și alte date de identificare.</p>
-<p>10.4. După activarea conturilor, pentru datele clienților tăi salvate în cont, Operatorul va acționa ca <strong>persoană
-împuternicită</strong> (art. 28 GDPR). Condițiile vor fi stabilite într-un acord de prelucrare a datelor, publicat înainte de
-activarea conturilor, care va face parte din acești Termeni.</p>
-<h2 id="11-citirea-avansata-anthropic-si-alte-servicii-terte">11. Citirea avansată (Anthropic) și alte servicii terțe</h2>
-<p>11.1. Citirea avansată a textului funcționează <strong>numai dacă îți introduci propria cheie API Anthropic</strong>. În acest caz,
-browserul tău trimite descrierea <strong>direct</strong> la Anthropic (SUA), în baza contractului <strong>tău</strong> cu Anthropic. Operatorul
-nu primește cheia și nu primește textul.</p>
-<p>11.2. Folosirea API-ului Anthropic e supusă termenilor Anthropic și poate genera costuri, pe care le plătești tu către
-Anthropic. Nu răspundem pentru serviciul Anthropic, pentru disponibilitatea sau costurile lui.</p>
-<p>11.3. Dacă bifezi „ține minte”, cheia se păstrează în browserul (sau, pentru aplicația locală, pe calculatorul) tău.
-Nu folosi această opțiune pe un calculator la care au acces și alte persoane.</p>
-<p>11.4. Aplicația funcționează și fără citirea avansată, doar cu regulile locale.</p>
+<p>10.4. Când datele clienților tăi ajung la noi — în contul tău (după activarea conturilor) sau prin citirea avansată
+inclusă în planurile plătite (art. 11.3) — Operatorul acționează ca <strong>persoană împuternicită</strong> (art. 28 GDPR).
+Condițiile sunt stabilite într-un acord de prelucrare a datelor, publicat înainte de activarea conturilor și a
+planurilor plătite, care face parte din acești Termeni.</p>
+<h2 id="11-citirea-avansata-claude-de-la-anthropic-si-alte-servicii-terte">11. Citirea avansată (Claude, de la Anthropic) și alte servicii terțe</h2>
+<p>11.1. Citirea avansată folosește modelul de limbaj <strong>Claude</strong>, furnizat de Anthropic, pentru a interpreta descrierea
+în cuvinte a instalației. Rezultatul e verificat apoi de regulile locale ale Aplicației. Citirea avansată este
+opțională; Aplicația funcționează și fără ea, doar cu regulile locale.</p>
+<p>11.2. <strong>În varianta gratuită</strong>, citirea avansată funcționează <strong>numai cu propria ta cheie API Anthropic</strong>. Browserul
+tău trimite descrierea <strong>direct</strong> la Anthropic (SUA), în baza contractului <strong>tău</strong> cu Anthropic. Operatorul nu primește
+cheia și nu primește textul. Folosirea API-ului e supusă termenilor Anthropic și poate genera costuri, pe care le
+plătești tu către Anthropic. Nu răspundem pentru serviciul Anthropic, pentru disponibilitatea sau costurile lui.</p>
+<p>11.3. <strong>În planurile plătite care o includ</strong> (abonamentul pentru firme și, dacă o prevăd, pachetele pe proiect),
+citirea avansată se face în limitele planului: descrierea ajunge la un <strong>server
+intermediar operat de noi</strong>, care o trimite la Anthropic cu <strong>cheia Operatorului</strong>. În acest caz Anthropic este
+subcontractantul nostru, iar noi:</p>
+<ul>
+<li>trimitem numai textul descrierii și instrucțiunile tehnice ale Aplicației, fără numele, e-mailul sau alte date ale
+  contului tău;</li>
+<li>aplicăm înainte de trimitere un filtru automat care maschează datele de identificare evidente (de exemplu, CNP,
+  adrese de e-mail, numere de telefon, IBAN);</li>
+<li>nu păstrăm textul descrierii pe serverul intermediar după ce primim răspunsul; păstrăm doar datele de consum necesare
+  pentru limitele planului.</li>
+</ul>
+<p>Detaliile sunt în Politica de confidențialitate (art. 5). Filtrul automat nu poate recunoaște orice dată personală,
+așa că recomandarea de la art. 10.3 rămâne valabilă. Pentru indisponibilitatea temporară a serviciului Anthropic se
+aplică art. 7.1 și 9.</p>
+<p>11.4. Dacă bifezi „ține minte” pentru cheia ta, cheia se păstrează în browserul (sau, pentru aplicația locală, pe
+calculatorul) tău. Nu folosi această opțiune pe un calculator la care au acces și alte persoane.</p>
 <h2 id="12-modificarea-termenilor">12. Modificarea Termenilor</h2>
 <p>12.1. Putem modifica acești Termeni, de exemplu când se schimbă Aplicația, legea sau modelul de preț. Versiunea și data
 sunt indicate la începutul documentului.</p>
@@ -327,16 +414,19 @@ sunt indicate la începutul documentului.</p>
 utilizatorii cu cont, prin e-mail. Modificările minore (corecturi, clarificări fără efect asupra drepturilor tale) se
 pot aplica imediat.</p>
 <p>12.3. Pentru modificările importante îți vom cere din nou acordul în Aplicație. Dacă nu ești de acord, poți înceta
-oricând folosirea Aplicației și îți poți închide contul, fără costuri.</p>
+oricând folosirea Aplicației și îți poți închide contul, fără costuri; pentru perioada plătită și neconsumată se aplică
+art. 7.3.</p>
 <h2 id="13-legea-aplicabila-si-litigii">13. Legea aplicabilă și litigii</h2>
 <p>13.1. Acești Termeni sunt guvernați de <strong>legea română</strong>.</p>
-<p>13.2. Încercăm întâi să rezolvăm orice neînțelegere pe cale amiabilă. Scrie-ne la <mark class="ph">[EMAIL CONTACT]</mark>; răspundem în cel
-mult 30 de zile.</p>
+<p>13.2. Încercăm întâi să rezolvăm orice neînțelegere pe cale amiabilă. Scrie-ne la contact@kromotec.com; răspundem în
+cel mult 30 de zile.</p>
 <p>13.3. Dacă folosești Aplicația ca <strong>profesionist</strong>, litigiile se soluționează de instanțele competente de la sediul
-Operatorului.</p>
-<p>13.4. Dacă ești <strong>consumator</strong>, te poți adresa instanțelor competente potrivit legii, inclusiv celor de la domiciliul
-tău. Poți apela și la soluționarea alternativă a litigiilor (SAL), prin entitatea SAL din cadrul Autorității Naționale
-pentru Protecția Consumatorilor (ANPC — https://anpc.ro), sau poți depune o reclamație la ANPC.</p>
+Operatorului (județul Bihor).</p>
+<p>13.4. Dacă ești <strong>consumator</strong>, alegerea legii române nu te privează de protecția normelor imperative din statul în care
+locuiești, iar competența instanțelor se stabilește potrivit regulilor legale de protecție a consumatorilor (inclusiv
+instanțele de la domiciliul tău). Poți apela și la soluționarea alternativă a litigiilor (SAL), prin entitatea SAL din
+cadrul Autorității Naționale pentru Protecția Consumatorilor (ANPC — https://anpc.ro), sau poți depune o reclamație la
+ANPC.</p>
 <h2 id="14-dispozitii-finale">14. Dispoziții finale</h2>
 <p>14.1. Dacă o clauză este declarată nulă sau inaplicabilă, celelalte clauze rămân valabile, iar clauza respectivă se
 înlocuiește cu una valabilă, cât mai apropiată ca efect.</p>
@@ -344,9 +434,15 @@ pentru Protecția Consumatorilor (ANPC — https://anpc.ro), sau poți depune o 
 <p>14.3. Nu poți transfera drepturile și obligațiile tale din acești Termeni fără acordul nostru. Le putem transfera unei
 alte entități care preia Aplicația, cu notificarea ta prealabilă. Dacă nu ești de acord cu transferul, poți înceta
 folosirea Aplicației.</p>
-<p>14.4. Contact: <mark class="ph">[DENUMIRE OPERATOR]</mark>, <mark class="ph">[SEDIU]</mark>, <mark class="ph">[EMAIL CONTACT]</mark>.</p>
+<p>14.4. Art. 3, 4.2, 9, 13 și 14 rămân aplicabile și după încetarea folosirii Aplicației.</p>
+<p>14.5. <strong>Punct unic de contact.</strong> Adresa contact@kromotec.com este și punctul unic de contact pentru autorități și
+pentru utilizatori în sensul art. 11 și 12 din Regulamentul (UE) 2022/2065 privind serviciile digitale; ne poți scrie în
+română sau în engleză.</p>
+<p>14.6. <strong>Date de identificare și contact:</strong> KROMOSOLAR TECH S.R.L. (denumirea comercială „kromotec”), sediul social: Sântandrei,
+Str. Râturi nr. 18, jud. Bihor, România · Nr. ORC J2024000929057 · CUI 49856341 · contact@kromotec.com ·
+www.kromotec.com.</p>
   </article>
-  <footer>Scheme monofilare · Versiunea 0.1 — draft, de verificat de un avocat · 28.10.2026</footer>
+  <footer>Scheme monofilare · KROMOSOLAR TECH S.R.L. (kromotec) · Versiunea 0.2 — draft, de verificat de un avocat · 28.10.2026</footer>
 </div>
 </body>
 </html>

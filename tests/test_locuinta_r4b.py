@@ -188,11 +188,12 @@ def test_texte_30mA_tip_A():
 def test_SPD_protectie_rezerva():
     z = calculeaza(_loc("mono", [L("Il", "iluminat")], In_Q_bransament_A=32, P_aprobata_kW=7))["rezultat"]
     p = z["SPD"]["protectie_rezerva"]
-    assert p == {"tip": "MCB", "In_A": 25, "curba": "C", "poli": "1P+N", "Icu_kA": p["Icu_kA"], "ref": "F2",
-                 "text": "MCB 1P+N C25 A"}
-    assert z["SPD"]["In_amonte_A"] == 25 and z["SPD"]["prot_tip"] == "MCB"
+    # raport_b3: rezerva SPD C40 (Imax 40 kA), plafonată la Q branșament 32 A
+    assert p == {"tip": "MCB", "In_A": 32, "curba": "C", "poli": "1P+N", "Icu_kA": p["Icu_kA"], "ref": "F2",
+                 "text": "MCB 1P+N C32 A"}
+    assert z["SPD"]["In_amonte_A"] == 32 and z["SPD"]["prot_tip"] == "MCB"
     car = text_lista("spd_ca", dict(z["SPD"], curba=z["SPD"]["curba_amonte"]))[1]
-    assert car.endswith("protecție amonte MCB C25 A") and "gG" not in car
+    assert car.endswith("protecție amonte MCB C32 A") and "gG" not in car
     # Q branșament 16 A → rezerva nu depășește Q: C16; trifazat → 3P+N
     z = calculeaza(_loc("tri", [L("Il", "iluminat")], In_Q_bransament_A=16))["rezultat"]
     assert z["SPD"]["protectie_rezerva"]["In_A"] == 16 and z["SPD"]["protectie_rezerva"]["poli"] == "3P+N"
@@ -230,7 +231,7 @@ def test_mn4_chei_ddr_necunoscute_si_retea_goala():
 
 
 # ----------------------------------------------------------------------------------------------------- N3 — TT
-@pytest.mark.parametrize("retea,cond,cablu", [("mono", "L + N", "CYABY 2×6 mm²"), ("tri", "3L + N", "CYABY 4×6 mm²")])
+@pytest.mark.parametrize("retea,cond,cablu", [("mono", "L + N", "CYAbY 2×6 mm²"), ("tri", "3L + N", "CYAbY 4×6 mm²")])
 def test_N3_tt_coloana_fara_pe(retea, cond, cablu):
     r = calculeaza(dict(_loc(retea, [L("Il", "iluminat")], In_Q_bransament_A=32, P_aprobata_kW=7),
                         schema_pamant="TT", RA_ohm=30))

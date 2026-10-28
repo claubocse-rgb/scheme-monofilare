@@ -91,6 +91,15 @@ def _insert_block(space, br: BlockRef, dx, dy, k, reg):
     _emit(space, [p for p in br.prims if isinstance(p, Text)], pos[0], pos[1], kk)
 
 
+def _rgb_straturi():
+    """E2: straturile cu culoare exactă (conductoarele L1 / L2 / L3 / N / PE, chenarul tabloului, curbele)"""
+    try:
+        from .desen_e2 import STRATURI_RGB
+        return STRATURI_RGB
+    except Exception:       # noqa: BLE001
+        return set()
+
+
 def render(c: Canvas, path: str, layout_name="A3"):
     _ezdxf()
     doc = ezdxf.new("R2018", setup=True)
@@ -102,11 +111,23 @@ def render(c: Canvas, path: str, layout_name="A3"):
         l = doc.layers.add(name, color=aci)
         l.dxf.lineweight = lw
         l.dxf.linetype = lt
+        if name in _rgb_straturi():
+            col = LAYERS[name][3].lstrip("#")
+            if len(col) == 3:
+                col = "".join(ch * 2 for ch in col)
+            l.rgb = tuple(int(col[i:i + 2], 16) for i in (0, 2, 4))
     doc.styles.add("ARIAL", font="arial.ttf")
     doc.styles.add("ARIAL_B", font="arialbd.ttf")
     doc.styles.add("ARIAL_I", font="ariali.ttf")
     msp = doc.modelspace()
     _emit(msp, c.items, reg={})
+    fil = (getattr(c, "meta", None) or {}).get("filigran")
+    if fil:
+        # E2: filigranul pe stratul separat „FILIGRAN” (se poate îngheța / șterge doar cu licență)
+        if "FILIGRAN" not in doc.layers:
+            doc.layers.add("FILIGRAN", color=9)
+        t = msp.add_text(str(fil), dxfattribs={"layer": "FILIGRAN", "style": "ARIAL", "height": 2.4})
+        t.set_placement((c.w / 2, 6.4), align=ALIGN["middle"])
     lay = doc.layouts.get("Layout1")
     lay.page_setup(size=(c.w, c.h), margins=(0, 0, 0, 0), units="mm", scale=1)
     lay.add_viewport(center=(c.w/2, c.h/2), size=(c.w, c.h), view_center_point=(c.w/2, c.h/2), view_height=c.h)

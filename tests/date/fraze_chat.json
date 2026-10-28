@@ -186,7 +186,7 @@
           "limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea C2)"
         ],
         "rezultat_cheie": {
-          "C2": "ACYABY 4×185 mm² + FY 1×50 mm² (PE)",
+          "C2": "ACYAbY 4×185 mm² + FY 1×50 mm² (PE)",
           "nota": "secțiunea C2 mărită de motor pentru ΔU (rezultat de dimensionare, nu presupunere)"
         },
         "actiune": "genereaza",
@@ -363,7 +363,7 @@
           "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "avertismente": [
-          "V45: coloana trece pe AC2XABY (Al PVC nu ajunge la 4×240 mm²)"
+          "V45: coloana trece pe AC2XAbY (Al PVC nu ajunge la 4×240 mm²)"
         ],
         "actiune": "genereaza",
         "intrebari": []

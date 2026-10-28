@@ -27,11 +27,12 @@ async function boot(date) {
   const py = await loadPyodide({ indexURL: base + 'pyodide/' });
   PY = py; BASE = base;
   progres('Încarc motorul de calcul…');
-  const src = await (await _f(base + 'app_src.json')).json();
-  for (const [p, txt] of Object.entries(src)) {
-    const full = '/app/' + p; py.FS.mkdirTree(full.slice(0, full.lastIndexOf('/'))); py.FS.writeFile(full, txt);
-  }
-  py.runPython('import sys; sys.path.insert(0, "/app"); sys.path.insert(0, "/app/web")');
+  // motorul vine ca arhivă zip (.pyc compilat pentru Python 3.12 sau sursă fără comentarii), publicată cu sufixul .wasm
+  const r = await _f(base + 'app_src.zip.wasm');
+  if (!r.ok) throw new Error('motorul de calcul lipsește (app_src.zip, HTTP ' + r.status + ')');
+  py.FS.mkdirTree('/app');
+  py.unpackArchive(await r.arrayBuffer(), 'zip', { extractDir: '/app' });
+  py.runPython('import sys; sys.dont_write_bytecode = True; sys.path.insert(0, "/app"); sys.path.insert(0, "/app/web")');
   api = py.pyimport('web_api');
   api.date_scrie(py.toPy(date || {}));
   postMessage({ tip: 'gata' });

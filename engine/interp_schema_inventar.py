@@ -1879,6 +1879,13 @@ INVENTAR = {
 "tablou"
 ]
 },
+"limitare_PCC_kW": {
+"t": [
+"number"
+],
+"v": [],
+"tipuri": []
+},
 "limitare_injectie_kW": {
 "t": [
 "number"

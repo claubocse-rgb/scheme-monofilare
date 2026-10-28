@@ -28,10 +28,10 @@ def test_chei_si_texte():
     # aceeași soluție ca P1·Grajd din T02 (25 kW, Al PVC D1, 50 m): gG 50 A pe Al 25 mm² (fără mărire, bara la ΔU 0)
     assert rr["protectie"]["tip"] == "gG" and rr["protectie"]["In_A"] == 50
     assert (rr["material"], rr["S_faza_mm2"], rr["S_PE_mm2"]) == ("Al", 25.0, 10.0)
-    assert s(r["text_cablu"]) == "ACYABY 4×25 mm² + FY 1×10 mm² (PE)"
+    assert s(r["text_cablu"]) == "ACYAbY 4×25 mm² + FY 1×10 mm² (PE)"
     assert s(r["text_lista"][0]) == "Separator 3P cu siguranțe fuzibile NH 000, 50 A gG"
     assert s(" · ".join(r["text_desen"])) == "3 × 50 A gG"
-    assert s(r["text_desen_cablu"][0]).startswith("ACYABY 4×25 mm²")
+    assert s(r["text_desen_cablu"][0]).startswith("ACYAbY 4×25 mm²")
     assert any("25 kA" in x for x in r["presupus"]) and r["pasi"]
     assert {i["cod"] for i in r["info"]} >= {"V30", "V33", "V35"}
 

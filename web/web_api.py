@@ -7,7 +7,7 @@ os.makedirs(os.environ["SM_DATE"], exist_ok=True)
 sys.path.insert(0, "/app")
 import app  # noqa: E402
 
-FISIERE_DATE = ("preturi.json", "profile.json", "echipamente.json")
+FISIERE_DATE = ("preturi.json", "profile.json", "echipamente.json", "galerie.json", "pvgis_cache.json")
 
 
 class WebH(app.H):
@@ -33,7 +33,7 @@ def cerere(metoda, cale, corp=b""):
     (h.do_GET if metoda == "GET" else h.do_POST)()
     st, hd, body = h.raspuns
     # DXF: browserul gazdă salvează doar anumite extensii → planșa DXF vine într-o arhivă .zip
-    if cale == "/api/export/dxf" and st == 200:
+    if cale.split("?")[0] == "/api/export/dxf" and st == 200:
         nume = hd.get("Content-Disposition", "").split("''")[-1] or "schema.dxf"
         import urllib.parse
         n = urllib.parse.unquote(nume)

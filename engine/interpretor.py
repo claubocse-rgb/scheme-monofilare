@@ -3734,6 +3734,16 @@ def extrage_pv(c: Ctx, intr: dict, ex: dict, tip: str) -> dict:
         c.intrebari.append(("I02", f"Invertoarele CEF-ului de {fmt(total)} kW: câte și de ce putere? (desenat 1 × "
                                    f"{fmt(total)} kW până la răspuns)"))
         total = None
+    if not grupuri and tip == "cef" and not bess and not total and len(rest_kw) == 1:
+        total = rest_kw[0]["val"]
+        c.foloseste(rest_kw[0]["s"], rest_kw[0]["e"])
+    if not grupuri and tip == "cef" and total and not bess:
+        # E2 (D4): „CEF 50 kW” fără invertoare declarate — Pn c.a. = 50 kW cu invertoare de tip implicit, PRESUPUS
+        # (motorul le alege: calc.scheme.invertoare_implicite); nu e întrebare blocantă
+        intr["Pn_total_kW"] = puteri["Pn_total_kW"] = _nr(total)
+        c.nota(f"CEF {fmt(total)} kW fără invertoare declarate → Pn c.a. = {fmt(total)} kW, invertoare de tip implicit "
+               f"(PRESUPUS — confirmați numărul și modelul)")
+        total = None
     inv = []
     bat_decl = bool(bess) or bool(re.search(r"\bhibrid\w*|(?<!fara )\bbater\w*|(?<!fara )\bstocare\b|\bacumulator\w*", c.t))
     for g in grupuri:
@@ -5809,11 +5819,13 @@ def _v_pt(intr, ex, d):
 
 
 def _v_cef(intr, ex, d):
-    if not intr.get("invertoare") and not (intr.get("bess") or {}).get("P_kW"):
+    if not intr.get("invertoare") and not (intr.get("bess") or {}).get("P_kW") and intr.get("Pn_total_kW"):
+        pass          # E2 (D4): invertoare de tip implicit (nota „PRESUPUS” e deja emisă la citire)
+    elif not intr.get("invertoare") and not (intr.get("bess") or {}).get("P_kW"):
         d.refuza("I02", "Lipsesc invertoarele (număr și putere) (I02).",
                  "Câte invertoare și de ce putere (kW c.a.)?")
         return
-    if not intr.get("invertoare"):
+    if not intr.get("invertoare") and not intr.get("Pn_total_kW"):
         d.presupus.append("BESS fără invertoare PV în această schemă (stocare independentă / lângă o CEF existentă): "
                           "se desenează doar ramura PCS + BESS")
     S, P = _s_cef(intr)

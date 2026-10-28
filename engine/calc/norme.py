@@ -133,7 +133,7 @@ S_MIN_CU = {
 }
 S_MIN_AL = 16.0            # cerință din tema de proiectare: Al armat ≥ 16 mm²
 
-# Combinații 3×S + N redus fabricate în RO (ACYABY / AC2XABY / CYABY). Folosite NUMAI dacă armonica 3 ≤ 15 % declarată.
+# Combinații 3×S + N redus fabricate în RO (ACYAbY / AC2XAbY / CYAbY). Folosite NUMAI dacă armonica 3 ≤ 15 % declarată.
 COMBINATII_N_REDUS = {25.0: 16.0, 35.0: 16.0, 50.0: 25.0, 70.0: 35.0, 95.0: 50.0, 120.0: 70.0, 150.0: 70.0, 185.0: 95.0, 240.0: 120.0}
 # SR HD 60364-5-52 art. 524.2.3: reducere permisă doar dacă S > 16 Cu / S > 25 Al și N ≥ 16 Cu / N ≥ 25 Al.
 N_REDUS_S_FAZA_MIN = {"Cu": 16.0, "Al": 25.0}   # strict mai mare decât
@@ -144,19 +144,21 @@ S_MIN_PEN = {"Cu": 10.0, "Al": 16.0}
 # PE separat (neîncorporat în cablu), SR HD 60364-5-54 art. 543.1.3 [SE3]
 S_MIN_PE_SEPARAT = {"protejat_mecanic": 2.5, "neprotejat": 4.0}
 
-# Denumiri RO de cabluri (material, izolație, armat) → tip. 0,6/1 kV.
+# Denumiri RO de cabluri (material, izolație, armat) → tip. 0,6/1 kV. E2 (raportul verificatorului #9): notația după
+# standardul de produs / ST 80-6 DEER — „Ab” = armătură din bandă de oțel, cu „b” mic: CYAbY, ACYAbY (și C2XAbY, AC2XAbY).
+# Potrivirea textelor (DENUMIRE_CABLU, citirea secțiunii) se face fără diferență de majuscule.
 TIP_CABLU = {
-    ("Cu", "PVC", True): "CYABY",
+    ("Cu", "PVC", True): "CYAbY",
     ("Cu", "PVC", False): "CYY-F",
-    ("Cu", "XLPE", True): "C2XABY",    # [practică, raport #9] denumire din ofertele producătorilor RO; alternativ N2XBY
+    ("Cu", "XLPE", True): "C2XAbY",    # [practică, raport #9] denumire din ofertele producătorilor RO; alternativ N2XBY
     ("Cu", "XLPE", False): "N2XY",
-    ("Al", "PVC", True): "ACYABY",
+    ("Al", "PVC", True): "ACYAbY",
     ("Al", "PVC", False): "ACYY",      # [VERIFICAT: DEER ST 80-6 JT Ed. U1 Rev. 1/2025]
-    ("Al", "XLPE", True): "AC2XABY",
+    ("Al", "XLPE", True): "AC2XAbY",
     ("Al", "XLPE", False): "NA2XY",
 }
 # r8b (industrial #25): denumirea impusă a cablului („2 × NA2XY 4x240”) → (material, izolație). Prefixul N/A al
-# denumirilor DIN (NYY, NAYY, N2XY, NA2XY) și denumirile RO (CYY, ACYY, CYABY, C2XABY…); „2X” = XLPE, altfel PVC.
+# denumirilor DIN (NYY, NAYY, N2XY, NA2XY) și denumirile RO (CYY, ACYY, CYAbY, C2XAbY…); „2X” = XLPE, altfel PVC.
 # Ordinea contează: denumirile mai lungi întâi (NA2XY înaintea N2XY).
 DENUMIRE_CABLU = (
     ("NA2XSY", ("Al", "XLPE")), ("NA2XY", ("Al", "XLPE")), ("NA2XBY", ("Al", "XLPE")), ("N2XSY", ("Cu", "XLPE")),
@@ -225,7 +227,7 @@ X_CABLU_OHM_KM = 0.08
 #      metoda "E"  = multipolar în aer liber / pat perforat / scară    (tab. B.52.10–B.52.13, col. E)
 #      metoda "F_atingere" / "F_trefla" = monopolar 3 cond. încărcate (tab. B.52.10–B.52.13, col. F)
 #    Sursa: [P] tab. 3.5 (C), 3.6 (D1), 3.7 (D2), 3.9 (E), 3.10 (F) — verificat, cu excepțiile marcate.
-#    Al 16 mm²: [P] nu tabelează Al sub 25 mm² → valori [NEVERIFICAT], vezi NEVERIFICAT.
+#    Al 16 mm²: [VERIFICAT: EIG Fig. G20, EUPEN tab. 4.2.2–4.2.5, raport_b3 #1–16]
 # =====================================================================================================
 _S = SECTIUNI_STD
 
@@ -244,12 +246,12 @@ IZ = {
     ("Cu", "XLPE", "D1", 3): _t([21, 28, 36, 44, 58, 75, 96, 115, 135, 167, 197, 223, 251, 281, 324, 365]),
     ("Cu", "XLPE", "D2", 3): _t([23, 30, 39, 49, 65, 84, 107, 129, 153, 188, 226, 257, 287, 324, 375, 419]),
     ("Cu", "XLPE", "E", 3):  _t([23, 32, 42, 54, 75, 100, 127, 158, 192, 246, 298, 346, 399, 456, 538, 621]),
-    ("Al", "PVC", "C", 3):   _t([58, 73, 90, 110, 140, 170, 197, 227, 259, 305, 351], _AL_S),
-    ("Al", "PVC", "D1", 3):  _t([49, 64, 77, 91, 112, 132, 150, 169, 190, 218, 247], _AL_S),
-    ("Al", "PVC", "D2", 3):  _t([52, 69, 83, 99, 122, 148, 169, 189, 214, 250, 282], _AL_S),
+    ("Al", "PVC", "C", 3):   _t([59, 73, 90, 110, 140, 170, 197, 227, 259, 305, 351], _AL_S),
+    ("Al", "PVC", "D1", 3):  _t([50, 64, 77, 91, 112, 132, 150, 169, 190, 218, 247], _AL_S),
+    ("Al", "PVC", "D2", 3):  _t([53, 69, 83, 99, 122, 148, 169, 189, 214, 250, 282], _AL_S),
     ("Al", "PVC", "E", 3):   _t([61, 78, 96, 117, 150, 183, 212, 245, 280, 330, 381], _AL_S),
-    ("Al", "XLPE", "C", 3):  _t([73, 90, 112, 136, 174, 211, 245, 283, 323, 382, 440], _AL_S),
-    ("Al", "XLPE", "D1", 3): _t([58, 75, 90, 106, 130, 154, 174, 197, 220, 253, 286], _AL_S),
+    ("Al", "XLPE", "C", 3):  _t([76, 90, 112, 136, 174, 211, 245, 283, 323, 382, 440], _AL_S),
+    ("Al", "XLPE", "D1", 3): _t([59, 75, 90, 106, 130, 154, 174, 197, 220, 253, 286], _AL_S),
     ("Al", "XLPE", "D2", 3): _t([64, 82, 98, 117, 144, 172, 197, 220, 250, 290, 326], _AL_S),
     ("Al", "XLPE", "E", 3):  _t([77, 97, 120, 146, 187, 227, 263, 304, 347, 409, 471], _AL_S),
     # ---------------- 2 conductoare încărcate (monofazat) ----------------
@@ -262,12 +264,12 @@ IZ = {
     ("Cu", "XLPE", "D2", 2): _t([27, 35, 46, 58, 77, 100, 129, 155, 183, 225, 270, 306, 343, 387, 448, 502]),
     ("Cu", "XLPE", "E", 2):  _t([26, 36, 49, 63, 86, 115, 149, 185, 225, 289, 352, 410, 473, 542, 641, 741]),
     ("Al", "PVC", "C", 2):   _t([66, 83, 103, 125, 160, 195, 226, 261, 298, 352, 406], _AL_S),
-    ("Al", "PVC", "D1", 2):  _t([60, 77, 93, 109, 135, 159, 180, 204, 228, 262, 296], _AL_S),
-    ("Al", "PVC", "D2", 2):  _t([61, 82, 98, 117, 145, 173, 200, 224, 255, 298, 336], _AL_S),
+    ("Al", "PVC", "D1", 2):  _t([61, 77, 93, 109, 135, 159, 180, 204, 228, 262, 296], _AL_S),
+    ("Al", "PVC", "D2", 2):  _t([63, 82, 98, 117, 145, 173, 200, 224, 255, 298, 336], _AL_S),
     ("Al", "PVC", "E", 2):   _t([73, 89, 111, 135, 173, 210, 244, 282, 322, 380, 439], _AL_S),
     ("Al", "XLPE", "C", 2):  _t([84, 101, 126, 154, 198, 241, 280, 324, 371, 439, 508], _AL_S),
-    ("Al", "XLPE", "D1", 2): _t([70, 90, 108, 128, 158, 186, 211, 238, 267, 307, 346], _AL_S),
-    ("Al", "XLPE", "D2", 2): _t([75, 98, 117, 139, 170, 204, 233, 261, 296, 343, 386], _AL_S),
+    ("Al", "XLPE", "D1", 2): _t([71, 90, 108, 128, 158, 186, 211, 238, 267, 307, 346], _AL_S),
+    ("Al", "XLPE", "D2", 2): _t([76, 98, 117, 139, 170, 204, 233, 261, 296, 343, 386], _AL_S),
     ("Al", "XLPE", "E", 2):  _t([91, 108, 135, 164, 211, 257, 300, 346, 397, 470, 543], _AL_S),
 }
 # Metoda F — cabluri MONOPOLARE, 3 conductoare încărcate, în aer liber, ref. 30 °C [P] tab. 3.10 (verificat)
@@ -284,7 +286,7 @@ IZ.update({
 })
 
 # v1.4 (§C.8, locuințe): metoda B2 = cablu multipolar în tub pe perete / îngropat în perete (tab. B.52.2–B.52.5,
-# col. B2), numai Cu [NEVERIFICAT individual — valori din IEC 60364-5-52:2009, transcrise din memorie]
+# col. B2), numai Cu [VERIFICAT: IEC 60364-5-52 B.52.2–B.52.5 col. B2 — Schneider EIG Fig. G20, EUPEN tab. 4.2.2/4.2.3, raport_b3 #17]
 IZ.update({
     ("Cu", "PVC", "B2", 2):  _t([16.5, 23, 30, 38, 52, 69, 90, 111, 133, 168, 201, 232, 258, 294, 344, 394]),
     ("Cu", "PVC", "B2", 3):  _t([15, 20, 27, 34, 46, 62, 80, 99, 118, 149, 179, 206, 225, 255, 297, 339]),
@@ -303,11 +305,11 @@ METODE_POZARE = {
 }
 METODE_IN_PAMANT = {"D1", "D2"}
 # v1.2 R2 (N-M5): cabluri monopolare (metoda F) — secțiuni tabelate, număr maxim de sisteme în paralel pe fază și
-# factorul de grupare pentru sisteme trifazate în treflă pe pat perforat, distanțate ≥ 2·De (B.52.21; 4–6 sisteme pe
-# 2 paturi) [NEVERIFICAT individual, DECIZIE conservatoare; 2 sisteme: 0,97 după B.52.21 — raport #17]
+# factorul de grupare pentru sisteme trifazate în treflă pe pat perforat, distanțate ≥ 2·De — B.52.21 treflă pat perforat
+# 2·De, max. 3 sisteme/pat [VERIFICAT: EUPEN §4.4.3 p. 23, EIG Fig. G17 — raport_b3]
 SECTIUNI_MONOPOLAR = [25.0, 35.0, 50.0, 70.0, 95.0, 120.0, 150.0, 185.0, 240.0, 300.0]
 N_PARALEL_MAX_MONOPOLAR = 6
-K_GRUP_F_DISTANTAT = {1: 1.00, 2: 0.97, 3: 0.96, 4: 0.93, 5: 0.92, 6: 0.90, 7: 0.89, 8: 0.88}
+K_GRUP_F_DISTANTAT = {1: 1.00, 2: 0.97, 3: 0.96, 4: 0.93, 5: 0.89, 6: 0.89, 7: 0.86, 8: 0.86}
 
 def iz_tabel(material, izolatie, metoda, n_incarcate, s):
     """Iz [A] din tabel sau None dacă nu e tabelat."""
@@ -769,6 +771,11 @@ DDR_INVERTOR_IDN_MARE_MA = 100           # [VERIFICAT: Huawei „≥ 100 mA” �
 DDR_INVERTOR_IDN_MIN_PRODUCATOR_MA = {"Huawei": 100}   # [VERIFICAT: HW1 — inclusiv SUN2000-3…10KTL-M1]
 SPD_CA_INVERTOR_L_M = 10.0               # SR HD 60364-7-712 (712.534): SPD c.a. și la invertor dacă cablul > 10 m [VERIFICAT: raport #95]
 SIGURANTE_CC_BATERIE_A = [16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630]   # gBat / NH c.c.
+# E2 (DECIZIE proprietar 28.10.2026): limitarea puterii la punctul de racord (PCC) când Sn trafo < S CEF.
+# Propunerea automată: P_lim = Sn trafo × cosφ_PCC × factor (cosφ 0,9 = capabilitatea de putere reactivă cerută la PCC
+# de Ord. ANRE 208/2018 / normele tehnice RfG; factor 0,95 = rezervă pentru pierderile trafo și precizia buclei EMS).
+PCC_COSFI = 0.9
+PCC_FACTOR = 0.95
 # Pragurile de racord (DECIZIE de proiectare, nu normă; ATR prevalează):
 PRAG_RACORD_BMPT_KVA = SQRT3 * U_N_V * BMPT_I_MAX_A / 1000.0   # ≈ 173,2 kVA (250 A) [VERIFICAT: ST 4-JT BMPTi-250]
 PRAG_RACORD_JT_MAX_KVA = 400.0           # [DECIZIE proiectant 28.10.2026, Î13] peste → racord MT cu PT propriu (BLOCANT dacă schema nu are PT și nu există ATR JT)
@@ -777,7 +784,8 @@ PRAG_RACORD_JT_MAX_KVA = 400.0           # [DECIZIE proiectant 28.10.2026, Î13]
 # 14. Grup electrogen
 # =====================================================================================================
 GE_XD2_IMPLICIT = 0.12                   # reactanță subtranzitorie [u.r.] [practică, raport #101] tipic 0,10…0,15
-GE_IK_SUSTINUT_MULTIPLU = 3.0            # 3·In_G timp de 10 s cu excitație susținută (PMG/AREP) — numai dacă e declarat
+GE_IK_SUSTINUT_MULTIPLU = 3.0            # ≥ 3·In_G timp de ≥ 2 s cu excitație susținută (PMG/AREP) — numai dacă e declarat
+GE_IK_SUSTINUT_T_S = 2.0                 # [DECIZIE proiectant 28.10.2026] durata minimă a curentului de scurtcircuit susținut
 
 # Seria de puteri standard GE [kVA] (cataloage uzuale, regim PRP) [VERIFICAT: cataloage, raport #103] — ARBITRAJ F42
 GE_SN_KVA = [10, 15, 20, 30, 40, 50, 60, 80, 100, 125, 150, 200, 250, 300, 400, 500, 630, 800, 1000, 1250, 1500, 2000]
@@ -797,13 +805,13 @@ def ge_sn_minim(P_kW, cosfi=0.9):
 # =====================================================================================================
 PRIZA_RHO_IMPLICIT_OHM_M = 100.0         # [VERIFICAT: prudent față de ST 42 (80 Ω·m) — raport #107] (argilă 40…100,
                                          # nisip argilos 100…300 Ω·m — 1.RE-Ip 30-2004 anexa / STAS 12604/5); se MĂSOARĂ
-PRIZA_ELECTROD_L_IMPLICIT_M = 3.0        # electrod OL-Zn × 3 m — practica uzuală [VERIFICAT: ST 42, raport #108]
+PRIZA_ELECTROD_L_IMPLICIT_M = 3.0        # electrod OL-Zn × 3 m — practica uzuală (I7 / 1.RE-Ip 30); ATENȚIE: ST 42 Ed. U1 Rev. 0/2025 §3.5 c și tab. 1 dau electrod ø60 × 1,5 m (raport_b3 B3-29) — de decis de proprietar
 PRIZA_ELECTROD_D_IMPLICIT_M = 0.060      # țeavă OL-Zn ø60 × 3,6 mm [VERIFICAT: DEER ST 42 anexa 3 — raport #109; înainte 63,5 mm]
 PRIZA_N_IMPLICIT = 2
 PRIZA_A_PE_L_IMPLICIT = 2.0              # DECIZIE: distanța între electrozi a = 2·L (6 m la L = 3 m)
 PRIZA_PLATBANDA_LATIME_IMPLICIT_M = 0.04  # OL-Zn 40 × 4 mm
 PRIZA_PLATBANDA_GROSIME_IMPLICIT_M = 0.004
-PRIZA_ADANCIME_IMPLICIT_M = 0.8          # platbanda și capul electrozilor la 0,8 m (sub adâncimea de îngheț uzuală)
+PRIZA_ADANCIME_IMPLICIT_M = 0.8          # platbanda și capul electrozilor la 0,8 m (sub adâncimea de îngheț uzuală — STAS 6054-77: 0,70–0,80 m în câmpia de vest; în zonele mai reci se coboară)
 PRIZA_N_MAX = 30                         # dimensionarea automată se oprește la 30 de electrozi (în linie)
 PRIZA_RHO_MAX_OHM_M = 10000.0            # DECIZIE: peste → rocă, priză specială (V10)
 PRIZA_REZERVA_PLATBANDA = 0.10           # +10 % la lungimea platbandei în lista de materiale
@@ -820,7 +828,7 @@ PRIZA_PSI_PLATBANDA_IMPLICIT = 3.5
 PRIZA_L_RACORD_IMPLICIT_M = 5.0          # v1.3 R5 (M5-1): platbanda = (n − 1)·a + racordul la piesa de separație (~5 m)
 # Manoperă orientativă pe unitate [ore] (v1.3 R5, minore) — DECIZIE, ordin de mărime din normele de deviz uzuale
 # (baterea manuală a electrodului 3 m, montaj platbandă în șanț, sudură, săpătură manuală 0,4 × 0,8 m) [NEVERIFICAT]
-PRIZA_ORE_U = {"electrod": 0.8, "platbanda_m": 0.1, "piesa_separatie": 0.5, "sudura": 0.3, "vopsea_kg": 0.5,
+PRIZA_ORE_U = {"electrod": 0.8, "platbanda_m": 0.17, "piesa_separatie": 0.5, "sudura": 0.3, "vopsea_kg": 0.5,
                "sapatura_m": 0.6}
 # Limite Rp [Ω]: 4 Ω la branșament / tablou / prosumator / CEF JT / GE [DECIZIE proiectant 28.10.2026, Î8 — utilizare și
 # branșament 4 Ω]. PT și CEF cu PT propriu (priză comună MT/JT): „conform ANRE” [Î8] — vezi PRIZA_PT_ANRE; normele ANRE
@@ -945,7 +953,7 @@ SPD_T2_LOCUINTA = {"tip": "T2", "In_kA": 20, "Imax_kA": 40, "Up_kV": 1.5, "Uc_V"
 # v1.6 (runda 4b): protecția de rezervă a SPD-ului T2 (F2) — DECIZIE după fișele uzuale ale SPD T2 In 20 kA
 # (rezervă admisă MCB C ≤ 25…32 A sau gG ≤ 32…125 A) [NEVERIFICAT pe fișa SPD-ului ales]: MCB C25, limitat la In Q
 # branșament (nu peste protecția din amonte); poli = poli SPD
-LOCUINTA_SPD_REZERVA = {"tip": "MCB", "In_A": 25, "curba": "C"}
+LOCUINTA_SPD_REZERVA = {"tip": "MCB", "In_A": 40, "curba": "C"}   # [VERIFICAT: SE-SPD p. 388 Imax 40 kA → C40; DEHN 952 110 — raport_b3]
 # v1.6 (N2): bugetul de ΔU al coloanei C2 (BMPM/BMPT → TE) — DECIZIE: coloana se mărește întâi până la ≤ 1,5 %, ca
 # circuitele finale să rămână la 1,5 / 2,5 mm² (rămân 1,5 % iluminat / 3,5 % forță pentru circuite, I7-2011 art. 5.2.5)
 LOCUINTA_DU_COLOANA_BUGET_PCT = 1.5
@@ -982,21 +990,17 @@ LOCUINTA_VE_DDR_IMPLICIT = "A"
 NEVERIFICAT = {
     # Rămân aici doar pozițiile „NU SE POATE VERIFICA PUBLIC” din verificarea din 28.10.2026 (standard cu plată / document
     # inaccesibil) — valoarea e cea din practica de proiectare, confirmată de verificator ca plauzibilă.
-    "IZ Al 16 mm² (toate metodele)": "[P] tabelează Al de la 25 mm²; C/E/C-XLPE/E-XLPE din tab. simplificat C.52.1 [SE2], D1/D2 extrapolat "
-                                     "cu raportul Al/Cu de la 25 mm² și rotunjit în jos (valoare derivată, raport #14)",
-    "IZ Cu B2": "metoda B2 (tub pe/în perete) din IEC 60364-5-52 tab. B.52.2–B.52.5 — verificată încrucișat cu tab. C.52.1 "
-                "[SE2] (raport #16), de confirmat pe SR HD 60364-5-52:2011",
     "TRAFO uk": "4 % ≤ 630 kVA / 6 % ≥ 800 kVA după SR EN 50588-1 (standard cu plată; practică, raport #55)",
     "TRAFO_SIGURANTA_MT_A": "orientativ (SIBA / SM6 / ABB), tabelul producătorului celulei (raport #58)",
     "TC_CONSUM_CONTOR_VA": "1,0 VA majorant (IEC 62053-22) când fișa contorului lipsește (raport #71)",
-    "K_GRUP_F_DISTANTAT, N_PARALEL_MAX_MONOPOLAR": "SR HD 60364-5-52 tab. B.52.21 (practică, raport #17)",
-    "TIP_CABLU C2XABY": "denumire comercială din ofertele producătorilor RO (ST 80-6 acoperă doar PVC; raport #9)",
+    "N_PARALEL_MAX_MONOPOLAR": "max. 6 sisteme monopolare în paralel pe fază (DECIZIE; B.52.21 treflă pat perforat 2·De, max. 3 sisteme/pat)",
+    "TIP_CABLU C2XAbY": "denumire comercială din ofertele producătorilor RO (ST 80-6 acoperă doar PVC; raport #9)",
     "GE_XD2_IMPLICIT": "tipic 0,10…0,15 (fișe alternatoare, raport #101)",
-    "IM_TM_MIN_A": "Im = max(10·In; 500 A) la In ≤ 50 A — valoarea exactă din fișa MCCB (raport #29)",
     "GG_I2T_TOTAL_FACTOR": "I²t total ≈ 2 × I²t prearc (practică, raport #44)",
-    "PRIZA_PSI_ZONE / PRIZA_PSI_IMPLICIT": "ψ_e = 1,4…1,8 după 1.RE-Ip 30-2004 (inaccesibil, raport #113); împărțirea pe zone "
-                                           "I/II/III și 1,6 implicit sunt DECIZII de notare",
-    "PRIZA_PSI_PLATBANDA_ZONE": "ψ_pl = 4,5 / 3,5 / 2,5 (zone I/II/III) pentru platbandă la 0,5…0,8 m (raport #114)",
+    "PRIZA_PSI_ZONE / PRIZA_PSI_IMPLICIT": "acoperitor față de tabelul clasic PUE/Karyakin, zona III (ψ_e 1,2–1,5) — [URG] tab. 1.3; "
+                                           "de confirmat pe 1.RE-Ip 30-2004 (necitit)",
+    "PRIZA_PSI_PLATBANDA_ZONE": "acoperitor față de tabelul clasic PUE/Karyakin, zona III (ψ_pl 1,6–3,2) — [URG] tab. 1.3; "
+                                "de confirmat pe 1.RE-Ip 30-2004 (necitit)",
     "PRIZA_L_RACORD_IMPLICIT_M": "5 m racord platbandă → piesa de separație (DECIZIE, depinde de amplasament)",
     "PRIZA_ORE_U": "ore de manoperă orientative pe unitate (DECIZIE; în deviz se folosesc normele de deviz)",
     "PRIZA_R_LIMITA_OHM['pt']": "PT cu priză comună MT/JT „conform ANRE” (Î8): ANRE nu dă o valoare unică (rezultă din "
@@ -1004,15 +1008,13 @@ NEVERIFICAT = {
                                 "cu OD / ATR (vezi PRIZA_PT_ANRE)",
     "DDR_T_ECHIVALENT_S": "DDR tip S tratat ca temporizare echivalentă 0,15 s (DECIZIE, coerent cu SR EN 61008-1 tab. 1)",
     "LOCUINTA_RECEPTORI": "puteri, curbe, calibre, secțiuni și lungimi implicite pe receptor — practică uzuală (raport #123)",
-    "LOCUINTA_INC_KA": "Inc RCCB / Icc condiționat IS 6/10 kA cu protecția din amonte — tabelele producătorului (raport #129)",
+    "LOCUINTA_INC_KA": "Icc condiționat IS 6/10 kA cu protecția din amonte — tabelele producătorului (raport #129); partea RCCB verificată: 4P + amonte curba D → 4,5 kA [HAG, raport_b3]",
     "LOCUINTA_COSFI": "cosφ mediu 0,95 al unei locuințe (DECIZIE, raport #125)",
-    "LOCUINTA_SPD_REZERVA": "MCB C25 ca protecție de rezervă SPD T2 — „conform fișă SPD” (raport #134)",
-    "LOCUINTA_S_MAX_CIRCUIT_DU_MM2": "plafonul de 16 mm² al măririi pentru ΔU a circuitelor finale ale locuinței (DECIZIE)",
+        "LOCUINTA_S_MAX_CIRCUIT_DU_MM2": "plafonul de 16 mm² al măririi pentru ΔU a circuitelor finale ale locuinței (DECIZIE)",
     "LOCUINTA_TD_P_CALIBRU": "r8b DECIZIE: circuit casnic al unui tablou secundar dat doar prin calibru → în bilanțul TD "
                              "intră puterea implicită a receptorului (LOCUINTA_RECEPTORI), plafonată la U·In·cosφ; TD "
                              "numai cu receptoare casnice → ks LOCUINTA_KS_GENERAL (ca la TE), altfel ks IEC 61439-2",
     "DENUMIRE_CABLU": "r8b: material / izolație din denumirea comercială (DIN N…/NA…, RO C…/AC…) — de confirmat pe fișă",
-    "K_GRUP_D2[0.5][16]": "sursa [SE1] tipărea 0,38 (greșeală evidentă); s-a folosit 0,68 din [P]",
 }
 
 # Deciziile proiectantului din 28.10.2026 (teste/verificare_norme/raspunsuri_proiectant.md) — afișabile în memoriu.

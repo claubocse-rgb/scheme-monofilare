@@ -273,6 +273,73 @@ def _val(v, k=None):
     return "" if v is None else str(v)
 
 
+def _cap_e2(model, r, nr):
+    """E2: capitolul „Măsuri și evaluări suplimentare” — protecția în regim GE, limitarea la PCC, evaluarea SPD,
+    pierderile în cabluri și producția estimată (PV). Ultimul capitol: numerotarea celorlalte nu se schimbă."""
+    from . import documente_protectii as dp, documente_tabele as dt, pvgis
+    rz = r.get("rezultat") if isinstance(r.get("rezultat"), dict) else {}
+    calc = model.get("calc") or {}
+    o = []
+    ge_p = rz.get("protectie_regim_GE")
+    if isinstance(ge_p, dict):
+        if ge_p.get("solutie"):
+            o.append(f"<h3>Protecția la contact indirect în regim GE</h3><p>Soluția aleasă: <b>{_e(ge_p['titlu'])}</b>. "
+                     f"{_e(ge_p.get('implica'))} Pe planșă: {_e(ge_p.get('desen'))}</p>")
+        else:
+            o.append("<h3>Protecția la contact indirect în regim GE</h3><p class='stop'>Neleasă — alegeți una dintre "
+                     "soluții:</p><ul>" + "".join(f"<li><b>{_e(x['titlu'])}</b> — când: {_e(x['cand'])} Implică: "
+                                                  f"{_e(x['implica'])}</li>" for x in ge_p.get("optiuni") or []) + "</ul>")
+    pcc = rz.get("limitare_PCC")
+    if isinstance(pcc, dict) and pcc.get("Sn_kVA"):
+        if pcc.get("P_kW"):
+            o.append(f"<h3>Limitarea puterii la punctul de racord (PCC)</h3><p>Sn trafo {_n(pcc['Sn_kVA'], 0)} kVA &lt; S "
+                     f"invertoare + PCS {_n(pcc['S_necesar_kVA'])} kVA: puterea la PCC se limitează la <b>{_n(pcc['P_kW'])} kW</b> "
+                     f"(S = {_n(pcc.get('S_kVA'))} kVA la cosφ {_n(pcc['cosfi'], 2)}) cu EMS / controller de putere, TC + "
+                     f"analizor de rețea la PCC și comandă spre invertoare / PCS. Propunerea automată: {_e(pcc['formula'])} = "
+                     f"{_n(pcc['propunere_kW'], 0)} kW. Limitarea se confirmă prin ATR.</p>")
+        else:
+            o.append(f"<h3>Limitarea puterii la punctul de racord (PCC)</h3><p class='stop'>Sn trafo {_n(pcc['Sn_kVA'], 0)} kVA "
+                     f"&lt; S {_n(pcc['S_necesar_kVA'])} kVA: alegeți un trafo mai mare sau limitați puterea la PCC (propus "
+                     f"{_n(pcc['propunere_kW'], 0)} kW = {_e(pcc['formula'])}).</p>")
+    try:
+        ev = dp.evaluare_spd(calc, model)
+        o.append(f"<h3>Protecția la supratensiuni (SPD)</h3><p>{_e(ev['nota_memoriu'])}</p>"
+                 + ("<ul>" + "".join(f"<li>{_e(x)}</li>" for x in ev["motive"] + ev["neconcordante"]) + "</ul>"
+                    if ev["motive"] or ev["neconcordante"] else "")
+                 + (f"<p class='pasi'>Presupus: {_e('; '.join(ev['presupus']))}</p>" if ev["presupus"] else ""))
+    except Exception:
+        pass
+    if calc.get("tip_schema") in ("cef", "prosumator"):
+        pv = model.get("pvgis") if isinstance(model.get("pvgis"), dict) else None
+        if pv is None and isinstance(calc.get("productie"), dict) and calc["productie"].get("kWh_kWp_an") and calc.get("kWp"):
+            # interfața salvează rezultatul PVGIS / valoarea manuală în calc.productie
+            pv = pvgis.din_valoare(calc["productie"]["kWh_kWp_an"], calc["kWp"])
+            pv["sursa"] = calc["productie"].get("sursa") or pv["sursa"]
+            if calc["productie"].get("unghi") is not None:
+                pv["parametri"] = {"unghi": calc["productie"]["unghi"], "azimut": calc["productie"].get("azimut", 0)}
+        y = (pv or {}).get("kWh_kWp_an") or calc.get("productie_specifica_kWh_kWp")
+        if pv and not pv.get("necesita_valoare"):
+            o.append(f"<h3>Producția estimată</h3><p>{_e(pvgis.paragraf_memoriu(pv, calc.get('kWp')))}</p>")
+        elif y and calc.get("kWp"):
+            o.append(f"<h3>Producția estimată</h3><p>{_e(pvgis.paragraf_memoriu(pvgis.din_valoare(y, calc['kWp'])))}</p>")
+        try:
+            pc = dt.pierderi_cabluri(model, r, calc, y)
+            if pc.get("aplicabil"):
+                o.append("<h3>Pierderi de putere în cabluri</h3><p>"
+                         + (f"La puterea nominală: c.c. {_n(pc['cc']['P_pierderi_kW'], 2)} kW ({_n(pc['cc']['pct'], 2)} %), "
+                            if pc["cc"]["pct"] is not None else "La puterea nominală: c.c. necalculat (kWp nedeclarat), ")
+                         + f"c.a. {_n(pc['ca']['P_pierderi_kW'], 2)} kW ({_n(pc['ca']['pct'], 2)} %). Energie anuală pierdută "
+                         f"estimată ≈ {_n(pc['energie_pierduta_kWh']['total'], 0)} kWh/an "
+                         f"({_n(pc['energie_pierduta_pct'], 2)} % din producție). Metoda: {_e(pc['metoda'])}.</p>"
+                         + ("<ul>" + "".join(f"<li>{_e(x)}</li>" for x in pc["avertismente"]) + "</ul>" if pc["avertismente"] else "")
+                         + (f"<p class='pasi'>Presupus: {_e('; '.join(pc['presupus']))}</p>" if pc["presupus"] else ""))
+        except Exception:
+            pass
+    if not o:
+        return []
+    return [f"<h2>{nr}. Măsuri și evaluări suplimentare</h2>"] + o
+
+
 def genereaza_html(model, r):
     k = model.get("cartus") or {}
     calc = model.get("calc") or {}
@@ -380,5 +447,6 @@ def genereaza_html(model, r):
     o += [f"<li>{_e(x)}</li>" for x in r.get("pasi", [])]
     o.append("</ol><p class='pasi'>Date normative: SR HD 60364-4-41, -4-43, -5-52:2011, -5-54; I7-2011; SR EN 60909-0; ST 4-JT Rev. 3/2024, "
              "ST 3-JT (DEER). Valorile marcate „presupus” trebuie confirmate cu datele din ATR / fișele producătorilor.</p>")
+    o += _cap_e2(model, r, cap_v + 2)
     o.append("</body></html>")
     return "\n".join(o)

@@ -32,8 +32,9 @@ se poate forța afară cu `"in_carcasa": false`. O plecare cu `copii` este un ta
 import math
 from .canvas import *
 from . import symbols as S
+from . import desen_e2  # noqa: F401  (E2: straturile noi — conductoare colorate, tablou, curbe)
 
-FORMATS = {"A3": (420.0, 297.0), "A2": (594.0, 420.0), "A1": (841.0, 594.0)}
+FORMATS = {"A3": (420.0, 297.0), "A2": (594.0, 420.0), "A1": (841.0, 594.0), "A4": (297.0, 210.0)}
 GAP = 4.0
 CABLE_SEG = 22.0          # lungimea segmentului de cablu (cu marcaj) între cutie și primul aparat
 BOX_H = 12.0
@@ -101,6 +102,8 @@ class Layout:
         self._comp = {}
         self.meta = {"carcase": [], "obiecte": [], "legaturi": [], "poz": [], "scara": 1.0}
         self._cabluri = []      # etichete de cablu amânate până se cunosc carcasele
+        self._titluri = []      # E2: titlurile carcaselor (texte, x1, x2, y_sus) — repoziționate la „racord sus”
+        self.H_REV = 0.0        # E2: înălțimea tabelului de revizii de deasupra cartușului
 
     # ------------------------------------------------------------ public
     def build(self) -> Canvas:
@@ -108,10 +111,21 @@ class Layout:
         c.rect(5, 5, self.w - 10, self.h - 10, "TABEL")
         c.rect(10, 10, self.w - 20, self.h - 20, "CHENAR")
         self._calc_note()
+        self.H_REV = _h_revizii(self.m)
         i0 = len(c.items)
-        self._schema()
-        self._muta_ref_laterale(i0)
-        self._scaleaza(i0, marire=self.m.get("format", "A3") in ("A2", "A1"))
+        sp = self.m.get("desen_special")
+        if isinstance(sp, dict) and sp.get("tip"):
+            # E2: planșe desenate direct (stringuri IE 07, TE de interfață multifilar IE 09, curbe timp-curent, ușa tabloului)
+            from . import desen_e2
+            self.x_right = (self.w - 10 - 164) if (self.m.get("lista_auto", True) or self.m.get("legenda", True)) else self.w - 24
+            self.kx_ky = (1.0, 1.0)
+            desen_e2.deseneaza(self, sp)
+        else:
+            self._schema()
+            self._muta_ref_laterale(i0)
+            self._scaleaza(i0, marire=self.m.get("format", "A3") in ("A2", "A1"))
+            if racord_sus(self.m):
+                self._rastoarna(i0)
         self.meta["schema_bbox"] = _bbox_items(c.items[i0:])
         self.meta["zona_schema"] = (15.0, (self.note_top + 6 if self.m.get("note") else 15.0), self.x_right - 2, self.h - 15)
         for mat in self.m.get("materiale") or []:      # cabluri, conductoare PE (U.M. m) — SPEC §E.1 pct. 5
@@ -123,7 +137,10 @@ class Layout:
         if self.m.get("legenda", True): self._legenda()
         self._tabel_pi()
         self._note()
-        self._cartus()
+        if self.m.get("cartus_mini"):
+            self._cartus_mini()
+        else:
+            self._cartus()
         if not self.m.get("blocaj"):
             # r9 (industrial #14, S12): ștampila apare pe ORICE planșă cu BLOCANT — și pe cele găsite doar la verificarea
             # desenului (V57 / V82 / V83, topologia), nu numai pe blocajele de calcul puse de constructor
@@ -150,10 +167,14 @@ class Layout:
             hh = min(hh, hh * (w - 8) / max(tw0, 0.1))
             x0, y0 = self.w - 10 - 158, self.h - 18.4          # deasupra titlului listei, în afara zonei schemei
             if not self.m.get("lista_auto", True):
-                y0 = 11 + 67.7 + 1.5          # lista ca anexă: schema ocupă și dreapta sus — ștampila deasupra cartușului
+                y0 = 11 + 67.7 + self.H_REV + 1.5          # lista ca anexă: schema ocupă și dreapta sus — ștampila deasupra cartușului
             c.rect(x0, y0, w, 5.6, "COMANDA")
             c.text(x0 + w / 2, y0 + 1.8, t, hh, True, align="middle", layer="COMANDA")
             self.meta["blocaj"] = (x0, y0, x0 + w, y0 + 5.6)
+        if self.m.get("filigran"):
+            # E2: filigranul variantei gratuite — în banda dintre cele două rame, jos; nu e element al desenului
+            # (nu intră în coliziuni / topologie), îl emit render_svg și render_dxf (strat „FILIGRAN”)
+            self.meta["filigran"] = str(self.m["filigran"])
         c.meta = self.meta
         return c
 
@@ -816,6 +837,14 @@ class Layout:
             yb = y_r
 
     def _titlu_carcasa(self, x1, x2, y2, titlu, sub):
+        """titlul carcasei (înregistrat pentru orientarea „racord sus”: după răsturnare titlul revine sus)"""
+        n0 = len(self.c.items)
+        self._titlu_carcasa0(x1, x2, y2, titlu, sub)
+        txt = [it for it in self.c.items[n0:] if isinstance(it, Text)]
+        if txt:
+            self._titluri.append((txt, x1, x2, y2))
+
+    def _titlu_carcasa0(self, x1, x2, y2, titlu, sub):
         """titlul carcasei, sus-stânga, fără să traverseze conductoarele care intră în carcasă:
         subtitlul trece pe rândul al doilea sau se micșorează dacă nu încape până la prima coloană"""
         c = self.c
@@ -847,6 +876,8 @@ class Layout:
         if bb is None: return
         X1, X2 = 15.0, self.x_right - 2
         Y1, Y2 = (self.note_top + 6 if self.m.get("note") else 15.0), self.h - 15
+        if self.m.get("cartus_mini"):
+            Y1 = 20.0
         fits = bb[0] >= X1 and bb[2] <= X2 and bb[1] >= Y1 - 1 and bb[3] <= Y2 + 3
         kx, ky = (X2 - X1) / max(bb[2] - bb[0], 1), (Y2 - Y1) / max(bb[3] - bb[1], 1)
         self.kx_ky = (kx, ky)
@@ -855,7 +886,16 @@ class Layout:
         if not fits and k >= 1.0 and not marire: k = 1.0
         ox = (X1 + X2) / 2 - k * (bb[0] + bb[2]) / 2
         oy = Y2 - k * bb[3]
-        c.items[i0:] = [transform_item(it, k, ox, oy) for it in items]
+        noi = [transform_item(it, k, ox, oy) for it in items]
+        c.items[i0:] = noi
+        self._tr = (k, ox, oy)
+        # referințele păstrate la texte (etichete laterale, titluri de carcasă) trec pe obiectele transformate
+        harta = {id(a_): b_ for a_, b_ in zip(items, noi)}
+        for nume_l in ("_ref_lat", "_ref_contor"):
+            if hasattr(self, nume_l):
+                setattr(self, nume_l, [(harta.get(id(t), t), bb_) for t, bb_ in getattr(self, nume_l)])
+        self._titluri = [([harta.get(id(t), t) for t in txt], x1 * k + ox, x2 * k + ox, y2 * k + oy)
+                         for txt, x1, x2, y2 in self._titluri]
         T = lambda b: (b[0] * k + ox, b[1] * k + oy, b[2] * k + ox, b[3] * k + oy)
         P = lambda p: (p[0] * k + ox, p[1] * k + oy)
         for key in ("carcase", "obiecte"):
@@ -1041,6 +1081,8 @@ class Layout:
             if l.get("ref"):
                 if t == "contor":       # la dreapta casetei (deasupra ei poate fi o casetă laterală din rândul de sus, ex. PI)
                     c.text(cx + w / 2 + 1.5, yc + 2.5, l["ref"], 2.6, True)
+                    if not hasattr(self, "_ref_contor"): self._ref_contor = []
+                    self._ref_contor.append((c.items[-1], lb))
                 else:
                     c.text(cx, yc + (9.0 if t == "cutie" else 4.0), l["ref"], 2.6, True, align="middle")
                     if t == "cutie":
@@ -1176,7 +1218,7 @@ class Layout:
         y -= hdr; ytop = y
         # spațiul disponibil până deasupra cartușului (+ legendă); dacă nu încape, se compactează: întâi mai puține
         # rânduri pe poziție, apoi corp de literă mai mic
-        y_lim = 11 + 67.7 + (26 if self.m.get("legenda", True) else 4) + self._h_tabel_pi()
+        y_lim = 11 + 67.7 + self.H_REV + (29 if self.m.get("legenda", True) else 4) + self._h_tabel_pi()
         fh, step, max_l = 1.9, 3.1, 4
         def _inalt(fh_, step_, ml):
             mc = int((cols[3] - cols[2] - 3) / (CH * fh_ / 2.1)); tot = 0
@@ -1272,13 +1314,16 @@ class Layout:
         else:
             y = self.h - 20
         h_tot = self._h_tabel_pi()
-        jos = 11 + 67.7 + 1
+        jos = 11 + 67.7 + self.H_REV + 1
         k_r = 1.0
         if y - h_tot < jos:
             # nu încape sub legendă: rândurile se strâng (cel mult la 60 %), altfel tabelele urcă peste spațiul listei
-            k_r = max(0.6, (y - jos) / max(h_tot, 1))
-            if y - k_r * h_tot < jos:
-                y = jos + k_r * h_tot
+            # (antetele și sursele nu se strâng — numai rândurile)
+            h_rand = sum(self.PI_RAND * len(t["randuri"]) for t in tabele)
+            h_fix = h_tot - h_rand
+            k_r = max(0.6, min(1.0, (y - jos - h_fix) / max(h_rand, 1)))
+            if y - (h_fix + k_r * h_rand) < jos:
+                y = jos + h_fix + k_r * h_rand
         rand = self.PI_RAND * k_r
         fz = 1.9 * min(1.0, k_r * 1.1)
         for tp in tabele:
@@ -1395,7 +1440,7 @@ class Layout:
         L(XR + 19, 13, XR + 19, 25)
         T(XR + 1, 3.0, "FAZA:", 1.7); T(XR + 21, 11.4, k.get("faza", ""), 6.0, True, al="middle", maxw=W - XR - 10)
         T(XR + 1, 16.0, "PLANȘA NR.", 1.6, maxw=17); T(XR + 9.5, 23.0, k.get("plansa", ""), 3.4, True, al="middle", maxw=17)
-        T(XR + 20, 16.0, "NR. REV.", 1.6, maxw=13); T(XR + 26.5, 23.0, str(k.get("rev", "")), 3.4, True, al="middle", maxw=13)
+        T(XR + 20, 16.0, "NR. REV.", 1.6, maxw=13); T(XR + 26.5, 23.0, rev_curenta(self.m), 3.4, True, al="middle", maxw=13)
         cell(XR + 1, 25, 6, "SCARA:", 1.8); cell(XR + 15, 25, 6, k.get("scara", ""), 1.9, maxw=W - XR - 16)
         cell(XR + 1, 31, 6, "FORMAT:", 1.8); cell(XR + 15, 31, 6, "ISO " + self.m.get("format", "A3"), 1.9)
         cell(XR + 1, 37, 6, "DATA:", 1.8); cell(XR + 11, 37, 6, k.get("data", ""), 1.9, maxw=W - XR - 12)
@@ -1403,6 +1448,252 @@ class Layout:
         T(XR + 1, 54.0, "ȘTAMPILĂ ATESTAT", 1.5, maxw=W - XR - 2)
         T(W / 2, 66.6, k.get("footer", "Acest plan este proprietatea proiectantului de specialitate și nu poate fi reprodus, copiat sau transmis fără acord scris."),
           1.7, True, al="middle", maxw=W - 3)
+        self._revizii(x0, y0 + H, W)
+
+    def _cartus_mini(self):
+        """E2 (#4): antetul paginii „schemă de tablou” de pe ușă — o bandă jos: tabloul, proiectul, revizia, data"""
+        c = self.c; k = self.m.get("cartus", {}) or {}
+        x0, y0, w = 10.0, 10.0, self.w - 20
+        c.rect(x0, y0, w, 7.0, "CARTUS", fill="#fff")
+        st = k.get("denumire1", "SCHEMĂ TABLOU")
+        c.text(x0 + 2, y0 + 2.4, st, fit_h(st, 2.6, w * 0.45, True), True)
+        dr = " · ".join(x for x in ((k.get("titlu") or k.get("denumire2") or ""), (k.get("beneficiar") or ""),
+                                      (f"nr. pr. {k['nr_pr']}" if k.get("nr_pr") else ""), f"rev. {rev_curenta(self.m)}",
+                                      (k.get("data") or ""), (k.get("proiectant") or "")) if x)
+        c.text(x0 + w - 2, y0 + 2.4, dr, fit_h(dr, 1.9, w * 0.5), align="right")
+
+    REV_RAND = 3.6
+    REV_COL = ((0.0, "Rev."), (12.0, "Data"), (32.0, "Descriere"), (112.0, "Întocmit"), (135.0, "Verificat"))
+
+    def _revizii(self, x0, y0, W):
+        """E2 (#5): tabelul de revizii lipit deasupra cartușului — antetul jos, reviziile în sus (cea curentă sus);
+        datele din `model.revizii[]` = [{rev, data, descriere, intocmit, verificat}]"""
+        rv = revizii(self.m)
+        if not rv:
+            return
+        c, rh = self.c, self.REV_RAND
+        n = len(rv)
+        H = rh * (n + 1)
+        c.rect(x0, y0, W, H, "CARTUS", fill="#fff")
+        c.rect(x0, y0, W, rh, "TABEL", fill="#f3f3f3")
+        for i in range(1, n + 1):
+            c.line((x0, y0 + rh * i), (x0 + W, y0 + rh * i), "TABEL")
+        xs = [cx for cx, _ in self.REV_COL] + [W]
+        for cx in xs[1:-1]:
+            c.line((x0 + cx, y0), (x0 + cx, y0 + H), "TABEL")
+        for (cx, t), cx2 in zip(self.REV_COL, xs[1:]):
+            c.text(x0 + cx + 1.0, y0 + 1.0, t, min(1.7, 1.7 * (cx2 - cx - 2) / max(text_width(t, 1.7, True), 0.1)), True)
+        chei = ("rev", "data", "descriere", "intocmit", "verificat")
+        for j, r in enumerate(rv):
+            yb = y0 + rh * (j + 1) + 1.0
+            for (cx, _), cx2, k_ in zip(self.REV_COL, xs[1:], chei):
+                t = str(r.get(k_) or "")
+                if not t:
+                    continue
+                h = min(1.8, 1.8 * (cx2 - cx - 2) / max(text_width(t, 1.8, k_ == "rev"), 0.1))
+                c.text(x0 + cx + 1.0, yb, t, h, k_ == "rev")
+        self.meta["revizii_bbox"] = (x0, y0, x0 + W, y0 + H)
+
+    # ------------------------------------------------------------ E2 (#3): orientarea „racord sus”
+    def _rastoarna(self, i0):
+        """oglindește vertical schema (elementele de la i0): racordul / rețeaua sus, invertoarele jos (convenția
+        proiectantului la CEF și prosumator). Geometria se oglindește; textele NU — fiecare grup de rânduri (ref +
+        spec, titlu + subtitlu) se mută în bloc pe poziția oglindită, cu ordinea rândurilor păstrată; textele rotite
+        (de-a lungul cablurilor) își schimbă alinierea. Meta (carcase, obiecte, legături, poziții) se oglindește la fel."""
+        c = self.c
+        items = c.items[i0:]
+        bb = _bbox_items(items)
+        if bb is None:
+            return
+        A = bb[1] + bb[3]
+        # nu se răstoarnă dacă partea lată a schemei (de obicei sursele) ar ajunge peste cartuș / tabelul de revizii
+        cx1, cy2 = self.w - 11 - 158.0 - 2, 11 + 67.7 + self.H_REV + 2
+        for it in items:
+            b_ = (text_bbox(it) if isinstance(it, Text) else block_bbox(it, texts=True) if isinstance(it, BlockRef)
+                  else prim_bbox(it))
+            if b_ and b_[2] > cx1 and A - b_[3] < cy2:
+                return
+        top = []
+        for it in items:
+            if isinstance(it, Text):
+                top.append(it)
+            elif isinstance(it, BlockRef):
+                pr = [_oglinda_geom(p, 0.0) for p in it.prims]
+                _oglinda_texte([p for p in pr if isinstance(p, Text)], 0.0)
+                it.prims = pr
+                it.p = (it.p[0], A - it.p[1])
+            else:
+                _oglinda_geom(it, A, inplace=True)
+        _oglinda_texte(top, A)
+        F = lambda b: (b[0], A - b[3], b[2], A - b[1])
+        P = lambda p: (p[0], A - p[1])
+        for key in ("carcase", "obiecte"):
+            for o in self.meta[key]:
+                if o.get("bbox"): o["bbox"] = F(o["bbox"])
+        for l in self.meta["legaturi"]:
+            for f in ("de_xy", "spre_xy", "sageata"):
+                if l.get(f): l[f] = P(l[f])
+            for f in ("de_bbox", "spre_bbox"):
+                if l.get(f): l[f] = F(l[f])
+        self.meta["poz"] = [(P(p), r) for p, r in self.meta["poz"]]
+        self.meta["orientare"] = "racord_sus"
+        # etichetele casetelor laterale (P1, SM …) care, oglindite, ating alt text: primul loc liber lângă casetă
+        tx = [(it, text_bbox(it)) for it in items if isinstance(it, Text)] + \
+             [(p, text_bbox(p, it.p[0], it.p[1], it.scale)) for it in items if isinstance(it, BlockRef)
+              for p in it.prims if isinstance(p, Text)]
+        cerc = [(p[0] - r, p[1] - r, p[0] + r, p[1] + r) for p, r in self.meta["poz"]]
+        k_, ox_, oy_ = getattr(self, "_tr", (1.0, 0.0, 0.0))
+        for t, (x1, y1, x2, y2) in getattr(self, "_ref_lat", []) + getattr(self, "_ref_contor", []):
+            x1, x2, y1, y2 = x1 * k_ + ox_, x2 * k_ + ox_, y1 * k_ + oy_, y2 * k_ + oy_
+            y1, y2 = A - y2, A - y1
+            def lovit():
+                b0 = text_bbox(t)
+                if any(bbox_overlap(b0, cb_, 0.2) for cb_ in cerc):
+                    return True
+                for o, ob in tx:
+                    if o is t:
+                        continue
+                    if bbox_overlap(b0, ob, 0.2):
+                        return True
+                return False
+            if not lovit():
+                continue
+            p0, al0 = t.p, t.align
+            for p, al in (((x2 + 1.5, y2 - 3.2), "left"), ((x2 + 1.2, y2 + 0.8), "left"), ((x1 - 1.2, y2 + 0.8), "right"),
+                          ((x2 + 1.2, (y1 + y2) / 2 - 1.0), "left"), (((x1 + x2) / 2, y1 - 3.4), "middle")):
+                t.p, t.align = p, al
+                if not lovit():
+                    break
+            else:
+                t.p, t.align = p0, al0
+        # titlurile carcaselor: după oglindire ar sta jos în carcasă — revin sus (în interior, altfel deasupra ei)
+        for txt, x1, x2, _ in self._titluri:
+            car = next((k for k in self.meta["carcase"] if abs(k["bbox"][0] - x1) < 0.05 and abs(k["bbox"][2] - x2) < 0.05), None)
+            if car is None:
+                continue
+            cy1, cy2 = car["bbox"][1], car["bbox"][3]
+            ty1 = min(text_bbox(t)[1] for t in txt)
+            ids = {id(t) for t in txt}
+            for t in txt:
+                b = text_bbox(t)
+                d = b[1] - cy1            # distanța de la marginea de jos (oglinda distanței față de marginea de sus)
+                for dy in ((cy2 - d) - b[3] + (b[3] - b[1]) - (b[3] - b[1]),          # în interior, sus
+                           (cy2 + 1.6 + (b[1] - ty1)) - b[1]):                      # deasupra carcasei
+                    if self._liber([(t, dy)], ids, i0):
+                        t.p = (t.p[0], t.p[1] + dy)
+                        break
+
+    def _liber(self, mut, ids, i0):
+        """True dacă textele `mut` (text, dy) mutate nu ating nimic altceva din schemă"""
+        bxs = []
+        for t, dy in mut:
+            b = text_bbox(t)
+            bxs.append((b[0] - 0.4, b[1] + dy - 0.4, b[2] + 0.4, b[3] + dy + 0.4))
+        for it in self.c.items[i0:]:
+            if id(it) in ids:
+                continue
+            if isinstance(it, Text):
+                o = text_bbox(it)
+                if any(bbox_overlap(b, o) for b in bxs): return False
+            elif isinstance(it, BlockRef):
+                o = block_bbox(it, texts=True)
+                if o and any(bbox_overlap(b, o) for b in bxs): return False
+            elif isinstance(it, Circle):
+                o = prim_bbox(it)
+                if any(bbox_overlap(b, o) for b in bxs): return False
+            elif getattr(it, "layer", "") != "CARCASA":
+                for a, b2 in item_segments(it):
+                    if any(seg_hits_box(a, b2, b) for b in bxs): return False
+        return True
+
+
+# ---------------------------------------------------------------- E2: revizii, orientare, straturi noi
+TIPURI_RACORD_SUS = ("cef", "prosumator")
+
+
+def fit_h(s, h, maxw, bold=False):
+    return min(h, h * maxw / max(text_width(s or "", h, bold) * 1.04, 0.1))
+
+
+def racord_sus(m):
+    """E2 (#3): orientarea proiectantului — la CEF și prosumator racordul / rețeaua sus, invertoarele jos.
+    `orientare: "clasic"` păstrează desenul vechi (sursele sus); `"racord_sus"` o impune la orice tip."""
+    o = (m or {}).get("orientare")
+    if o in ("clasic", "jos", False):
+        return False
+    if o in ("racord_sus", "sus", True):
+        return True
+    return ((m or {}).get("calc") or {}).get("tip_schema") in TIPURI_RACORD_SUS and bool(m.get("plansa_pachet"))
+
+
+def revizii(m):
+    """lista reviziilor (cel mult ultimele 5) din `model.revizii[]` (sau `cartus.revizii`), fără rândurile goale"""
+    rv = (m or {}).get("revizii")
+    if not isinstance(rv, list):
+        rv = ((m or {}).get("cartus") or {}).get("revizii")
+    out = [r for r in rv or [] if isinstance(r, dict) and any(str(r.get(k) or "").strip() for k in
+                                                                 ("rev", "data", "descriere", "intocmit", "verificat"))]
+    return out[-5:]
+
+
+def _h_revizii(m):
+    n = len(revizii(m))
+    return Layout.REV_RAND * (n + 1) if n else 0.0
+
+
+def rev_curenta(m):
+    """numărul reviziei curente: ultima revizie din tabel (cu număr), altfel câmpul „rev” al cartușului"""
+    for r in reversed(revizii(m)):
+        if str(r.get("rev") or "").strip():
+            return str(r["rev"]).strip()
+    return str(((m or {}).get("cartus") or {}).get("rev", ""))
+
+
+def _oglinda_geom(it, A, inplace=False):
+    """oglindirea verticală y → A − y a unei primitive geometrice (textele se tratează separat)"""
+    from dataclasses import replace
+    F = lambda p: (p[0], A - p[1])
+    if isinstance(it, Line): new = dict(a=F(it.a), b=F(it.b))
+    elif isinstance(it, (Polyline, Solid)): new = dict(pts=[F(p) for p in it.pts])
+    elif isinstance(it, Rect): new = dict(p=(it.p[0], A - it.p[1] - it.h))
+    elif isinstance(it, (Circle, Ellipse)): new = dict(c=F(it.c))
+    else: return it
+    if inplace:
+        for k, v in new.items(): setattr(it, k, v)
+        return it
+    return replace(it, **new)
+
+
+def _oglinda_texte(texts, A):
+    """mută textele pe poziția oglindită (y → A − y) fără să le oglindească: rândurile aceluiași grup (aceeași
+    abscisă și aliniere, rânduri apropiate) se mută împreună, cu ordinea păstrată"""
+    simple, rot = [], []
+    for t in texts:
+        r = (t.rot or 0.0) % 360
+        if abs(r - 90) < 1 or abs(r - 270) < 1:
+            rot.append(t)
+        else:
+            simple.append(t)
+    for t in rot:
+        t.p = (t.p[0], A - t.p[1])
+        t.align = {"left": "right", "right": "left"}.get(t.align, t.align)
+    grupe = {}
+    for t in simple:
+        grupe.setdefault((t.align, round(t.p[0], 1)), []).append(t)
+    for lst in grupe.values():
+        lst.sort(key=lambda t: -t.p[1])
+        cl = [[lst[0]]]
+        for t in lst[1:]:
+            pr = cl[-1][-1]
+            if pr.p[1] - t.p[1] <= 1.9 * max(pr.h, t.h) + 0.3:
+                cl[-1].append(t)
+            else:
+                cl.append([t])
+        for g in cl:
+            bbs = [text_bbox(t) for t in g]
+            dy = A - min(b[1] for b in bbs) - max(b[3] for b in bbs)
+            for t in g:
+                t.p = (t.p[0], t.p[1] + dy)
 
 
 def _bbox_items(items):
@@ -1506,7 +1797,7 @@ def _layout(model: dict) -> "Layout":
                         "(și pe planșa IE 09.1/FV a pachetului de planșe).")
         model = dict(model, lista_auto=False, legenda=False, note=note, tabel_pi=None); L = Layout(model); L.build()
     # pe A2 / A1, o schemă lată și joasă (scara limitată de lățime) primește pas vertical mai mare, ca să ocupe și înălțimea
-    if model.get("format") in ("A2", "A1") or model.get("plansa_pachet"):
+    if model.get("format") in ("A2", "A1") or model.get("plansa_pachet") or model.get("cartus_mini"):
         vb = 1.0
         for _ in range(3):
             kx, ky = getattr(L, "kx_ky", (1, 1))

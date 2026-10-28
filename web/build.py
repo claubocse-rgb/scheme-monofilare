@@ -1,12 +1,24 @@
 """Construiește versiunea web (o pagină + worker Pyodide) din aceleași surse ca aplicația locală.
-Utilizare: python3 web/build.py DEST   — DEST primește index.html, config.js, worker.js, app_src.json, termeni.html, confidentialitate.html, fonts/, pyodide/, whl/.
-Fișierele Pyodide și roțile Python se iau din web/vendor/ (vezi web/README.md)."""
-import base64, json, pathlib, re, shutil, sys
+Utilizare: python3 web/build.py DEST [VENDOR] [--pagina] [--sursa]
+  DEST primește index.html, config.js, worker.js, app_src.zip.wasm, termeni.html, confidentialitate.html, beta.html,
+  robots.txt, _headers, fonts/, pyodide/, whl/. Fișierele Pyodide și roțile Python se iau din web/vendor/ (vezi web/README.md).
+E2 (găzduire Cloudflare, acces restricționat): codul nu se mai vede ca text în pagină — JS/CSS minificate, fără comentarii
+și fără sourcemaps; motorul Python vine compilat (.pyc pentru Python 3.12 = Pyodide 0.26, dacă există python3.12 pe
+mașina de build; altfel sursa fără comentarii / docstring-uri), într-o arhivă zip; pagina are `robots: noindex, nofollow`,
+fără titlu / descriere indexabile, iar robots.txt blochează tot. E doar o îngreunare: protecția reală e Cloudflare Access.
+--sursa = fără minificare (depanare)."""
+import base64, io, json, pathlib, re, shutil, subprocess, sys, zipfile
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import minif  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
-PAGINA = "--pagina" in sys.argv          # pagină de sine stătătoare (GitHub Pages): păstrează scheletul HTML
+PAGINA = "--pagina" in sys.argv          # pagină de sine stătătoare (GitHub Pages / Cloudflare): păstrează scheletul HTML
+SURSA = "--sursa" in sys.argv            # fără minificare (depanare)
+ROBOTS = '<meta name="robots" content="noindex, nofollow, noarchive">'
+PY_WEB = (3, 12)                          # Python-ul din Pyodide 0.26
 VENDOR = pathlib.Path(ARGS[1]) if len(ARGS) > 1 else WEB / "vendor"
 DEST = pathlib.Path(ARGS[0])
 
@@ -17,7 +29,10 @@ def main():
     src = {"app.py": (ROOT / "app.py").read_text(encoding="utf-8"), "web/web_api.py": (WEB / "web_api.py").read_text(encoding="utf-8")}
     for f in sorted((ROOT / "engine").rglob("*.py")):
         src[str(f.relative_to(ROOT))] = f.read_text(encoding="utf-8")
-    (DEST / "app_src.json").write_text(json.dumps(src, ensure_ascii=False), encoding="utf-8")
+    (DEST / "app_src.json").unlink(missing_ok=True)
+    zipb, fel = arhiva_python(src)
+    (DEST / "app_src.zip.wasm").write_bytes(zipb)
+    print("motorul:", fel)
     # 2. pagina: interfața locală, fără scheletul HTML (îl pune gazda), cu fonturile înglobate și puntea spre worker
     s = (ROOT / "static" / "index.html").read_text(encoding="utf-8")
     for tag in () if PAGINA else ("<!doctype html>", '<html lang="ro">', "<head>", '<meta charset="utf-8">',
@@ -49,20 +64,87 @@ html,body{overflow:hidden}
     shim = "<script>\n" + (WEB / "shim.js").read_text(encoding="utf-8") + "\n</script>\n"
     i = s.index("<script>")
     s = s[:i] + boot + shim + s[i:]
+    # fără titlu / descriere indexabile; noindex (în <head> la pagina de sine stătătoare, altfel la începutul fragmentului)
+    s = re.sub(r"<title>.*?</title>\s*", "", s, flags=re.S)
+    s = re.sub(r'<meta name="description"[^>]*>\s*', "", s)
+    s = s.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n' + ROBOTS, 1) if PAGINA else ROBOTS + "\n" + s
+    if not SURSA:
+        s = minif.html(s)
     (DEST / "index.html").write_text(s.strip() + "\n", encoding="utf-8")
-    shutil.copy(WEB / "worker.js", DEST / "worker.js")
-    # Termenii și Politica de confidențialitate (legături relative din pagină) + fonturile lor (url(fonts/…))
-    for f in ("termeni.html", "confidentialitate.html"):
+    w = (WEB / "worker.js").read_text(encoding="utf-8")
+    (DEST / "worker.js").write_text(w if SURSA else minif.js(w), encoding="utf-8")
+    # Termenii, Politica de confidențialitate, Condițiile de testare (legături relative din pagină) + fonturile lor (url(fonts/…))
+    for f in ("termeni.html", "confidentialitate.html", "beta.html"):
         if (ROOT / "static" / f).exists():
-            shutil.copy(ROOT / "static" / f, DEST / f)
+            t = (ROOT / "static" / f).read_text(encoding="utf-8")
+            if "noindex" not in t:
+                t = re.sub(r"(<meta charset=[^>]*>)", lambda m: m.group(1) + "\n" + ROBOTS, t, count=1, flags=re.I)
+            (DEST / f).write_text(t, encoding="utf-8")
     shutil.copytree(ROOT / "static" / "fonts", DEST / "fonts", dirs_exist_ok=True)
-    # 3. Pyodide + roți (publicate cu sufixul .wasm pentru arhive)
+    (DEST / "robots.txt").write_text("User-agent: *\nDisallow: /\n", encoding="utf-8")
+    # Cloudflare Pages: antetele pentru toate fișierele (noindex și pentru PDF / JSON / wasm)
+    (DEST / "_headers").write_text("/*\n  X-Robots-Tag: noindex, nofollow, noarchive\n  Referrer-Policy: no-referrer\n"
+                                   "  X-Content-Type-Options: nosniff\n", encoding="utf-8")
+    # 3. Pyodide + roți (publicate cu sufixul .wasm pentru arhive); fără sourcemaps
     for sub in ("pyodide", "whl"):
         (DEST / sub).mkdir(exist_ok=True)
         for f in (VENDOR / sub).iterdir():
+            if f.suffix == ".map":
+                continue
             nume = f.name + (".wasm" if f.suffix in (".whl", ".zip") else "")
-            shutil.copy(f, DEST / sub / nume)
+            if f.suffix in (".js", ".mjs"):
+                t = f.read_text(encoding="utf-8")
+                (DEST / sub / nume).write_text(re.sub(r"\n?//# sourceMappingURL=\S+\s*$", "\n", t), encoding="utf-8")
+            else:
+                shutil.copy(f, DEST / sub / nume)
     print("gata:", DEST)
+
+
+_COMPILEAZA = r"""
+import ast, importlib._bootstrap_external as be, io, json, sys, zipfile
+src = json.load(sys.stdin)
+def fara_docstring(t):
+    for n in ast.walk(t):
+        if isinstance(n, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and n.body \
+                and isinstance(n.body[0], ast.Expr) and isinstance(getattr(n.body[0], "value", None), ast.Constant) \
+                and isinstance(n.body[0].value.value, str):
+            n.body = n.body[1:] or [ast.Pass()]
+    return ast.fix_missing_locations(t)
+pyc = "--pyc" in sys.argv
+bio = io.BytesIO()
+with zipfile.ZipFile(bio, "w", zipfile.ZIP_DEFLATED) as z:
+    for cale, txt in sorted(src.items()):
+        t = fara_docstring(ast.parse(txt, cale))
+        if pyc:
+            cod = compile(t, cale, "exec", dont_inherit=True, optimize=0)
+            z.writestr(cale[:-3] + ".pyc", bytes(be._code_to_timestamp_pyc(cod, 0, 0)))
+        else:
+            z.writestr(cale, ast.unparse(t) + "\n")
+sys.stdout.buffer.write(bio.getvalue())
+"""
+
+
+def _python_web():
+    """un interpretor Python 3.12 (același bytecode ca Pyodide 0.26), dacă există pe mașina de build"""
+    if sys.version_info[:2] == PY_WEB:
+        return sys.executable
+    for n in ("python3.12", "python312"):
+        p = shutil.which(n)
+        if p:
+            return p
+    return None
+
+
+def arhiva_python(src):
+    """{cale: text} → (zip, descriere). Cu Python 3.12: doar .pyc (fără text); altfel sursa fără comentarii / docstring-uri."""
+    py = _python_web()
+    if py:
+        r = subprocess.run([py, "-I", "-c", _COMPILEAZA, "--pyc"], input=json.dumps(src).encode(), capture_output=True)
+        if r.returncode == 0:
+            return r.stdout, f"bytecode .pyc (Python {PY_WEB[0]}.{PY_WEB[1]}), {len(src)} module"
+        print("atenție: compilarea .pyc a eșuat, rămâne sursa fără comentarii:", r.stderr.decode()[-300:], file=sys.stderr)
+    r = subprocess.run([sys.executable, "-I", "-c", _COMPILEAZA], input=json.dumps(src).encode(), capture_output=True, check=True)
+    return r.stdout, f"sursă fără comentarii (fără .pyc), {len(src)} module"
 
 
 if __name__ == "__main__":

@@ -1434,7 +1434,7 @@ def _calculeaza(inp, j, cutie):
         if al.get("pozare_coloana"):
             bi["cablu"]["metoda"] = al["pozare_coloana"]
         else:
-            j.presupune("coloana C2 pozată în pământ (D1, CYABY) — pentru apartament / tablou în clădire declarați "
+            j.presupune("coloana C2 pozată în pământ (D1, CYAbY) — pentru apartament / tablou în clădire declarați "
                         "pozarea coloanei „în clădire” (B2, CYY-F)")
     if al.get("L_coloana_m") is None:
         bi["L_coloana_m"] = 15.0
@@ -1642,7 +1642,7 @@ def _calculeaza(inp, j, cutie):
                   aparat=f"Q general MCB C{In_g}", a=in_q_br, b=In_g)
         if q_br is not None:
             pr.selectivitate(q_br, qg, ik3_te, "Q general vs Q branșament", j)
-    # v1.6 (m-n2 / N4): protecția de rezervă a SPD-ului (F2) — MCB C25 (norme.LOCUINTA_SPD_REZERVA), nu peste
+    # v1.6 (m-n2 / N4): protecția de rezervă a SPD-ului (F2) — MCB C40 (norme.LOCUINTA_SPD_REZERVA, raport_b3), nu peste
     # Q general MCB / Q branșament; poli = poli SPD; Icu ≥ Ik3 la bara TE
     poli_spd = "1P+N" if retea == "mono" else "3P+N"
     rz = norme.LOCUINTA_SPD_REZERVA

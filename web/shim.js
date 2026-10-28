@@ -70,7 +70,7 @@ window.SM_WEB = true;
     else if (ArrayBuffer.isView(b)) bytes = new Uint8Array(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
     else bytes = new TextEncoder().encode(String(b));
     const id = ++seq;
-    const r = await new Promise(res => { pend.set(id, res); w.postMessage({ id, metoda: (opts.method || 'GET').toUpperCase(), cale: u.split('?')[0], corp: bytes }, [bytes.buffer]); });
+    const r = await new Promise(res => { pend.set(id, res); w.postMessage({ id, metoda: (opts.method || 'GET').toUpperCase(), cale: u, corp: bytes }, [bytes.buffer]); });
     return new Response(r.corp, { status: r.status, headers: r.antete });
   };
   // descărcări: prin capabilitatea „downloads” a paginii (browserul gazdă cere confirmarea)

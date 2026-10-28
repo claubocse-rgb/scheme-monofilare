@@ -48,7 +48,7 @@ def test_build_web_copiaza_paginile_legale(tmp_path):
         assert (dest / u).exists(), u                                  # fonturile paginilor legale, relative
     assert 'href="confidentialitate.html"' in t
     idx = (dest / "index.html").read_text(encoding="utf-8")
-    assert "const LEGAL = window.SM_WEB ? '' : '/static/';" in idx and "SM_WEB = true" in idx
+    assert "const LEGAL=window.SM_WEB?'':'/static/';" in idx and "SM_WEB=true" in idx          # E2: pagina e minificată
 
 
 # --------------------------------------------------------------------------- browser
@@ -251,8 +251,11 @@ def test_primul_export_cere_proiectantul_o_data_si_nume_ascii(srv, browser):
     pg.wait_for_selector("dialog.dlg[open] #cp-proiectant")
     assert pg.evaluate("() => document.activeElement.id") == "cp-proiectant"
     pg.fill("#cp-proiectant", "SC Proiect Test SRL"); pg.fill("#cp-proiectat", "ing. Ion Pop")
+    pg.click("#cp-salv")
+    pg.wait_for_selector("dialog.dlg[open] #as-cb")                              # E2: asumarea planșei de către proiectant
+    assert pg.is_disabled("#as-ok"); pg.check("#as-cb")
     with pg.expect_download() as dl:
-        pg.click("#cp-salv")
+        pg.click("#as-ok")
     nume = dl.value.suggested_filename
     assert nume.endswith(".svg") and nume.isascii() and not re.search(r"[\s—·/\\:*?\"<>|]", nume), nume
     assert unicodedata.normalize("NFKD", nume) == nume
@@ -347,8 +350,9 @@ def test_legaturi_termeni_si_confidentialitate(srv, browser):
     pg = _pagina(browser, srv)
     for sel in ("#h-leg a", "#exp-leg a"):
         hrefs = pg.evaluate(f"() => [...document.querySelectorAll('{sel}')].map(a => a.href)")
-        assert len(hrefs) == 2 and hrefs[0].endswith("/static/termeni.html") and hrefs[1].endswith("/static/confidentialitate.html")
-        for h in hrefs:
+        assert len(hrefs) == 3 and hrefs[0].endswith("/static/termeni.html") and hrefs[1].endswith("/static/confidentialitate.html")
+        assert hrefs[2].endswith("/static/beta.html")                               # E2: Condițiile de testare (pagina: tests/test_ui_e2.py)
+        for h in hrefs[:2]:
             assert urllib.request.urlopen(h, timeout=5).status == 200
     pg.evaluate("() => acasaArata('cont')")
     assert pg.locator("#h-main a[href$='termeni.html']").count() == 1

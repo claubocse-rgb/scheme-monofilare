@@ -361,7 +361,7 @@ def test_minor_ge_qg_ir_sub_in_g_si_cabluri_c1_c3():
     z = r["rezultat"]
     assert z["Q_G"]["Ir_A"] == 144.0 and z["Q_G"]["Icu_kA"] >= z["Ik3_GE_kA"]
     assert z["Q_retea"]["Icu_kA"] >= 25.0                       # Ik3 rețea implicit 25 kA
-    assert z["C1"]["cablu"].startswith("ACYABY 4×70") and z["C1"]["L_m"] == 80.0   # Ib 96,23 → Al 70 D1
+    assert z["C1"]["cablu"].startswith("ACYAbY 4×70") and z["C1"]["L_m"] == 80.0   # Ib 96,23 → Al 70 D1
     assert z["C2"]["Ib_A"] == 144.0 and z["C2"]["Ik3max_origine_kA"] == pytest.approx(1.1 * 144.34 / 0.12 / 1000, rel=1e-3)
     # v1.2 R2: C3 în regim rețea e protejat de QR (Ir 100 A), în regim GE (C3.regim_GE) de Q_G (Ir 144 A)
     assert z["C3"]["protectie"]["Ir_A"] == 100.0 and z["C3"]["regim_GE"]["protectie"]["Ir_A"] == 144.0
@@ -519,7 +519,7 @@ def test_R2_NM2_tn_c_pen_in_cablu():
                     "P_kW": 60, "L_alimentare_m": 30, "plecari": [{"nume": "Hala", "In_A": 63}]})
     c1 = r["rezultat"]["Q1_C1"]
     assert c1["PE"] == "PEN" and c1["S_PE_mm2"] == c1["S_N_mm2"]
-    assert c1["cablu"].replace(" ", " ") == "ACYABY 4×70 mm² (PEN)" and "FY" not in c1["cablu"]
+    assert c1["cablu"].replace(" ", " ") == "ACYAbY 4×70 mm² (PEN)" and "FY" not in c1["cablu"]
 
 
 @pytest.mark.parametrize("pl, cod", [
@@ -557,14 +557,14 @@ def test_R2_NM4_servicii_proprii_gG_cablu_mic():
 @pytest.mark.parametrize("sn, n, S", [(800, 2, 240.0), (2000, 5, 300.0)])
 def test_R2_NM5_ge_mare_cabluri_monopolare(sn, n, S):
     # 800 kVA: Q_G MCCB 1250, Ir = 0,90·1250 = 1125 A; F treflă Cu XLPE 240: 2·607·0,97 = 1177,6 A (B.52.21, raport #17) ≥ 1125 A
-    # 2000 kVA: ACB 3200, Ir = 2880 A; 300 mm²: 5·703·0,92 = 3233,8 A ≥ 2880 A (4·703·0,93 = 2615 A < 2880 A)
+    # 2000 kVA: ACB 3200, Ir = 2880 A; 300 mm²: 5·703·0,89 = 3128,35 A ≥ 2880 A (4·703·0,93 = 2615 A < 2880 A; raport_b3)
     # R3 (N3-M1): rețeaua normală de > 250 A trebuie să fie un PT (aici PT propriu 1000 / 2000 kVA)
     r = calculeaza({"tip_schema": "ge_ats", "Sn_GE_kVA": sn, "P_sarcina_kW": sn * 0.75, "origine": "pt_propriu",
                     "pt_Sn_kVA": {800: 1000, 2000: 2000}[sn]})
     assert not r["blocheaza_export"], blocante(r)
     c2 = r["rezultat"]["C2"]
     assert c2["metoda"] == "F_trefla" and c2["n_paralel"] == n and c2["S_faza_mm2"] == S
-    k = {2: 0.97, 5: 0.92}[n]
+    k = {2: 0.97, 5: 0.89}[n]
     iz = {240.0: 607, 300.0: 703}[S]
     assert c2["Iz_corectat_A"] == pytest.approx(n * iz * k)
     assert ("V45", "QG/C2") in avert(r)

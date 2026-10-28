@@ -103,9 +103,9 @@ SABLOANE = [
     ("cablu", {"material": "Al", "izolatie": "PVC", "metoda": "D1", "n_paralel": 2, "S_faza_mm2": 120,
                "S_N_mm2": 120, "S_PE_mm2": 35, "PE": "separat", "L_m": 80, "Iz_corectat_A": 255.0, "k_total": 0.85,
                "dU_ramura_pct": 1.2934},
-     "Cablu 2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE)) Al, în paralel 2×",
+     "Cablu 2 × (ACYAbY 4×120 mm² + FY 1×35 mm² (PE)) Al, în paralel 2×",
      "0,6/1 kV, L ≈ 80 m, Iz' = 255 A (metoda D1, k = 0,85), ΔU = 1,29 %",
-     "2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE)) · L ≈ 80 m"),
+     "2 × (ACYAbY 4×120 mm² + FY 1×35 mm² (PE)) · L ≈ 80 m"),
     ("PE", {"S_PE_mm2": 35, "ref": "C2", "L_m": 80}, "Conductor de protecție FY 1×35 mm² Cu, galben-verde",
      "pozat lângă cablul C2, L ≈ 80 m", None),
     ("trafo", {"Sn_kVA": 630}, "Transformator de putere 630 kVA, 20 ± 2×2,5 % / 0,4 kV, Dyn5",
@@ -152,13 +152,13 @@ def test_unitate_separata_prin_spatiu_fara_intrerupere():
 
 
 @pytest.mark.parametrize("args, asteptat", [
-    (("Cu", "PVC", "D1", 1, 6.0, 6.0, 6.0, "cablu", "tri"), "CYABY 5×6 mm²"),
-    (("Cu", "PVC", "D1", 1, 6.0, 6.0, 6.0, "cablu", "mono"), "CYABY 3×6 mm²"),
+    (("Cu", "PVC", "D1", 1, 6.0, 6.0, 6.0, "cablu", "tri"), "CYAbY 5×6 mm²"),
+    (("Cu", "PVC", "D1", 1, 6.0, 6.0, 6.0, "cablu", "mono"), "CYAbY 3×6 mm²"),
     (("Cu", "PVC", "C", 1, 2.5, 2.5, 2.5, "cablu", "tri"), "CYY-F 5×2,5 mm²"),
     (("Cu", "PVC", "C", 1, 4.0, 4.0, 4.0, "cablu", "mono"), "CYY-F 3×4 mm²"),
-    (("Al", "PVC", "D1", 1, 25.0, 25.0, 10.0, "separat", "tri"), "ACYABY 4×25 mm² + FY 1×10 mm² (PE)"),
-    (("Al", "PVC", "D1", 1, 185.0, 95.0, 50.0, "separat", "tri"), "ACYABY 3×185+95 mm² + FY 1×50 mm² (PE)"),
-    (("Al", "XLPE", "D1", 4, 240.0, 240.0, 95.0, "separat", "tri"), "4 × (AC2XABY 4×240 mm² + FY 1×95 mm² (PE))"),
+    (("Al", "PVC", "D1", 1, 25.0, 25.0, 10.0, "separat", "tri"), "ACYAbY 4×25 mm² + FY 1×10 mm² (PE)"),
+    (("Al", "PVC", "D1", 1, 185.0, 95.0, 50.0, "separat", "tri"), "ACYAbY 3×185+95 mm² + FY 1×50 mm² (PE)"),
+    (("Al", "XLPE", "D1", 4, 240.0, 240.0, 95.0, "separat", "tri"), "4 × (AC2XAbY 4×240 mm² + FY 1×95 mm² (PE))"),
     (("Cu", "XLPE", "E", 3, 150.0, 150.0, 95.0, "separat", "tri"), "3 × (N2XY 4×150 mm² + FY 1×95 mm² (PE))"),
     (("Cu", "PVC", "E", 1, 95.0, 95.0, 50.0, "separat", "tri"), "CYY-F 4×95 mm² + FY 1×50 mm² (PE)"),
 ])

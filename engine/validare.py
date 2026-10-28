@@ -14,7 +14,7 @@ from .calc import calculeaza
 
 NOTA_MANUAL = ("ATENȚIE: schemă desenată manual — dimensionarea cablurilor, reglajele protecțiilor, scurtcircuitul și "
                "selectivitatea NU au fost verificate de aplicație.")
-CHEI_PLANSA = ("format", "auto_format", "lista_auto", "legenda", "titlu_lista", "abrevieri", "note_manuale", "deviz", "confirmari", "_doc")
+CHEI_PLANSA = ("format", "auto_format", "lista_auto", "legenda", "titlu_lista", "abrevieri", "note_manuale", "deviz", "confirmari", "_doc", "filigran", "revizii")
 
 
 def _fara_interne(o):
@@ -80,15 +80,17 @@ def _n(t):
 
 
 def _cablu_din_text(t):
-    """„ACYABY 4×16 mm²”, „2 × (CYABY 5×95 mm² …)”, „4 x 16 mmp Al”, „N2XY 4×1×16” → parametri pentru verifica_cablu
+    """„ACYAbY 4×16 mm²”, „2 × (CYAbY 5×95 mm² …)”, „4 x 16 mmp Al”, „N2XY 4×1×16” → parametri pentru verifica_cablu
     (None dacă secțiunea nu se poate citi). Izolația și pozarea se deduc din denumire: 2X / XLPE → XLPE, altfel PVC;
-    cablu armat (…ABY / …A2Y) → îngropat (D1), altfel pe perete (C). Aluminiu: denumirea începe cu A sau textul spune „Al”."""
+    cablu armat (…AbY / …A2Y) → îngropat (D1), altfel pe perete (C). Aluminiu: denumirea începe cu A sau textul spune „Al”."""
     t = _n(t).replace("mmp", "mm²").replace(" x ", "×").replace("x", "×")
     n = 1
     mp = re.match(r"^\s*(\d+)\s*×\s*\(", t)
     if mp:
         n = int(mp.group(1))
-    tip = (re.search(r"\b([A-Z][A-Z0-9-]{2,})\b", t) or [None, ""])[1] if re.search(r"\b([A-Z][A-Z0-9-]{2,})\b", t) else ""
+    # E2: notația DEER are „b” mic (CYAbY / ACYAbY) — denumirea se citește cu el, apoi se compară cu majuscule
+    mt = re.search(r"\b([A-Z](?:[A-Z0-9-]|b(?=[A-Z]))+)\b", t)
+    tip = mt.group(1).upper() if mt and len(mt.group(1)) >= 3 else ""
     ms = re.search(r"(\d)\s*×\s*(?:1\s*×\s*)?(\d+(?:[.,]\d+)?)", t) or re.search(r"(\d+(?:[.,]\d+)?)\s*mm²", t)
     if not ms:
         return None

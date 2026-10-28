@@ -81,7 +81,7 @@ O **ramură** = aparat de protecție + cablul pe care îl protejează + sarcina 
 | cosφ motor | 0,85 | DECIZIE |
 | cosφ invertor / PCS | 1,0, dar curentul se ia din Smax (B.2) | — |
 | ks tablou | IEC 61439-2 tab. 101: 1 plecare → 1; 2–3 → 0,9; 4–5 → 0,8; 6–9 → 0,7; ≥ 10 → 0,6 | `ks_implicit()` |
-| material, izolație | cabluri în pământ: Al, PVC (ACYABY); circuite interioare: Cu, PVC | DECIZIE: PVC are Iz mai mic (conservator) |
+| material, izolație | cabluri în pământ: Al, PVC (ACYAbY); circuite interioare: Cu, PVC | DECIZIE: PVC are Iz mai mic (conservator) |
 | metodă de pozare | în pământ: **D1** (tub); sub-plecări interioare: **C**; „pat de cabluri/aer”: **E** | DECIZIE (B.7.3) |
 | temperatură | aer 30 °C, sol 20 °C | condițiile de referință |
 | rezistivitate termică sol | 2,5 K·m/W | condiția de referință (sol uscat, conservator) |
@@ -292,10 +292,14 @@ Un cablu în pământ trece la DEER prin tuburi de protecție la subtraversări 
 
 | Material | Izolație | Armat (pământ) | Nearmat (aer) | Secțiuni multipolare permise [mm²] |
 |---|---|---|---|---|
-| Cu | PVC | CYABY | CYY-F | 1,5 … 240 |
-| Cu | XLPE | C2XABY [practică, raport #9] | N2XY | 1,5 … 240 |
-| Al | PVC | ACYABY | ACYY [VERIFICAT: ST 80-6 DEER] | 16 … 240 |
-| Al | XLPE | AC2XABY | NA2XY | 16 … 240 |
+| Cu | PVC | CYAbY | CYY-F | 1,5 … 240 |
+| Cu | XLPE | C2XAbY [practică, raport #9] | N2XY | 1,5 … 240 |
+| Al | PVC | ACYAbY | ACYY [VERIFICAT: ST 80-6 DEER] | 16 … 240 |
+| Al | XLPE | AC2XAbY | NA2XY | 16 … 240 |
+
+**E2 (raportul verificatorului #9):** notația după standardul de produs / ST 80-6 DEER — „Ab” = armătură din bandă de oțel, cu
+„b” mic: **CYAbY, ACYAbY** (și C2XAbY, AC2XAbY), peste tot (planșă, listă, memoriu, deviz, documente). Citirea textelor
+(denumirea impusă, V80, FE180) nu ține cont de majuscule, deci proiectele vechi cu „CYABY” se citesc la fel.
 
 Secțiunile minime:
 - **Cu** iluminat 1,5; prize, forță, motor, invertor 2,5; coloane spre tablouri 4; **orice cablu în pământ ≥ 6** (DECIZIE mecanică).
@@ -328,7 +332,7 @@ Se ia cel mai mic n, apoi cea mai mică S.
 - Gruparea: n cabluri paralele = n circuite în kgrup (B.7.2).
 - Fiecare cablu din paralel are **propriul conductor PE** (în cablu sau FY alăturat). S_PE se raportează pe cablu; în verificări se folosește totalul n·S_PE.
 - Impedanțele (R, X) ale ramurii se împart la n.
-- Textul pentru listă: `2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE))`.
+- Textul pentru listă: `2 × (ACYAbY 4×120 mm² + FY 1×35 mm² (PE))`.
 
 ### B.10 Secțiunea neutrului (SR HD 60364-5-52 art. 524.2; I7-2011 anexa 5.29)
 1. Monofazat: N = S.
@@ -370,7 +374,7 @@ Dacă pică și S nu e impusă: un PE din cablu se mută în conductor separat �
 
 **PEN:** ≥ 10 mm² Cu / 16 mm² Al și ≥ S_tab; numai în instalații fixe; interzis în aval de DDR → V27 BLOCANT.
 
-**R2:** în TN-C (`PE_loc = "PEN"`) conductorul PEN este neutrul cablului: 4 conductoare, fără PE separat, rezultatul ramurii are `PE = "PEN"`, `S_PE_mm2 = S_N_mm2`, textul „ACYABY 4×70 mm² (PEN)”; PEN insuficient termic → V36 BLOCANT. Pentru Cu ≤ 35 mm² cu PE în cablu, dacă PE-ul nu rezistă termic, se mărește întâi secțiunea cablului (5×S, PE în cablu) și abia apoi se trece pe FY separat. Energia la Ik1min pentru aparatele limitatoare: gG în zona Ik1 ≥ Imax(0,1 s) → I²t = 2·I²t prearc max (`GG_I2T_PREARC_KA2S`); MCB B/C ≤ 32 A în zona instantanee → I²t clasa 3 (SR EN 60898-1 anexa ZA, `MCB_I2T_CLASA3_A2S`, **tabele separate pe curba B / C**, până la 10 kA; peste 10 kA — let-through-ul producătorului, fără limitare) [VERIFICAT: anexa ZA, catalogul IPD — raport #43].
+**R2:** în TN-C (`PE_loc = "PEN"`) conductorul PEN este neutrul cablului: 4 conductoare, fără PE separat, rezultatul ramurii are `PE = "PEN"`, `S_PE_mm2 = S_N_mm2`, textul „ACYAbY 4×70 mm² (PEN)”; PEN insuficient termic → V36 BLOCANT. Pentru Cu ≤ 35 mm² cu PE în cablu, dacă PE-ul nu rezistă termic, se mărește întâi secțiunea cablului (5×S, PE în cablu) și abia apoi se trece pe FY separat. Energia la Ik1min pentru aparatele limitatoare: gG în zona Ik1 ≥ Imax(0,1 s) → I²t = 2·I²t prearc max (`GG_I2T_PREARC_KA2S`); MCB B/C ≤ 32 A în zona instantanee → I²t clasa 3 (SR EN 60898-1 anexa ZA, `MCB_I2T_CLASA3_A2S`, **tabele separate pe curba B / C**, până la 10 kA; peste 10 kA — let-through-ul producătorului, fără limitare) [VERIFICAT: anexa ZA, catalogul IPD — raport #43].
 
 ### B.12 Căderea de tensiune
 **Rezistența la temperatura maximă de regim** (θ = 70 °C PVC, 90 °C XLPE):
@@ -672,6 +676,21 @@ Reguli suplimentare:
    - **Puterea declarată** `Pn_total_kW` ≠ Σ n·Pn invertoare (> 1 %) → **V91 AVERTISMENT**; se calculează cu lista.
    - **gPV declarat** (`string.gpv_In_A` sau `gpv.In_A`): cu Isc cunoscut se verifică în [1,5·Isc; min(2,4·Isc; Irev)] (altfel V69 BLOCANT); fără Isc se ia ca atare (presupus). Stringuri declarate fără Voc modul (n_module + n_stringuri_paralel / n_MPPT / gpv): se desenează, Voc(Tmin) și SPD c.c. rămân neverificate (presupus, Ucpv 1100 V) — nu mai blochează.
 
+**C.3 E2 — limitarea puterii la punctul de racord (PCC), decizia proprietarului 28.10.2026.** Sn trafo (Σ Sn, sau al
+secției) < S invertoare + PCS → **V67 BLOCANT** cu propunerea `{"camp": "limitare_PCC_kW", "valoare": P}`, unde
+**P = Sn × cosφ_PCC × factor** (`norme.PCC_COSFI` = 0,9 — capabilitatea de putere reactivă la PCC; `norme.PCC_FACTOR` =
+0,95 — rezervă pentru pierderile trafo și precizia buclei EMS), rotunjită în jos la 5 kW (1000 kVA → 855 kW). Cu
+`limitare_PCC_kW` declarată și S_lim = P_lim / cosφ_PCC ≤ Sn → **V67 AVERTISMENT** explicit (varianta „pcc”: EMS /
+controller de putere, TC + analizor la PCC, invertoarele nu pot debita simultan puterea instalată; remediere: confirmare
+ATR, fail-safe EMS), notă pe planșă, capitol în memoriu; S_lim > Sn → V67 BLOCANT „pcc_insuf” cu propunerea. Pe secții
+(PT nou cu 2 trafo) limita se împarte egal. Limitarea se realizează cu lanțul limitării injecției (`limitare_injectie_kW`
+= min(declarată, limitare_PCC_kW) — TC + analizor la PCC → EMS → invertoare / PCS, V92). Rezultat: `limitare_PCC`
+{Sn_kVA, S_necesar_kVA, propunere_kW, cosfi, factor, formula, P_kW, S_kVA, aplicata}.
+
+**C.3 E2 — CEF cu putere în kW fără invertoare declarate (D4).** `Pn_total_kW` fără `invertoare` (și fără BESS) →
+invertoare de tip implicit: n = ⌈P / 100 kW⌉ egale (trifazate, fără fișă: Iac,max = 1,1·Pn/(√3·U)), declarate în
+„presupus” — nu întrebare blocantă (`scheme.invertoare_implicite`). Interpretorul: „CEF 50 kW” → `Pn_total_kW: 50`.
+
 ### C.4 Prosumator (mono/tri)
 - Prosumator = P invertor ≤ 400 kW pe loc de consum (Ord. ANRE 95/2022, se verifică la data proiectului). Peste → V70 BLOCANT „schema CEF”.
 - Mono: Iac,max > 40 A → **V53 BLOCANT** (BMPM; invertor mono maxim ≈ 8,36 kW cu factorul 1,1). Generare monofazată cu Smax (= 230·Iac,max) > 16 A ≈ **3,68 kVA** → V71 AVERTISMENT (comparația pe kVA; Ord. ANRE 228/2018 art. 12(3), excepțiile art. 12(4)–(5) în ATR) [VERIFICAT: raport #87; DECIZIE proiectant 28.10.2026, Î4]. Invertoarele monofazate pe rețea trifazată: dezechilibrul între faze > 3,68 kVA (înainte 4,6 kVA, VDE-AR-N 4105) → V71.
@@ -713,6 +732,18 @@ Reguli suplimentare:
    - **R3 (N3-M1) — rețeaua normală:** fără `origine` = rețea publică prin branșament: Ib sarcină > 250 A → **V50 BLOCANT** („racord din PT”). Cu `origine = "pt_propriu"` + `pt_Sn_kVA`: Z și Ik din PT (B.13/B.14, ca la tablou), `PT_retea` în rezultat; √3·400·Ib > Sn PT → **V62 BLOCANT**. Fără `pt_Sn_kVA`: implicitele OD, limite 6/8 %.
    - **R2 (N-C1):** în regim GE (Ik1 ≈ In_G ≪ Ia Q_G) protecția la contact indirect se face cu **bloc diferențial 300 mA tip A, selectiv, asociat Q_G** (`Q_G.DDR`, SR HD 60364-4-41 art. 411.4.5, -5-55 art. 551.4); V85 INFO. `DDR_GE: false` → V85 BLOCANT. C3 se calculează separat în ambele regimuri, cu aceeași secțiune (cea mai mare): `C3` = regim rețea (QR, sursa = capătul C1), `C3.regim_GE` = ramură completă în regim GE (Q_G, sursa = capătul C2, obiect „C3 (regim GE)”); deconectarea se verifică în regimul cel mai defavorabil.
    - ATS: intrări distincte I (rețea) / II (GE), ieșire comună C3 (`ATS.intrari`, `ATS.iesire`); In ≥ max(In QR; In Q_G) din seriile MCCB/ACB; neutrul GE legat la pământ local (`neutru_GE`).
+7. **E2 — protecția la defect în regim GE fără asigurare (decizia proprietarului 28.10.2026).** Când în regim GE
+   Ik1 < Ia(Q_G) și nu există bloc diferențial aplicabil (V85 „B” / „ramura”, V97 „ge” — circuite de siguranță),
+   motorul oferă AMBELE soluții, fiecare cu explicație (`scheme.GE_PROTECTIE_OPTIUNI`: când se folosește, ce implică, ce
+   se desenează) în câmpul `optiuni` al verificării (`camp` = „ge_protectie”):
+   (a) **`ge_protectie: "excitatie"`** — excitație susținută: curent de scurtcircuit susținut **≥ 3·In_G timp de ≥ 2 s**
+   (`norme.GE_IK_SUSTINUT_MULTIPLU`, `GE_IK_SUSTINUT_T_S`), Q_G cu declanșator electronic, Isd reglat sub Ik1 din regim
+   GE; calculul se reface cu Ik1 = 3·In_G; dacă nici așa nu deconectează → BLOCANT cu remediere (Isd, C2/C3, varianta b);
+   (b) **`ge_protectie: "echipotential"`** — legături echipotențiale suplimentare (SR HD 60364-4-41 art. 415.2,
+   R ≤ 50 V/Ia măsurat la PIF) → verificările devin INFO.
+   Fără alegere → BLOCANT cu cele două opțiuni. Câmpurile vechi `excitatie_sustinuta` / `legaturi_echipotentiale` (true)
+   rămân echivalente. Rezultat: `protectie_regim_GE` {solutie, necesara, titlu, implica, desen, Ik_sustinut_A,
+   t_sustinut_s, optiuni}; nota §G.3 pe planșă și capitolul „Măsuri și evaluări suplimentare” din memoriu.
 
 ### C.7 Priza de pământ (v1.3, `pamant.py`)
 Calculul rulează **numai** dacă intrarea schemei are cheia `priza`; altfel nota 2 de pe planșă rămâne „priza de pământ (calcul separat)”. Dispunerea calculată: n electrozi verticali **în linie**, la distanța a, legați cu platbandă orizontală (sau fără platbandă, `"platbanda": false`).
@@ -793,8 +824,8 @@ La rețea trifazată, plita, pompa de căldură, VE și sauna sunt implicit 3F (
 - **v1.7 (m-c6) — plafonul circuitelor finale la ΔU: `norme.LOCUINTA_S_MAX_CIRCUIT_DU_MM2` = 16 mm² (DECIZIE).** Mărirea automată pentru ΔU (§B.12) a unui circuit final al locuinței (fără secțiune impusă) se oprește la 16 mm², fără cabluri în paralel (ramura B.21 cu `S_max_dU`): peste, problema e coloana sau poziția tabloului, nu circuitul (cazul verificatorului: coloana impusă 6 mm² / 60 m, ΔU la bară 5,89 % → circuitele de lumină / prize urcau la 4 × 240 mm²). Circuitul rămâne la plafon, `dU_plafonat_mm2` = 16 în rezultatul lui, iar V20 BLOCANT spune „secțiunea circuitului plafonată la 16 mm² (ΔU la bara TE x %)”, cu remedierea „mărește coloana C2 / mută tabloul; altfel scurtează / împarte circuitul (tablou secundar)”. Secțiunile cerute de Iz (nu de ΔU) nu sunt plafonate.
 - **v1.7 (M-c1) — Q branșament în afara seriei** (ex. 33 A; 63 A la monofazat; seria BMPM 16…40 A, respectiv toate treptele BMPT 16…250 A): **V05 BLOCANT** (obiect „Q”, `camp` „alimentare.In_Q_bransament_A”, cu vecinii din serie), valoarea se ignoră și calculul **continuă** cu Q presupus = calibrul standard imediat superior, limitat la limita blocului (BMPM 40 A; BMPTi-250 250 A), `alimentare.Q_presupus = true`, explicat în `presupus[]`; nu se mai emite V46 „q_pres” (V05 acoperă câmpul). Înainte: rezultat gol, planșă goală, fără `camp`.
 - **v1.6 (P1-10) — `alimentare.zona`** ∈ {„urban”, „rural”} (sinonime „oras”, „sat”; altfel V12 BLOCANT, câmpul ignorat): fără `Zb_OD_ohm`, „rural” → Zbuclă OD implicită `norme.LOCUINTA_ZB_OD_RURAL_OHM` = **0,8 Ω** (R/X ca la valoarea implicită) **[DECIZIE proiectant 28.10.2026, Î2; înainte 0,45 Ω]**, declarată; nedeclarată → 0,30 Ω (urban), iar `presupus[]` spune explicit valoarea urbană folosită și cum se declară zona rurală. `alimentare.zona` apare în rezultat.
-- **v1.6 (N3) — conductoarele racordului și ale coloanei:** `alimentare.C1_conductoare` = „L + PEN” / „3L + PEN” (TN-C-S) sau „L + N” / „3L + N” (TT). `coloana.conductoare`: TN-C-S „L + N + PE” / „3L + N + PE”, `PE_origine` „bloc”, `legatura_BPE` true; **TT** „L + N” / „3L + N”, `PE` = „fara”, `S_PE_mm2` = null, `PE_origine` „priza_locala”, `legatura_BPE` false, cablul fără conductor PE (ex. „CYABY 2×6 mm²” / „CYABY 4×6 mm²”); `PE_nota` explică. PE-ul instalației TT pornește numai din priza locală (PPL → BPE).
-- **Coloana C2** = ramură completă protejată de Q branșament (Cu implicit, L 15 m implicit), `rez["coloana"]`. Metoda: `alimentare.cablu.metoda` (B2 / C / D1 …) sau câmpul nou **`alimentare.pozare_coloana`** ∈ {„pamant” → D1 (CYABY), „cladire” / „tub” → B2 (CYY-F), „aparent” → C (CYY-F)}; nespecificat → D1, declarat ca presupus (cu indicația pentru apartament / tablou în clădire). Valoare necunoscută → V12 BLOCANT pe „C2”.
+- **v1.6 (N3) — conductoarele racordului și ale coloanei:** `alimentare.C1_conductoare` = „L + PEN” / „3L + PEN” (TN-C-S) sau „L + N” / „3L + N” (TT). `coloana.conductoare`: TN-C-S „L + N + PE” / „3L + N + PE”, `PE_origine` „bloc”, `legatura_BPE` true; **TT** „L + N” / „3L + N”, `PE` = „fara”, `S_PE_mm2` = null, `PE_origine` „priza_locala”, `legatura_BPE` false, cablul fără conductor PE (ex. „CYAbY 2×6 mm²” / „CYAbY 4×6 mm²”); `PE_nota` explică. PE-ul instalației TT pornește numai din priza locală (PPL → BPE).
+- **Coloana C2** = ramură completă protejată de Q branșament (Cu implicit, L 15 m implicit), `rez["coloana"]`. Metoda: `alimentare.cablu.metoda` (B2 / C / D1 …) sau câmpul nou **`alimentare.pozare_coloana`** ∈ {„pamant” → D1 (CYAbY), „cladire” / „tub” → B2 (CYY-F), „aparent” → C (CYY-F)}; nespecificat → D1, declarat ca presupus (cu indicația pentru apartament / tablou în clădire). Valoare necunoscută → V12 BLOCANT pe „C2”.
 
 **3. Q general TE:** implicit **întreruptor-separator** (`norme.IS_IN_A`) 2P/4P cu In ≥ In Q branșament — nu declanșează (selectiv față de Q) și e protejat la suprasarcină de Q; Ib > In Q nu mai mărește IS-ul (e V46). `Q_general_tip = "MCB"`: cel mai mare MCB C ≤ In Q branșament și ≥ min(Ib, In Q), verificat cu B.18 („Q general vs Q branșament”); MCB > In Q → V40 BLOCANT. **SPD T2** la intrare (In 20 kA, Up ≤ 1,5 kV, Uc 275 V, 1P+N / 3P+N; `configuratie`: CT1 la TN, CT2 „1+1”/„3+1” la TT, SR HD 60364-5-534). **v1.6 (N4, m-n2) — protecția de rezervă a SPD-ului (F2):** `SPD.protectie_rezerva` = {tip „MCB”, In_A, curba „C”, poli (= poli SPD), Icu_kA, ref „F2”, text}; In = cel mai mare MCB ≤ min(25 A, In Q branșament, In Q general MCB) — **DECIZIE** după fișele uzuale ale SPD T2 In 20 kA (rezervă admisă MCB C ≤ 25…32 A sau gG ≤ 32…125 A; `norme.LOCUINTA_SPD_REZERVA`, [NEVERIFICAT] pe fișa SPD-ului ales). Pentru șablonul §E.3 `spd_ca`: `SPD.In_amonte_A`, `SPD.prot_tip` („MCB”), `SPD.curba_amonte` („C”); conductorul de pământ al SPD-ului la BPE (`SPD.PE_la`).
 
@@ -1144,7 +1175,7 @@ Exemplu pentru F01:
 
 **Contradicții → întrebare (I08), niciodată alegere tăcută:** două scheme de pământ incompatibile (TT cu TN-*), mono și tri în afara listei („tablou monofazat 3x400V”, „230V … 3P”), tablou monofazat cu plecare trifazată, „X sau Y” cu aceeași unitate („7 kW sau 10 kW”), două surse ale tabloului („din PT propriu și din BMPT”), două racorduri („în TG existent și prin BMPT nou”), Σ invertoare ≠ puterea scrisă (și la prosumator), putere scrisă ≠ puterea din codul modelului („SUN2000-100KTL-M2 de 50 kW”). Un „monofazat” scris la o plecare / un receptor ține de acel element (`plecari[].retea`, `circuite[].faza`), nu de tablou. „nu știu dacă e mono sau tri” = rețea nedeclarată (întrebare).
 
-**Clase reparate (r6):** multiplicitate „N x MODEL”, „MODEL xN”, „N bucăți …”, „N MARCĂ MODEL”, „P kW xN”; Pn din catalogul motorului (`catalog_invertoare.cauta`, inclusiv „hibrid”); „PT nou” ≠ existent, „PT existent / al beneficiarului / al OD” = existent (`pt_existent`, `atr_jt` la OD), „până la TGD” ≠ TG existent; „TG … din BMPT” = tablou cu `origine = bmpt` (calibrul BMPT → Q1, declarat); sursa tabloului („alimentare din PT 250 kVA”) se citește înaintea listei și nu devine plecare; TG/TD + magazin / hală / supermarket / birouri ≠ locuință („casa de marcat” ≠ casă); listele „8 circuite: 3 iluminat 10A …”, „N circ”, „B10”, „->”, „TD-uri:”, „a/m”, „3 x TD 63A (TD-1..TD-3)”, cascade „TD-P 63A 20m cu …”, paranteze descriptive; cablul unei plecări („TD-1 63A cablu CYABY 5x10”) rămâne pe plecare, „2x(NA2XY 4x240)” = 2 în paralel, „4x(1x240)” = monopolare, „3x400V” nu e secțiune; mărirea de putere „X → Y” / „de la X la Y” (X informativ); „tt”, „Q40A”, „trif”, „ap/apt”, „pc 10kw”, „pompă piscină”, „inc pardoseală”, numerele fără unitate după un receptor de locuință (= kW, declarat), „AC 3x2.5kw”, „în curte la 30 m”; atelier / garaj / anexă → `tablouri_secundare`; baterie fără „hibrid” la prosumator → c.c. desenat + întrebare de cuplaj; `bess.cuplaj` din text / catalog („cuplaj c.c.”, „cuplat în c.a.”, „X kWh fiecare”); stringuri `string{n_module, n_stringuri_paralel, n_MPPT, Uoc_V, Isc_A, gpv_In_A}`; V72 și la CEF (Iac > Q BMPT → întrebare).
+**Clase reparate (r6):** multiplicitate „N x MODEL”, „MODEL xN”, „N bucăți …”, „N MARCĂ MODEL”, „P kW xN”; Pn din catalogul motorului (`catalog_invertoare.cauta`, inclusiv „hibrid”); „PT nou” ≠ existent, „PT existent / al beneficiarului / al OD” = existent (`pt_existent`, `atr_jt` la OD), „până la TGD” ≠ TG existent; „TG … din BMPT” = tablou cu `origine = bmpt` (calibrul BMPT → Q1, declarat); sursa tabloului („alimentare din PT 250 kVA”) se citește înaintea listei și nu devine plecare; TG/TD + magazin / hală / supermarket / birouri ≠ locuință („casa de marcat” ≠ casă); listele „8 circuite: 3 iluminat 10A …”, „N circ”, „B10”, „->”, „TD-uri:”, „a/m”, „3 x TD 63A (TD-1..TD-3)”, cascade „TD-P 63A 20m cu …”, paranteze descriptive; cablul unei plecări („TD-1 63A cablu CYAbY 5x10”) rămâne pe plecare, „2x(NA2XY 4x240)” = 2 în paralel, „4x(1x240)” = monopolare, „3x400V” nu e secțiune; mărirea de putere „X → Y” / „de la X la Y” (X informativ); „tt”, „Q40A”, „trif”, „ap/apt”, „pc 10kw”, „pompă piscină”, „inc pardoseală”, numerele fără unitate după un receptor de locuință (= kW, declarat), „AC 3x2.5kw”, „în curte la 30 m”; atelier / garaj / anexă → `tablouri_secundare`; baterie fără „hibrid” la prosumator → c.c. desenat + întrebare de cuplaj; `bess.cuplaj` din text / catalog („cuplaj c.c.”, „cuplat în c.a.”, „X kWh fiecare”); stringuri `string{n_module, n_stringuri_paralel, n_MPPT, Uoc_V, Isc_A, gpv_In_A}`; V72 și la CEF (Iac > Q BMPT → întrebare).
 
 **Chei emise (r6):** `plecari[].retea`, `plecari[].curba`, `bess.cuplaj`, `string.Uoc_V/Isc_A/n_MPPT/gpv_In_A`, `compensare_kvar`, `compensare_L_m`, `U_MT_kV`, `n_trafo`, `SkQ_MVA`, `masura_ceruta = directa` (PT), `pt_aerian`, `pt_existent: false` explicit la PT nou, `ge_paralel`, `retea = mono` la GE (motorul blochează), `consumatori[]{nume, P_kW, n, pornire, siguranta}`, `tablouri_secundare[]`, `schema_pamant = IT` (motorul: V28). Rezultatul interpretorului are cheia nouă `neconsumat[]`.
 
@@ -1274,7 +1305,7 @@ Rescrierea are acum, în ordine: indentare → tabel → engleză → scurt → 
 9. **Contradicții întrebate:** Q1 impus < Ib din plecările în kW (I08); BMPM + tablou trifazat (I08); Q branșament >
    1,6 × Q uzual pentru Pa (întrebare); sursă nedeclarată a unui tablou ≥ 100 kW fără P / Q1 declarat → întrebare
    (sub — „Am presupus” BMPT); racord CEF nedeclarat → întrebare peste 100 kW, avertisment sub; BESS fără PCS →
-   întrebare; IT medical → I12; magazin / farmacie + TT ≠ locuință; cabluri „2 cabluri CYABY 3x185+95 în paralel” →
+   întrebare; IT medical → I12; magazin / farmacie + TT ≠ locuință; cabluri „2 cabluri CYAbY 3x185+95 în paralel” →
    `cablu.n_paralel`, `cablu.tip_cablu` (+ `izolatie: XLPE` la N2XY / NA2XY) — verificat până în motor (Q1_C1).
 10. **Teste / reverificare:** `tests/test_interpretor_r9.py` (fiecare frază P0/P1 r9, amprenta frazelor corecte, plasa
    pe tot r9, teste de clasă pe formulări noi), `teste/r9/reverificare.py` (r5…r9). r9 (208 fraze, verificări C/P/G):
@@ -1473,6 +1504,35 @@ Un câmp lipsă se lasă gol, **nu** se completează cu text de exemplu.
 
 ---
 
+## I. Documente și vederi derivate (E2, 28.10.2026)
+
+Toate pleacă din planșă (model: referințele de pe desen) + calcul (valorile); nu schimbă dimensionarea.
+
+| Funcție | Modul | Endpoint |
+|---|---|---|
+| Tabel de cabluri (ref, de la → la, tip, formație, L, pozare, Ib, Iz', ΔU ramură / cumulat, protecție, Ik) | `documente_tabele.tabel_cabluri` | `/api/documente`, `/api/export/tabel_cabluri[?format=pdf]` |
+| Fișa de reglaje (Ir, tr, Isd, tsd, Ii, curbă, IΔn, Icu) + Ik3max / Ik1min pe noduri + reglajele PI | `documente_tabele.fisa_reglaje` | `/api/documente`, `/api/export/fisa_reglaje`, `/api/export/tabele` |
+| Carcasa tabloului: module DIN, rezervă 20–30 % (implicit 25 %), rânduri, carcasa propusă | `documente_tabele.dimensionare_carcasa` | `/api/documente` |
+| Pierderi în cabluri c.c. / c.a. (kW, %), energie anuală pierdută (factor de formă 0,5) | `documente_tabele.pierderi_cabluri` | `/api/documente`, memoriu |
+| Evaluarea SPD: SR HD 60364-4-443 (art. 443.4 consecințe; 443.5 CRL = fenv/(LP·Ng) < 1000), SR HD 60364-7-712 (Lcrit = 115 / 200 / 450 / Ng) | `documente_protectii.evaluare_spd` | `/api/spd`, `/api/documente`, memoriu |
+| Curbe timp-curent generice (MCB B/C/D, gG, MCCB TM, electronic LSI) + perechi amonte / aval | `documente_protectii.curbe_timp_curent` | `/api/curbe` (desenul le randează) |
+| Producție PVGIS (JRC v5.3, cache, offline → valoarea proiectantului) | `pvgis` | `/api/pvgis`, `/api/pvgis/url`, `/api/pvgis/raspuns` |
+| „Tipic pentru N” (invertoare identice) | `documente_tabele.grupuri_tipice` → `model.grupuri_tipice` | (date în model) |
+| Import circuite Excel / CSV + model .xlsx | `import_circuite` | `GET /api/import/model_circuite`, `POST /api/import/circuite?destinatie=` |
+| Galerie personală (date/galerie.json) | `galerie` | `GET/POST /api/galerie` |
+| Dosar de racordare (cerere Ord. ANRE 19/2022 anexa 1 / 2 sau Ord. 59/2013, fișa tehnică, lista echipamentelor cu certificate, declarația instalatorului, planșa) | `documente_racordare` + `sabloane/racordare.py` | `/api/export/dosar_racordare` (.zip: .docx + .pdf) |
+| Caiet de sarcini (8 capitole, caracteristici minime neutre de marcă) | `documente_caiet` + `sabloane/caiet_sarcini.py` | `/api/export/caiet_sarcini[?format=pdf]` |
+
+**Tab-ul „Documente” (interfața):** `POST /api/documente/<cheie>` (previzualizare: JSON {titlu, coloane, randuri, note} /
+{titlu, tabele[]}, SVG la `curbe`, HTML la `spd`) și `POST /api/export/<cheie>` pentru cheile cabluri (.xlsx), reglaje,
+curbe, spd, carcasa, productie (PDF; HTML fără Chrome / în Pyodide), pierderi (.xlsx), etichete (PDF A4, benzi de 18 mm ×
+module·17,5 mm + etichetele „două surse”), racordare (PV: .zip dosar; consum: cererea loc de consum .docx), caiet (.docx)
+— `engine/documente_vederi.py`. Producția PVGIS salvată de interfață în `calc.productie` {lat, lon, unghi, azimut,
+pierderi_pct, kWh_kWp_an, lunar[12], sursa, data} e folosită la `productie`, la pierderi și în memoriu.
+
+Câmpurile formularelor: completate din date = fond albastru, de completat manual = „…… (de completat)” pe fond galben
+(`documente_doc.Camp`). Pachetul de predare include tabelele (.xlsx), caietul de sarcini și, la PV, dosarul de racordare.
+
 ## H. Anexe
 
 ### H.1 Trasabilitatea constatărilor din audit
@@ -1509,7 +1569,7 @@ Un câmp lipsă se lasă gol, **nu** se completează cu text de exemplu.
 | P2-10 Ord. 228 la CEF | C.3 pct. 7, V75 |
 
 ### H.2 Valori [NEVERIFICAT] rămase
-Lista completă e în `norme.NEVERIFICAT` (afișată în memoriu). După verificarea din 28.10.2026 rămân numai pozițiile care nu se pot verifica public (standard cu plată / document inaccesibil), cu valoarea din practica de proiectare confirmată ca plauzibilă de verificator: Iz Al 16 mm² și Iz Cu B2; uk trafo (SR EN 50588-1); siguranțele MT ale celulei trafo; consumul contorului 1,0 VA; factorii de grupare F distanțat (0,97 la 2 sisteme); denumirea C2XABY; x"d GE; Im minim 500 A (valoarea exactă din fișa MCCB); I²t total gG ≈ 2·prearc; ψ_e / ψ_pl, racordul platbandei și orele de manoperă ale prizei; limita prizei PT „conform ANRE” (1 Ω păstrat, vezi §C.7); DDR S = 0,15 s echivalent; tabelul receptorilor de locuință, Inc RCCB / IS 6/10 kA, cosφ 0,95, rezerva SPD T2, plafonul de 16 mm²; regulile r8b de denumire / calibru. Deciziile proiectantului sunt în `norme.DECIZII_PROIECTANT_28_10_2026` și în §H.2a.
+Lista completă e în `norme.NEVERIFICAT` (afișată în memoriu). După verificarea din 28.10.2026 rămân numai pozițiile care nu se pot verifica public (standard cu plată / document inaccesibil), cu valoarea din practica de proiectare confirmată ca plauzibilă de verificator: Iz Al 16 mm² și Iz Cu B2; uk trafo (SR EN 50588-1); siguranțele MT ale celulei trafo; consumul contorului 1,0 VA; factorii de grupare F distanțat (0,97 la 2 sisteme); denumirea C2XAbY; x"d GE; Im minim 500 A (valoarea exactă din fișa MCCB); I²t total gG ≈ 2·prearc; ψ_e / ψ_pl, racordul platbandei și orele de manoperă ale prizei; limita prizei PT „conform ANRE” (1 Ω păstrat, vezi §C.7); DDR S = 0,15 s echivalent; tabelul receptorilor de locuință, Inc RCCB / IS 6/10 kA, cosφ 0,95, rezerva SPD T2, plafonul de 16 mm²; regulile r8b de denumire / calibru. Deciziile proiectantului sunt în `norme.DECIZII_PROIECTANT_28_10_2026` și în §H.2a.
 
 ### H.2a Verificarea normelor (28.10.2026) — tabelul de valori
 Surse: `teste/verificare_norme/raport.md` (141 de rânduri, verdicte CONFIRMAT / CORECTAT / DEPENDENT DE OD / NU SE POATE VERIFICA PUBLIC) și `teste/verificare_norme/raspunsuri_proiectant.md` (15 decizii, toate obligatorii; **proiectantul are prioritate** față de verificator). Marcaje în `norme.py`: „[VERIFICAT: sursă]”, „[DECIZIE proiectant 28.10.2026, Îk]”, „[practică, raport #n]”.
@@ -1564,6 +1624,8 @@ Câmpurile și unitățile sunt exact cele din `cazuri_golden.json` → `_schema
 ### H.5 Istoric modificări ale specificației
 | Data | Versiune | Modificare |
 |---|---|---|
+| 28.10.2026 | 1.14b norme | Corecturile `teste/verificare_norme/raport_b3.md` §2: Iz Al 16 mm² (9 rânduri), `K_GRUP_F_DISTANTAT` (5–8 sisteme: 0,89/0,89/0,86/0,86), `LOCUINTA_SPD_REZERVA` C40, `PRIZA_ORE_U` platbandă 0,17, curățarea `NEVERIFICAT` și a marcajelor; `PRIZA_ELECTROD_L_IMPLICIT_M` rămâne 3 m (ST 42 Ed. 2025 dă 1,5 m — decizie de proprietar, citarea corectată). Golden B08 (C2 Al 25 → Cu 10, V48), golden v1.14. |
+| 28.10.2026 | 1.14 E2 | Deciziile proprietarului: §C.6 pct. 7 (GE — `ge_protectie` „excitatie” ≥ 3·In ≥ 2 s / „echipotential” art. 415.2, BLOCANT cu ambele opțiuni explicate), §C.3 (limitarea la PCC `limitare_PCC_kW`, propunerea Sn × 0,9 × 0,95, V67 AVERTISMENT „pcc”; CEF kW fără invertoare → invertoare implicite presupuse), §B.8 (notația CYAbY / ACYAbY), §I nou (documente și vederi derivate). Constructor: `lista_pe` PTA nu mai e suprascrisă. Teste: `tests/test_motor_e2.py`; golden / texte actualizate la notația CYAbY. |
 | 28.10.2026 | 1.13 norme | Verificarea normelor (`teste/verificare_norme/raport.md`) + cele 15 decizii ale proiectantului (`raspunsuri_proiectant.md`): §B.0 (Zbuclă 0,30 / 0,8 Ω, Ik3 25 kA), §B.5 (Im MCCB TM ≥ 500 A la In ≤ 50 A), §B.6, §B.8, §B.11 (I²t clasa 3 pe curbe B/C, ≤ 10 kA), §B.12, §B.14 (factorii CLC/TR 50480 fază / PE), §B.18.1 și §C.1 (DDR BMPM / BMPT AC instantaneu la locuință, V43 cu „declarați blocul real”), §B.19 (contor 1,0 VA), §B.20 și §E.3 (contor fără curent nominal), §C.3 (RfG Ord. 79/2016, Umax 1000 V), §C.4 (TD-PV la toți prosumatorii, întrebarea „protecții pe c.c. / c.a.”, DDR invertor doar la cerere, V71 16 A ≈ 3,68 kVA pe kVA), §C.5 (siguranțe MT ≤ 630 kVA, V61), §C.7 (electrod ø60, PT „conform ANRE”), §C.8 (VE: `limitare_kW` + propunerea V46 `propunere_ve`), §H.2 / §H.2a nou (tabelul de valori). Golden: 49 de cazuri actualizate (`_schema.istoric`, golden v1.13); `fraze_chat.json` F01–F47 (Zbuclă, celula trafo). Interfață: `confLipsa` din regula serverului (BESS fără PV nu mai e blocat), câmpul „Limitare VE”, eticheta „nu intră în deviz” (aparate generice / existente / furnizate de OD — `deviz.motiv_exclus_auto`), titlul TD la tabloul alimentat din TG. Teste: `tests/test_verificare_norme.py`. |
 | 27.10.2026 | 1.12 r12-reale | §F.16 nou: texte de proiectant (memorii, ATR, devize) — cablurile legate pe segment (C0 / invertor / MT / tablouri intermediare / tronsoane), invertoarele pe rânduri INVk, racordul existent (PT / TG / stație), capcanele de vocabular (TT de măsură, AAR, „Ir = kA”, „buc N”, „Pi kW”, Pn total, ATR kVA / kW), cheile noi pentru motor (QG, protecția invertoarelor, monitorizare, tablouri intermediare, cablu_MT). `engine/interp_reale.py`; teste `tests/test_interpretor_reale.py`. |
 | 12.10.2026 | 1.0 | versiunea inițială |

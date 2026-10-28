@@ -14,7 +14,7 @@ Formule (1.RE-Ip 30-2004 / STAS 12604/5-90, forma 0,366·ρ/L·lg(...) = ρ/(2π
     R_pl  = ρ_pl/(2πL_p)·ln(2·L_p²/(b·h))                                    (platbandă orizontală, lățime b, adâncime h)
     Rp    = R_e·R_pl/(R_e·η_p + n·R_pl·η_e)                                 (combinația, coeficienți de utilizare η)
     Rp    = R_e/(n·η_e)                                                     (fără platbandă)
-η_e, η_p: norme.PRIZA_ETA_ELECTROZI / PRIZA_ETA_PLATBANDA în funcție de n și a/L [NEVERIFICAT].
+η_e, η_p: norme.PRIZA_ETA_ELECTROZI / PRIZA_ETA_PLATBANDA în funcție de n și a/L [VERIFICAT: tabelul clasic, raport #118/#119, raport_b3 #24–25].
 """
 import math
 

@@ -497,7 +497,7 @@ def tip_cablu(material, izolatie, metoda):
 def text_cablu(material, izolatie, metoda, n_paralel, S_faza, S_N=None, S_PE=None, PE="cablu", retea="tri",
                monopolar=False, fara_N=False, tip=None):
     """Textul cablului pentru listă (SPEC §B.9, §B.10, §B.11, §E.3), de ex.
-    „CYABY 5×6 mm²”, „ACYABY 3×185+95 mm² + FY 1×50 mm² (PE)”, „2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE))”.
+    „CYAbY 5×6 mm²”, „ACYAbY 3×185+95 mm² + FY 1×50 mm² (PE)”, „2 × (ACYAbY 4×120 mm² + FY 1×35 mm² (PE))”.
     `tip`: denumirea impusă de proiectant (r8b, „NA2XY”), păstrată în locul celei implicite."""
     monopolar = monopolar or str(metoda).startswith("F")
     if not tip:
@@ -635,6 +635,19 @@ def note_generate(rezultat):
             txt += (f"; Voc(−25{NB}°C) = {_u(r['Uoc_Tmin_V'], 'V', 1)} ≤ "
                     f"{_u(r.get('Umax_inv_V', norme.PV_UMAX_INVERTOR_IMPLICIT_V), 'V')}")
         note.append(txt + ".")
+    pcc = r.get("limitare_PCC") or {}
+    if pcc.get("P_kW") and pcc.get("aplicata"):
+        # E2: limitarea puterii la PCC (Sn trafo < S invertoare + PCS) — avertisment explicit pe planșă
+        note.append(f"ATENȚIE: Sn trafo {_u(pcc['Sn_kVA'], 'kVA')} < S invertoare + PCS {_u(pcc['S_necesar_kVA'], 'kVA', 1)} — "
+                    f"puterea la punctul de racord (PCC) se limitează la {_u(pcc['P_kW'], 'kW')} prin EMS / controller de "
+                    f"putere (TC + analizor la PCC, comandă spre invertoare / PCS, funcție fail-safe); conform ATR.")
+    ge_p = r.get("protectie_regim_GE") or {}
+    if ge_p.get("solutie") == "excitatie":
+        note.append(f"Regim GE: excitație susținută (PMG / AREP) — Ik ≥ 3·In_G timp de ≥ 2{NB}s (declarația producătorului "
+                    f"GE); Q_G cu declanșator electronic, Isd reglat sub Ik1 din regim GE.")
+    elif ge_p.get("solutie") == "echipotential":
+        note.append("Regim GE: protecția la contact indirect prin legături echipotențiale suplimentare (SR HD 60364-4-41 "
+                    "art. 415.2) în zona consumatorilor alimentați din GE; R ≤ 50 V/Ia — se măsoară la PIF.")
     return note
 
 

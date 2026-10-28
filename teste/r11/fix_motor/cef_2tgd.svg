@@ -1,0 +1,982 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="841.0mm" height="594.0mm" viewBox="0 0 841.0 594.0">
+<title>cef_2tgd</title>
+<style>text{font-family:Arial,Helvetica,sans-serif}</style>
+<rect x="0" y="0" width="841.0" height="594.0" fill="#fff"/>
+<rect x="5.000" y="5.000" width="831.000" height="584.000" stroke="#000" stroke-width="0.18" fill="none"/>
+<rect x="10.000" y="10.000" width="821.000" height="574.000" stroke="#000" stroke-width="0.5" fill="none"/>
+<rect x="47.773" y="15.000" width="49.417" height="9.266" stroke="#000" stroke-width="0.35" fill="#f3f3f3"/>
+<text x="72.481" y="18.552" font-size="3.22" fill="#000" text-anchor="middle" font-weight="bold">CÂMP PV 1</text>
+<text x="72.481" y="22.413" font-size="2.14" fill="#555" text-anchor="middle">invertor 50 kW</text>
+<line x1="72.481" y1="24.266" x2="72.481" y2="41.253" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="41.253" x2="72.481" y2="48.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="65.532" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="65.532" y1="57.378" x2="70.937" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="65.532" y1="50.429" x2="70.937" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<rect x="72.095" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="72.095" y1="57.378" x2="77.500" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="72.095" y1="50.429" x2="77.500" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="79.431" y="54.676" font-size="2.57" fill="#000" text-anchor="start" font-weight="bold"></text>
+<line x1="68.235" y1="57.378" x2="68.235" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="74.798" y1="57.378" x2="74.798" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="68.235" y1="58.923" x2="74.798" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="58.923" x2="72.481" y2="60.467" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="62.444" y="51.973" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">PV1</text>
+<text x="62.444" y="54.753" font-size="2.25" fill="#000" text-anchor="end">câmp PV</text>
+<line x1="74.335" y1="54.290" x2="87.538" y2="54.290" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<rect x="87.924" y="49.657" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="98.734" y="52.900" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE</text>
+<text x="98.734" y="55.680" font-size="2.14" fill="#555" text-anchor="middle">echipot. rame</text>
+<text x="98.734" y="47.341" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE1</text>
+<circle cx="112.633" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="112.633" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">2</text>
+<circle cx="80.126" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="80.126" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">1</text>
+<line x1="72.481" y1="60.467" x2="72.481" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="67.327" x2="72.481" y2="74.187" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="74.187" x2="72.481" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="75.113" x2="72.481" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="71.092" y1="76.503" x2="73.871" y2="76.503" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<circle cx="72.481" cy="75.770" r="0.656" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="72.481" y1="84.225" x2="75.261" y2="76.735" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="71.555" y1="84.225" x2="73.408" y2="84.225" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="84.225" x2="72.481" y2="86.541" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="76.805" y="79.592" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="69.007" y="78.047" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">S1</text>
+<text x="69.007" y="80.827" font-size="2.25" fill="#000" text-anchor="end">c.c. sub sarcină</text>
+<line x1="75.261" y1="80.364" x2="87.538" y2="80.364" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8" stroke-linecap="round"/>
+<rect x="87.924" y="75.731" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="98.734" y="78.974" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB</text>
+<text x="98.734" y="81.754" font-size="2.14" fill="#555" text-anchor="middle">cutie de joncțiune</text>
+<text x="98.734" y="73.415" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB1</text>
+<circle cx="112.633" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="112.633" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">4</text>
+<circle cx="72.481" cy="67.327" r="0.695" fill="#000"/>
+<line x1="72.481" y1="67.327" x2="120.354" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="120.354" y1="67.327" x2="120.354" y2="69.643" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="118.038" y="69.643" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="119.119,73.504 120.354,70.415 121.589,73.504" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="120.354" y1="74.276" x2="120.354" y2="76.592" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="116.879" y1="76.592" x2="123.829" y2="76.592" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="118.038" y1="77.828" x2="122.670" y2="77.828" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="119.196" y1="79.063" x2="121.512" y2="79.063" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="116.957" y="72.886" font-size="2.57" fill="#000" text-anchor="end" font-weight="bold">=</text>
+<text x="124.215" y="71.188" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F1.2</text>
+<text x="124.215" y="73.813" font-size="2.25" fill="#000" text-anchor="start">SPD c.c. · 1100 V</text>
+<circle cx="146.288" cy="71.960" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="146.288" y="72.616" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">5</text>
+<circle cx="79.045" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="79.045" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">3</text>
+<line x1="72.481" y1="86.541" x2="72.481" y2="93.401" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="93.401" x2="72.481" y2="100.261" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="100.261" x2="72.481" y2="101.805" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="67.076" y="101.805" width="10.810" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="67.076" y1="111.071" x2="77.886" y2="101.805" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="68.235" y="104.739" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="76.728" y="109.990" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">~</text>
+<line x1="72.481" y1="111.071" x2="72.481" y2="112.615" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="63.988" y="104.122" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">INV-1</text>
+<text x="63.988" y="106.901" font-size="2.25" fill="#000" text-anchor="end">50 kW · 3 × 400 V</text>
+<text x="63.988" y="109.218" font-size="2.25" fill="#000" text-anchor="end">Huawei SUN2000-50KTL-M3</text>
+<line x1="87.538" y1="106.438" x2="74.335" y2="106.438" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="74.335,106.438 76.033,107.202 76.033,105.674" fill="#c00" stroke="none"/>
+<rect x="87.924" y="104.122" width="9.266" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="92.557" y="107.365" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<circle cx="100.278" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="100.278" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">7</text>
+<circle cx="80.512" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="80.512" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">6</text>
+<line x1="72.481" y1="112.615" x2="72.481" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="119.475" x2="72.481" y2="126.335" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="126.335" x2="72.481" y2="138.689" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="72.481" cy="119.475" r="0.695" fill="#000"/>
+<line x1="72.481" y1="119.475" x2="92.557" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="92.557" y1="119.475" x2="92.557" y2="121.791" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="90.241" y="121.791" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="91.322,125.652 92.557,122.564 93.792,125.652" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="92.557" y1="126.424" x2="92.557" y2="128.741" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="89.082" y1="128.741" x2="96.032" y2="128.741" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="90.241" y1="129.976" x2="94.873" y2="129.976" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="91.399" y1="131.212" x2="93.715" y2="131.212" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="96.418" y="123.336" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F1.3</text>
+<text x="96.418" y="125.961" font-size="2.25" fill="#000" text-anchor="start">SPD T2 · 4P</text>
+<circle cx="112.613" cy="124.108" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="112.613" y="124.764" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">8</text>
+<line x1="72.481" y1="138.689" x2="72.481" y2="145.549" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="145.549" x2="72.481" y2="168.713" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="168.713" x2="72.481" y2="175.573" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="175.573" x2="72.481" y2="177.890" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="71.246" y1="179.125" x2="73.717" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="73.717" y1="179.125" x2="71.246" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="185.611" x2="75.261" y2="178.121" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="71.555" y1="185.611" x2="73.408" y2="185.611" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="185.611" x2="72.481" y2="187.927" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="77.500" y="180.399" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="79.045" y="182.445" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="73.871" y1="181.866" x2="77.500" y2="181.866" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="69.007" y="179.434" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">Q1</text>
+<text x="69.007" y="182.214" font-size="2.25" fill="#000" text-anchor="end">4P · 100 A · Ir 95 A · 25 kA</text>
+<circle cx="83.214" cy="185.997" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="83.214" y="186.653" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">9</text>
+<line x1="72.481" y1="187.927" x2="72.481" y2="194.787" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="72.481" y1="194.787" x2="72.481" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="174.968" y="15.000" width="49.417" height="9.266" stroke="#000" stroke-width="0.35" fill="#f3f3f3"/>
+<text x="199.676" y="18.552" font-size="3.22" fill="#000" text-anchor="middle" font-weight="bold">CÂMP PV 2</text>
+<text x="199.676" y="22.413" font-size="2.14" fill="#555" text-anchor="middle">invertor 50 kW</text>
+<line x1="199.676" y1="24.266" x2="199.676" y2="41.253" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="41.253" x2="199.676" y2="48.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="192.727" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="192.727" y1="57.378" x2="198.132" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="192.727" y1="50.429" x2="198.132" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<rect x="199.290" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="199.290" y1="57.378" x2="204.695" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="199.290" y1="50.429" x2="204.695" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="206.625" y="54.676" font-size="2.57" fill="#000" text-anchor="start" font-weight="bold"></text>
+<line x1="195.429" y1="57.378" x2="195.429" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="201.992" y1="57.378" x2="201.992" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="195.429" y1="58.923" x2="201.992" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="58.923" x2="199.676" y2="60.467" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="189.638" y="51.973" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">PV2</text>
+<text x="189.638" y="54.753" font-size="2.25" fill="#000" text-anchor="end">câmp PV</text>
+<line x1="201.529" y1="54.290" x2="214.733" y2="54.290" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<rect x="215.119" y="49.657" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="225.929" y="52.900" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE</text>
+<text x="225.929" y="55.680" font-size="2.14" fill="#555" text-anchor="middle">echipot. rame</text>
+<text x="225.929" y="47.341" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE2</text>
+<circle cx="239.827" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="239.827" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">2</text>
+<circle cx="207.320" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="207.320" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">1</text>
+<line x1="199.676" y1="60.467" x2="199.676" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="67.327" x2="199.676" y2="74.187" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="74.187" x2="199.676" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="75.113" x2="199.676" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="198.286" y1="76.503" x2="201.066" y2="76.503" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<circle cx="199.676" cy="75.770" r="0.656" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="199.676" y1="84.225" x2="202.456" y2="76.735" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="198.749" y1="84.225" x2="200.603" y2="84.225" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="84.225" x2="199.676" y2="86.541" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="204.000" y="79.592" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="196.201" y="78.047" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">S2</text>
+<text x="196.201" y="80.827" font-size="2.25" fill="#000" text-anchor="end">c.c. sub sarcină</text>
+<line x1="202.456" y1="80.364" x2="214.733" y2="80.364" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8" stroke-linecap="round"/>
+<rect x="215.119" y="75.731" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="225.929" y="78.974" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB</text>
+<text x="225.929" y="81.754" font-size="2.14" fill="#555" text-anchor="middle">cutie de joncțiune</text>
+<text x="225.929" y="73.415" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB2</text>
+<circle cx="239.827" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="239.827" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">4</text>
+<circle cx="199.676" cy="67.327" r="0.695" fill="#000"/>
+<line x1="199.676" y1="67.327" x2="247.549" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="247.549" y1="67.327" x2="247.549" y2="69.643" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="245.232" y="69.643" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="246.313,73.504 247.549,70.415 248.784,73.504" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="247.549" y1="74.276" x2="247.549" y2="76.592" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="244.074" y1="76.592" x2="251.023" y2="76.592" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="245.232" y1="77.828" x2="249.865" y2="77.828" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="246.390" y1="79.063" x2="248.707" y2="79.063" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="244.151" y="72.886" font-size="2.57" fill="#000" text-anchor="end" font-weight="bold">=</text>
+<text x="251.409" y="71.188" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F2.2</text>
+<text x="251.409" y="73.813" font-size="2.25" fill="#000" text-anchor="start">SPD c.c. · 1100 V</text>
+<circle cx="273.483" cy="71.960" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="273.483" y="72.616" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">5</text>
+<circle cx="206.239" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="206.239" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">3</text>
+<line x1="199.676" y1="86.541" x2="199.676" y2="93.401" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="93.401" x2="199.676" y2="100.261" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="100.261" x2="199.676" y2="101.805" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="194.271" y="101.805" width="10.810" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="194.271" y1="111.071" x2="205.081" y2="101.805" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="195.429" y="104.739" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="203.923" y="109.990" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">~</text>
+<line x1="199.676" y1="111.071" x2="199.676" y2="112.615" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="191.183" y="104.122" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">INV-2</text>
+<text x="191.183" y="106.901" font-size="2.25" fill="#000" text-anchor="end">50 kW · 3 × 400 V</text>
+<text x="191.183" y="109.218" font-size="2.25" fill="#000" text-anchor="end">Huawei SUN2000-50KTL-M3</text>
+<line x1="214.733" y1="106.438" x2="201.529" y2="106.438" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="201.529,106.438 203.228,107.202 203.228,105.674" fill="#c00" stroke="none"/>
+<rect x="215.119" y="104.122" width="9.266" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="219.752" y="107.365" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<circle cx="227.473" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="227.473" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">7</text>
+<circle cx="207.706" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="207.706" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">6</text>
+<line x1="199.676" y1="112.615" x2="199.676" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="119.475" x2="199.676" y2="126.335" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="126.335" x2="199.676" y2="138.689" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="199.676" cy="119.475" r="0.695" fill="#000"/>
+<line x1="199.676" y1="119.475" x2="219.752" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="219.752" y1="119.475" x2="219.752" y2="121.791" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="217.435" y="121.791" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="218.516,125.652 219.752,122.564 220.987,125.652" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="219.752" y1="126.424" x2="219.752" y2="128.741" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="216.277" y1="128.741" x2="223.226" y2="128.741" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="217.435" y1="129.976" x2="222.068" y2="129.976" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="218.593" y1="131.212" x2="220.910" y2="131.212" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="223.612" y="123.336" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F2.3</text>
+<text x="223.612" y="125.961" font-size="2.25" fill="#000" text-anchor="start">SPD T2 · 4P</text>
+<circle cx="239.808" cy="124.108" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="239.808" y="124.764" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">8</text>
+<line x1="199.676" y1="138.689" x2="199.676" y2="145.549" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="145.549" x2="199.676" y2="168.713" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="168.713" x2="199.676" y2="175.573" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="175.573" x2="199.676" y2="177.890" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="198.441" y1="179.125" x2="200.911" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="200.911" y1="179.125" x2="198.441" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="185.611" x2="202.456" y2="178.121" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="198.749" y1="185.611" x2="200.603" y2="185.611" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="185.611" x2="199.676" y2="187.927" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="204.695" y="180.399" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="206.239" y="182.445" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="201.066" y1="181.866" x2="204.695" y2="181.866" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="196.201" y="179.434" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">Q2</text>
+<text x="196.201" y="182.214" font-size="2.25" fill="#000" text-anchor="end">4P · 100 A · Ir 95 A · 25 kA</text>
+<circle cx="210.409" cy="185.997" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="210.409" y="186.653" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">9</text>
+<line x1="199.676" y1="187.927" x2="199.676" y2="194.787" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="199.676" y1="194.787" x2="199.676" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="302.162" y="15.000" width="49.417" height="9.266" stroke="#000" stroke-width="0.35" fill="#f3f3f3"/>
+<text x="326.871" y="18.552" font-size="3.22" fill="#000" text-anchor="middle" font-weight="bold">CÂMP PV 3</text>
+<text x="326.871" y="22.413" font-size="2.14" fill="#555" text-anchor="middle">invertor 50 kW</text>
+<line x1="326.871" y1="24.266" x2="326.871" y2="41.253" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="41.253" x2="326.871" y2="48.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="319.921" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="319.921" y1="57.378" x2="325.326" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="319.921" y1="50.429" x2="325.326" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<rect x="326.485" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="326.485" y1="57.378" x2="331.890" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="326.485" y1="50.429" x2="331.890" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="333.820" y="54.676" font-size="2.57" fill="#000" text-anchor="start" font-weight="bold"></text>
+<line x1="322.624" y1="57.378" x2="322.624" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="329.187" y1="57.378" x2="329.187" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="322.624" y1="58.923" x2="329.187" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="58.923" x2="326.871" y2="60.467" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="316.833" y="51.973" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">PV3</text>
+<text x="316.833" y="54.753" font-size="2.25" fill="#000" text-anchor="end">câmp PV</text>
+<line x1="328.724" y1="54.290" x2="341.927" y2="54.290" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<rect x="342.313" y="49.657" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="353.123" y="52.900" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE</text>
+<text x="353.123" y="55.680" font-size="2.14" fill="#555" text-anchor="middle">echipot. rame</text>
+<text x="353.123" y="47.341" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE3</text>
+<circle cx="367.022" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="367.022" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">2</text>
+<circle cx="334.515" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="334.515" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">1</text>
+<line x1="326.871" y1="60.467" x2="326.871" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="67.327" x2="326.871" y2="74.187" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="74.187" x2="326.871" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="75.113" x2="326.871" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="325.481" y1="76.503" x2="328.261" y2="76.503" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<circle cx="326.871" cy="75.770" r="0.656" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="326.871" y1="84.225" x2="329.650" y2="76.735" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="325.944" y1="84.225" x2="327.797" y2="84.225" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="84.225" x2="326.871" y2="86.541" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="331.195" y="79.592" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="323.396" y="78.047" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">S3</text>
+<text x="323.396" y="80.827" font-size="2.25" fill="#000" text-anchor="end">c.c. sub sarcină</text>
+<line x1="329.650" y1="80.364" x2="341.927" y2="80.364" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8" stroke-linecap="round"/>
+<rect x="342.313" y="75.731" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="353.123" y="78.974" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB</text>
+<text x="353.123" y="81.754" font-size="2.14" fill="#555" text-anchor="middle">cutie de joncțiune</text>
+<text x="353.123" y="73.415" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB3</text>
+<circle cx="367.022" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="367.022" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">4</text>
+<circle cx="326.871" cy="67.327" r="0.695" fill="#000"/>
+<line x1="326.871" y1="67.327" x2="374.743" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="374.743" y1="67.327" x2="374.743" y2="69.643" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="372.427" y="69.643" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="373.508,73.504 374.743,70.415 375.979,73.504" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="374.743" y1="74.276" x2="374.743" y2="76.592" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="371.269" y1="76.592" x2="378.218" y2="76.592" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="372.427" y1="77.828" x2="377.060" y2="77.828" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="373.585" y1="79.063" x2="375.901" y2="79.063" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="371.346" y="72.886" font-size="2.57" fill="#000" text-anchor="end" font-weight="bold">=</text>
+<text x="378.604" y="71.188" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F3.2</text>
+<text x="378.604" y="73.813" font-size="2.25" fill="#000" text-anchor="start">SPD c.c. · 1100 V</text>
+<circle cx="400.677" cy="71.960" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="400.677" y="72.616" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">5</text>
+<circle cx="333.434" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="333.434" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">3</text>
+<line x1="326.871" y1="86.541" x2="326.871" y2="93.401" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="93.401" x2="326.871" y2="100.261" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="100.261" x2="326.871" y2="101.805" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="321.466" y="101.805" width="10.810" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="321.466" y1="111.071" x2="332.276" y2="101.805" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="322.624" y="104.739" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="331.117" y="109.990" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">~</text>
+<line x1="326.871" y1="111.071" x2="326.871" y2="112.615" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="318.377" y="104.122" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">INV-3</text>
+<text x="318.377" y="106.901" font-size="2.25" fill="#000" text-anchor="end">50 kW · 3 × 400 V</text>
+<text x="318.377" y="109.218" font-size="2.25" fill="#000" text-anchor="end">Huawei SUN2000-50KTL-M3</text>
+<line x1="341.927" y1="106.438" x2="328.724" y2="106.438" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="328.724,106.438 330.423,107.202 330.423,105.674" fill="#c00" stroke="none"/>
+<rect x="342.313" y="104.122" width="9.266" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="346.946" y="107.365" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<circle cx="354.668" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="354.668" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">7</text>
+<circle cx="334.901" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="334.901" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">6</text>
+<line x1="326.871" y1="112.615" x2="326.871" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="119.475" x2="326.871" y2="126.335" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="126.335" x2="326.871" y2="138.689" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="326.871" cy="119.475" r="0.695" fill="#000"/>
+<line x1="326.871" y1="119.475" x2="346.946" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="346.946" y1="119.475" x2="346.946" y2="121.791" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="344.630" y="121.791" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="345.711,125.652 346.946,122.564 348.182,125.652" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="346.946" y1="126.424" x2="346.946" y2="128.741" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="343.472" y1="128.741" x2="350.421" y2="128.741" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="344.630" y1="129.976" x2="349.263" y2="129.976" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="345.788" y1="131.212" x2="348.104" y2="131.212" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="350.807" y="123.336" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F3.3</text>
+<text x="350.807" y="125.961" font-size="2.25" fill="#000" text-anchor="start">SPD T2 · 4P</text>
+<circle cx="367.003" cy="124.108" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="367.003" y="124.764" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">8</text>
+<line x1="326.871" y1="138.689" x2="326.871" y2="145.549" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="145.549" x2="326.871" y2="168.713" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="168.713" x2="326.871" y2="175.573" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="175.573" x2="326.871" y2="177.890" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="325.635" y1="179.125" x2="328.106" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="328.106" y1="179.125" x2="325.635" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="185.611" x2="329.650" y2="178.121" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="325.944" y1="185.611" x2="327.797" y2="185.611" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="185.611" x2="326.871" y2="187.927" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="331.890" y="180.399" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="333.434" y="182.445" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="328.261" y1="181.866" x2="331.890" y2="181.866" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="323.396" y="179.434" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">Q3</text>
+<text x="323.396" y="182.214" font-size="2.25" fill="#000" text-anchor="end">4P · 100 A · Ir 95 A · 25 kA</text>
+<circle cx="337.603" cy="185.997" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="337.603" y="186.653" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">9</text>
+<line x1="326.871" y1="187.927" x2="326.871" y2="194.787" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="326.871" y1="194.787" x2="326.871" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="460.242" y="15.000" width="49.417" height="9.266" stroke="#000" stroke-width="0.35" fill="#f3f3f3"/>
+<text x="484.951" y="18.552" font-size="3.22" fill="#000" text-anchor="middle" font-weight="bold">CÂMP PV 4</text>
+<text x="484.951" y="22.413" font-size="2.14" fill="#555" text-anchor="middle">invertor 50 kW</text>
+<line x1="484.951" y1="24.266" x2="484.951" y2="41.253" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="41.253" x2="484.951" y2="48.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="478.002" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="478.002" y1="57.378" x2="483.407" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="478.002" y1="50.429" x2="483.407" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<rect x="484.565" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="484.565" y1="57.378" x2="489.970" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="484.565" y1="50.429" x2="489.970" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="491.900" y="54.676" font-size="2.57" fill="#000" text-anchor="start" font-weight="bold"></text>
+<line x1="480.704" y1="57.378" x2="480.704" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="487.267" y1="57.378" x2="487.267" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="480.704" y1="58.923" x2="487.267" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="58.923" x2="484.951" y2="60.467" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="474.913" y="51.973" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">PV4</text>
+<text x="474.913" y="54.753" font-size="2.25" fill="#000" text-anchor="end">câmp PV</text>
+<line x1="486.804" y1="54.290" x2="500.008" y2="54.290" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<rect x="500.394" y="49.657" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="511.204" y="52.900" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE</text>
+<text x="511.204" y="55.680" font-size="2.14" fill="#555" text-anchor="middle">echipot. rame</text>
+<text x="511.204" y="47.341" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE4</text>
+<circle cx="525.102" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="525.102" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">2</text>
+<circle cx="492.595" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="492.595" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">1</text>
+<line x1="484.951" y1="60.467" x2="484.951" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="67.327" x2="484.951" y2="74.187" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="74.187" x2="484.951" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="75.113" x2="484.951" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="483.561" y1="76.503" x2="486.341" y2="76.503" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<circle cx="484.951" cy="75.770" r="0.656" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="484.951" y1="84.225" x2="487.731" y2="76.735" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.024" y1="84.225" x2="485.877" y2="84.225" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="84.225" x2="484.951" y2="86.541" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="489.275" y="79.592" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="481.476" y="78.047" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">S4</text>
+<text x="481.476" y="80.827" font-size="2.25" fill="#000" text-anchor="end">c.c. sub sarcină</text>
+<line x1="487.731" y1="80.364" x2="500.008" y2="80.364" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8" stroke-linecap="round"/>
+<rect x="500.394" y="75.731" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="511.204" y="78.974" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB</text>
+<text x="511.204" y="81.754" font-size="2.14" fill="#555" text-anchor="middle">cutie de joncțiune</text>
+<text x="511.204" y="73.415" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB4</text>
+<circle cx="525.102" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="525.102" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">4</text>
+<circle cx="484.951" cy="67.327" r="0.695" fill="#000"/>
+<line x1="484.951" y1="67.327" x2="532.823" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="532.823" y1="67.327" x2="532.823" y2="69.643" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="530.507" y="69.643" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="531.588,73.504 532.823,70.415 534.059,73.504" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="532.823" y1="74.276" x2="532.823" y2="76.592" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="529.349" y1="76.592" x2="536.298" y2="76.592" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="530.507" y1="77.828" x2="535.140" y2="77.828" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="531.665" y1="79.063" x2="533.982" y2="79.063" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="529.426" y="72.886" font-size="2.57" fill="#000" text-anchor="end" font-weight="bold">=</text>
+<text x="536.684" y="71.188" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F4.2</text>
+<text x="536.684" y="73.813" font-size="2.25" fill="#000" text-anchor="start">SPD c.c. · 1100 V</text>
+<circle cx="558.758" cy="71.960" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="558.758" y="72.616" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">5</text>
+<circle cx="491.514" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="491.514" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">3</text>
+<line x1="484.951" y1="86.541" x2="484.951" y2="93.401" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="93.401" x2="484.951" y2="100.261" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="100.261" x2="484.951" y2="101.805" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="479.546" y="101.805" width="10.810" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="479.546" y1="111.071" x2="490.356" y2="101.805" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="480.704" y="104.739" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="489.198" y="109.990" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">~</text>
+<line x1="484.951" y1="111.071" x2="484.951" y2="112.615" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="476.457" y="104.122" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">INV-4</text>
+<text x="476.457" y="106.901" font-size="2.25" fill="#000" text-anchor="end">50 kW · 3 × 400 V</text>
+<text x="476.457" y="109.218" font-size="2.25" fill="#000" text-anchor="end">Huawei SUN2000-50KTL-M3</text>
+<line x1="500.008" y1="106.438" x2="486.804" y2="106.438" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="486.804,106.438 488.503,107.202 488.503,105.674" fill="#c00" stroke="none"/>
+<rect x="500.394" y="104.122" width="9.266" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="505.026" y="107.365" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<circle cx="512.748" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="512.748" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">7</text>
+<circle cx="492.981" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="492.981" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">6</text>
+<line x1="484.951" y1="112.615" x2="484.951" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="119.475" x2="484.951" y2="126.335" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="126.335" x2="484.951" y2="138.689" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="484.951" cy="119.475" r="0.695" fill="#000"/>
+<line x1="484.951" y1="119.475" x2="505.026" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="505.026" y1="119.475" x2="505.026" y2="121.791" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="502.710" y="121.791" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="503.791,125.652 505.026,122.564 506.262,125.652" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="505.026" y1="126.424" x2="505.026" y2="128.741" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="501.552" y1="128.741" x2="508.501" y2="128.741" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="502.710" y1="129.976" x2="507.343" y2="129.976" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="503.868" y1="131.212" x2="506.185" y2="131.212" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="508.887" y="123.336" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F4.3</text>
+<text x="508.887" y="125.961" font-size="2.25" fill="#000" text-anchor="start">SPD T2 · 4P</text>
+<circle cx="525.083" cy="124.108" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="525.083" y="124.764" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">8</text>
+<line x1="484.951" y1="138.689" x2="484.951" y2="145.549" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="145.549" x2="484.951" y2="168.713" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="168.713" x2="484.951" y2="175.573" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="175.573" x2="484.951" y2="177.890" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="483.715" y1="179.125" x2="486.186" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="486.186" y1="179.125" x2="483.715" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="185.611" x2="487.731" y2="178.121" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.024" y1="185.611" x2="485.877" y2="185.611" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="185.611" x2="484.951" y2="187.927" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="489.970" y="180.399" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="491.514" y="182.445" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="486.341" y1="181.866" x2="489.970" y2="181.866" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="481.476" y="179.434" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">Q4</text>
+<text x="481.476" y="182.214" font-size="2.25" fill="#000" text-anchor="end">4P · 100 A · Ir 95 A · 25 kA</text>
+<circle cx="495.684" cy="185.997" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="495.684" y="186.653" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">9</text>
+<line x1="484.951" y1="187.927" x2="484.951" y2="194.787" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.951" y1="194.787" x2="484.951" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="587.437" y="15.000" width="49.417" height="9.266" stroke="#000" stroke-width="0.35" fill="#f3f3f3"/>
+<text x="612.145" y="18.552" font-size="3.22" fill="#000" text-anchor="middle" font-weight="bold">CÂMP PV 5</text>
+<text x="612.145" y="22.413" font-size="2.14" fill="#555" text-anchor="middle">invertor 50 kW</text>
+<line x1="612.145" y1="24.266" x2="612.145" y2="41.253" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="41.253" x2="612.145" y2="48.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="605.196" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="605.196" y1="57.378" x2="610.601" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="605.196" y1="50.429" x2="610.601" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<rect x="611.759" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="611.759" y1="57.378" x2="617.164" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="611.759" y1="50.429" x2="617.164" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="619.095" y="54.676" font-size="2.57" fill="#000" text-anchor="start" font-weight="bold"></text>
+<line x1="607.899" y1="57.378" x2="607.899" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="614.462" y1="57.378" x2="614.462" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="607.899" y1="58.923" x2="614.462" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="58.923" x2="612.145" y2="60.467" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="602.108" y="51.973" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">PV5</text>
+<text x="602.108" y="54.753" font-size="2.25" fill="#000" text-anchor="end">câmp PV</text>
+<line x1="613.999" y1="54.290" x2="627.202" y2="54.290" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<rect x="627.588" y="49.657" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="638.398" y="52.900" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE</text>
+<text x="638.398" y="55.680" font-size="2.14" fill="#555" text-anchor="middle">echipot. rame</text>
+<text x="638.398" y="47.341" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE5</text>
+<circle cx="652.297" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="652.297" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">2</text>
+<circle cx="619.790" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="619.790" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">1</text>
+<line x1="612.145" y1="60.467" x2="612.145" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="67.327" x2="612.145" y2="74.187" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="74.187" x2="612.145" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="75.113" x2="612.145" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="610.756" y1="76.503" x2="613.535" y2="76.503" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<circle cx="612.145" cy="75.770" r="0.656" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="612.145" y1="84.225" x2="614.925" y2="76.735" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="611.219" y1="84.225" x2="613.072" y2="84.225" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="84.225" x2="612.145" y2="86.541" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="616.469" y="79.592" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="608.671" y="78.047" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">S5</text>
+<text x="608.671" y="80.827" font-size="2.25" fill="#000" text-anchor="end">c.c. sub sarcină</text>
+<line x1="614.925" y1="80.364" x2="627.202" y2="80.364" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8" stroke-linecap="round"/>
+<rect x="627.588" y="75.731" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="638.398" y="78.974" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB</text>
+<text x="638.398" y="81.754" font-size="2.14" fill="#555" text-anchor="middle">cutie de joncțiune</text>
+<text x="638.398" y="73.415" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB5</text>
+<circle cx="652.297" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="652.297" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">4</text>
+<circle cx="612.145" cy="67.327" r="0.695" fill="#000"/>
+<line x1="612.145" y1="67.327" x2="660.018" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="660.018" y1="67.327" x2="660.018" y2="69.643" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="657.702" y="69.643" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="658.783,73.504 660.018,70.415 661.253,73.504" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="660.018" y1="74.276" x2="660.018" y2="76.592" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="656.543" y1="76.592" x2="663.493" y2="76.592" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="657.702" y1="77.828" x2="662.334" y2="77.828" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="658.860" y1="79.063" x2="661.176" y2="79.063" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="656.621" y="72.886" font-size="2.57" fill="#000" text-anchor="end" font-weight="bold">=</text>
+<text x="663.879" y="71.188" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F5.2</text>
+<text x="663.879" y="73.813" font-size="2.25" fill="#000" text-anchor="start">SPD c.c. · 1100 V</text>
+<circle cx="685.952" cy="71.960" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="685.952" y="72.616" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">5</text>
+<circle cx="618.709" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="618.709" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">3</text>
+<line x1="612.145" y1="86.541" x2="612.145" y2="93.401" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="93.401" x2="612.145" y2="100.261" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="100.261" x2="612.145" y2="101.805" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="606.740" y="101.805" width="10.810" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="606.740" y1="111.071" x2="617.550" y2="101.805" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="607.899" y="104.739" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="616.392" y="109.990" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">~</text>
+<line x1="612.145" y1="111.071" x2="612.145" y2="112.615" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="603.652" y="104.122" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">INV-5</text>
+<text x="603.652" y="106.901" font-size="2.25" fill="#000" text-anchor="end">50 kW · 3 × 400 V</text>
+<text x="603.652" y="109.218" font-size="2.25" fill="#000" text-anchor="end">Huawei SUN2000-50KTL-M3</text>
+<line x1="627.202" y1="106.438" x2="613.999" y2="106.438" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="613.999,106.438 615.697,107.202 615.697,105.674" fill="#c00" stroke="none"/>
+<rect x="627.588" y="104.122" width="9.266" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="632.221" y="107.365" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<circle cx="639.942" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="639.942" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">7</text>
+<circle cx="620.176" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="620.176" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">6</text>
+<line x1="612.145" y1="112.615" x2="612.145" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="119.475" x2="612.145" y2="126.335" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="126.335" x2="612.145" y2="138.689" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="612.145" cy="119.475" r="0.695" fill="#000"/>
+<line x1="612.145" y1="119.475" x2="632.221" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="632.221" y1="119.475" x2="632.221" y2="121.791" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="629.905" y="121.791" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="630.986,125.652 632.221,122.564 633.456,125.652" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="632.221" y1="126.424" x2="632.221" y2="128.741" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="628.746" y1="128.741" x2="635.696" y2="128.741" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="629.905" y1="129.976" x2="634.537" y2="129.976" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="631.063" y1="131.212" x2="633.379" y2="131.212" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="636.082" y="123.336" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F5.3</text>
+<text x="636.082" y="125.961" font-size="2.25" fill="#000" text-anchor="start">SPD T2 · 4P</text>
+<circle cx="652.277" cy="124.108" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="652.277" y="124.764" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">8</text>
+<line x1="612.145" y1="138.689" x2="612.145" y2="145.549" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="145.549" x2="612.145" y2="168.713" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="168.713" x2="612.145" y2="175.573" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="175.573" x2="612.145" y2="177.890" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="610.910" y1="179.125" x2="613.381" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="613.381" y1="179.125" x2="610.910" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="185.611" x2="614.925" y2="178.121" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="611.219" y1="185.611" x2="613.072" y2="185.611" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="185.611" x2="612.145" y2="187.927" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="617.164" y="180.399" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="618.709" y="182.445" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="613.535" y1="181.866" x2="617.164" y2="181.866" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="608.671" y="179.434" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">Q5</text>
+<text x="608.671" y="182.214" font-size="2.25" fill="#000" text-anchor="end">4P · 100 A · Ir 95 A · 25 kA</text>
+<circle cx="622.878" cy="185.997" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="622.878" y="186.653" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">9</text>
+<line x1="612.145" y1="187.927" x2="612.145" y2="194.787" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="612.145" y1="194.787" x2="612.145" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="714.632" y="15.000" width="49.417" height="9.266" stroke="#000" stroke-width="0.35" fill="#f3f3f3"/>
+<text x="739.340" y="18.552" font-size="3.22" fill="#000" text-anchor="middle" font-weight="bold">CÂMP PV 6</text>
+<text x="739.340" y="22.413" font-size="2.14" fill="#555" text-anchor="middle">invertor 50 kW</text>
+<line x1="739.340" y1="24.266" x2="739.340" y2="41.253" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="41.253" x2="739.340" y2="48.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="732.391" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="732.391" y1="57.378" x2="737.796" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="732.391" y1="50.429" x2="737.796" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<rect x="738.954" y="50.429" width="5.405" height="6.949" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="738.954" y1="57.378" x2="744.359" y2="50.429" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="738.954" y1="50.429" x2="744.359" y2="57.378" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="746.289" y="54.676" font-size="2.57" fill="#000" text-anchor="start" font-weight="bold"></text>
+<line x1="735.093" y1="57.378" x2="735.093" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="741.657" y1="57.378" x2="741.657" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="735.093" y1="58.923" x2="741.657" y2="58.923" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="58.923" x2="739.340" y2="60.467" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="729.302" y="51.973" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">PV6</text>
+<text x="729.302" y="54.753" font-size="2.25" fill="#000" text-anchor="end">câmp PV</text>
+<line x1="741.193" y1="54.290" x2="754.397" y2="54.290" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<rect x="754.783" y="49.657" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="765.593" y="52.900" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE</text>
+<text x="765.593" y="55.680" font-size="2.14" fill="#555" text-anchor="middle">echipot. rame</text>
+<text x="765.593" y="47.341" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PE6</text>
+<circle cx="779.491" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="779.491" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">2</text>
+<circle cx="746.984" cy="58.537" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="746.984" y="59.193" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">1</text>
+<line x1="739.340" y1="60.467" x2="739.340" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="67.327" x2="739.340" y2="74.187" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="74.187" x2="739.340" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="75.113" x2="739.340" y2="75.113" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="737.950" y1="76.503" x2="740.730" y2="76.503" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<circle cx="739.340" cy="75.770" r="0.656" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="739.340" y1="84.225" x2="742.120" y2="76.735" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="738.414" y1="84.225" x2="740.267" y2="84.225" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="84.225" x2="739.340" y2="86.541" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="743.664" y="79.592" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="735.865" y="78.047" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">S6</text>
+<text x="735.865" y="80.827" font-size="2.25" fill="#000" text-anchor="end">c.c. sub sarcină</text>
+<line x1="742.120" y1="80.364" x2="754.397" y2="80.364" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8" stroke-linecap="round"/>
+<rect x="754.783" y="75.731" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="765.593" y="78.974" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB</text>
+<text x="765.593" y="81.754" font-size="2.14" fill="#555" text-anchor="middle">cutie de joncțiune</text>
+<text x="765.593" y="73.415" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">SB6</text>
+<circle cx="779.491" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="779.491" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">4</text>
+<circle cx="739.340" cy="67.327" r="0.695" fill="#000"/>
+<line x1="739.340" y1="67.327" x2="787.213" y2="67.327" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="787.213" y1="67.327" x2="787.213" y2="69.643" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="784.896" y="69.643" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="785.977,73.504 787.213,70.415 788.448,73.504" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="787.213" y1="74.276" x2="787.213" y2="76.592" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="783.738" y1="76.592" x2="790.687" y2="76.592" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="784.896" y1="77.828" x2="789.529" y2="77.828" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="786.054" y1="79.063" x2="788.371" y2="79.063" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="783.815" y="72.886" font-size="2.57" fill="#000" text-anchor="end" font-weight="bold">=</text>
+<text x="791.073" y="71.188" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F6.2</text>
+<text x="791.073" y="73.813" font-size="2.25" fill="#000" text-anchor="start">SPD c.c. · 1100 V</text>
+<circle cx="813.147" cy="71.960" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="813.147" y="72.616" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">5</text>
+<circle cx="745.903" cy="84.611" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="745.903" y="85.267" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">3</text>
+<line x1="739.340" y1="86.541" x2="739.340" y2="93.401" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="93.401" x2="739.340" y2="100.261" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="100.261" x2="739.340" y2="101.805" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="733.935" y="101.805" width="10.810" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="733.935" y1="111.071" x2="744.745" y2="101.805" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="735.093" y="104.739" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">=</text>
+<text x="743.587" y="109.990" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">~</text>
+<line x1="739.340" y1="111.071" x2="739.340" y2="112.615" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="730.847" y="104.122" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">INV-6</text>
+<text x="730.847" y="106.901" font-size="2.25" fill="#000" text-anchor="end">50 kW · 3 × 400 V</text>
+<text x="730.847" y="109.218" font-size="2.25" fill="#000" text-anchor="end">Huawei SUN2000-50KTL-M3</text>
+<line x1="754.397" y1="106.438" x2="741.193" y2="106.438" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="741.193,106.438 742.892,107.202 742.892,105.674" fill="#c00" stroke="none"/>
+<rect x="754.783" y="104.122" width="9.266" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="759.416" y="107.365" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<circle cx="767.137" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="767.137" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">7</text>
+<circle cx="747.370" cy="110.685" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="747.370" y="111.341" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">6</text>
+<line x1="739.340" y1="112.615" x2="739.340" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="119.475" x2="739.340" y2="126.335" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="126.335" x2="739.340" y2="138.689" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="739.340" cy="119.475" r="0.695" fill="#000"/>
+<line x1="739.340" y1="119.475" x2="759.416" y2="119.475" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="759.416" y1="119.475" x2="759.416" y2="121.791" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="757.099" y="121.791" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="758.180,125.652 759.416,122.564 760.651,125.652" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="759.416" y1="126.424" x2="759.416" y2="128.741" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="755.941" y1="128.741" x2="762.890" y2="128.741" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="757.099" y1="129.976" x2="761.732" y2="129.976" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="758.257" y1="131.212" x2="760.574" y2="131.212" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="763.276" y="123.336" font-size="3.00" fill="#000" text-anchor="start" font-weight="bold">F6.3</text>
+<text x="763.276" y="125.961" font-size="2.25" fill="#000" text-anchor="start">SPD T2 · 4P</text>
+<circle cx="779.472" cy="124.108" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="779.472" y="124.764" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">8</text>
+<line x1="739.340" y1="138.689" x2="739.340" y2="145.549" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="145.549" x2="739.340" y2="168.713" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="168.713" x2="739.340" y2="175.573" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="175.573" x2="739.340" y2="177.890" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="738.105" y1="179.125" x2="740.576" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="740.576" y1="179.125" x2="738.105" y2="176.654" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="185.611" x2="742.120" y2="178.121" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="738.414" y1="185.611" x2="740.267" y2="185.611" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="185.611" x2="739.340" y2="187.927" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="744.359" y="180.399" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="745.903" y="182.445" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="740.730" y1="181.866" x2="744.359" y2="181.866" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="735.865" y="179.434" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">Q6</text>
+<text x="735.865" y="182.214" font-size="2.25" fill="#000" text-anchor="end">4P · 100 A · Ir 95 A · 25 kA</text>
+<circle cx="750.073" cy="185.997" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="750.073" y="186.653" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">9</text>
+<line x1="739.340" y1="187.927" x2="739.340" y2="194.787" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="739.340" y1="194.787" x2="739.340" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="40.824" y1="197.876" x2="413.032" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="40.824" y1="198.416" x2="413.032" y2="198.416" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="419.209" y1="197.876" x2="747.061" y2="197.876" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="419.209" y1="198.416" x2="747.061" y2="198.416" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="416.120" y1="187.066" x2="416.120" y2="221.040" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8" stroke-linecap="round"/>
+<text x="226.928" y="200.347" font-size="2.04" fill="#555" text-anchor="middle">TGD-CF1</text>
+<text x="583.135" y="200.347" font-size="2.04" fill="#555" text-anchor="middle">TGD-CF2</text>
+<text x="74.798" y="196.641" font-size="2.25" fill="#000" text-anchor="start">TGD-CF1 │ TGD-CF2 · bare Cu 3P + N + PE · Σ Iac 238,2 / 238,2 A</text>
+<circle cx="72.481" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="199.676" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="326.871" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="484.951" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="612.145" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="739.340" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="358.210" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="477.544" cy="197.876" r="0.695" fill="#000"/>
+<circle cx="47.001" cy="197.876" r="0.695" fill="#000"/>
+<line x1="47.001" y1="197.876" x2="47.001" y2="200.965" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="47.001" y1="200.965" x2="47.001" y2="203.281" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="44.684" y="203.281" width="4.633" height="4.633" stroke="#000" stroke-width="0.35" fill="none"/>
+<polyline points="45.765,207.142 47.001,204.053 48.236,207.142" stroke="#000" stroke-width="0.35" fill="none" stroke-linejoin="round"/>
+<line x1="47.001" y1="207.914" x2="47.001" y2="210.230" stroke="#1a7f37" stroke-width="0.35" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<line x1="43.526" y1="210.230" x2="50.475" y2="210.230" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="44.684" y1="211.466" x2="49.317" y2="211.466" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="45.843" y1="212.701" x2="48.159" y2="212.701" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="43.140" y="202.509" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">F1</text>
+<text x="43.140" y="205.289" font-size="2.25" fill="#000" text-anchor="end">SPD T1+T2 · 4P</text>
+<circle cx="52.406" cy="205.597" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="52.406" y="206.254" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">10</text>
+<line x1="358.210" y1="197.876" x2="358.210" y2="204.736" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="358.210" y1="204.736" x2="358.210" y2="207.052" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="356.974" y1="208.288" x2="359.445" y2="205.817" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="359.445" y1="208.288" x2="356.974" y2="205.817" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="358.210" y1="214.774" x2="360.990" y2="207.284" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="357.283" y1="214.774" x2="359.136" y2="214.774" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="358.210" y1="214.774" x2="358.210" y2="217.090" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="363.229" y="209.562" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="364.773" y="211.608" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<rect x="363.229" y="212.496" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="364.773" y="214.542" font-size="1.61" fill="#000" text-anchor="middle" font-weight="bold">BD</text>
+<line x1="359.600" y1="211.029" x2="363.229" y2="211.029" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="354.735" y="208.597" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">QG1</text>
+<text x="354.735" y="211.376" font-size="2.25" fill="#000" text-anchor="end">4P · 250 A · Ir 250 A · 25 kA</text>
+<line x1="373.267" y1="213.963" x2="366.317" y2="213.963" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="366.317,213.963 368.016,214.727 368.016,213.199" fill="#c00" stroke="none"/>
+<rect x="373.653" y="206.280" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="384.463" y="209.523" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PI</text>
+<text x="384.463" y="212.303" font-size="2.14" fill="#555" text-anchor="middle">U / f</text>
+<circle cx="398.361" cy="215.160" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="398.361" y="215.816" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">12</text>
+<circle cx="368.943" cy="206.666" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="368.943" y="207.323" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">11</text>
+<line x1="358.210" y1="217.090" x2="358.210" y2="223.950" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="358.210" y1="223.950" x2="358.210" y2="307.194" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="365.024" y1="307.194" x2="374.290" y2="307.194" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="365.024" y1="307.734" x2="374.290" y2="307.734" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="369.657" cy="307.194" r="0.695" fill="#000"/>
+<circle cx="358.210" cy="307.194" r="0.695" fill="#000"/>
+<line x1="369.657" y1="307.194" x2="369.657" y2="314.054" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="369.657" y1="314.054" x2="369.657" y2="316.370" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="368.421" y1="317.606" x2="370.892" y2="315.135" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="370.892" y1="317.606" x2="368.421" y2="315.135" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="369.657" y1="324.092" x2="372.436" y2="316.602" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="368.730" y1="324.092" x2="370.583" y2="324.092" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="369.657" y1="324.092" x2="369.657" y2="326.408" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="374.676" y="318.880" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="376.220" y="320.926" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="371.047" y1="320.347" x2="374.676" y2="320.347" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="366.182" y="317.915" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">QPT1</text>
+<text x="366.182" y="320.694" font-size="2.25" fill="#000" text-anchor="end">4P · 250 A · Ir 250 A · 25 kA</text>
+<circle cx="380.390" cy="324.478" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="380.390" y="325.134" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">13</text>
+<line x1="369.657" y1="326.408" x2="369.657" y2="333.268" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="369.657" y1="333.268" x2="369.657" y2="333.268" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="318.230" y="299.473" width="79.960" height="32.341" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8"/>
+<text x="320.546" y="302.870" font-size="2.32" fill="#000" text-anchor="start" font-weight="bold">TGJT EXISTENT — plecarea 1</text>
+<text x="360.912" y="302.870" font-size="2.25" fill="#555" text-anchor="start">Ib = 238,2 A · ΔU = 0,94 %</text>
+<line x1="477.544" y1="197.876" x2="477.544" y2="204.736" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="477.544" y1="204.736" x2="477.544" y2="207.052" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="476.308" y1="208.288" x2="478.779" y2="205.817" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="478.779" y1="208.288" x2="476.308" y2="205.817" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="477.544" y1="214.774" x2="480.324" y2="207.284" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="476.617" y1="214.774" x2="478.470" y2="214.774" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="477.544" y1="214.774" x2="477.544" y2="217.090" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="482.563" y="209.562" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="484.107" y="211.608" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<rect x="482.563" y="212.496" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="484.107" y="214.542" font-size="1.61" fill="#000" text-anchor="middle" font-weight="bold">BD</text>
+<line x1="478.934" y1="211.029" x2="482.563" y2="211.029" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="474.069" y="208.597" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">QG2</text>
+<text x="474.069" y="211.376" font-size="2.25" fill="#000" text-anchor="end">4P · 250 A · Ir 250 A · 25 kA</text>
+<line x1="492.601" y1="213.963" x2="485.651" y2="213.963" stroke="#c00" stroke-width="0.25" fill="none" stroke-dasharray="0.5 0.9" stroke-linecap="round"/>
+<polygon points="485.651,213.963 487.350,214.727 487.350,213.199" fill="#c00" stroke="none"/>
+<rect x="492.987" y="206.280" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="503.797" y="209.523" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">PI</text>
+<text x="503.797" y="212.303" font-size="2.14" fill="#555" text-anchor="middle">U / f</text>
+<circle cx="517.695" cy="215.160" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="517.695" y="215.816" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">14</text>
+<circle cx="488.277" cy="206.666" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="488.277" y="207.323" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">11</text>
+<line x1="477.544" y1="217.090" x2="477.544" y2="223.950" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="477.544" y1="223.950" x2="477.544" y2="307.194" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.358" y1="307.194" x2="493.624" y2="307.194" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="484.358" y1="307.734" x2="493.624" y2="307.734" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="488.991" cy="307.194" r="0.695" fill="#000"/>
+<circle cx="477.544" cy="307.194" r="0.695" fill="#000"/>
+<line x1="488.991" y1="307.194" x2="488.991" y2="314.054" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="488.991" y1="314.054" x2="488.991" y2="316.370" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="487.755" y1="317.606" x2="490.226" y2="315.135" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="490.226" y1="317.606" x2="487.755" y2="315.135" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="488.991" y1="324.092" x2="491.770" y2="316.602" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="488.064" y1="324.092" x2="489.917" y2="324.092" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="488.991" y1="324.092" x2="488.991" y2="326.408" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="494.010" y="318.880" width="3.089" height="2.934" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="495.554" y="320.926" font-size="1.93" fill="#000" text-anchor="middle" font-weight="bold">I&gt;</text>
+<line x1="490.381" y1="320.347" x2="494.010" y2="320.347" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<text x="485.516" y="317.915" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">QPT2</text>
+<text x="485.516" y="320.694" font-size="2.25" fill="#000" text-anchor="end">4P · 250 A · Ir 250 A · 25 kA</text>
+<circle cx="499.723" cy="324.478" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="499.723" y="325.134" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">13</text>
+<line x1="488.991" y1="326.408" x2="488.991" y2="333.268" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="488.991" y1="333.268" x2="488.991" y2="333.268" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="437.564" y="299.473" width="79.960" height="32.341" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8"/>
+<text x="439.880" y="302.870" font-size="2.32" fill="#000" text-anchor="start" font-weight="bold">TGJT EXISTENT — plecarea 2</text>
+<text x="480.246" y="302.870" font-size="2.25" fill="#555" text-anchor="start">Ib = 238,2 A · ΔU = 0,94 %</text>
+<line x1="369.657" y1="333.268" x2="369.657" y2="348.711" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="369.657" cy="348.711" r="0.695" fill="#000"/>
+<line x1="488.991" y1="333.268" x2="488.991" y2="348.711" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="488.991" cy="348.711" r="0.695" fill="#000"/>
+<line x1="365.024" y1="348.711" x2="493.624" y2="348.711" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="365.024" y1="349.251" x2="493.624" y2="349.251" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<text x="371.201" y="347.630" font-size="2.14" fill="#555" text-anchor="start">bara JT existentă</text>
+<circle cx="429.324" cy="348.711" r="0.695" fill="#000"/>
+<line x1="429.324" y1="348.711" x2="429.324" y2="355.571" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<line x1="429.324" y1="355.571" x2="429.324" y2="367.925" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<circle cx="429.324" cy="361.748" r="3.089" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="424.691" y="359.431" font-size="3.00" fill="#000" text-anchor="end" font-weight="bold">TCA</text>
+<text x="424.691" y="362.211" font-size="2.25" fill="#000" text-anchor="end">3 × 500/5 A · cl. 0,5</text>
+<line x1="432.412" y1="361.748" x2="439.748" y2="361.748" stroke="#1a5fb4" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<polygon points="439.748,361.748 438.049,362.512 438.049,360.983" fill="#1a5fb4" stroke="none"/>
+<rect x="440.134" y="357.115" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="450.944" y="360.358" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">AR</text>
+<text x="450.944" y="363.138" font-size="2.14" fill="#555" text-anchor="middle">analizor rețea</text>
+<text x="450.944" y="365.609" font-size="2.14" fill="#555" text-anchor="middle">P la PCC</text>
+<text x="450.944" y="354.799" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">AR</text>
+<circle cx="464.842" cy="365.995" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="464.842" y="366.651" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">16</text>
+<line x1="461.754" y1="361.748" x2="467.545" y2="361.748" stroke="#1a5fb4" stroke-width="0.25" fill="none" stroke-dasharray="2.4 1.2" stroke-linecap="round"/>
+<polygon points="467.545,361.748 465.846,362.512 465.846,360.983" fill="#1a5fb4" stroke="none"/>
+<rect x="467.931" y="357.115" width="21.620" height="9.266" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="478.741" y="360.358" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<text x="478.741" y="363.138" font-size="2.14" fill="#555" text-anchor="middle">injecție zero</text>
+<text x="478.741" y="365.609" font-size="2.14" fill="#555" text-anchor="middle">→ 6 inv./PCS</text>
+<text x="478.741" y="354.799" font-size="2.79" fill="#000" text-anchor="middle" font-weight="bold">EMS</text>
+<circle cx="492.639" cy="365.995" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="492.639" y="366.651" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">7</text>
+<circle cx="436.273" cy="365.995" r="1.853" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="436.273" y="366.651" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">15</text>
+<line x1="429.324" y1="367.925" x2="429.324" y2="374.785" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="333.091" y="340.217" width="168.814" height="30.796" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8"/>
+<text x="335.407" y="343.615" font-size="2.65" fill="#000" text-anchor="start" font-weight="bold">PT EXISTENT 630 kVA</text>
+<text x="372.359" y="343.615" font-size="2.25" fill="#555" text-anchor="start">TGJT existent · punctul de racord</text>
+<line x1="429.324" y1="374.785" x2="429.324" y2="446.536" stroke="#000" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+<rect x="404.615" y="446.536" width="49.417" height="9.266" stroke="#000" stroke-width="0.35" fill="#f3f3f3"/>
+<text x="429.324" y="450.088" font-size="3.22" fill="#000" text-anchor="middle" font-weight="bold">T EXISTENT 630 kVA — PCC</text>
+<text x="429.324" y="453.949" font-size="2.14" fill="#555" text-anchor="middle">sosirea trafo · schimbul total cu rețeaua</text>
+<rect x="15.233" y="170.168" width="741.789" height="52.327" stroke="#000" stroke-width="0.35" fill="none" stroke-dasharray="3.6 1.8"/>
+<text x="17.549" y="173.566" font-size="3.22" fill="#000" text-anchor="start" font-weight="bold">TGD-CF1 + TGD-CF2</text>
+<text x="75.184" y="173.566" font-size="2.25" fill="#555" text-anchor="start">2 tablouri c.a. fotovoltaice separate · Σ Pn = 300 kW · categoria A RfG</text>
+<line x1="70.165" y1="34.381" x2="74.798" y2="31.601" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="75.956" y="33.686" font-size="2.47" fill="#000" text-anchor="start">c.c.</text>
+<text x="69.007" y="34.998" font-size="2.14" fill="#555" text-anchor="end">H1Z2Z2-K</text>
+<line x1="70.165" y1="158.753" x2="74.798" y2="155.973" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="75.956" y="158.058" font-size="2.47" fill="#000" text-anchor="start">3 + N + PE</text>
+<text x="69.007" y="159.370" font-size="2.14" fill="#555" text-anchor="end">ACYABY 4×70 mm² + FY 1×25 mm² (PE) · L ≈ 30 m</text>
+<line x1="197.360" y1="34.381" x2="201.992" y2="31.601" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="203.151" y="33.686" font-size="2.47" fill="#000" text-anchor="start">c.c.</text>
+<text x="196.201" y="34.998" font-size="2.14" fill="#555" text-anchor="end">H1Z2Z2-K</text>
+<line x1="197.360" y1="158.753" x2="201.992" y2="155.973" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="203.151" y="158.058" font-size="2.47" fill="#000" text-anchor="start">3 + N + PE</text>
+<text x="196.201" y="159.370" font-size="2.14" fill="#555" text-anchor="end">ACYABY 4×70 mm² + FY 1×25 mm² (PE) · L ≈ 30 m</text>
+<line x1="324.554" y1="34.381" x2="329.187" y2="31.601" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="330.345" y="33.686" font-size="2.47" fill="#000" text-anchor="start">c.c.</text>
+<text x="323.396" y="34.998" font-size="2.14" fill="#555" text-anchor="end">H1Z2Z2-K</text>
+<line x1="324.554" y1="158.753" x2="329.187" y2="155.973" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="330.345" y="158.058" font-size="2.47" fill="#000" text-anchor="start">3 + N + PE</text>
+<text x="323.396" y="159.370" font-size="2.14" fill="#555" text-anchor="end">ACYABY 4×70 mm² + FY 1×25 mm² (PE) · L ≈ 30 m</text>
+<line x1="482.634" y1="34.381" x2="487.267" y2="31.601" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="488.425" y="33.686" font-size="2.47" fill="#000" text-anchor="start">c.c.</text>
+<text x="481.476" y="34.998" font-size="2.14" fill="#555" text-anchor="end">H1Z2Z2-K</text>
+<line x1="482.634" y1="158.753" x2="487.267" y2="155.973" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="488.425" y="158.058" font-size="2.47" fill="#000" text-anchor="start">3 + N + PE</text>
+<text x="481.476" y="159.370" font-size="2.14" fill="#555" text-anchor="end">ACYABY 4×70 mm² + FY 1×25 mm² (PE) · L ≈ 30 m</text>
+<line x1="609.829" y1="34.381" x2="614.462" y2="31.601" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="615.620" y="33.686" font-size="2.47" fill="#000" text-anchor="start">c.c.</text>
+<text x="608.671" y="34.998" font-size="2.14" fill="#555" text-anchor="end">H1Z2Z2-K</text>
+<line x1="609.829" y1="158.753" x2="614.462" y2="155.973" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="615.620" y="158.058" font-size="2.47" fill="#000" text-anchor="start">3 + N + PE</text>
+<text x="608.671" y="159.370" font-size="2.14" fill="#555" text-anchor="end">ACYABY 4×70 mm² + FY 1×25 mm² (PE) · L ≈ 30 m</text>
+<line x1="737.024" y1="34.381" x2="741.657" y2="31.601" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="742.815" y="33.686" font-size="2.47" fill="#000" text-anchor="start">c.c.</text>
+<text x="735.865" y="34.998" font-size="2.14" fill="#555" text-anchor="end">H1Z2Z2-K</text>
+<line x1="737.024" y1="158.753" x2="741.657" y2="155.973" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="742.815" y="158.058" font-size="2.47" fill="#000" text-anchor="start">3 + N + PE</text>
+<text x="735.865" y="159.370" font-size="2.14" fill="#555" text-anchor="end">ACYABY 4×70 mm² + FY 1×25 mm² (PE) · L ≈ 30 m</text>
+<line x1="356.357" y1="227.579" x2="360.063" y2="225.263" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="355.430" y="226.575" font-size="2.68" fill="#000" text-anchor="end" font-weight="bold">C0.1</text>
+<text x="357.252" y="263.796" font-size="2.14" fill="#555" text-anchor="middle" transform="rotate(-90 357.252 263.796)">2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE)) · L ≈ 60 m</text>
+<text x="360.372" y="263.796" font-size="2.14" fill="#000" text-anchor="middle" transform="rotate(-90 360.372 263.796)">3 + N + PE</text>
+<line x1="475.691" y1="227.579" x2="479.397" y2="225.263" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="474.764" y="226.575" font-size="2.68" fill="#000" text-anchor="end" font-weight="bold">C0.2</text>
+<text x="476.586" y="263.796" font-size="2.14" fill="#555" text-anchor="middle" transform="rotate(-90 476.586 263.796)">2 × (ACYABY 4×120 mm² + FY 1×35 mm² (PE)) · L ≈ 60 m</text>
+<text x="479.706" y="263.796" font-size="2.14" fill="#000" text-anchor="middle" transform="rotate(-90 479.706 263.796)">3 + N + PE</text>
+<line x1="427.471" y1="374.643" x2="431.177" y2="372.326" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="428.366" y="410.860" font-size="2.14" fill="#555" text-anchor="middle" transform="rotate(-90 428.366 410.860)">existent</text>
+<text x="16.000" y="544.000" font-size="3.89" fill="#000" text-anchor="start" font-weight="bold">NOTE</text>
+<text x="16.000" y="548.500" font-size="2.78" fill="#000" text-anchor="start">1. Schemă electrică monofilară de principiu, fază PT. Dimensionare conform I7-2011, SR HD 60364-4-41, -4-43, -5-52 (2011), -5-54, SR EN 60909-0; branșament conform ST 4-JT / ST 3-JT (DEER).</text>
+<text x="16.000" y="552.100" font-size="2.78" fill="#000" text-anchor="start">2. Nu fac obiectul prezentei planșe: PT-ul propriu existent și bara JT a PT (amonte de punctul de racord), conform ATR; priza de pământ (calcul separat); analiza de risc la trăsnet.</text>
+<text x="16.000" y="555.700" font-size="2.78" fill="#000" text-anchor="start">3. Schemă de legare la pământ: TN-S din PT propriu. Rp ≤ 1 Ω, conform calcul.</text>
+<text x="16.000" y="559.300" font-size="2.78" fill="#000" text-anchor="start">4. Secțiunile cablurilor sunt dimensionate la Iz&#x27; = Iz·kθ·kgrup·ksol (SR HD 60364-5-52 tab. B.52.x), la ΔU (I7-2011) și la stabilitatea termică; reglajele protecțiilor sunt cele înscrise pe planșă.</text>
+<text x="16.000" y="562.900" font-size="2.78" fill="#000" text-anchor="start">5. Σ Pn = 300 kW, S = 330 kVA, categoria A RfG; PI conform Ord. ANRE 208/2018 și ATR.</text>
+<text x="16.000" y="566.500" font-size="2.78" fill="#000" text-anchor="start">6. Ipoteze de calcul: cosφ = 1 (invertor); pozare D1 (multipolar în tub sau canalizație în pământ), θ = 20 °C, ρ sol = 2,5 K·m/W, fără grupare; S&quot;kQ = 500 MVA (presupus); trafo uk = 4 %, Pk = 4600 W (presupus); c_max = 1,10, c_min = 0,95; limite ΔU: 6/8 % de la bornele JT ale PT.</text>
+<text x="16.000" y="570.100" font-size="2.78" fill="#000" text-anchor="start">7. Atenționări de verificat (detalii în memoriul de calcul): V41 (Q PT vs QG1, Q PT vs QG2); V21 (INV-1, INV-2, INV-3, INV-4 și încă 2); V42 (QG1 vs INV-1, QG1 vs INV-2, QG1 vs INV-3, QG2 vs INV-4 și încă 2).</text>
+<text x="16.000" y="573.700" font-size="2.78" fill="#000" text-anchor="start">8. Lista de echipamente și materiale se predă ca anexă la planșă (fișier .xlsx) — nu încape lizibil pe A1.</text>
+<rect x="672.000" y="515.300" width="158.000" height="67.700" stroke="#000" stroke-width="0.35" fill="#fff"/>
+<line x1="672.000" y1="520.300" x2="796.000" y2="520.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="525.300" x2="796.000" y2="525.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="532.800" x2="796.000" y2="532.800" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="537.800" x2="796.000" y2="537.800" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="548.300" x2="796.000" y2="548.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="553.300" x2="796.000" y2="553.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="560.300" x2="796.000" y2="560.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="563.800" x2="796.000" y2="563.800" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="567.600" x2="796.000" y2="567.600" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="571.400" x2="796.000" y2="571.400" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="575.200" x2="796.000" y2="575.200" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="672.000" y1="579.000" x2="830.000" y2="579.000" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="706.000" y1="515.300" x2="706.000" y2="579.000" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="764.000" y1="515.300" x2="764.000" y2="520.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="772.000" y1="537.800" x2="772.000" y2="548.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="756.000" y1="560.300" x2="756.000" y2="579.000" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="776.000" y1="560.300" x2="776.000" y2="579.000" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="796.000" y1="515.300" x2="796.000" y2="579.000" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="673.000" y="518.650" font-size="2.64" fill="#000" text-anchor="start">VERIFICATOR:</text>
+<text x="765.000" y="518.500" font-size="2.22" fill="#000" text-anchor="start">REFERAT NR.</text>
+<text x="673.000" y="523.650" font-size="2.64" fill="#000" text-anchor="start">BENEFICIAR:</text>
+<text x="673.000" y="529.900" font-size="2.64" fill="#000" text-anchor="start">TITLU PROIECT:</text>
+<text x="673.000" y="536.150" font-size="2.64" fill="#000" text-anchor="start">NR. ATR / AVIZ:</text>
+<text x="673.000" y="541.500" font-size="2.36" fill="#000" text-anchor="start">PROIECTANT DE</text>
+<text x="673.000" y="544.300" font-size="2.36" fill="#000" text-anchor="start">SPECIALITATE</text>
+<text x="673.000" y="547.100" font-size="2.36" fill="#000" text-anchor="start">INSTALAȚII ELECTRICE:</text>
+<text x="784.000" y="544.000" font-size="2.92" fill="#000" text-anchor="middle">L.S.</text>
+<text x="673.000" y="551.650" font-size="2.64" fill="#000" text-anchor="start">ATESTAT ANRE:</text>
+<text x="673.000" y="557.650" font-size="2.64" fill="#000" text-anchor="start">DENUMIRE PLAN:</text>
+<text x="707.000" y="556.300" font-size="2.78" fill="#000" text-anchor="start" font-weight="bold">SCHEMA ELECTRICĂ MONOFILARĂ</text>
+<text x="707.000" y="559.600" font-size="2.78" fill="#000" text-anchor="start" font-weight="bold">CEF 300 kW · 2 TGD-CF</text>
+<text x="673.000" y="562.700" font-size="2.08" fill="#000" text-anchor="start" font-weight="bold">Funcția</text>
+<text x="707.000" y="562.700" font-size="2.08" fill="#000" text-anchor="start" font-weight="bold">Numele</text>
+<text x="766.000" y="562.700" font-size="2.08" fill="#000" text-anchor="middle" font-weight="bold">Semnătura</text>
+<text x="786.000" y="562.700" font-size="2.08" fill="#000" text-anchor="middle" font-weight="bold">Data</text>
+<text x="673.000" y="566.500" font-size="2.50" fill="#000" text-anchor="start">Șef proiect</text>
+<text x="673.000" y="570.300" font-size="2.50" fill="#000" text-anchor="start">Proiectat</text>
+<text x="673.000" y="574.100" font-size="2.50" fill="#000" text-anchor="start">Desenat</text>
+<text x="673.000" y="577.900" font-size="2.50" fill="#000" text-anchor="start">Verificat</text>
+<line x1="796.000" y1="528.300" x2="830.000" y2="528.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="796.000" y1="540.300" x2="830.000" y2="540.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="796.000" y1="546.300" x2="830.000" y2="546.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="796.000" y1="552.300" x2="830.000" y2="552.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="796.000" y1="558.300" x2="830.000" y2="558.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="796.000" y1="566.300" x2="830.000" y2="566.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<line x1="815.000" y1="528.300" x2="815.000" y2="540.300" stroke="#000" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+<text x="797.000" y="518.300" font-size="2.36" fill="#000" text-anchor="start">FAZA:</text>
+<text x="817.000" y="526.700" font-size="8.33" fill="#000" text-anchor="middle" font-weight="bold">PT</text>
+<text x="797.000" y="531.300" font-size="2.22" fill="#000" text-anchor="start">PLANȘA NR.</text>
+<text x="805.500" y="538.300" font-size="4.72" fill="#000" text-anchor="middle" font-weight="bold">E01</text>
+<text x="816.000" y="531.300" font-size="2.22" fill="#000" text-anchor="start">NR. REV.</text>
+<text x="822.500" y="538.300" font-size="4.72" fill="#000" text-anchor="middle" font-weight="bold">0</text>
+<text x="797.000" y="544.100" font-size="2.50" fill="#000" text-anchor="start">SCARA:</text>
+<text x="811.000" y="544.150" font-size="2.64" fill="#000" text-anchor="start">-</text>
+<text x="797.000" y="550.100" font-size="2.50" fill="#000" text-anchor="start">FORMAT:</text>
+<text x="811.000" y="550.150" font-size="2.64" fill="#000" text-anchor="start">ISO A1</text>
+<text x="797.000" y="556.100" font-size="2.50" fill="#000" text-anchor="start">DATA:</text>
+<text x="797.000" y="561.300" font-size="2.22" fill="#000" text-anchor="start">NR. PROIECT:</text>
+<text x="797.000" y="569.300" font-size="2.08" fill="#000" text-anchor="start">ȘTAMPILĂ ATESTAT</text>
+<text x="751.000" y="581.900" font-size="2.36" fill="#000" text-anchor="middle" font-weight="bold">Acest plan este proprietatea proiectantului de specialitate și nu poate fi reprodus, copiat sau transmis fără acord scris.</text>
+</svg>

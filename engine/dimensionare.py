@@ -1,6 +1,6 @@
 """Dimensionare simplificată JT (fază PT): curent de calcul, aparat de protecție, secțiune cablu, cădere de tensiune.
 Tabele orientative după I7-2011 / SR HD 60364-5-52 (metode de pozare D = în pământ, E = în aer / pe pat de cabluri),
-cabluri cu izolație PVC (ACYABY / CYABY / CYY-F) sau XLPE (AC2XABY / N2XY). Valorile finale se verifică la PT + DDE."""
+cabluri cu izolație PVC (ACYAbY / CYAbY / CYY-F) sau XLPE (AC2XAbY / N2XY). Valorile finale se verifică la PT + DDE."""
 import math
 
 STD_IN = [6, 10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600]
@@ -19,7 +19,7 @@ IZ = {
 }
 RHO = {"Cu": 0.0225, "Al": 0.036}          # Ω·mm²/m la temperatura de regim (~70 °C)
 X_KM = 0.08                                 # Ω/km reactanță cablu JT
-TIP_CABLU = {("Al", "PVC"): "ACYABY", ("Al", "XLPE"): "AC2XABY", ("Cu", "PVC"): "CYABY", ("Cu", "XLPE"): "N2XY"}
+TIP_CABLU = {("Al", "PVC"): "ACYAbY", ("Al", "XLPE"): "AC2XAbY", ("Cu", "PVC"): "CYAbY", ("Cu", "XLPE"): "N2XY"}
 
 
 def std_up(v, lst):

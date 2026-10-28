@@ -10,7 +10,9 @@ from .scheme import CAMPURI_CABLU_SCHEMA, CHEI_TENSIUNE_JT, CHEI_UK
 
 # date care nu schimbă schema (cartuș, comentarii, contractul interpretorului) — acceptate la orice tip
 INFORMATIVE = frozenset({"beneficiar", "titlu", "obiectiv", "adresa", "proiect", "observatii", "nota", "note", "comentariu",
-                         "descriere", "nr_atr", "atr", "localitate", "judet"})
+                         "descriere", "nr_atr", "atr", "localitate", "judet",
+                         # E2: date pentru documente (PVGIS, SPD, dosarul de racordare, caietul de sarcini) — nu schimbă schema
+                         "amplasament", "productie_specifica_kWh_kWp", "pvgis", "evaluare_spd", "dosar", "grupare_invertoare", "productie"})
 
 COMUNE = frozenset({"tip_schema", "schema_pamant", "RA_ohm", "retea", "priza", *CHEI_TENSIUNE_JT})
 
@@ -32,12 +34,12 @@ CHEI = {
            "OD", "punct_conexiune", "compartimente", *CHEI_UK},
     "ge_ats": {"Sn_GE_kVA", "consumatori", "plecari", "P_sarcina_kW", "Ib_sarcina_A", "sursa_retea", "sursa_rezerva",
                "fara_retea", "ge_paralel", "bara_vitala", "comutare", "ATS_poli", "ATS_interblocaj", "DDR_GE", "xd",
-               "excitatie_sustinuta", "legaturi_echipotentiale", "In_QG_A", "In_Q_retea_A", "L_C1_m", "L_C2_m", "L_C3_m", "L_GE_ATS_m", "L_m",
+               "excitatie_sustinuta", "legaturi_echipotentiale", "ge_protectie", "In_QG_A", "In_Q_retea_A", "L_C1_m", "L_C2_m", "L_C3_m", "L_GE_ATS_m", "L_m",
                "L_normali_m", "L_alimentare_m", "cablu", "cosfi", "ks", "origine", "Ik3_sursa_kA", "Sn_T_kVA", "Sn_T2_kVA",
                "Sn_kVA", "siguranta", "siguranta_tablou", "titlu_tablou", *_SURSA_PT, *_OD},
     "cef": {"invertoare", "bess", "kWp", "modul", "string", "racord", "pt_Sn_kVA", "pt_existent", "pt_od", "n_trafo",
             "cupla", "bara", "bara_racord", "n_tgd_cf", "masura", "masura_pt", "celule_mt", "celula_trafo", "In_Q_JT_A",
-            "trafo_izolatie", "SkQ_MVA", "grupa_conexiuni", "atr_jt", "limitare_injectie_kW", "P_aprobata_kW",
+            "trafo_izolatie", "SkQ_MVA", "grupa_conexiuni", "atr_jt", "limitare_injectie_kW", "limitare_PCC_kW", "P_aprobata_kW",
             "P_evacuata_kW", "Pn_total_kW", "In_QG_A", "In_Q_bransament_A", "L_racord_m", "L_inv_m", "L_pcs_m", "cablu",
             "cablu_C0", "cablu_inv", "cablu_pcs", "cablu_cc", "U_ca_V", "U_inv_ca_V", "gpv_In_A", "gpv", "spd_cc",
             "Ucpv_V", "racord_In_Q_A", "racord_Icu_kA", "racord_Q_tip", "Ik3_TG_kA", "Ik3_sursa_kA", "Ik3_bara_kA",
@@ -66,7 +68,7 @@ CONSUMATOR = frozenset({"nume", "P_kW", "n", "n_rezerva", "rezerva", "siguranta"
 INVERTOR = frozenset({"n", "Pn_kW", "producator", "model", "Iac_max_A", "Idc_max_A", "Isc_max_A", "Umax_dc_V",
                       "MPPT_min_V", "MPPT_max_V", "nr_MPPT", "hibrid", "existent", "faza", "retea", "U_ca_V", "sectie",
                       "tgd", "cablu", "L_m", "ddr", "IdN_min_mA", "tip_ddr", "spd_ca", "string", "modul",
-                      "separator_cc_integrat", "tablou", "prot_tip", "protectie"})
+                      "separator_cc_integrat", "tablou", "prot_tip", "protectie", "presupus"})
 LISTE = {"plecari": PLECARE, "consumatori": CONSUMATOR, "invertoare": INVERTOR}
 
 

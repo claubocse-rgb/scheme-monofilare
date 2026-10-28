@@ -90,7 +90,7 @@ def _cond(r):
     return "3 + N + PE"
 
 
-_TIP_CABLU = re.compile(r"\b[A-Z][A-Z0-9-]*[A-Z0-9]\b")
+_TIP_CABLU = re.compile(r"\b[A-Z](?:[A-Z0-9-]|b(?=[A-Z]))*[A-Z0-9]\b")     # E2: și „CYAbY” (b mic)
 
 
 def fe180(txt):
@@ -708,8 +708,9 @@ def _pt(inp, rz, m):
         m["cartus"]["denumire2"] = f"POST DE TRANSFORMARE AERIAN PE STÂLP (PTA) {umt}/0,4 kV · {sn} kVA"
         m["lista_pe"] = ["Priză de pământ comună MT/JT la baza stâlpului PTA, R ≤ 4 Ω (calcul separat, conform ANRE)",
                          "neutrul trafo și masele (cuva, consolele, cutia TDJT) legate la priza de pământ"]
-    m["lista_pe"] = ["Priză de pământ comună MT/JT conform ANRE: R ≤ 1 Ω + tensiuni de atingere (calcul separat)", "neutrul trafo legat la priza de pământ"
-                     + (" (ambele trafo; N comun pe bara JT)" if n_t == 2 else "")]
+    else:     # D4: textele PTA nu mai sunt suprascrise de cele ale PT-ului în anvelopă
+        m["lista_pe"] = ["Priză de pământ comună MT/JT conform ANRE: R ≤ 1 Ω + tensiuni de atingere (calcul separat)", "neutrul trafo legat la priza de pământ"
+                         + (" (ambele trafo; N comun pe bara JT)" if n_t == 2 else "")]
     return "post de transformare"
 
 
@@ -3238,6 +3239,12 @@ def genereaza(intrare, cartus=None, format_="A3", pastreaza=None):
         m["materiale"] += materiale_aparataj(m, intrare, rz)
     regenereaza_texte(m)
     m["calc_rezumat"] = rezumat(r)
+    if intrare.get("tip_schema") in ("cef", "prosumator") and intrare.get("grupare_invertoare") is not False:
+        # E2 (#13): invertoarele identice („tipic pentru N”) — doar datele; desenul decide dacă le comprimă
+        from .documente_tabele import grupuri_tipice
+        gt_ = grupuri_tipice(m)
+        if gt_:
+            m["grupuri_tipice"] = gt_
     return m, r
 
 

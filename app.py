@@ -7,6 +7,7 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 ROOT = pathlib.Path(__file__).parent
 sys.path.insert(0, str(ROOT))
 from engine import presets, layout, render_svg, render_dxf, symbols, bom, interpretor, constructor, validare, memoriu, deviz, echipamente, cheie_api
+from engine import documente_tabele, documente_protectii, documente_racordare, documente_caiet, pvgis, import_circuite, galerie, documente_vederi
 from engine.calc import dimensioneaza_ramura_simpla
 
 def _find_chrome():
@@ -159,6 +160,21 @@ def pachet_zip(model_original, m, r, name):
             if lst:
                 add(name + "_planse_A3.zip", _pl.pachet_planse_zip(lst, name, pdf=lambda svgs: html_to_pdf(_pl.html_multipagina(svgs))),
                     f"pachetul de {len(lst)} planșe A3 (SVG + DXF pe planșă, PDF multi-pagină): " + ", ".join(c for c, _ in lst))
+        # E2: tabelul de cabluri + fișa de reglaje (Excel), caietul de sarcini, dosarul de racordare (PV)
+        try:
+            add(name + "_tabel_cabluri_si_reglaje.xlsx", documente_tabele.tabel_xlsx(_tabele_predare(m, r), m.get("cartus")),
+                "tabelul de cabluri, fișa de reglaje a protecțiilor și curenții de scurtcircuit pe noduri (recepție / PIF)")
+            cs = documente_caiet.caiet_sarcini(model_original, m, r)
+            try:
+                add(name + "_caiet_de_sarcini.docx", cs.docx(), "caietul de sarcini (de completat câmpurile marcate cu galben)")
+            except ImportError:
+                add(name + "_caiet_de_sarcini.html", cs.html(), "caietul de sarcini (HTML)")
+            if (m.get("calc") or {}).get("tip_schema") in ("cef", "prosumator"):
+                add(name + "_dosar_racordare.zip", documente_racordare.dosar_zip(model_original, m, r, name,
+                                                                                  pdf=html_to_pdf if CHROME else None),
+                    "dosarul de racordare: cerere, fișa tehnică, lista echipamentelor cu certificate, declarația instalatorului")
+        except Exception as e:                       # documentele derivate nu blochează pachetul
+            fis.append(("(documente E2 lipsă)", type(e).__name__))
         add(name + "_proiect.json", json.dumps(validare._fara_interne(model_original), ensure_ascii=False, indent=2),
             "proiectul — se redeschide în aplicație (Deschide)")
         k = m.get("cartus") or {}
@@ -266,6 +282,54 @@ def _fara_uid(o):
     return o
 
 
+XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+
+def documente_json(corp, m, r, parti=None):
+    """E2: vederile derivate din planșă + calcul, într-un singur răspuns (interfața afișează ce îi trebuie)"""
+    inp = m.get("calc") or {}
+    tip = inp.get("tip_schema")
+    toate = ("tabel_cabluri", "fisa_reglaje", "carcasa", "pierderi", "spd", "grupuri_tipice", "dosar_racordare", "protectie_regim_GE",
+             "limitare_PCC")
+    parti = [x for x in (parti or toate) if x in toate + ("curbe",)]
+    out = {}
+    rz = (r or {}).get("rezultat") or {}
+    y = (corp.get("pvgis") or {}).get("kWh_kWp_an") if isinstance(corp.get("pvgis"), dict) else None
+    for x in parti:
+        if x == "tabel_cabluri":
+            out[x] = documente_tabele.tabel_cabluri(m, r)
+        elif x == "fisa_reglaje":
+            out[x] = documente_tabele.fisa_reglaje(m, r)
+        elif x == "carcasa":
+            out[x] = documente_tabele.dimensionare_carcasa(m, corp.get("rezerva_pct", 25))
+        elif x == "pierderi" and tip in ("cef", "prosumator"):
+            out[x] = documente_tabele.pierderi_cabluri(m, r, inp, y)
+        elif x == "spd":
+            out[x] = documente_protectii.evaluare_spd(dict(inp, evaluare_spd=corp.get("evaluare_spd") or inp.get("evaluare_spd")), m)
+        elif x == "curbe":
+            out[x] = documente_protectii.curbe_timp_curent(m, r)
+        elif x == "grupuri_tipice" and tip in ("cef", "prosumator"):
+            out[x] = documente_tabele.grupuri_tipice(m)
+        elif x == "dosar_racordare" and tip in ("cef", "prosumator"):
+            out[x] = documente_racordare.rezumat(corp, m, r)
+        elif x in ("protectie_regim_GE", "limitare_PCC") and rz.get(x):
+            out[x] = rz[x]
+    return out
+
+
+def _tabele_predare(m, r):
+    t = [documente_tabele.tabel_cabluri(m, r)]
+    f = documente_tabele.fisa_reglaje(m, r)
+    t.append(f)
+    if f.get("ik_noduri"):
+        t.append({"titlu": "CURENTI DE SCURTCIRCUIT PE NODURI", "randuri": f["ik_noduri"],
+                  "coloane": [("de_la", "De la"), ("nod", "Nod"), ("Ik3max_origine_kA", "Ik3max origine [kA]"),
+                              ("Ik3max_capat_kA", "Ik3max capăt [kA]"), ("Ik1min_capat_A", "Ik1min capăt [A]"),
+                              ("Ia_A", "Ia [A]"), ("t_deconectare_s", "t deconectare [s]")], "note": []})
+    return t
+
+
 class H(BaseHTTPRequestHandler):
     def _send(self, code, body, ctype="application/json; charset=utf-8", fname=None, extra=None):
         if isinstance(body, str): body = body.encode("utf-8")
@@ -296,6 +360,10 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, json.dumps(citeste_profile(), ensure_ascii=False))
         if p == "/api/echipamente":
             return self._send(200, json.dumps(dict(echipamente.citeste_catalog(), claude=echipamente.claude_disponibil()), ensure_ascii=False))
+        if p == "/api/import/model_circuite":        # E2: modelul Excel de import al circuitelor
+            return self._send(200, import_circuite.model_xlsx(), XLSX, "Model_import_circuite.xlsx")
+        if p == "/api/galerie":                      # E2: galeria personală de circuite / tablouri
+            return self._send(200, json.dumps(galerie.citeste(), ensure_ascii=False))
         if p == "/api/symbols":
             return self._send(200, json.dumps([{"cheie": k, "nume": v[1], "categorie": v[2]} for k, v in symbols.SYMBOLS.items()], ensure_ascii=False))
         if p.startswith("/static/"):
@@ -323,6 +391,17 @@ class H(BaseHTTPRequestHandler):
             except Exception:
                 return self._send(400, json.dumps({"eroare": "Fișierul nu e un Excel .xlsx valid. Salvează lista de prețuri ca .xlsx "
                                                    "(nu .xls / .csv / .pdf) și încearcă din nou."}, ensure_ascii=False))
+        if p == "/api/import/circuite":      # E2: corp = fișierul .xlsx / .csv (binar); ?destinatie=locuinta|tablou
+            try:
+                n = int(self.headers.get("Content-Length", 0))
+                q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                rez = import_circuite.importa(self.rfile.read(n), (q.get("destinatie") or [None])[0])
+                return self._send(200, json.dumps(rez, ensure_ascii=False))
+            except ValueError as e:
+                return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
+            except Exception as e:
+                return self._send(400, json.dumps({"eroare": "Fișierul nu a putut fi citit (" + type(e).__name__ + "). Folosiți "
+                                                   "modelul .xlsx sau un CSV cu „;”."}, ensure_ascii=False))
         if p == "/api/echipamente/import":   # corp = fișa tehnică PDF (binar) sau textul fișei
             try:
                 n = int(self.headers.get("Content-Length", 0))
@@ -391,6 +470,62 @@ class H(BaseHTTPRequestHandler):
                     return self._send(400, json.dumps({"eroare": str(e)}, ensure_ascii=False))
                 out["blocat"] = validare.valideaza(model)["blocheaza"]
                 return self._send(200, json.dumps(out, ensure_ascii=False, default=str))
+            if p == "/api/documente":        # E2: tabel cabluri, reglaje + Ik, carcasă, pierderi, SPD, tipic, dosar (rezumat)
+                m, r = validare.pregateste(model)
+                out = documente_json(model, m, r, model.get("parti"))
+                out["blocat"] = validare.valideaza(model)["blocheaza"]
+                return self._send(200, json.dumps(out, ensure_ascii=False, default=str))
+            if p.startswith("/api/documente/"):      # E2: previzualizarea unui document din tab-ul „Documente”
+                cheie = p.rsplit("/", 1)[1]
+                if cheie not in documente_vederi.CHEI_PREVIZUALIZARE:
+                    return self._send(404, "not found", "text/plain")
+                m, r = validare.pregateste(model)
+                try:
+                    ct, corp = documente_vederi.previzualizare(cheie, model, m, r)
+                except documente_vederi.Indisponibil as e:
+                    return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
+                return self._send(200, corp, ct)
+            if p == "/api/curbe":            # E2: curbele timp-curent generice (date pentru desen)
+                m, r = validare.pregateste(model)
+                return self._send(200, json.dumps(documente_protectii.curbe_timp_curent(m, r), ensure_ascii=False, default=str))
+            if p == "/api/spd":              # E2: evaluarea necesității SPD (corp: model + evaluare_spd)
+                m, _ = validare.pregateste(model)
+                inp = dict(m.get("calc") or model.get("calc") or {})
+                if isinstance(model.get("evaluare_spd"), dict):
+                    inp["evaluare_spd"] = model["evaluare_spd"]
+                return self._send(200, json.dumps(documente_protectii.evaluare_spd(inp, m), ensure_ascii=False, default=str))
+            if p == "/api/pvgis":            # E2: {lat, lon, kWp, unghi, azimut, pierderi, montaj, offline} → producția (cache)
+                r_ = pvgis.estimeaza(model.get("lat"), model.get("lon"), model.get("kWp"), model.get("unghi", 30),
+                                     model.get("azimut", 0), model.get("pierderi"), model.get("montaj", "free"),
+                                     offline=bool(model.get("offline")))
+                return self._send(200, json.dumps(r_, ensure_ascii=False))
+            if p == "/api/pvgis/url":        # E2 (browser): adresa cererii PVcalc pe care o face JavaScript
+                try:
+                    return self._send(200, json.dumps({"url": pvgis.cerere_url(model.get("lat"), model.get("lon"), model.get("kWp"),
+                                                                              model.get("unghi", 30), model.get("azimut", 0),
+                                                                              model.get("pierderi"), model.get("montaj", "free"))}))
+                except ValueError as e:
+                    return self._send(400, json.dumps({"eroare": str(e)}, ensure_ascii=False))
+            if p == "/api/pvgis/raspuns":    # E2: {raspuns: JSON PVGIS, kWp} sau {kWh_kWp_an, kWp} (mod offline)
+                try:
+                    if model.get("raspuns") is not None:
+                        r_ = pvgis.din_raspuns(model["raspuns"], model.get("kWp"))
+                    else:
+                        r_ = pvgis.din_valoare(model.get("kWh_kWp_an"), model.get("kWp"))
+                    r_["paragraf_memoriu"] = pvgis.paragraf_memoriu(r_)
+                    return self._send(200, json.dumps(r_, ensure_ascii=False))
+                except (ValueError, KeyError, TypeError) as e:
+                    return self._send(400, json.dumps({"eroare": f"Răspuns PVGIS / valoare nevalidă: {e}"}, ensure_ascii=False))
+            if p == "/api/galerie":          # E2: {element} adaugă / înlocuiește; {sterge: id}; {aplica: element, intrare}
+                try:
+                    if model.get("sterge"):
+                        return self._send(200, json.dumps(galerie.sterge(str(model["sterge"])), ensure_ascii=False))
+                    if model.get("aplica") is not None:
+                        return self._send(200, json.dumps({"intrare": galerie.aplica(model["aplica"], model.get("intrare"))},
+                                                          ensure_ascii=False))
+                    return self._send(200, json.dumps(galerie.adauga(model.get("element")), ensure_ascii=False))
+                except ValueError as e:
+                    return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
             if p == "/api/export/json":
                 return self._send(200, json.dumps(validare._fara_interne(model), ensure_ascii=False, indent=2), "application/json; charset=utf-8", name + ".json")
             if p.startswith("/api/export/"):
@@ -426,6 +561,54 @@ class H(BaseHTTPRequestHandler):
                         return self._send(400, json.dumps({"eroare": "Pachetul de planșe se generează pentru CEF calculate."}, ensure_ascii=False))
                     zipb = _pl.pachet_planse_zip(lst, name, pdf=lambda svgs: html_to_pdf(_pl.html_multipagina(svgs)))
                     return self._send(200, zipb, "application/zip", name + "_planse_A3.zip")
+                fmt = (urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("format") or [""])[0].lower()
+                if p in ("/api/export/tabel_cabluri", "/api/export/fisa_reglaje", "/api/export/tabele"):
+                    # E2: tabelul de cabluri / fișa de reglaje + Ik pe noduri — .xlsx (implicit) sau ?format=pdf
+                    t = {"/api/export/tabel_cabluri": [documente_tabele.tabel_cabluri(m, r)],
+                         "/api/export/fisa_reglaje": _tabele_predare(m, r)[1:],
+                         "/api/export/tabele": _tabele_predare(m, r)}[p]
+                    suf = p.rsplit("/", 1)[1]
+                    if fmt == "pdf":
+                        h = documente_tabele.tabel_html(t, m.get("cartus"))
+                        try:
+                            return self._send(200, html_to_pdf(h), "application/pdf", f"{name}_{suf}.pdf")
+                        except RuntimeError:
+                            return self._send(200, h, "text/html; charset=utf-8", f"{name}_{suf}.html")
+                    return self._send(200, documente_tabele.tabel_xlsx(t, m.get("cartus")), XLSX, f"{name}_{suf}.xlsx")
+                if p == "/api/export/caiet_sarcini":      # E2: .docx (implicit) sau ?format=pdf
+                    doc = documente_caiet.caiet_sarcini(model, m, r)
+                    if fmt == "pdf":
+                        try:
+                            return self._send(200, html_to_pdf(doc.html()), "application/pdf", f"{name}_caiet_de_sarcini.pdf")
+                        except RuntimeError:
+                            return self._send(200, doc.html(), "text/html; charset=utf-8", f"{name}_caiet_de_sarcini.html")
+                    try:
+                        return self._send(200, doc.docx(), DOCX, f"{name}_caiet_de_sarcini.docx")
+                    except ImportError:
+                        return self._send(200, doc.html(), "text/html; charset=utf-8", f"{name}_caiet_de_sarcini.html")
+                if p == "/api/export/dosar_racordare":    # E2: .zip cu .docx + .pdf + planșa
+                    if (m.get("calc") or {}).get("tip_schema") not in ("cef", "prosumator"):
+                        return self._send(400, json.dumps({"eroare": "Dosarul de racordare se generează pentru prosumator și CEF."},
+                                                          ensure_ascii=False))
+                    try:
+                        pl = to_pdf(m)
+                    except RuntimeError:
+                        pl = None
+                    z = documente_racordare.dosar_zip(model, m, r, name, pdf=html_to_pdf if CHROME else None, plansa_pdf=pl)
+                    return self._send(200, z, "application/zip", f"{name}_dosar_racordare.zip")
+                cheie = p.rsplit("/", 1)[1]
+                if cheie in documente_vederi.CHEI_EXPORT:  # E2: exportul documentelor din tab-ul „Documente”
+                    pl = None
+                    if cheie == "racordare":
+                        try:
+                            pl = to_pdf(m)
+                        except RuntimeError:
+                            pl = None
+                    try:
+                        ct, corp, suf = documente_vederi.export(cheie, model, m, r, pdf=html_to_pdf if CHROME else None, plansa_pdf=pl)
+                    except documente_vederi.Indisponibil as e:
+                        return self._send(400, json.dumps({"eroare": str(e)[:1].upper() + str(e)[1:] + "."}, ensure_ascii=False))
+                    return self._send(200, corp, ct, name + suf)
                 if p == "/api/export/memoriu":
                     if r is None:
                         return self._send(400, json.dumps({"eroare": "Memoriul de calcul există doar pentru schemele generate din calcul."}, ensure_ascii=False))
