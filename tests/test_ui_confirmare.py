@@ -200,7 +200,7 @@ def test_e2e_tg_fara_retea_prin_asistent(srv, browser):
     pg.select_option("#cf-retea-q", "tri")
     assert pg.input_value("#cf-retea") == "tri" and pg.get_attribute("#cf-ok", "aria-disabled") == "false"
     pg.click("#cf-ok")
-    pg.wait_for_function("() => !$('#conf') && MODEL.calc && MODEL._wiz === 1", timeout=30000)
+    pg.wait_for_function("() => !$('#conf') && MODEL.calc && !wizActiv() && TAB === 'calc'", timeout=30000)   # echipa 1: direct la planșă
     c = pg.evaluate("() => MODEL.calc")
     assert c["retea"] == "tri" and [p["nume"] for p in c["plecari"]] == ["Hală", "Birouri"]
     assert not pg.erori

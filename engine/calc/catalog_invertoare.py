@@ -4,7 +4,7 @@ Folosit de motor (CEF / prosumator) și disponibil interpretorului:
 * `cauta(producator, model)` → {producator, model, Pn_kW, hibrid, retea} sau None — Pn din codul modelului
   (valoarea nominală c.a. din denumirea comercială; Iac,max se ia din fișă, nu se presupune aici);
 * `e_hibrid(producator, model)` → True pentru invertoarele cu port de baterie c.c. (Sungrow SH…RT / SH…T,
-  Huawei SUN2000-…KTL-M1 / -L1 / -MAP0 / -MB0, Fronius GEN24, SMA Smart Energy, GoodWe ET/EH, Solis S6-EH / RHI …);
+  Huawei SUN2000-3…10KTL-M1 / -L1 / -MAP0 / -MB0, Fronius GEN24, SMA Smart Energy, GoodWe ET/EH, Solis S6-EH / RHI …);
 * `baterie_cc(producator, model)` / `bess_ca(producator, model)` → bateria e un pachet c.c. pentru invertor hibrid
   (Sungrow SBH / SBR, Huawei LUNA2000-5/10/15-S0, BYD HVS / HVM fără PCS) sau un sistem BESS cu PCS propriu
   (Sungrow PowerStack / ST…, Huawei LUNA2000-200/215 …, containere).
@@ -42,7 +42,9 @@ _MODELE = [
     # Huawei: SUN2000-…KTL-M1 / -L1 (hibrid, port LUNA2000), …K-MAP0 / -MB0 (hibrid), …KTL-M2/M3/M5 (rețea)
     # r8: -L1 / -LC0 = monofazat (1 × 230 V), -M1 / -MAP0 / -MB0 = trifazat
     (r"\bSUN\s*2000\s*-?\s*(\d+(?:[.,]\d+)?)\s*KTL\s*-?\s*L1\b", "Huawei", lambda m: float(m.group(1).replace(",", ".")), True, "mono"),
-    (r"\bSUN\s*2000\s*-?\s*(\d+(?:[.,]\d+)?)\s*KTL\s*-?\s*M1\b", "Huawei", lambda m: float(m.group(1).replace(",", ".")), True, "tri"),
+    # verificare 28.10.2026 (raport #99): hibrid DOAR SUN2000-3…10KTL-M1 (rezidențial, port LUNA2000); 100KTL-M1 e invertor
+    # de rețea C&I (100 kW / 110 kVA, 10 MPPT, fără port de baterie) → intră pe regula generală „…KTL” (rețea)
+    (r"\bSUN\s*2000\s*-?\s*((?:[3-9]|10)(?:[.,]\d+)?)\s*KTL\s*-?\s*M1\b", "Huawei", lambda m: float(m.group(1).replace(",", ".")), True, "tri"),
     (r"\bSUN\s*2000\s*-?\s*(\d+(?:[.,]\d+)?)\s*K\s*-?\s*LC0\b", "Huawei", lambda m: float(m.group(1).replace(",", ".")), True, "mono"),
     (r"\bSUN\s*2000\s*-?\s*(\d+(?:[.,]\d+)?)\s*K\s*-?\s*(MAP0|MB0)\b", "Huawei", lambda m: float(m.group(1).replace(",", ".")), True, "tri"),
     # r8: SUN2000-…K-MG0 (150K-MG0, 115K-MG0) — rețea, 3 × 400 V, Pn = cifra din cod

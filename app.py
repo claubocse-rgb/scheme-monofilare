@@ -1,7 +1,7 @@
 """Server local pentru generatorul de scheme monofilare.
 Pornire:  python3 app.py   →  http://localhost:8765
 Fără dependențe externe în afară de ezdxf (DXF) și Google Chrome (PDF)."""
-import json, sys, pathlib, subprocess, tempfile, urllib.parse
+import json, re, sys, pathlib, subprocess, tempfile, urllib.parse
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 ROOT = pathlib.Path(__file__).parent
@@ -211,7 +211,9 @@ def _verifica_declarate(intrare):
     """r11 (panoul de confirmare): generare de probă, fără desen — ce valori declarate ar schimba motorul.
     Deocamdată: Q-ul branșamentului la locuință (alimentare.In_Q_bransament_A față de Q-ul ales)."""
     import copy
-    out = {"schimbari": []}
+    from engine.confirmare import campuri_lipsa
+    from engine.confirmare import intrebari_confirmare
+    out = {"schimbari": [], "lipsa": campuri_lipsa(intrare), "intrebari": intrebari_confirmare(intrare)}
     try:
         _, r = constructor.genereaza(copy.deepcopy(intrare))
     except Exception as e:                                   # previzualizarea nu trebuie să blocheze panoul
@@ -219,6 +221,9 @@ def _verifica_declarate(intrare):
         return out
     rz = (r or {}).get("rezultat") or {}
     out["blocante"] = sum(1 for v in (r or {}).get("verificari") or [] if v.get("nivel") == "BLOCANT")
+    # echipa 1: implicitele motorului (valorile presupuse) — panoul le marchează pe câmpurile lor, cu galben
+    out["presupus"] = [str(x) for x in ((r or {}).get("presupus") or [])]
+    out["avertismente"] = [v.get("mesaj", "") for v in (r or {}).get("verificari") or [] if v.get("nivel") == "AVERTISMENT"]
     if intrare.get("tip_schema") == "locuinta":
         q_d = (intrare.get("alimentare") or {}).get("In_Q_bransament_A")
         q_c = (((rz.get("alimentare") or {}).get("Q")) or {}).get("In_A")
@@ -237,6 +242,23 @@ def _verifica_declarate(intrare):
     return out
 
 
+def nume_fisier(text, implicit="Schema_monofilara"):
+    """numele fișierului de export: fără diacritice, liniuțe lungi sau caractere problematice pe Windows / email / WhatsApp
+    („E01 · BMPTd-40 — BLOC DE MĂSURĂ” → „E01_BMPTd-40_BLOC_DE_MASURA”)"""
+    import unicodedata
+    t = str(text or "").translate(str.maketrans({"ș": "s", "ş": "s", "Ș": "S", "Ş": "S", "ț": "t", "ţ": "t", "Ț": "T", "Ţ": "T",
+                                                  "—": "-", "–": "-", "·": "_", "×": "x", "²": "2", "³": "3"}))
+    t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode("ascii")
+    t = re.sub(r"[^A-Za-z0-9._+-]+", "_", t)
+    t = re.sub(r"_*-_*", "-", t)
+    t = re.sub(r"_{2,}", "_", t)
+    t = re.sub(r"[_-]+\.", ".", t).strip("._-")
+    m = re.search(r"\.[A-Za-z0-9]{2,5}$", t)                       # extensia rămâne întreagă la trunchiere
+    ext = m.group(0) if m else ""
+    stem = t[:len(t) - len(ext)][:80 - len(ext)].rstrip("._-")
+    return (stem or implicit) + ext
+
+
 def _fara_uid(o):
     """scoate cheile interne ale interfeței (_uid etc.) înainte de export"""
     if isinstance(o, dict): return {k: _fara_uid(v) for k, v in o.items() if not k.startswith("_")}
@@ -250,7 +272,7 @@ class H(BaseHTTPRequestHandler):
         self.send_response(code)
         for k, v in (extra or {}).items(): self.send_header(k, str(v))
         self.send_header("Content-Type", ctype); self.send_header("Content-Length", str(len(body)))
-        if fname: self.send_header("Content-Disposition", f"attachment; filename*=UTF-8''{urllib.parse.quote(fname)}")
+        if fname: self.send_header("Content-Disposition", f"attachment; filename=\"{nume_fisier(fname)}\"; filename*=UTF-8''{urllib.parse.quote(fname)}")
         self.end_headers(); self.wfile.write(body)
 
     def _json(self):
@@ -279,7 +301,7 @@ class H(BaseHTTPRequestHandler):
         if p.startswith("/static/"):
             f = ROOT / p.lstrip("/")
             if f.exists() and f.resolve().is_relative_to((ROOT / "static").resolve()):
-                ct = {".css": "text/css", ".js": "application/javascript", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2"}.get(f.suffix, "application/octet-stream")
+                ct = {".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "application/javascript", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2"}.get(f.suffix, "application/octet-stream")
                 return self._send(200, f.read_bytes(), ct)
         self._send(404, "not found", "text/plain")
 
@@ -327,7 +349,7 @@ class H(BaseHTTPRequestHandler):
             for d in (model, model.get("model") if isinstance(model.get("model"), dict) else None):
                 if d and isinstance(d.get("cartus"), dict):        # cartușul e text: numere / null → șiruri
                     d["cartus"] = {k: ("" if v is None else v if isinstance(v, str) else str(v)) for k, v in d["cartus"].items()}
-            name = ((model.get("cartus") or {}).get("plansa", "E01") + "_" + ((model.get("cartus") or {}).get("denumire2") or "Schema monofilara"))[:80]
+            name = nume_fisier(((model.get("cartus") or {}).get("plansa") or "E01") + "_" + ((model.get("cartus") or {}).get("denumire2") or "Schema monofilara"))[:60].rstrip("._-")
             if p == "/api/preview":
                 m, _ = validare.pregateste(model)
                 svg, _ = to_svg(m); return self._send(200, svg, "image/svg+xml; charset=utf-8")
@@ -441,6 +463,15 @@ class H(BaseHTTPRequestHandler):
                 avansat = it.get("motor") == "llm"
                 motiv = model.get("eroare_llm") or next((x for x in it.get("presupus") or [] if x.startswith("(LLM indisponibil")
                                                          or x.startswith("(citirea Claude")), None)
+                from engine.calc.umanizare import umanizeaza as _um
+                def _um_t(x):            # echipa1 (ux 5): textele pentru om fără chei interne
+                    if isinstance(x, str): return _um(x)
+                    if isinstance(x, list): return [_um_t(y) for y in x]
+                    if isinstance(x, dict): return {k: (_um_t(v) if k in ("mesaj", "text", "intrebare", "motiv") else v) for k, v in x.items()}
+                    return x
+                for k_ in ("presupus", "intrebari", "refuz_motiv", "intelegere", "avertismente"):
+                    if it.get(k_) is not None:
+                        it[k_] = _um_t(it[k_])
                 out = {"interpretare": {k: it.get(k) for k in ("actiune", "tip_schema", "presupus", "intrebari", "refuz_cod", "refuz_motiv",
                                                                "intelegere", "avertismente", "motor", "intrare_fizica", "cartus",
                                                                "verificare_incrucisata", "neconsumat")},
@@ -448,6 +479,15 @@ class H(BaseHTTPRequestHandler):
                                   "mesaj": "citire avansată (Claude), verificată cu regulile locale" if avansat else
                                   ("citire avansată indisponibilă — " + (str(motiv).strip("()") if motiv else "fără cheie API")
                                    + "; s-au folosit regulile locale")}}
+                if it.get("intrare_fizica"):
+                    # echipa1 P0-5: datele obligatorii ale panoului de confirmare — regula motorului (BESS fără PV trece)
+                    from engine.confirmare import campuri_lipsa, intrebari_confirmare
+                    out["interpretare"]["lipsa"] = campuri_lipsa(it["intrare_fizica"])
+                    # Î5 (28.10.2026): întrebările neblocante (prosumator: protecții pe c.c. și pe c.a.)
+                    iq = intrebari_confirmare(it["intrare_fizica"])
+                    if iq:
+                        out["interpretare"]["intrebari"] = list(out["interpretare"].get("intrebari") or []) + \
+                            [x["intrebare"] for x in iq]
                 if it.get("actiune") != "refuza" and it.get("intrare_fizica"):
                     cart = _cartus_chat(it.get("cartus") or {})
                     out["cartus_chat"] = cart

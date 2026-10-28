@@ -221,8 +221,29 @@ def plansa_smart_meter(m, cod):
     return pl
 
 
+TIPURI_FV = ("cef", "bess", "prosumator")
+
+
+def are_fv(m):
+    """echipa1 P0-4: pachetul „FV” (IE 07–09.1/FV, releu de interfață) există doar la CEF / BESS / prosumator"""
+    tip = ((m or {}).get("calc") or {}).get("tip_schema")
+    return tip in TIPURI_FV
+
+
+def plansa_principala(m):
+    """[(cod, model)] — pentru lucrările fără producție (casă, branșament, TG, PT, GE) pachetul conține doar planșa
+    principală, în formatul ei (fără planșe FV / releu de interfață)"""
+    cod = ((m.get("cartus") or {}).get("plansa") or "E01")
+    pb = copy.deepcopy(m)
+    pb.setdefault("materiale", [])
+    return [(cod, pb)]
+
+
 def planse_din_model(m, prefix="IE", sufix="FV"):
-    """lista [(cod, model)] a planșelor A3 derivate din modelul calculat al CEF"""
+    """lista [(cod, model)] a planșelor A3 derivate din modelul calculat al CEF; pentru celelalte tipuri de lucrări —
+    doar planșa principală (echipa1 P0-4)"""
+    if not are_fv(m):
+        return plansa_principala(m) if m.get("intrari") else []
     out = []
     k = 0
     for b in m.get("intrari") or []:

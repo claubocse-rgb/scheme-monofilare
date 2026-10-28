@@ -690,7 +690,8 @@ class Layout:
             if jn.get("copii"):
                 # r12: după bara comună (TEG) — C0 → tabloul de racord (TGJT / TG existent) cu aparatele lui
                 c.line((xm, y), (xm, y_c), "FORTA")
-                bj = {"aparate": [], "cablu": jn.get("cablu"), "sarcina": jn.get("sarcina") or {}, "copii": jn["copii"]}
+                bj = {"aparate": [], "cablu": jn.get("cablu"), "sarcina": jn.get("sarcina") or {}, "copii": jn["copii"],
+                      "aparate_tablou": jn.get("aparate_tablou") or []}
                 plecare(bj, xm, max(60.0, bx2 - bx1), 20.0, y_c, self._adancime(bj), 1, None)
             else:
                 c.line((xm, y), (xm, y_c - self.seg_out), "FORTA")
@@ -931,6 +932,8 @@ class Layout:
         poziție, cu cantitatea însumată și notațiile reunite (SPEC §E.1 pct. 5)."""
         if a.get("existent"):
             return "E"          # r10: aparat existent — marcat „E”, nu intră în lista de echipamente noi
+        if a.get("generic"):
+            return "G"          # echipa1 P1-10: aparat generic (tabloul consumatorului, conform proiect IU) — nu se cumpără aici
         lista = a.get("lista") or [S.SYMBOLS.get(a.get("tip", "nod"), (None, a.get("tip", ""), ""))[1] + (" · " + " · ".join(a.get("spec", [])) if a.get("spec") else "")]
         ref = a.get("ref") or a.get("eticheta", "")
         buc = a.get("buc", 1)
@@ -1376,6 +1379,8 @@ class Layout:
         cell(1, 33, 5, "ATESTAT ANRE:", 1.9)
         at = " · ".join(s_ for s_ in (("nr. " + str(k["atestat_anre"])) if k.get("atestat_anre") else "",
                                        ("tip " + str(k["atestat_tip"])) if k.get("atestat_tip") else "") if s_)
+        if not k.get("atestat_tip") and k.get("atestat_necesar"):
+            at = (at + " · " if at else "") + str(k["atestat_necesar"])      # echipa1 P1-5: atestatul cerut de lucrare
         cell(C1 + 1, 33, 5, at, 1.9, maxw=XR - C1 - 2)
         cell(1, 38, 7, "DENUMIRE PLAN:", 1.9)
         T(C1 + 1, 41.0, k.get("denumire1", ""), 2.0, True, maxw=XR - C1 - 2)
@@ -1459,12 +1464,35 @@ def _wrap(s, n):
     return out or [""]
 
 
+def _casa_anexa(model):
+    """echipa1 P1-3: planșa casei fără lista de echipamente și fără legendă (ambele predate ca anexă)"""
+    n = len(model.get("note") or [])
+    note = list(model.get("note") or []) + [
+        f"{n + 1}. Lista de echipamente și materiale se predă ca anexă la planșă (fișier .xlsx).",
+        f"{n + 2}. Simbolurile grafice conform SR EN 60617; legenda se predă cu lista de echipamente."]
+    return dict(model, lista_auto=False, legenda=False, note=note)
+
+
 def _layout(model: dict) -> "Layout":
     L = Layout(model); L.build()
+    if (getattr(L, "k_min", 1.0) < 0.85 and model.get("format", "A3") == "A3" and model.get("auto_format", True)
+            and (model.get("calc") or {}).get("tip_schema") == "locuinta" and model.get("lista_auto", True)):
+        # echipa1 P1-3: tabloul unei case se predă pe A3 — lista de echipamente trece în anexă (.xlsx) dacă așa încape
+        m3 = _casa_anexa(model)
+        L3 = Layout(m3); L3.build()
+        if getattr(L3, "k_min", 1.0) >= 0.8:
+            return L3
     # dacă schema a trebuit comprimată orizontal pe A3, se trece automat pe A2
     if getattr(L, "k_min", 1.0) < 0.85 and model.get("format", "A3") == "A3" and model.get("auto_format", True):
         model = dict(model, format="A2"); L = Layout(model); L.build()
     # nici pe A2 nu încape lizibil (ex. casă P+1 cu 20+ circuite) → A1
+    if ((L.meta.get("scara") or 1) < 0.6 and model.get("format") == "A2" and model.get("auto_format", True)
+            and (model.get("calc") or {}).get("tip_schema") == "locuinta" and model.get("lista_auto", True)):
+        # echipa1 P1-3: casa rămâne cel mult pe A2 — lista și legenda în anexă, dacă așa e lizibilă
+        m2 = _casa_anexa(model)
+        L2 = Layout(m2); L2.build()
+        if (L2.meta.get("scara") or 1) >= 0.6:
+            model, L = m2, L2
     if (L.meta.get("scara") or 1) < 0.6 and model.get("format") == "A2" and model.get("auto_format", True):
         model = dict(model, format="A1"); L = Layout(model); L.build()
     # pe A1 tot prea mic (scara < 0,8 → text sub ~1,7 mm): lista de echipamente iese de pe planșă, ca anexă (.xlsx)

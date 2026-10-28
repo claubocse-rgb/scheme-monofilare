@@ -280,11 +280,17 @@ def test_bransament_nou_25kw_q_din_puterea_ceruta():
 
 
 def test_casa_obisnuita_fara_avertismente_ddr():
+    # Î1 (proiectant 28.10.2026): DDR-ul din BMPM / BMPT nedeclarat = 300 mA AC instantaneu (ST DEER) → V43 vizibil,
+    # cu remedierea „declară blocul real”; blocul declarat A-S → fără V43
     for retea, pa in (("mono", 7), ("tri", 15)):
         c = CIRC + ([{"nume": "VE", "receptor": "vehicul_electric", "P_kW": 7.4}] if retea == "tri" else [])
         r = calculeaza(_loc(retea, c, tip="bransament_existent", P_aprobata_kW=pa))
-        assert not _v(r, "V43", "AVERTISMENT"), retea
+        assert _v(r, "V43", "AVERTISMENT") and all("blocul real" in v["remediere"] or "tip B" in v["remediere"]
+                                                   for v in _v(r, "V43", "AVERTISMENT")), retea
         assert any("DDR-ul 300 mA din" in p for p in r["presupus"])
+        r = calculeaza(_loc(retea, c, tip="bransament_existent", P_aprobata_kW=pa, DDR_bransament_tip="A",
+                            DDR_bransament_selectiv=True))
+        assert not _v(r, "V43", "AVERTISMENT"), retea
 
 
 def test_avertismentul_ddr_ramane_cand_e_problema():

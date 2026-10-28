@@ -63,7 +63,7 @@ def prag_pornire(tip, In, curba):
         return {"B": 3.0, "C": 5.0, "D": 10.0}.get(curba or "C", 5.0) * In
     if tip in ("MCCB", "ACB"):
         if pr.declansator(tip, In) == "TM":
-            return 0.8 * norme.IM_TM_MULTIPLU * In
+            return 0.8 * norme.im_tm(In)
         return 0.8 * 12.0 * In
     return None
 
@@ -259,12 +259,17 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
     # SPEC §B.3.1 (v1.2): motor cu pornire directă — protecția trebuie să suporte Ip = k·Ib timp de tp
     pornire = r.get("pornire") or ("directa" if receptor == "motor" else None)
     k_porn = norme.MOTOR_IP_MULTIPLU.get(pornire, 0.0) if receptor == "motor" else 0.0
+    # echipa1 P0-3: pornire stea-triunghi — 2 cabluri spre motor (U1V1W1 și W2U2V2), fiecare cu 3 faze + PE, fără N,
+    # parcurse de curentul înfășurării Ib/√3; suprasarcina lor e protejată de releul termic de pe ramura Δ (Ir = Ib/√3)
+    yd = receptor == "motor" and pornire == "stea_triunghi" and retea == "tri"
     ip_porn = k_porn * ib if k_porn > 1.0 else None
     motor_v23 = None
+    motor_gg = False
     if ip_porn is not None and tip == "gG" and tip_f is None and in_f is None:
         # pornire directă fără tip impus: întreruptor MCCB TM (motor) în locul siguranțelor gG — pragul magnetic
         # 0,8·10·In ≥ 6·Ib, iar cablul rămâne dimensionat la Ir (fără supradimensionarea cerută de gG la pornire)
         tip = "MCCB"
+        motor_gg = True
         serie = r.get("serie_In") or pr.SERII[tip]
         In = pr.alege_calibru(tip, ip_min, serie)
         if In is None:
@@ -332,6 +337,11 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         prot["Isd_multiplu"] = float(r["Isd_multiplu_fortat"])
         prot["Isd_A"] = prot["Isd_multiplu"] * prot["Ir_A"]
         prot["Isd_fortat"] = True
+    if motor_gg and prot.get("decl") == "TM" and not decl_f and In <= norme.IM_TM_IN_MIN_FIX_A:
+        # verificare 28.10.2026 (raport #29, #53): MCCB-urile TM mici au Im fix ≈ 500 A — pentru motor (întreruptor-
+        # motor GV2 / 3RV2 / MS) magneticul e 13·In: același aparat descris în pas și pe planșă
+        prot["Im_A"] = min(norme.MOTOR_IM_MULTIPLU * In, norme.im_tm(In))
+        prot["intrerupator_motor"] = prot["Im_A"] < norme.im_tm(In)
     if motor_ma:
         prot["Im_A"] = norme.MOTOR_IM_MULTIPLU * In
         prot["intrerupator_motor"] = True
@@ -462,6 +472,14 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
             # SR HD 60364-4-43 art. 431.2.3: curentul din neutru > curentul de fază → detecția supracurentului în N
             emite(j, "V24", AVERTISMENT, obiect, h3=h3)
     j.pas(f"{obiect}: I2 = {fmt_ro(I2)} A → Iz' ≥ max(Ip; I2/1,45) = {fmt_ro(iz_min)} A")
+    ir_yd = None
+    if yd:
+        ir_yd = ib / math.sqrt(3)
+        iz_min = ir_yd
+        c["n_alte"] = int(c.get("n_alte") or 0) + 1        # cele 2 cabluri ale motorului pozate împreună (grupare)
+        j.pas(f"{obiect}: pornire stea-triunghi → 2 cabluri spre motor (3 faze + PE, fără N), fiecare parcurs de "
+              f"Ib/√3 = {fmt_ro(ir_yd)} A; suprasarcina — releul termic pe ramura Δ (Ir = Ib/√3, I2 ≈ 1,2·Ir ≤ 1,45·Iz) → "
+              f"Iz' ≥ {fmt_ro(ir_yd)} A pe fiecare cablu (grupare cu 2 circuite)")
 
     lim, cod_lim = r.get("limita_dU") or limita_du(receptor, ctx["origine"])
     lim_max = limita_du_max(receptor, ctx["origine"]) if r.get("limita_dU") is None else None
@@ -469,8 +487,9 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
     du0 = ctx.get("dU_cef_pct", 0.0) if invertor else ctx["dU_pct"]
 
     def du(cc, n, S):
-        """ΔU pe ramură [%] cu Ib, nu cu Ip (SPEC §B.12)."""
-        return cb.du_pct(retea, ib, L, cc["material"], cc["izolatie"], S, n, cosfi)
+        """ΔU pe ramură [%] cu Ib, nu cu Ip (SPEC §B.12). Stea-triunghi: curentul înfășurării Ib/√3 trece prin câte un
+        conductor din fiecare cablu → ΔU = 2·(Ib/√3)·Z·L, adică echivalentul trifazat cu 2/3·Ib."""
+        return cb.du_pct(retea, ib * 2.0 / 3.0 if yd else ib, L, cc["material"], cc["izolatie"], S, n, cosfi)
 
     def smin(mat):
         """Secțiunea minimă pentru material (SPEC §B.8)."""
@@ -621,10 +640,11 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         j.pas(f"{obiect}: secțiune mărită pentru ΔU → {n}×{fmt_ro(S)} mm² (Iz' = {fmt_ro(cb.iz_corectat(c, n, S)[2])} A)")
     if S_f is not None:
         _, _, izp = cb.iz_corectat(c, n, S)
-        if gt(Ip, izp):
-            emite(j, "V02", BLOCANT, obiect, Ip=Ip, Iz=izp)
-        if gt(I2, 1.45 * izp):
-            emite(j, "V03", BLOCANT, obiect, I2=I2, lim=1.45 * izp)
+        ip_c, i2_c = (ir_yd, 1.2 * ir_yd) if yd else (Ip, I2)
+        if gt(ip_c, izp):
+            emite(j, "V02", BLOCANT, obiect, Ip=ip_c, Iz=izp)
+        if gt(i2_c, 1.45 * izp):
+            emite(j, "V03", BLOCANT, obiect, I2=i2_c, lim=1.45 * izp)
         if (gt(Ip, izp) or gt(I2, 1.45 * izp)) and cin.get("izolatie") is None and c["izolatie"] == "PVC":
             # r8b: cablul impus fără izolație declarată se verifică conservator ca PVC; dacă e XLPE (N2XY, NA2XY…)
             # Iz' e mai mare — spunem cât, ca proiectantul să precizeze izolația în loc să mărească inutil cablul
@@ -670,7 +690,8 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         dur = du(c, n, S)
         r20 = norme.R20_OHM_KM[mat][float(S)]
         zq = sc.z_capat(ctx["Zq"], r20, L, n)
-        fpe = f_faza if cfg["loc"] in ("cablu", "PEN") else norme.FACTOR_R_IK1MIN["PVC"]
+        # CLC/TR 50480 (raport #12): fază la temperatura de regim, PE / PEN la media regim–final de scurtcircuit
+        fpe = norme.FACTOR_R_IK1MIN_PE[izl] if cfg["loc"] in ("cablu", "PEN") else norme.FACTOR_R_IK1MIN_PE["PVC"]
         zb = sc.zb_capat(ctx["Zb"], r20, f_faza, cb.r20_pe(mat, cfg["loc"], cfg["s_pe"]), fpe, L, n)
         ik1 = sc.ik1_din_zb(zb)
         if prot.get("decl") == "EL":
@@ -752,7 +773,7 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
                     n1 = min(n1, math.sqrt(norme.GG_I2T_TOTAL_FACTOR * i2t[1] * 1e3) / kp)
             elif tip == "MCB" and prot.get("curba", "C") in ("B", "C") and e["Ia"] is not None and ge(e["Ik1"], e["Ia"]):
                 # MCB clasa 3 (SR EN 60898-1 anexa ZA): I²t limitat în zona instantanee
-                e_lim = norme.mcb_i2t(In, e["Ik1"])
+                e_lim = norme.mcb_i2t(In, e["Ik1"], prot.get("curba", "C"))
                 if e_lim is not None:
                     n1 = min(n1, math.sqrt(e_lim) / kp)
             n3 = ik3o * 1000.0 * math.sqrt(t3) / kp if tip in ("MCCB", "ACB") else 0.0
@@ -924,6 +945,12 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
         emite(j, "V33", INFO, obiect, "ok", icu=icu, ik3=ik3o)
     # 14. termic
     niv, x = v35
+    if niv in ("B", "AV") and x is not None and ge(n * S, x):
+        # echipa1 P1-4: secțiunea a fost mărită după verificarea termică (PE / deconectare) — condiția e îndeplinită pe
+        # configurația finală; mesajul nu mai poate spune „25 mm² < 20,4 mm²”
+        niv, x, _v35_final = "INFO", None, f"n·S = {n}×{fmt_ro(S)} mm² ≥ {fmt_ro(x, 1)} mm² necesar"
+    else:
+        _v35_final = None
     if niv == "B":
         emite(j, "V35", BLOCANT, obiect, "B", n=n, S=S, x=round(x, 1))
     elif niv == "AV":
@@ -931,9 +958,11 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
     elif niv == "INFO_marit":
         emite(j, "V35", INFO, obiect, "INFO_marit", n=n, S=S, x=round(x, 1))
     else:
-        emite(j, "V35", INFO, obiect, "INFO", detaliu=("aparat limitator, SR HD 60364-4-43 art. 435.1" if x is None
-                                                       else f"n·S ≥ {fmt_ro(x, 1)} mm²"))
+        emite(j, "V35", INFO, obiect, "INFO", detaliu=_v35_final or ("aparat limitator, SR HD 60364-4-43 art. 435.1" if x is None
+                                                                     else f"n·S ≥ {fmt_ro(x, 1)} mm²"))
     niv, x = v36
+    if niv in ("B", "AV") and x is not None and ge(n * ev["s_pe"], x):
+        niv = "INFO"                           # echipa1 P1-4: PE final suficient (mărit ulterior)
     if niv == "B":
         emite(j, "V36", BLOCANT, obiect, "B", S=ev["s_pe"], x=round(x, 1))
     elif niv == "AV":
@@ -981,6 +1010,12 @@ def calculeaza_ramura(r, ctx, j, obiect, amonte=None, obiect_sel=None, bmpt_sel=
            "Ia_A": ia_v, "t_deconectare_s": t_cer, "retea": retea, "receptor": receptor}
     if tip_txt:
         rez["tip_cablu"] = tip_txt
+    if yd:
+        # echipa1 P0-3: 2 cabluri (6 conductoare + PE) — textul, conductoarele și cantitățile din listă le poartă
+        rez.update({"fara_N": True, "S_N_mm2": None, "cabluri_yd": 2, "Ir_releu_yd_A": ir_yd})
+        t1 = text_cablu(mat, izl, c["metoda"], n, S, None, ev["s_pe"], ev["loc"], retea, monopolar=cb.monopolar(c),
+                        tip=tip_txt, fara_N=True)
+        rez["cablu"] = f"2 cabluri {t1} (Y/Δ: U1V1W1 + W2U2V2)"
     if cb.monopolar(c):
         rez["monopolar"] = True
     if plafon[0] and gt(ev["dU_c"], lim):

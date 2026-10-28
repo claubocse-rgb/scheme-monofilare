@@ -47,9 +47,11 @@ SIGURANTA = {
                           "schema_pamant": "TN-S", "plecari": [{"nume": "Electropompa", "P_kW": 55, "pornire": "stea_triunghi"},
                                                                {"nume": "Pompa pilot", "P_kW": 2.2}]},
     "ge_tdsi": {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "Sn_GE_kVA": 125, "sursa_retea": "tgd",
+                "legaturi_echipotentiale": True,      # echipa1 P1-8: soluția de contact indirect în regim GE declarată
                 "P_sarcina_kW": 57.2, "titlu_tablou": "TDSI sprinklere",
                 "consumatori": [{"nume": "Electropompa", "P_kW": 55, "pornire": "stea_triunghi"}, {"nume": "Jockey", "P_kW": 2.2}]},
     "ge_jockey_fara_titlu": {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "Sn_GE_kVA": 125, "sursa_retea": "tgd",
+                             "legaturi_echipotentiale": True,         # echipa1 P1-8
                              "P_sarcina_kW": 57.2, "consumatori": [{"nume": "Electropompa", "P_kW": 55, "pornire": "stea_triunghi"},
                                                                     {"nume": "Jockey", "P_kW": 2.2}]},
     "pt_lift_pompieri": {"tip_schema": "pt", "Sn_kVA": 630, "plecari": [
@@ -203,11 +205,11 @@ def test_q_presupus_pereche_atr_in_toleranta_1_13():
 def test_bransament_rccb_tip_a_si_mcb_back_up():
     m, r = constructor.genereaza({"tip_schema": "bransament", "retea": "tri", "P_kW": 20, "L_coloana_m": 50,
                                   "schema_pamant": "TN-C-S"})
-    assert r["rezultat"]["RCCB"]["tip"] == "A"
+    assert r["rezultat"]["RCCB"]["tip"] == "AC"             # ST 4-JT §4.2.6 i (Î1, proiectant 28.10.2026)
     q = next(a for a in m["intrari"][0]["aparate"] if a.get("ref") == "Q")
     assert "back-up" in " ".join(q["lista"])
     assert calculeaza({"tip_schema": "bransament", "retea": "tri", "P_kW": 20,
-                       "DDR_bransament_tip": "AC"})["rezultat"]["RCCB"]["tip"] == "AC"
+                       "DDR_bransament_tip": "A"})["rezultat"]["RCCB"]["tip"] == "A"
 
 
 # --------------------------------------------------------------------------- 5. comutator manual

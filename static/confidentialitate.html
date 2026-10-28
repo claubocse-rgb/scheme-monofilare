@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Politica de confidențialitate · Scheme monofilare</title>
+<meta name="description" content="Politica de confidențialitate a aplicației Scheme monofilare (draft v0.1).">
+<meta name="robots" content="noindex">
+<script>try{var t=JSON.parse(localStorage.getItem('sm.theme')||'null');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+@font-face{font-family:"Barlow";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/barlow-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/barlow-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/barlow-latin-500-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/barlow-latin-ext-500-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Barlow";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Barlow Semi Condensed";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-semi-condensed-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Barlow Semi Condensed";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/barlow-semi-condensed-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+/* ===================================================================== tokens */
+:root{
+  --mat:#d9dee2; --panel:#f6f7f8; --surface:#fff; --sunk:#eef1f3;
+  --ink:#1a1e22; --ink-2:#4a545e; --ink-3:#5c6670;
+  --rule:#d3d9de; --rule-2:#7a848e;
+  --sig:#f2c230; --sig-hover:#e3b21c; --sig-soft:#fdf3cf; --on-sig:#1a1e22; --sig-line:#a67c00;
+  --hl-plan:#d99a00; --hl-plan-text:#a06e00;
+  --danger:#b42318; --danger-soft:#fdecea; --ok:#1d6b3a; --warn:#8a5a00; --warn-soft:#fff4d6;
+  /* culori de conductor IEC 60445: L1 maro (surse), bară (negru), L3 gri (plecări) */
+  --c-src:#7b4a2a; --c-bar:#1a1e22; --c-out:#6f7882; --c-sub:#848d96;
+  --font:"Barlow","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-c:"Barlow Semi Condensed","Barlow","Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --fs-xs:11.5px; --fs-sm:12.5px; --fs:14px; --fs-md:15px; --fs-lg:17px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px;
+  --r-sm:4px; --r:6px; --r-lg:10px;
+  --h-ctl:32px; --h-ctl-sm:26px;
+  --panel-w:440px;
+  --shadow-paper:0 1px 2px rgba(20,30,40,.18),0 12px 40px rgba(20,30,40,.22);
+  --shadow-pop:0 8px 28px rgba(20,30,40,.22),0 1px 3px rgba(20,30,40,.18);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --mat:#121518; --panel:#1b1f23; --surface:#22272c; --sunk:#181c20;
+  --ink:#e8ebee; --ink-2:#b3bcc4; --ink-3:#9ba5ae; --rule:#30373e; --rule-2:#6b757f;
+  --sig-soft:#3a3115; --sig-line:#f2c230; --danger:#ff8a7f; --danger-soft:#3a1c1a; --ok:#6fcf97; --warn:#f2c230; --warn-soft:#332a10;
+  --c-src:#c08860; --c-bar:#e8ebee; --c-out:#8d969e; --c-sub:#76808a;
+  --shadow-paper:0 0 0 1px rgba(255,255,255,.08),0 16px 48px rgba(0,0,0,.6); --shadow-pop:0 10px 32px rgba(0,0,0,.55);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --mat:#121518; --panel:#1b1f23; --surface:#22272c; --sunk:#181c20;
+  --ink:#e8ebee; --ink-2:#b3bcc4; --ink-3:#9ba5ae; --rule:#30373e; --rule-2:#6b757f;
+  --sig-soft:#3a3115; --sig-line:#f2c230; --danger:#ff8a7f; --danger-soft:#3a1c1a; --ok:#6fcf97; --warn:#f2c230; --warn-soft:#332a10;
+  --c-src:#c08860; --c-bar:#e8ebee; --c-out:#8d969e; --c-sub:#76808a;
+  --shadow-paper:0 0 0 1px rgba(255,255,255,.08),0 16px 48px rgba(0,0,0,.6); --shadow-pop:0 10px 32px rgba(0,0,0,.55);
+  color-scheme:dark;
+}
+
+/* ===================================================================== bază */
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--panel);color:var(--ink);font:var(--fs-md)/1.6 var(--font);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration-color:var(--sig-line);text-underline-offset:2px;text-decoration-thickness:1.5px}
+a:hover{text-decoration-color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:1px;box-shadow:0 0 0 4px var(--sig)}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:4px var(--s3);flex-wrap:wrap;padding:8px 16px;min-height:48px;
+  background:var(--surface);border-bottom:1px solid var(--rule);box-shadow:inset 0 3px 0 var(--sig)}
+.top .brand{white-space:nowrap;font:600 var(--fs-lg)/1 var(--font-c);letter-spacing:.01em;text-decoration:none}
+.top nav{margin-left:auto;margin-right:-9px;display:flex;gap:4px;flex-wrap:wrap}
+.top nav a{font-size:var(--fs-sm);font-weight:500;text-decoration:none;padding:5px 9px;border-radius:var(--r);color:var(--ink-2)}
+.top nav a:hover{background:var(--sunk);color:var(--ink)}
+.top nav a[aria-current="page"]{background:var(--sig-soft);color:var(--ink)}
+.wrap{max-width:1120px;margin:0 auto;padding:var(--s5) 16px 64px;display:grid;grid-template-columns:1fr;gap:var(--s5)}
+@media (min-width:960px){.wrap{grid-template-columns:240px minmax(0,1fr)}}
+.toc{display:none}
+@media (min-width:960px){.toc{display:block;position:sticky;top:72px;align-self:start;max-height:calc(100dvh - 96px);overflow:auto;font-size:var(--fs-sm)}}
+.toc p{margin:0 0 6px;font:600 var(--fs-xs)/1.2 var(--font);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)}
+.toc ul{list-style:none;margin:0;padding:0}
+.toc li{margin:0}
+.toc a{display:block;padding:4px 8px;border-left:2px solid var(--rule);text-decoration:none;color:var(--ink-2)}
+.toc a:hover{color:var(--ink);border-left-color:var(--sig)}
+.toc ul ul{display:none}
+article{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-lg);padding:clamp(18px,4vw,40px);min-width:0}
+.draft{display:flex;gap:10px;align-items:flex-start;margin:0 0 var(--s5);padding:10px 14px;border-radius:var(--r);
+  background:var(--warn-soft);border:1px solid var(--sig-line);color:var(--ink);font-size:var(--fs-sm);line-height:1.45}
+.draft b{white-space:nowrap}
+h1{font:600 clamp(26px,4vw,34px)/1.15 var(--font-c);margin:0 0 6px;letter-spacing:.005em}
+h1+p{margin-top:0;color:var(--ink-2);font-size:var(--fs-sm)}
+h2{font:600 21px/1.25 var(--font-c);margin:2.2em 0 .6em;padding-top:.8em;border-top:1px solid var(--rule);scroll-margin-top:64px}
+p,li{max-width:72ch}
+ul,ol{padding-left:1.3em}
+li{margin:.25em 0}
+blockquote{margin:1.2em 0 1.6em;padding:14px 18px;background:var(--sig-soft);border-left:4px solid var(--sig);border-radius:0 var(--r) var(--r) 0}
+blockquote p{margin:.3em 0}
+blockquote ul{margin:.4em 0}
+code{font:0.88em var(--mono);background:var(--sunk);padding:1px 5px;border-radius:var(--r-sm)}
+em{color:var(--ink-2)}
+mark.ph{background:var(--sig-soft);color:inherit;border:1px dashed var(--sig-line);border-radius:3px;padding:0 3px;font-size:.92em;white-space:nowrap}
+@media (max-width:600px){mark.ph{white-space:normal}}
+.tbl{overflow-x:auto;margin:1em 0 1.4em;border:1px solid var(--rule);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:var(--fs);line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--rule)}
+th{background:var(--sunk);font-weight:600;font-size:var(--fs-sm);color:var(--ink-2)}
+tr:last-child td{border-bottom:0}
+footer{grid-column:1/-1;font-size:var(--fs-sm);color:var(--ink-3);text-align:center}
+@media print{
+  .top,.toc,footer{display:none}
+  body{background:#fff;color:#000;font-size:11pt}
+  .wrap{display:block;padding:0;max-width:none}
+  article{border:0;padding:0}
+  h2{break-after:avoid}
+  a{text-decoration:none}
+}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="./">Scheme monofilare</a>
+  <nav aria-label="Documente"><a href="termeni.html">Termeni</a><a href="confidentialitate.html" aria-current="page">Confidențialitate</a><a href="./">← Aplicația</a></nav>
+</header>
+<script>/* aplicația locală servește paginile din /static/, iar aplicația e la / */
+if(location.pathname.indexOf('/static/')>=0)document.querySelectorAll('a[href="./"]').forEach(function(a){a.href='/'})</script>
+<div class="wrap">
+  <aside class="toc" aria-label="Cuprins"><p>Cuprins</p>
+<ul>
+<li><a href="#1-cine-este-operatorul-de-date">1. Cine este operatorul de date</a></li>
+<li><a href="#2-pe-scurt-unde-stau-datele">2. Pe scurt: unde stau datele</a></li>
+<li><a href="#3-datele-pastrate-local-in-browserul-tau">3. Datele păstrate local, în browserul tău</a></li>
+<li><a href="#4-datele-tehnice-la-incarcarea-paginii">4. Datele tehnice la încărcarea paginii</a></li>
+<li><a href="#5-citirea-avansata-cu-cheia-ta-anthropic">5. Citirea avansată cu cheia ta Anthropic</a></li>
+<li><a href="#6-conturile-de-utilizator-dupa-activare">6. Conturile de utilizator (după activare)</a></li>
+<li><a href="#7-cat-timp-pastram-datele">7. Cât timp păstrăm datele</a></li>
+<li><a href="#8-cookie-uri-si-stocarea-locala">8. Cookie-uri și stocarea locală</a></li>
+<li><a href="#9-recomandare-datele-clientilor-tai">9. Recomandare: datele clienților tăi</a></li>
+<li><a href="#10-drepturile-tale">10. Drepturile tale</a></li>
+<li><a href="#11-securitate">11. Securitate</a></li>
+<li><a href="#12-minori">12. Minori</a></li>
+<li><a href="#13-modificari-ale-politicii">13. Modificări ale Politicii</a></li>
+<li><a href="#14-contact">14. Contact</a></li>
+</ul>
+</aside>
+  <article>
+<h1 id="politica-de-confidentialitate">Politica de confidențialitate</h1>
+<p><strong>Versiunea 0.1 — draft, de verificat de un avocat</strong> · ultima actualizare: 28.10.2026</p>
+<div class="draft" role="note"><b>Draft v0.1</b><span>Text de lucru, încă neverificat de un avocat. Elementele între paranteze drepte (de ex. [DENUMIRE OPERATOR]) urmează să fie completate.</span></div>
+<blockquote>
+<p><strong>Pe scurt.</strong></p>
+<ul>
+<li>În prezent, <strong>proiectele tale rămân în browserul tău</strong>: nu le trimitem nicăieri și nu le vedem.</li>
+<li>Nu folosim cookie-uri de urmărire, publicitate sau statistici.</li>
+<li>Dacă îți pui <strong>propria cheie Anthropic</strong>, textul descrierii pleacă direct din browserul tău la Anthropic (SUA).
+  Scoate înainte numele, adresele și alte date personale.</li>
+<li>Când vom activa <strong>conturile</strong>, proiectele salvate în cont vor fi păstrate în UE (Frankfurt).</li>
+<li><strong>Nu introduce CNP-uri sau alte date sensibile</strong> ale clienților tăi.</li>
+</ul>
+</blockquote>
+<h2 id="1-cine-este-operatorul-de-date">1. Cine este operatorul de date</h2>
+<p>1.1. Operatorul datelor cu caracter personal descrise mai jos este <mark class="ph">[DENUMIRE OPERATOR]</mark>, cu sediul în <mark class="ph">[SEDIU]</mark>,
+CUI <mark class="ph">[CUI]</mark> („<strong>noi</strong>”). Contact pentru protecția datelor: <mark class="ph">[EMAIL CONTACT]</mark>.</p>
+<p>1.2. Politica se aplică aplicației web „Scheme monofilare” (https://claubocse-rgb.github.io/scheme-monofilare/),
+versiunii locale și, după activare, conturilor de utilizator. Ea completează
+<a href="termeni.html">Termenii și condițiile</a>.</p>
+<h2 id="2-pe-scurt-unde-stau-datele">2. Pe scurt: unde stau datele</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Unde</th>
+<th>Ce date</th>
+<th>Cine are acces</th>
+<th>Situația actuală</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>În browserul tău</strong> (localStorage) sau pe calculatorul tău (aplicația locală)</td>
+<td>proiecte, profiluri de firmă, cataloage de prețuri și echipamente, preferințe, cheia API (doar dacă bifezi „ține minte”)</td>
+<td>numai tu</td>
+<td><strong>activ</strong></td>
+</tr>
+<tr>
+<td><strong>Găzduirea paginii</strong> (GitHub Pages)</td>
+<td>adresa IP și datele tehnice ale cererii (jurnale de server)</td>
+<td>GitHub</td>
+<td><strong>activ</strong></td>
+</tr>
+<tr>
+<td><strong>Contul tău</strong> (Supabase, UE — Frankfurt)</td>
+<td>e-mail, date de profil, proiecte și versiuni</td>
+<td>tu; noi, numai pentru suport și securitate</td>
+<td><strong>pregătit, neactivat</strong></td>
+</tr>
+<tr>
+<td><strong>Anthropic</strong> (SUA)</td>
+<td>textul descrierii trimis la citirea avansată</td>
+<td>Anthropic, în baza contractului tău</td>
+<td><strong>numai cu cheia ta</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-datele-pastrate-local-in-browserul-tau">3. Datele păstrate local, în browserul tău</h2>
+<p>3.1. În versiunea actuală, Aplicația rulează integral în browser (motorul de calcul rulează local, prin Pyodide).
+Proiectele, profilurile de firmă (inclusiv numele proiectantului, numărul atestatului ANRE și datele firmei din cartuș),
+cataloagele de prețuri și de echipamente și preferințele de afișare <strong>se salvează în memoria locală a browserului</strong>
+(localStorage / sessionStorage).</p>
+<p>3.2. <strong>Aceste date nu ne sunt transmise.</strong> Nu le putem vedea, corecta sau șterge. Tu le controlezi: le poți șterge din
+setările browserului („Șterge datele site-ului”) sau din Aplicație.</p>
+<p>3.3. Documentele exportate (DXF, PDF, SVG, Excel, JSON, .zip) se salvează pe calculatorul tău și nu trec prin
+serverele noastre.</p>
+<h2 id="4-datele-tehnice-la-incarcarea-paginii">4. Datele tehnice la încărcarea paginii</h2>
+<p>4.1. Pagina este găzduită pe <strong>GitHub Pages</strong> (GitHub, Inc., SUA). Când o deschizi, browserul tău trimite către
+serverele GitHub date tehnice (adresa IP, tipul browserului, pagina cerută, ora). GitHub le prelucrează pentru livrarea
+paginii și pentru securitate, potrivit propriei declarații de confidențialitate. Noi nu primim aceste jurnale.</p>
+<p>4.2. Fișierele aplicației (inclusiv motorul de calcul și fonturile) sunt servite de pe același site. După activarea
+conturilor, biblioteca de conectare Supabase poate fi încărcată de pe un CDN public (jsDelivr). În acest caz, CDN-ul
+primește adresa IP și datele tehnice ale cererii.</p>
+<p>4.3. Temeiul este interesul nostru legitim de a livra pagina și de a o proteja (art. 6 alin. (1) lit. f) GDPR).</p>
+<h2 id="5-citirea-avansata-cu-cheia-ta-anthropic">5. Citirea avansată cu cheia ta Anthropic</h2>
+<p>5.1. Citirea avansată este <strong>opțională</strong> și funcționează <strong>numai</strong> dacă îți introduci propria cheie API Anthropic.</p>
+<p>5.2. În acest caz, <strong>browserul tău trimite direct</strong> la Anthropic, PBC (SUA) textul descrierii pe care îl scrii sau îl
+lipești, împreună cu instrucțiunile tehnice ale Aplicației. <strong>Noi nu primim nici textul, nici cheia.</strong></p>
+<p>5.3. Transmiterea are loc în baza contractului <strong>tău</strong> cu Anthropic și este supusă termenilor și politicii de
+confidențialitate Anthropic aplicabile contului tău (inclusiv regulilor privind păstrarea datelor și folosirea lor la
+antrenarea modelelor). Te rugăm să le verifici.</p>
+<p>5.4. <strong>Transfer în afara SEE.</strong> Anthropic prelucrează datele în SUA. Transferul se face în baza mecanismelor prevăzute
+de capitolul V din GDPR pe care Anthropic le pune la dispoziție (de exemplu, clauzele contractuale standard adoptate de
+Comisia Europeană, incluse în acordul de prelucrare a datelor al Anthropic, sau, dacă este cazul, certificarea în cadrul
+EU-U.S. Data Privacy Framework). Verifică mecanismul aplicabil în documentația contractuală Anthropic.</p>
+<p>5.5. Dacă descrierea conține date personale ale altor persoane (de exemplu, ale clientului tău), <strong>tu decizi</strong>
+transmiterea și răspunzi de temeiul ei. <strong>Recomandarea noastră:</strong> înainte de trimitere, scoate numele, adresele,
+numerele de loc de consum și orice alte date de identificare. Pentru calcul nu este nevoie de ele.</p>
+<p>5.6. Cheia API: în versiunea web, stă în memoria paginii și, numai dacă bifezi „ține minte”, în localStorage. În
+aplicația locală, stă în memoria procesului și, numai cu „ține minte”, într-un fișier din profilul tău de utilizator
+(<code>~/.config/scheme-monofilare</code>). Cheia nu intră niciodată în proiecte sau în exporturi. O poți șterge oricând din
+Aplicație.</p>
+<h2 id="6-conturile-de-utilizator-dupa-activare">6. Conturile de utilizator (după activare)</h2>
+<p><em>Conturile sunt pregătite, dar </em><em>nu sunt încă activate</em><em>. Secțiunea descrie ce se va întâmpla după activare. Îți vom
+cere acordul pentru Termeni și te vom informa înainte.</em></p>
+<p>6.1. <strong>Ce date prelucrăm.</strong></p>
+<ul>
+<li>Date de cont: adresa de e-mail, parola (păstrată doar sub formă criptografică, de tip hash), datele de autentificare
+  și sesiune.</li>
+<li>Date de profil: nume, firmă, numărul și tipul atestatului ANRE, datele pentru cartuș.</li>
+<li>Proiecte: modelul schemei, titlul, tipul, o miniatură, istoricul versiunilor (în prezent, cel mult 50 de versiuni pe
+  proiect), datele de creare și modificare.</li>
+<li>Evidența acceptării: versiunea Termenilor și a Politicii acceptate, data și ora, contextul (de exemplu, la crearea
+  contului).</li>
+<li>Date tehnice: adresa IP, browserul, momentele de autentificare și jurnalele de securitate ale furnizorului de găzduire.</li>
+<li>Corespondența cu noi, dacă ne scrii.</li>
+</ul>
+<p>6.2. <strong>Scopuri și temeiuri legale.</strong></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Scop</th>
+<th>Temei (GDPR)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>crearea și administrarea contului; salvarea și sincronizarea proiectelor</td>
+<td>art. 6 alin. (1) lit. b) — executarea contractului (Termenii)</td>
+</tr>
+<tr>
+<td>securitate, prevenirea abuzurilor, jurnale de acces</td>
+<td>art. 6 alin. (1) lit. f) — interes legitim (protecția serviciului și a utilizatorilor)</td>
+</tr>
+<tr>
+<td>evidența acceptării Termenilor; apărarea în eventuale litigii</td>
+<td>art. 6 alin. (1) lit. f) — interes legitim</td>
+</tr>
+<tr>
+<td>mesaje de serviciu (confirmare cont, resetare parolă, modificări ale Termenilor sau ale prețurilor)</td>
+<td>art. 6 alin. (1) lit. b) și f)</td>
+</tr>
+<tr>
+<td>facturare și evidență contabilă (numai dacă vor exista planuri plătite)</td>
+<td>art. 6 alin. (1) lit. c) — obligație legală</td>
+</tr>
+<tr>
+<td>mesaje de informare sau marketing (numai dacă vor exista)</td>
+<td>art. 6 alin. (1) lit. a) — consimțământ, retractabil oricând</td>
+</tr>
+</tbody>
+</table></div>
+<p>6.3. <strong>Unde stau datele.</strong> La Supabase (furnizor de bază de date și autentificare), în regiunea <strong>UE — Frankfurt
+(Germania)</strong>. Supabase acționează ca persoană împuternicită și are propriii subcontractanți (de exemplu, furnizorul de
+infrastructură cloud). Deoarece Supabase, Inc. este o companie din SUA, un acces din afara SEE (de exemplu, pentru
+suport) nu poate fi exclus. Pentru această situație se aplică garanțiile din acordul de prelucrare a datelor al
+Supabase (clauzele contractuale standard ale Comisiei Europene). Lista completă a persoanelor împuternicite va fi
+publicată înainte de activare: <mark class="ph">[LISTĂ SUBÎMPUTERNICIȚI — Supabase, furnizorul de e-mail tranzacțional, după caz
+procesatorul de plăți]</mark>.</p>
+<p>6.4. <strong>Accesul la proiecte.</strong> Fiecare cont își vede numai proiectele proprii (reguli de acces la nivel de rând în baza de
+date). Noi accesăm conținutul proiectelor numai dacă ne ceri asta (de exemplu, pentru suport), dacă e necesar pentru
+securitate sau dacă ne obligă legea.</p>
+<p>6.5. <strong>Datele clienților tăi din proiecte.</strong> Pentru datele clienților tăi (beneficiari, adrese etc.) pe care le salvezi
+în cont, <strong>tu ești operatorul</strong>, iar noi suntem persoana ta împuternicită (art. 28 GDPR). Acordul de prelucrare a
+datelor va fi publicat odată cu activarea conturilor.</p>
+<h2 id="7-cat-timp-pastram-datele">7. Cât timp păstrăm datele</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Durata</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>date locale (browser)</td>
+<td>până le ștergi tu; noi nu avem acces la ele</td>
+</tr>
+<tr>
+<td>cont, profil, proiecte</td>
+<td>cât timp contul este activ; după ștergerea contului, se șterg în cel mult <strong>30 de zile</strong></td>
+</tr>
+<tr>
+<td>copii de siguranță (backup)</td>
+<td>se suprascriu automat în cel mult <mark class="ph">[NR. ZILE, de ex. 30]</mark> de zile de la ștergere</td>
+</tr>
+<tr>
+<td>contul inactiv</td>
+<td>se șterge după <mark class="ph">[PERIOADĂ, de ex. 24 de luni]</mark> de inactivitate, cu notificare prealabilă de 30 de zile</td>
+</tr>
+<tr>
+<td>evidența acceptării Termenilor</td>
+<td><mark class="ph">[DURATĂ, de ex. 3 ani]</mark> de la închiderea contului (termenul general de prescripție)</td>
+</tr>
+<tr>
+<td>jurnale tehnice și de securitate</td>
+<td><mark class="ph">[DURATĂ, de ex. 90 de zile]</mark> sau cât prevede furnizorul de găzduire</td>
+</tr>
+<tr>
+<td>documente contabile (numai la planuri plătite)</td>
+<td>cât prevede legea contabilității (în prezent, de regulă, 5 ani)</td>
+</tr>
+<tr>
+<td>corespondența cu noi</td>
+<td><mark class="ph">[DURATĂ, de ex. 2 ani]</mark> de la ultimul mesaj</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-cookie-uri-si-stocarea-locala">8. Cookie-uri și stocarea locală</h2>
+<p>8.1. Aplicația <strong>nu folosește cookie-uri</strong> de publicitate, de urmărire sau de statistici și nu include instrumente de
+analiză de tip Google Analytics.</p>
+<p>8.2. Aplicația folosește <strong>stocarea locală a browserului</strong> numai pentru funcții pe care le ceri explicit. Aceste
+elemente sunt strict necesare și nu necesită consimțământ separat (art. 4 alin. (5) din Legea nr. 506/2004):</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Cheie</th>
+<th>Rol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sm.model</code></td>
+<td>ultima schemă la care ai lucrat (recuperare după închidere)</td>
+</tr>
+<tr>
+<td><code>sm.docs</code></td>
+<td>lista proiectelor salvate în browser</td>
+</tr>
+<tr>
+<td>profilele de firmă, cataloagele de prețuri și echipamente</td>
+<td>datele tale de lucru, salvate la cererea ta</td>
+</tr>
+<tr>
+<td><code>sm.theme</code>, <code>sm.panel</code>, <code>sm.assist</code>, <code>sm.hint</code></td>
+<td>preferințe de afișare (temă, panouri, indicii)</td>
+</tr>
+<tr>
+<td><code>sm.tab</code>, <code>sm.alive</code> (sessionStorage / localStorage)</td>
+<td>evitarea conflictelor când aplicația e deschisă în mai multe file</td>
+</tr>
+<tr>
+<td>cheia API Anthropic</td>
+<td>numai dacă bifezi „ține minte”</td>
+</tr>
+<tr>
+<td><code>sm.auth</code></td>
+<td>sesiunea de autentificare (numai după activarea conturilor)</td>
+</tr>
+</tbody>
+</table></div>
+<p>8.3. Dacă vom adăuga instrumente de statistică sau alte elemente care nu sunt strict necesare, îți vom cere înainte
+consimțământul.</p>
+<h2 id="9-recomandare-datele-clientilor-tai">9. Recomandare: datele clienților tăi</h2>
+<p>Aplicația nu are nevoie de date personale ale clienților tăi ca să calculeze și să deseneze. De aceea:</p>
+<ul>
+<li><strong>nu introduce</strong> CNP, serii de act de identitate, date bancare sau date despre sănătate;</li>
+<li>folosește, unde se poate, un <strong>cod de proiect</strong> în locul numelui beneficiarului și al adresei, apoi completează aceste
+  date direct pe documentul final;</li>
+<li><strong>anonimizează</strong> textul înainte să folosești citirea avansată;</li>
+<li>dacă trimiți proiectul altcuiva (fișier .json sau pachetul .zip), verifică ce date conține.</li>
+</ul>
+<h2 id="10-drepturile-tale">10. Drepturile tale</h2>
+<p>10.1. Potrivit GDPR, ai dreptul:</p>
+<ul>
+<li>de <strong>acces</strong> la datele tale;</li>
+<li>la <strong>rectificarea</strong> datelor inexacte;</li>
+<li>la <strong>ștergerea</strong> datelor („dreptul de a fi uitat”);</li>
+<li>la <strong>restricționarea</strong> prelucrării;</li>
+<li>la <strong>portabilitatea</strong> datelor (proiectele se pot exporta oricând în formate deschise, JSON și DXF);</li>
+<li>de a te <strong>opune</strong> prelucrărilor bazate pe interesul legitim;</li>
+<li>de a-ți <strong>retrage consimțământul</strong> oricând, fără a afecta prelucrările făcute înainte;</li>
+<li>de a <strong>nu fi supus unei decizii bazate exclusiv pe prelucrare automată</strong> care te afectează în mod semnificativ.
+  Aplicația nu ia astfel de decizii despre persoane; calculele ei privesc instalații electrice.</li>
+</ul>
+<p>10.2. Pentru exercitarea drepturilor, scrie-ne la <mark class="ph">[EMAIL CONTACT]</mark>. Răspundem în cel mult o lună. Termenul se poate
+prelungi cu încă două luni în cazurile complexe, cu informarea ta. Putem cere date suplimentare pentru a confirma
+identitatea.</p>
+<p>10.3. Pentru datele păstrate numai în browserul tău (art. 3) nu avem acces, deci nu le putem furniza sau șterge.
+Le controlezi direct tu.</p>
+<p>10.4. Ai dreptul să depui o plângere la <strong>Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter
+Personal (ANSPDCP)</strong>, B-dul G-ral. Gheorghe Magheru nr. 28–30, sector 1, București, https://www.dataprotection.ro,
+sau la autoritatea de supraveghere din statul în care locuiești ori lucrezi.</p>
+<h2 id="11-securitate">11. Securitate</h2>
+<p>Folosim conexiuni criptate (HTTPS), controlul accesului pe fiecare cont, parole stocate numai sub formă de hash și
+principiul minimizării datelor. Niciun sistem nu este însă complet sigur. Dacă vom afla de o încălcare a securității
+datelor care te poate afecta, te vom informa și vom notifica ANSPDCP, potrivit legii.</p>
+<h2 id="12-minori">12. Minori</h2>
+<p>Aplicația se adresează profesioniștilor și nu este destinată persoanelor sub 18 ani.</p>
+<h2 id="13-modificari-ale-politicii">13. Modificări ale Politicii</h2>
+<p>Putem actualiza această Politică. Versiunea și data sunt indicate la început. Modificările importante (de exemplu, o
+nouă categorie de date sau un nou furnizor în afara SEE) le anunțăm în Aplicație și, pentru utilizatorii cu cont, prin
+e-mail, înainte să se aplice.</p>
+<h2 id="14-contact">14. Contact</h2>
+<p><mark class="ph">[DENUMIRE OPERATOR]</mark>, <mark class="ph">[SEDIU]</mark>, CUI <mark class="ph">[CUI]</mark> · <mark class="ph">[EMAIL CONTACT]</mark></p>
+  </article>
+  <footer>Scheme monofilare · Versiunea 0.1 — draft, de verificat de un avocat · 28.10.2026</footer>
+</div>
+</body>
+</html>

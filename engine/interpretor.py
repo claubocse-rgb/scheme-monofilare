@@ -5123,7 +5123,15 @@ def extrage_locuinta(c: Ctx, intr, ex):
     for mm in re.finditer(r"\btg\b\s+(?:la|de\s+la|in|din|al)\s+(?:parter\w*|cas\w*|locuint\w*)", t):
         c.foloseste(mm.start(), mm.end())
     tipic = [_circuit_loc(n, r) for n, r in SET_TIPIC[tipl_set] if r not in exclusi]
-    if not listati:
+    # echipa1 P1-2: lista de circuite scrisă explicit („circuite: …”, „circuitele …”) se ia ca atare — setul implicit
+    # se adaugă doar dacă nu s-a scris niciun circuit (sau la cerere: „tablou tipic plus …”)
+    explicit = bool(listati) and not plus and bool(re.search(
+        r"\bcircuit\w*\s*(?::|-|—|=)|\bcircuitele\b|\bcircuite\s+(?:sunt|are|avem|cu|pentru)\b|\blista\s+(?:de\s+)?circuit", t))
+    if explicit:
+        circuite = [dict(x) for x in listati]
+        c.nota(f"circuitele scrise în descriere ({len(circuite)}) — fără set implicit adăugat: "
+               + ", ".join(x["nume"] for x in circuite))
+    elif not listati:
         circuite = tipic
         c.nota(f"circuitele nu sunt listate → set tipic pentru {descr}: " + ", ".join(x["nume"] for x in circuite)
                + f" ({len(circuite)} circuite) — PRESUPUNERE, corectați lista dacă diferă")
@@ -5134,8 +5142,9 @@ def extrage_locuinta(c: Ctx, intr, ex):
                "corectați lista dacă diferă")
     else:
         # r8 (#18): „Iluminat parter / Iluminat etaj” listate (cu P / L) acoperă circuitul de bază „Iluminat” — fără dublare
-        acoperite = {r for r in GENERICE_LOC if sum(1 for x in listati if x["receptor"] == r
-                                                    and "exterior" not in norm_nume(x["nume"])) >= 2}
+        acoperite = {r for r in GENERICE_LOC if sum(1 for x in listati if x["receptor"] == r and not re.search(
+            r"exterior|gradin|curte|piscin|selv|\b12\b|\b24\b|fatad|alee", norm_nume(x["nume"]))) >= 1}
+        # echipa1 P1-2: un circuit listat („Prize camere”, „Iluminat interior”) acoperă circuitul de bază de același fel
         circuite = _combina_circuite([_circuit_loc(n, r) for n, r in SET_BAZA if r not in acoperite], listati)
         adaugate = [x["nume"] for x in circuite if x not in listati]
         c.nota(f"receptorii listați + circuitele de bază ale oricărei locuințe"
@@ -5258,7 +5267,7 @@ def extrage_locuinta(c: Ctx, intr, ex):
 # Presupuneri (F.6) — generate din intrarea fizică (deci valabile și pentru calea LLM)
 # =====================================================================================================
 TEXT_OD = (f"Ik3max OD {fmt(norme.OD_IK3MAX_IMPLICIT_KA)} kA și Zbuclă OD {fmt(norme.OD_ZBUCLA_IMPLICIT_OHM[0], 2)} + "
-           f"j{fmt(norme.OD_ZBUCLA_IMPLICIT_OHM[1], 2)} Ω (|Z| = 0,201 Ω) (valori implicite — introduceți datele din ATR)")
+           f"j{fmt(norme.OD_ZBUCLA_IMPLICIT_OHM[1], 2)} Ω (|Z| = {fmt(norme.OD_ZBUCLA_MODUL_IMPLICIT_OHM, 2)} Ω) (valori implicite — introduceți datele din ATR)")
 DESCR_METODA = {"D1": "în tub în pământ", "D2": "direct în pământ", "C": "aparent pe perete", "E": "pat de cabluri / în aer"}
 TABEL_GRUPARE = {"D1": "B.52.19", "D2": "B.52.18", "C": "B.52.17", "E": "B.52.17"}
 
@@ -5277,7 +5286,7 @@ def _sn_standard(s_kva):
 
 def _celula(sn) -> str:
     if sn > norme.TRAFO_SN_MAX_SIGURANTE_MT_KVA:
-        return "celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > 1000 kVA)"
+        return f"celulă trafo cu întreruptor + releu 50/51, 50N/51N (Sn > {norme.TRAFO_SN_MAX_SIGURANTE_MT_KVA} kVA)"
     return ("celulă trafo cu separator de sarcină + siguranțe MT "
             f"{fmt(norme.TRAFO_SIGURANTA_MT_A.get(sn, 0))} A (orientativ, tabel producător)")
 
@@ -5350,7 +5359,7 @@ def _pres_plecari(intr, ex, tip):
         if p["unitate"] == "A" and p["valoare"] and p["valoare"] > 630:
             out.append(f"plecarea de {fmt(p['valoare'])} A: MCCB (gG doar până la 630 A pe plecări)")
     if cf:
-        out.append("tablou cu circuite finale (circuite_finale): MCB curba B pentru iluminat/prize, C pentru restul; "
+        out.append("tablou cu circuite finale: MCB curba B pentru iluminat/prize, C pentru restul; "
                    "DDR 30 mA tip A pe circuitele de prize")
     return out
 
@@ -5430,6 +5439,9 @@ def _pres_pt(intr, ex):
                    f"uk {fmt(uk)} %, Pk {pk} W (Tier 2)" + ("" if iz else " — tipul (ulei / uscat) nedeclarat"))
         if intr.get("celula_trafo") == "sigurante" and sn <= norme.TRAFO_SN_MAX_SIGURANTE_MT_KVA:
             out.append(f"siguranțe MT {fmt(norme.TRAFO_SIGURANTA_MT_A.get(sn, 0))} A (orientativ, tabel producător)")
+        elif intr.get("celula_trafo") == "sigurante":
+            out.append(f"celulă cu siguranțe MT declarată la {sn} kVA > {norme.TRAFO_SN_MAX_SIGURANTE_MT_KVA} kVA — "
+                       f"motorul cere întreruptor + releu 50/51 (V61)")
         elif not intr.get("celula_trafo"):
             out.append(_celula(sn))
     if intr.get("celule_mt"):
@@ -5876,13 +5888,14 @@ def _v_prosumator(intr, ex, d):
                      f"Treceți pe prosumator trifazat {fmt(pn)} kW, sau reduceți invertorul monofazat la cel mult "
                      f"{pmax} kW (Iac,max ≤ 40 A)?")
             return
-        if pn > norme.MONOFAZAT_P_INVERTOR_AVERTISMENT_KW:
-            d.avertismente.append(f"V71: invertor monofazat {fmt(pn)} kW > 3,68 kW (dezechilibru; cerința exactă în ATR)")
+        if FACTOR_INV * pn > norme.MONOFAZAT_S_INVERTOR_AVERTISMENT_KVA + 1e-9:
+            d.avertismente.append(f"V71: invertor monofazat {fmt(pn)} kW (Smax {fmt(FACTOR_INV * pn)} kVA) > 3,68 kVA = "
+                                  f"16 A (dezechilibru, Ord. ANRE 228/2018 art. 12(3); excepțiile în ATR)")
     for g in intr.get("invertoare") or []:
         if intr.get("retea") == "tri" and g.get("faza") in ("L1", "L2", "L3") and \
-                (g.get("Pn_kW") or 0) > norme.MONOFAZAT_P_INVERTOR_AVERTISMENT_KW:
-            d.avertismente.append(f"V71: invertor monofazat {fmt(g['Pn_kW'])} kW pe faza {g['faza']} > 3,68 kW "
-                                  "(dezechilibru între faze; cerința exactă în ATR)")
+                FACTOR_INV * (g.get("Pn_kW") or 0) > norme.MONOFAZAT_S_INVERTOR_AVERTISMENT_KVA + 1e-9:
+            d.avertismente.append(f"V71: invertor monofazat {fmt(g['Pn_kW'])} kW pe faza {g['faza']} > 3,68 kVA = 16 A "
+                                  "(dezechilibru între faze, Ord. ANRE 228/2018 art. 12(3); excepțiile în ATR)")
     if intr.get("retea") != "mono":
         iac = FACTOR_INV * pn * 1000 / U_TRI
         if iac > norme.BMPT_I_MAX_A:                          # r7 (#65): peste 250 A nu mai e BMPT
@@ -5909,7 +5922,7 @@ def _v_ge(intr, ex, d):
         if ib > in_g:
             sus = norme.ge_sn_minim(P, COSFI) or sn                     # seria GE_SN_KVA (C.6 pct. 5)
             d.refuza("V86", f"Sarcina {fmt(ib)} A > In GE {fmt(in_g)} A — V86.",
-                     f"Măriți GE la cel puțin {sus} kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = {fmt(P / COSFI)} kVA; "
+                     f"Măriți GE la cel puțin {sus} kVA (seria standard a grupurilor electrogene, Sn ≥ P/cosφ = {fmt(P / COSFI)} kVA; "
                      "pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?")
 
 
@@ -6115,6 +6128,8 @@ def _compensare(c: Ctx, tip, intr: dict):
         mcu = re.search(r"(?:\bcu\s+|\bsi\s+|\bplus\s+)?$", c.t[a:m.start()])
         if re.search(r"\b(?:din|de\s+la)\s+(?:pt|post\w*|tg|tablou|bmpt)", c.t[a:m.start()]):
             a = a + mcu.start()                          # r7 (#36): „TG din PT 1000 kVA cu compensare” — sursa rămâne
+        elif mcu.group(0) and re.search(r"\d", c.t[a:a + mcu.start()]):
+            a = a + mcu.start()                          # echipa1 P1-6: „…, 63 A și compensare 150 kvar” — 63 A e plecare
         if not zone or a > zone[-1][1]:
             zone.append([a, b])
         else:
@@ -6166,6 +6181,10 @@ def _q_general(c: Ctx, tip, intr: dict):
         # r10 (industrial #30, #53, #9): „TG 4000 A”, „tg 1000A”, „PTA … cu BMPT 3x400 A” = aparatul general JT al PT-ului
         m = re.search(rf"(?<!plecare\s)(?<!plecari\s)\b(?P<tip>tgjt|tg|tablou\w*\s+general\w*|cutie\s+bmpt|bmpt\w*)\s+(?:de\s+)?"
                       rf"(?:3\s*×\s*)?(?P<v>{NUM})\s*a\b", c.mascat())
+    if not m and tip == "tablou":
+        # echipa1 P1-6: „stație încărcare VE 2 × 22 kW, tablou 63 A” — calibrul tabloului (Q1), nu o plecare „Tablou”
+        m = re.search(rf"(?<!plecare\s)(?<!plecari\s)(?:[,;]\s*|\bcu\s+)(?P<tip>tablou\w*|tg)\s+(?:de\s+)?(?P<v>{NUM})\s*a\b",
+                      c.mascat())
     if not m:
         return
     v = numar(m.group("v"))
@@ -7521,8 +7540,9 @@ def _completeaza_locuinta(intr: dict, ex: dict, note: list):
         note.append(f"set tipic pentru {DESCR_LOCUINTA[tipl]} + receptorii citiți = {len(intr['circuite'])} circuite "
                     "— PRESUPUNERE, corectați lista dacă diferă")
     else:
-        intr["circuite"] = _combina_circuite([_circuit_loc(n, r) for n, r in SET_BAZA if r not in citite], listati)
-        adaug = [x["nume"] for x in intr["circuite"] if x not in listati]
+        # echipa1 P1-2: circuitele citite (≥ 3) se iau ca atare — fără setul de bază peste ele
+        intr["circuite"] = [dict(x) for x in listati]
+        adaug = []
         if adaug:
             note.append(f"circuitele de bază ale oricărei locuințe ({', '.join(adaug)}) adăugate la cele citite — "
                         "PRESUPUNERE, corectați lista dacă diferă")
@@ -7700,6 +7720,13 @@ def interpreteaza(text: str, foloseste_llm: bool = False, cheie: str | None = No
     if verifica_motor:
         r = intrebari_din_motor(r)
         r.pop("_motor_verificat", None)
+    # echipa1 (ux 5): întrebările, presupunerile și refuzul se citesc de om — fără chei JSON / constante de cod
+    from .calc.umanizare import umanizeaza
+    for k in ("intrebari", "presupus", "avertismente"):
+        if isinstance(r.get(k), list):
+            r[k] = [umanizeaza(x) if isinstance(x, str) else x for x in r[k]]
+    if isinstance(r.get("refuz_motiv"), str):
+        r["refuz_motiv"] = umanizeaza(r["refuz_motiv"])
     return r
 
 

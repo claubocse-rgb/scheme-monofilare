@@ -271,8 +271,9 @@ CATALOG = {
              "AV": "Ir QG {x} A > In_T {y} A — trafo neprotejat la suprasarcină",
              "sigma": "Σ Iac {x} A > Σ Ir Q JT {y} A ({n} trafo) — injecția maximă declanșează Q JT"},
             "Q JT ≥ In_T"),
-    "V61": ("Siguranțe MT > 1000 kVA",
-            {"": "celulă trafo cu siguranțe MT la {Sn} kVA > 1000 kVA — întreruptor + releu 50/51, 50N/51N"},
+    "V61": ("Siguranțe MT > 630 kVA",
+            {"": "celulă trafo cu siguranțe MT la {Sn} kVA > 630 kVA — întreruptor + releu 50/51, 50N/51N (DECIZIE "
+                 "proiectant 28.10.2026)"},
             "întreruptor + releu"),
     "V62": ("Bilanț > Sn", {"": "Sc = {x} kVA > Sn = {y} kVA",
                             "ge": "sarcina consumatorilor {x} kVA > Sn PT {y} kVA — PT-ul nu acoperă regimul rețea"},
@@ -291,7 +292,7 @@ CATALOG = {
     "V67": ("Trafo CEF sub S", {"": "Sn trafo {x} kVA < S invertoare+PCS {y} kVA",
                                 "n": "Σ Sn trafo {n} × {sn} = {x} kVA < S invertoare+PCS {y} kVA",
                                 "sectie": "secția {k}: Sn T{k} {x} kVA < S invertoare+PCS ale secției {y} kVA ({inv})"},
-            "trafo mai mare"),
+            "alege un transformator cu Sn ≥ {y} kVA (puterea PT) sau redu puterea instalată a invertoarelor / PCS"),
     "V68": ("Voc(Tmin)", {"B": "Voc la Tmin {x} V > Umax {y} V", "INFO": "Voc la Tmin {x} V ≤ Umax {y} V",
                           "beta": "β(Voc) = {x} %/K neplauzibil — coeficientul de temperatură al Voc este negativ "
                                   "(c-Si: −0,25…−0,35 %/K); Voc(Tmin) nu se poate verifica"},
@@ -303,12 +304,14 @@ CATALOG = {
             "alt modul / alt invertor; introduceți Isc / fișa modulului"),
     "V70": ("Categorie RfG / prosumator",
             {"INFO": "modul generator categoria {X} (Pn = {P} kW)",
-             "AV": "modul generator categoria {X} (Pn = {P} kW) — cerințe RfG tip {X} (Ord. ANRE 208/2018), PI conform ATR",
+             "AV": "modul generator categoria {X} (Pn = {P} kW, Ord. ANRE 79/2016) — cerințe RfG tip {X} (Ord. ANRE "
+                   "208/2018), PI conform ATR",
              "B": "peste 400 kW nu e prosumator — schema CEF"}, ""),
-    "V71": ("Invertor mono > 3,68 kW",
-            {"": "invertor monofazat {P} kW > 3,68 kW — verificați cerința OD privind dezechilibrul",
+    "V71": ("Generare monofazată > 3,68 kVA (16 A)",
+            {"": "generare monofazată {P} kW (Smax {S} kVA) > 3,68 kVA = 16 A (Ord. ANRE 228/2018 art. 12(3)) — "
+                 "dezechilibru; excepțiile art. 12(4)–(5) se confirmă în ATR",
              "dezechilibru": "invertoare monofazate pe rețea trifazată: S pe faze {det} — dezechilibru {d} kVA > {lim} kVA "
-                             "(prag DECIZIE, practica OD; cerința exactă în ATR)",
+                             "(16 A, Ord. ANRE 228/2018 art. 12(3); excepțiile art. 12(4)–(5) în ATR)",
              "faze": "invertoare monofazate repartizate pe faze: {det} — dezechilibru {d} kVA ≤ {lim} kVA"}, "trifazat"),
     "V72": ("Injecție > Q branșament",
             {"AV": "Iac,max {x} A > Q branșament {y} A — limitați injecția (setare invertor) sau solicitați ATR nou",
@@ -366,6 +369,9 @@ CATALOG = {
              "tablou": "tablou de siguranță: {detaliu}"},
             "proiect de specialitate pentru instalația de stingere (P118-3) / ATR; fără DDR pe calea consumatorilor de "
             "siguranță (racord înaintea DDR-ului / întreruptorului general, RCM doar alarmă)"),
+    "V58": ("Atestat ANRE pentru tipul lucrării (echipa1)",
+            {"": "atestatul ANRE declarat în cartuș („{declarat}”) nu acoperă lucrarea: {lucrare} cere {necesar}"},
+            "completează în cartuș atestatul de firmă și de persoană potrivit lucrării ({necesar})"),
     "V98": ("Compensarea puterii reactive",
             {"": "baterie de condensatoare {Q} kvar: In = {In} A, întreruptor ≥ 1,43·In = {Imin} A (armonici + "
                  "toleranța capacității, SR EN 60831-1), cablu dimensionat la 1,43·In",

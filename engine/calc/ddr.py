@@ -104,6 +104,9 @@ def verifica(j, am, av, obiect, RA_ohm=None):
         motive.append(f"IΔn amonte {ia} mA < 3·{iv} = {fmt_ro(K * iv, 0)} mA")
         rem.append((f"IΔn amonte ≥ {nec} mA" if nec else "alt nivel de protecție") +
                    (f" sau IΔn aval ≤ {jos} mA" if jos else ""))
+    if am.get("presupus"):
+        # Î1 (28.10.2026): DDR-ul din BMPM / BMPT e PRESUPUS (AC instantaneu, ST DEER) — remedierea cere blocul real
+        rem.append("sau declarați blocul real (DDR din branșament tip S, dacă așa e echipat)")
     emite(j, "V43", AVERTISMENT, ob, "AV", motiv="; ".join(motive), rem="; ".join(rem), **par)
     return False
 

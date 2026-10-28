@@ -86,15 +86,16 @@ def test_psi_distinct_electrozi_platbanda():
 def test_lungime_platbanda_implicita():
     # v1.3 R5 (M5-1): L_p = (n − 1)·a + racord (5 m implicit): n = 2, a = 6 → 11 m; racord dat 2 m → 8 m
     # n = 2, L_p = 11 m: R_pl = 350/(2π·11)·ln(2·121/0,032) = 5,06397·8,93101 = 45,226 Ω
-    # Rp = 41,481·45,226/(41,481·0,94 + 2·45,226·0,91) = 1876,0/121,303 = 15,466 Ω
+    # electrod ø60 mm (ST 42 DEER, verificare 28.10.2026): R_e = 1,6·100/(2π·3)·[ln(6/0,06) + ½·ln(12,2/6,2)] = 41,963 Ω
+    # Rp = 41,963·45,226/(41,963·0,94 + 2·45,226·0,91) = 1897,8/121,757 = 15,587 Ω
     par, _, _ = pamant.normalizeaza({})
     c = pamant.calcul(par, 2)
-    assert c["Lp"] == 11.0 and c["R_pl"] == pytest.approx(45.226, rel=1e-4) and c["Rp"] == pytest.approx(15.466, rel=1e-4)
+    assert c["Lp"] == 11.0 and c["R_pl"] == pytest.approx(45.226, rel=1e-4) and c["Rp"] == pytest.approx(15.587, rel=1e-4)
     assert pamant.calcul(par, 5)["Lp"] == 29.0
     par, _, _ = pamant.normalizeaza({"platbanda": {"L_racord_m": 2}})
     assert pamant.calcul(par, 2)["Lp"] == 8.0
     r = calculeaza(dict(TABLOU, priza={}))
-    assert r["rezultat"]["priza"]["L_racord_m"] == 5.0 and r["rezultat"]["priza"]["Rp_initial_ohm"] == pytest.approx(15.466, rel=1e-4)
+    assert r["rezultat"]["priza"]["L_racord_m"] == 5.0 and r["rezultat"]["priza"]["Rp_initial_ohm"] == pytest.approx(15.587, rel=1e-4)
 
 
 def test_fara_platbanda():
@@ -163,11 +164,11 @@ def test_limita_dupa_un_electrod_adaugat():
 def test_pt_1_ohm_blocant_la_30_electrozi():
     # PT 400 kVA, implicite: limita 1 Ω (priză comună MT/JT). n = 30, L_p = 29·6 + 5 = 179 m:
     # R_pl = 350/(2π·179)·ln(2·32 041/0,032) = 0,31120·14,5099 = 4,5155 Ω; η_e(30) = 0,60, η_p(30) = 0,46
-    # Rp = 41,481·4,5155/(41,481·0,46 + 30·4,5155·0,60) = 187,31/100,36 = 1,866 Ω > 1 Ω → V37 BLOCANT
+    # Rp = 41,963·4,5155/(41,963·0,46 + 30·4,5155·0,60) = 189,48/100,58 = 1,884 Ω > 1 Ω → V37 BLOCANT (R_e cu ø60 mm)
     r = calculeaza({"tip_schema": "pt", "Sn_kVA": 400, "plecari": [{"nume": "TD-1", "In_A": 100}], "priza": {}})
     p = r["rezultat"]["priza"]
     assert p["R_limita_ohm"] == 1.0 and p["n_electrozi"] == 30 and p["n_necesar"] is None and not p["ok"]
-    assert p["Rp_ohm"] == pytest.approx(1.866, rel=2e-3) and p["L_platbanda_m"] == 179.0
+    assert p["Rp_ohm"] == pytest.approx(1.884, rel=2e-3) and p["L_platbanda_m"] == 179.0
     assert ("V37", "BLOCANT", "priza de pământ") in {(v["cod"], v["nivel"], v["obiect"]) for v in r["verificari"]}
     assert r["blocheaza_export"]
 
@@ -212,32 +213,32 @@ def test_fara_cheia_priza_neschimbat():
 # TT: RA = Rp calculat
 # ---------------------------------------------------------------------------------------------------------------
 def test_tt_ra_din_priza():
-    # TT fără RA_ohm: RA = Rp (n = 2, implicite) = 15,466 Ω (declarat), fără V34 „RA nedeclarat”; limita prizei =
+    # TT fără RA_ohm: RA = Rp (n = 2, implicite, electrod ø60 mm) = 15,587 Ω (declarat), fără V34 „RA nedeclarat”; limita prizei =
     # 50 V / 0,3 A = 166,7 Ω (RCCB BMPT 300 mA = cel mai mare IΔn din schemă) → V37 INFO
     r = calculeaza(dict(TABLOU, schema_pamant="TT", priza={}))
     p = r["rezultat"]["priza"]
     assert p["RA_din_priza"] and p["R_limita_ohm"] == pytest.approx(166.667, rel=1e-4) and p["ok"]
-    assert any(x.startswith("RA = Rp calculat = 15,47") for x in r["presupus"])
+    assert any(x.startswith("RA = Rp calculat = 15,59") for x in r["presupus"])
     assert not any(v["cod"] == "V34" for v in r["verificari"])
-    assert "RA = 15,47" in r["rezultat"]["nota_schema_pamant"]
+    assert "RA = 15,59" in r["rezultat"]["nota_schema_pamant"]
     # RA declarat → nu se înlocuiește
     r = calculeaza(dict(TABLOU, schema_pamant="TT", RA_ohm=50, priza={}))
     assert not r["rezultat"]["priza"]["RA_din_priza"] and "RA = 50" in r["rezultat"]["nota_schema_pamant"]
 
 
 def test_tt_ra_din_priza_dimensionata():
-    # ρ = 3000 Ω·m, ψ 1,6, 1 electrod fără platbandă: R_e = 4800/(6π)·4,8869 = 1244,4 Ω > 166,7 Ω (RCCB BMPT 300 mA)
-    # n = 9: η_e = 0,81 − 0,06·4/5 = 0,762 → 1244,4/6,858 = 181,5 Ω > 166,7; n = 10: η_e 0,75 → 1244,4/7,5 = 165,9 Ω
-    # → schema se recalculează cu RA = 165,9 Ω: 0,3 A·165,9 = 49,8 V ≤ 50 V (fără V34); v1.3 R5: Q1 fără DDR propriu
+    # ρ = 3000 Ω·m, ψ 1,6, 1 electrod ø60 mm fără platbandă: R_e = 4800/(6π)·4,9437 = 1258,9 Ω > 166,7 Ω (RCCB BMPT
+    # 300 mA); n = 10: η_e 0,75 → 1258,9/7,5 = 167,9 Ω > 166,7; n = 11: η_e = 0,75 − 0,04/5 = 0,742 → 1258,9/8,162 =
+    # 154,2 Ω → schema se recalculează cu RA = 154,2 Ω: 0,3 A·154,2 = 46,3 V ≤ 50 V (fără V34); v1.3 R5: Q1 fără DDR propriu
     # (protejat de RCCB BMPT 300 mA S), plecarea 100 mA instantaneu (≤ 300/3; 0,1·165,9 = 16,6 V)
     r = calculeaza(dict(TABLOU, schema_pamant="TT", priza={"rho_ohm_m": 3000, "electrozi": {"n": 1},
                                                             "platbanda": False}))
     p = r["rezultat"]["priza"]
-    assert p["Rp_initial_ohm"] == pytest.approx(1244.44, rel=1e-4) and p["n_necesar"] == 10
-    assert p["Rp_ohm"] == pytest.approx(165.93, rel=1e-4) and p["L_platbanda_m"] == 0.0
+    assert p["Rp_initial_ohm"] == pytest.approx(1258.88, rel=1e-4) and p["n_necesar"] == 11
+    assert p["Rp_ohm"] == pytest.approx(154.24, rel=1e-4) and p["L_platbanda_m"] == 0.0
     assert not r["blocheaza_export"] and "DDR" not in r["rezultat"]["Q1_C1"]
     assert r["rezultat"]["plecari"][0]["DDR"]["IdN_mA"] == 100
-    assert any("165,93" in x for x in r["presupus"])
+    assert any("154,24" in x for x in r["presupus"])
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -266,10 +267,10 @@ def test_valori_absurde(priza, cod):
 
 
 def test_un_electrod_fara_conditie_a_pe_L():
-    # n = 1: distanța nu intervine (η = 1) → a/L < 1 nu e eroare. ρ = 10: R_e = 4,148 Ω; L_p = racord 5 m,
-    # R_pl = 35/(2π·5)·ln(50/0,032) = 1,11408·7,354 = 8,193 Ω → Rp = 4,148·8,193/(4,148 + 8,193) = 2,754 Ω ≤ 4
+    # n = 1: distanța nu intervine (η = 1) → a/L < 1 nu e eroare. ρ = 10: R_e = 4,196 Ω (ø60 mm); L_p = racord 5 m,
+    # R_pl = 35/(2π·5)·ln(50/0,032) = 1,11408·7,354 = 8,193 Ω → Rp = 4,196·8,193/(4,196 + 8,193) = 2,775 Ω ≤ 4
     r = calculeaza(dict(TABLOU, priza={"rho_ohm_m": 10, "electrozi": {"n": 1, "distanta_m": 1}}))
-    assert r["rezultat"]["priza"]["Rp_ohm"] == pytest.approx(2.754, rel=1e-3)
+    assert r["rezultat"]["priza"]["Rp_ohm"] == pytest.approx(2.775, rel=1e-3)
     assert r["rezultat"]["priza"]["eta_e"] == 1.0 and not r["blocheaza_export"]
 
 
@@ -277,7 +278,7 @@ def test_valori_implicite_declarate():
     r = calculeaza(dict(TABLOU, priza={}))
     t = " | ".join(r["presupus"])
     # v1.3 (P0-2, pct. 3): n și L_p apar cu valorile ADOPTATE după dimensionare (inițialele între paranteze)
-    for s in ("ρ sol = 100 Ω·m", "priză: 11 electrozi (mărit automat de la 2", "2½″", "a = 2·L = 6 m",
+    for s in ("ρ sol = 100 Ω·m", "priză: 11 electrozi (mărit automat de la 2", "Ø 60", "a = 2·L = 6 m",
               "platbandă 65 m = (n − 1)·a + racord = 10·6 + 5 m (inițial 11 m)",
               "racord platbandă → piesa de separație 5 m", "40 × 4 mm", "ψ_e = 1,6", "ψ_pl = 3,5"):
         assert s in t, s

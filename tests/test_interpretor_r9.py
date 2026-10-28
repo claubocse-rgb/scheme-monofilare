@@ -246,7 +246,9 @@ def test_statie_pompare_psi_pe_ge_ats():
     assert i["tip_schema"] == "ge_ats" and i.get("siguranta_tablou")
     p45 = [x for x in i["consumatori"] if x["P_kW"] == 45]
     assert p45 and p45[0]["siguranta"] and p45[0].get("n") == "1+1"
-    assert not blocante(i)
+    # echipa1 P1-8: în regim GE contactul indirect al pompelor (fără DDR) cere o soluție declarată — singurele blocaje
+    assert blocante(i) <= {"V85", "V97"}
+    assert not blocante(dict(i, legaturi_echipotentiale=True))
 
 
 def test_normalii_pe_ge_cu_vital_false():

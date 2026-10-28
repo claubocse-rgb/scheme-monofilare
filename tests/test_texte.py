@@ -86,10 +86,10 @@ SABLOANE = [
      "3 × 150/5 A · cl. 0,5"),
     ("contor", {"retea": "tri", "masura": "directa"},
      "Contor electronic trifazat de energie activă și reactivă, direct",
-     "3 × 230/400 V, 5(100) A, telecitire, furnizat și sigilat de OD", "kWh · kVArh"),
+     "3 × 230/400 V, conexiune directă, telecitire, furnizat și montat de OD", "kWh · kVArh"),
     ("contor", {"retea": "tri", "masura": "semidirecta", "bidirectional": True},
      "Contor electronic trifazat de energie activă și reactivă, semidirect, bidirecțional",
-     "3 × 230/400 V, 5 A, telecitire, furnizat și sigilat de OD", "kWh · kVArh"),
+     "3 × 230/400 V, conexiune prin TC, telecitire, furnizat și montat de OD", "kWh · kVArh"),
     ("DPST", {}, "Dispozitiv de protecție la supratensiuni de frecvență industrială, trifazat",
      "Uf = 270 ± 10 V, t = 0,13…0,2 s, comandă BD pe Q", "DPST · U> 50 Hz"),
     ("SPD_ca", {"tip": "T1+T2", "poli": 4, "In_amonte_A": 125}, "Descărcător SPD tip T1+T2, 4P",
@@ -190,7 +190,7 @@ def test_nota_bransament_X02():
                              "Pa_kW": 62.4})[0])
     assert "reglat la Ir = 106,25 A (Pa = 62,4 kW din ATR)" in cu_pa
     mcb = s(note_generate({"bloc": "BMPTd-40", "Q": {"tip": "MCB", "In_A": 25}, "Pa_kW": 15})[0])
-    assert mcb == ("Măsurare directă 5(100) A; Q MCB C25 (Pa = 15 kW din ATR); BMPTd-40 conform ST 4-JT Ed. U1 "
+    assert mcb == ("Măsurare directă (contor furnizat și montat de OD); Q MCB C25 (Pa = 15 kW din ATR); BMPTd-40 conform ST 4-JT Ed. U1 "
                    "Rev. 3/2024, varianta 2.")
 
 

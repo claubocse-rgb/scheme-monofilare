@@ -145,7 +145,7 @@ def _sabloane_mccb(t, p, In):
         icu = _g(p, "Icu_kA")
         el = (t == "acb") or _mccb_decl(p) == "EL"
         if not el:
-            im = _g(p, "Im_A", implicit=norme.IM_TM_MULTIPLU * In)
+            im = _g(p, "Im_A", implicit=norme.im_tm(In) if In else None)
             km = (float(im) / float(In)) if In else norme.IM_TM_MULTIPLU
             car = (f"Ir = {fmt_ro(k)}{PUNCT}In = {_u(ir, 'A')}, Im = {fmt_ro(km, 0)}{PUNCT}In = {_u(im, 'A')}, "
                    f"Icu {_u(icu, 'kA')}" + (f" la {_u(_g(p, 'U_V'), 'V')}" if _g(p, "U_V") else "")
@@ -250,10 +250,12 @@ def _sabloane_rest(t, p, In):
         u = f"3 {X} 230/400{NB}V" if tri else f"230{NB}V"
         if tri and float(_g(p, "U_V", implicit=400)) > 400:
             u = f"3 {X} {fmt_ro(_g(p, 'U_V'), 0)}{NB}V (3 fire)"        # r7: măsura semidirectă pe 800 V c.a.
-        i = (f"5(100){NB}A" if tri else f"5(60){NB}A") if direct else f"5{NB}A"
+        # Î15 (proiectant 28.10.2026, ST 4-JT §4.2.3 / ST 3-JT §4.2.3): contorul e furnizat și montat de OD — pe
+        # planșă fără curent nominal (Ib / Imax inventate)
+        con = "conexiune directă" if direct else "conexiune prin TC"
         return (f"Contor electronic {'tri' if tri else 'mono'}fazat de energie activă și reactivă, "
                 f"{'direct' if direct else 'semidirect'}{bidir}",
-                f"{u}, {i}, telecitire, furnizat și sigilat de OD", f"kWh {PUNCT} kVArh")
+                f"{u}, {con}, telecitire, furnizat și montat de OD", f"kWh {PUNCT} kVArh")
     if t == "dpst":
         return ("Dispozitiv de protecție la supratensiuni de frecvență industrială, trifazat",
                 f"Uf = 270 ± 10{NB}V, t = 0,13{INTERVAL}0,2{NB}s, comandă BD pe Q", f"DPST {PUNCT} U> 50{NB}Hz")
@@ -582,7 +584,7 @@ def nota_bransament(bloc, Q, TC=None, Pa_kW=None):
         prim = TC if isinstance(TC, (int, float)) else _primar_din_text(TC)
         mas = f"Măsurare semidirectă prin TC 3 {X} {fmt_ro(prim)}/5{NB}A, cl. 0,5, 5{NB}VA"
     else:
-        mas = f"Măsurare directă 5(100){NB}A"
+        mas = "Măsurare directă (contor furnizat și montat de OD)"
     In = Q.get("In_A")
     ir = None
     if str(Q.get("tip", "MCB")).upper().startswith("MCCB"):
@@ -617,7 +619,7 @@ def note_generate(rezultat):
     elif "bloc" in r and str(r["bloc"]).startswith("BMPM"):
         q = r.get("Q", {})
         pa = f"(Pa = {_u(r['Pa_kW'], 'kW')} din ATR)" if r.get("Pa_kW") is not None else "(Pa din ATR)"
-        note.append(f"Măsurare directă 5(60){NB}A; Q RCBO 1P+N C{fmt_ro(q.get('In_A'))}, IΔn 300{NB}mA {pa}; "
+        note.append(f"Măsurare directă (contor furnizat și montat de OD); Q RCBO 1P+N C{fmt_ro(q.get('In_A'))}, IΔn 300{NB}mA {pa}; "
                     f"BMPM conform ST 3-JT Ed. U1 Rev. 3/2026.")
     if "trafo" in r and "Q_JT" in r:
         t, q = r["trafo"], r["Q_JT"]

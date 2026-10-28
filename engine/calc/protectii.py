@@ -97,7 +97,7 @@ def construieste(tip, In, ip_min, curba=None, are_aval=False, decl=None, ir=None
             p["Ir_A"] = ir_
         p["decl"] = decl if decl in ("TM", "EL") else declansator(tip, In)
         if p["decl"] == "TM":
-            p["Im_A"] = norme.IM_TM_MULTIPLU * In
+            p["Im_A"] = norme.im_tm(In)
         else:
             p["Ii_A"] = 12.0 * In
             p["tsd_s"] = norme.TSD_S if are_aval else 0.0
@@ -213,7 +213,7 @@ def prag_selectivitate(prot):
         return {"B": 3.0, "C": 5.0, "D": 10.0}[prot.get("curba", "C")] * In
     if t in ("MCCB", "ACB"):
         if prot.get("decl") == "TM":
-            return 0.8 * norme.IM_TM_MULTIPLU * In
+            return 0.8 * norme.im_tm(In)
         return 0.8 * 12.0 * In
     if t == "gG":
         porti = norme.GG_PORTI_A.get(In)

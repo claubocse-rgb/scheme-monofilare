@@ -71,7 +71,7 @@
           "cosφ 0,9",
           "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
           "schema TN-C-S, separare PEN în BMPT",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "rezultat_cheie": {
           "bloc": "BMPTd-40",
@@ -98,7 +98,7 @@
           "cosφ 0,9",
           "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
           "schema TN-C-S, separare PEN în BMPT",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)",
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)",
           "beneficiar și adresă necompletate (câmpuri goale în cartuș)"
         ],
         "rezultat_cheie": {
@@ -133,7 +133,7 @@
           "cosφ 0,9",
           "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
           "schema TN-C-S, separare PEN în BMPT",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "rezultat_cheie": {
           "bloc": "BMPTi-250",
@@ -182,7 +182,7 @@
           "cosφ 0,9",
           "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
           "schema TN-C-S, separare PEN în BMPT",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)",
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)",
           "limita ΔU la bara TE = 3 % (dacă e depășită, motorul mărește secțiunea C2)"
         ],
         "rezultat_cheie": {
@@ -210,7 +210,7 @@
         "presupus": [
           "cosφ 0,9",
           "schema TN-C-S, separare PEN în BMPT",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -234,7 +234,7 @@
           "cosφ 0,9",
           "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²",
           "schema TN-C-S, separare PEN în BMPT",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "avertismente": [
           "V51: la 72,2 A ST 4-JT prevede BMPTd-100 (măsură directă); s-a generat BMPTd-100"
@@ -274,7 +274,7 @@
           "ks = 0,9 (2 plecări)",
           "plecări: L = 50 m, Al PVC D1",
           "sursa: rețea publică prin BMPT cu RCCB 300 mA",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -360,7 +360,7 @@
           "ks = 0,6 (12 plecări), dar P declarată 400 kW are prioritate",
           "„hală 1 100 A” = numele „Hală 1” + 100 A (separatorul de mii prin spațiu NU se acceptă în liste)",
           "plecări L = 50 m, trasee separate",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "avertismente": [
           "V45: coloana trece pe AC2XABY (Al PVC nu ajunge la 4×240 mm²)"
@@ -402,7 +402,7 @@
           "cosφ 0,9",
           "pompe: receptor motor, cosφ 0,85",
           "lungimea de 120 m se aplică DOAR alimentării; plecări L = 50 m",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -453,7 +453,7 @@
           "cosφ 0,9",
           "plecări pe același pat de cabluri (grupare 4 circuite, B.52.17: 0,77)",
           "plecări L = 50 m",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -490,7 +490,7 @@
           "unitatea „A” se aplică tuturor numerelor din listă",
           "alimentare L = 50 m",
           "plecări L = 50 m",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -515,7 +515,7 @@
           "Iac,max = 1,1·Pn/(√3·400) (fișa invertorului lipsește)",
           "cablu invertor Al PVC D1, L = 30 m",
           "racord JT (S = 55 kVA)",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -571,7 +571,7 @@
           "categoria A RfG (880 kW < 1 MW)"
         ],
         "intrebari": [
-          "Confirmați PT propriu 1000 kVA (celulă trafo cu separator de sarcină + siguranțe MT)?"
+          "Confirmați PT propriu 1000 kVA (celulă trafo cu întreruptor + releu 50/51, 50N/51N)?"
         ]
       }
     },
@@ -798,7 +798,7 @@
         "nr_plecari": 8,
         "presupus": [
           "uk 6 %",
-          "celulă trafo cu întreruptor (Sn > 1000 kVA)"
+          "celulă trafo cu întreruptor (Sn > 630 kVA)"
         ],
         "rezultat_cheie": {
           "Q_JT": "ACB 2500 A, Ir 2375 A"
@@ -826,7 +826,7 @@
           "„cam 35 m” = 35 m, aproximativ",
           "cablul descris = coloana C2 dintre BMPT și tabloul consumatorului; racordul C1 aparține OD",
           "cosφ 0,9",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "rezultat_cheie": {
           "bloc": "BMPTi-250",
@@ -870,7 +870,7 @@
           "moară = receptor motor (cosφ 0,85)",
           "iluminat = receptor iluminat (ΔU ≤ 3 %)",
           "plecări L = 50 m",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -986,7 +986,7 @@
           "„TD-1” păstrat cu majuscule",
           "P TD-1 din bilanțul sub-plecărilor (ks 0,9)",
           "sub-plecări: circuite finale Cu PVC metoda C, L = 25 m",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -1009,7 +1009,7 @@
         "presupus": [
           "cosφ 0,9",
           "schema TN-C-S, separare PEN în BMPT",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -1036,7 +1036,7 @@
         "presupus": [
           "cosφ 0,9",
           "coloană Cu (monofazat)",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "rezultat_cheie": {
           "bloc": "BMPM-32"
@@ -1581,7 +1581,7 @@
         "metoda": "D1",
         "presupus": [
           "cosφ 0,9",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -1604,7 +1604,7 @@
         "presupus": [
           "„sol umed” nu se convertește automat: rezistivitatea termică rămâne 2,5 K·m/W (conservator); se poate introduce numeric",
           "cosφ 0,9",
-          "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)"
+          "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)"
         ],
         "actiune": "genereaza",
         "intrebari": []
@@ -1681,7 +1681,7 @@
           }
         ],
         "presupus": [
-          "siguranțe MT 63 A (orientativ, tabel producător)"
+          "celulă cu siguranțe MT declarată la 1000 kVA > 630 kVA — motorul cere întreruptor + releu 50/51 (V61)"
         ],
         "actiune": "genereaza",
         "intrebari": []

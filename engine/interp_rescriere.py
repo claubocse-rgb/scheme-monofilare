@@ -18,6 +18,7 @@ try:
     from .interp_r10 import rescrie_inainte as rescrie_r10_inainte, rescrie_dupa as rescrie_r10_dupa
     from .interp_sinonime import canonizeaza
     from .interp_r11 import rescrie_inainte as rescrie_r11_inainte, rescrie_dupa as rescrie_r11_dupa
+    from .interp_echipa1 import rescrie as rescrie_echipa1
 except ImportError:  # rulare ca script
     from engine.interp_tabel import rescrie_tabel  # type: ignore
     from engine.interp_cifre import rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire  # type: ignore
@@ -25,6 +26,7 @@ except ImportError:  # rulare ca script
     from engine.interp_r10 import rescrie_inainte as rescrie_r10_inainte, rescrie_dupa as rescrie_r10_dupa  # type: ignore
     from engine.interp_sinonime import canonizeaza  # type: ignore
     from engine.interp_r11 import rescrie_inainte as rescrie_r11_inainte, rescrie_dupa as rescrie_r11_dupa  # type: ignore
+    from engine.interp_echipa1 import rescrie as rescrie_echipa1  # type: ignore
 
 _DIA = str.maketrans("șşțţăâîȘŞȚŢĂÂÎ", "ssttaaiSSTTAAI")
 NUM = r"\d+(?:[.,]\d+)?"
@@ -376,7 +378,7 @@ def rescrie(text: str) -> tuple[str, list[str]]:
     """Toate rescrierile r8, în ordine; întoarce (text, note)."""
     note = []
     for f in (rescrie_r11_inainte, rescrie_indentare, rescrie_tabel, rescrie_r10_inainte, rescrie_en, rescrie_scurt, canonizeaza,
-              rescrie_email, rescrie_autocorectura, rescrie_r10_dupa, rescrie_r11_dupa, rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire,
+              rescrie_email, rescrie_autocorectura, rescrie_r10_dupa, rescrie_r11_dupa, rescrie_echipa1, rescrie_cifre, rescrie_termeni, rescrie_lungimi, rescrie_marire,
               rescrie_lant, rescrie_din_tg, rescrie_cascade, rescrie_corpuri):
         text, n = f(text)
         note += n

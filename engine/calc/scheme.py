@@ -56,7 +56,7 @@ def receptor_dupa_nume(nume, nivel):
 
 def _zb_din_intrare(zb, j):
     """M2 (v1.2): impedanța buclei OD din ATR — perechea (R, X), dict {R, X} sau modulul |Z| (număr). La modul,
-    R/X = 2 (raportul valorii implicite 0,18 + j0,09 Ω, rețea rurală LEA/LES) — declarat ca presupus."""
+    R/X = 2 (raportul valorii implicite 0,2683 + j0,1342 Ω, |Z| = 0,30 Ω) — declarat ca presupus."""
     if zb is None:
         return None
     if isinstance(zb, dict):
@@ -67,7 +67,7 @@ def _zb_din_intrare(zb, j):
     r0, x0 = norme.OD_ZBUCLA_IMPLICIT_OHM
     m0 = math.hypot(r0, x0)
     j.presupune(f"Zbuclă OD dată ca modul |Z| = {fmt_ro(z, 3)} Ω: R/X = {fmt_ro(r0 / x0)} presupus (ca la valoarea "
-                f"implicită 0,18 + j0,09 Ω) → Zb = {fmt_ro(z * r0 / m0, 3)} + j{fmt_ro(z * x0 / m0, 3)} Ω")
+                f"implicită) → Zb = {fmt_ro(z * r0 / m0, 3)} + j{fmt_ro(z * x0 / m0, 3)} Ω")
     return (z * r0 / m0, z * x0 / m0)
 
 
@@ -86,7 +86,8 @@ def _context_od(inp, j, ddr_amonte):
             j.presupune(f"Zbuclă OD implicită ridicată la 2·Z_Q = {fmt_ro(ctx['Zb'][0], 3)} + j{fmt_ro(ctx['Zb'][1], 3)} Ω "
                         f"(consistentă cu Ik3 OD = {fmt_ro(ctx['Ik3_kA'])} kA; Ik1min ≤ Ik3max) — presupusă, se confirmă cu OD / ATR")
         else:
-            j.presupune("Zbuclă OD 0,18 + j0,09 Ω (|Z| = 0,201 Ω, valoare implicită presupusă — se confirmă cu OD / ATR)")
+            j.presupune(f"Zbuclă OD {fmt_ro(norme.OD_ZBUCLA_IMPLICIT_OHM[0], 3)} + j{fmt_ro(norme.OD_ZBUCLA_IMPLICIT_OHM[1], 3)} Ω "
+                        f"(|Z| = {fmt_ro(norme.OD_ZBUCLA_MODUL_IMPLICIT_OHM, 2)} Ω, valoare implicită presupusă — se confirmă cu OD / ATR)")
     j.ipoteza("ik3_od", ctx["Ik3_kA"], ik3 is None)
     # v1.7 (§C.8, N11): Zb presupus după zonă (locuință rurală) — marcat presupus, cu sursa, nu „declarat”
     j.ipoteza("zb_od", sc.modul(ctx["Zb"]), inp.get("_zb_presupus") or zb is None)
@@ -379,8 +380,8 @@ def _valideaza_ddr(d, j, obiect, camp):
 
 def _ddr_amonte(inp, retea="tri", bmpm_sel=None):
     """v1.3 (§B.18.1): DDR-ul din amontele schemei (branșamentul): `IdN_amonte_mA` declarat (tip S după
-    `DDR_amonte_selectiv`, implicit S) sau RCCB 300 mA S din BMPT (ST 4-JT, M11) / RCBO 300 mA din BMPM (ST 3-JT,
-    instantaneu [NEVERIFICAT])."""
+    `DDR_amonte_selectiv`, implicit S) sau RCCB 300 mA din BMPT (ST 4-JT; S la tablourile din M11, instantaneu la
+    locuință — Î1 28.10.2026) / RCBO 300 mA din BMPM (ST 3-JT §4.2.4 m: instantaneu [VERIFICAT])."""
     idn = inp.get("IdN_amonte_mA")
     if idn is not None:
         return ddr_mod.descriere(idn, inp.get("DDR_amonte_selectiv", True), "DDR amonte (declarat)")
@@ -924,18 +925,18 @@ def _bransament(inp, j):
                 emite(j, "V04", BLOCANT, "Q", Ib=ib, Ip=q_f)
                 return rez
             In_q = q_f
-        # r6: RCBO 300 mA din BMPM — selectiv (S), tip A (echiparea uzuală a blocurilor noi, presupusă și documentată);
-        # instantaneu ar fi neselectiv cu DDR-urile de 30 mA din TE (V43). Branșamentul vechi se declară.
+        # Î1 (proiectant 28.10.2026): RCBO 300 mA din BMPM — tip AC, instantaneu (ST 3-JT §4.2.4 l–m DEER); neselectiv
+        # cu DDR-urile de 30 mA din TE (V43, cu remedierea „declarați blocul real”). Blocul cu RCBO A / S se declară.
         sel_q = inp.get("DDR_amonte_selectiv", norme.LOCUINTA_DDR_BRANSAMENT_IMPLICIT["selectiv"])
         tip_q = inp.get("DDR_bransament_tip") or norme.LOCUINTA_DDR_BRANSAMENT_IMPLICIT["tip"]
         if inp.get("DDR_amonte_selectiv") is None and not inp.get("_cosfi_eticheta"):
-            j.presupune(f"RCBO 300 mA din BMPM: selectiv (S), tip {tip_q} — echiparea uzuală a blocurilor noi; un "
-                        f"RCBO instantaneu nu e selectiv cu DDR-urile de 30 mA din tablou")
+            j.presupune(f"RCBO 300 mA din BMPM: tip {tip_q}, instantaneu (ST 3-JT DEER) — declarați blocul real "
+                        f"(DDR_amonte_selectiv / DDR_bransament_tip) dacă RCBO-ul e de tip S / A")
         rez.update({"bloc": f"BMPM-{In_q}",
                     "Q": {"tip": "RCBO 1P+N", "curba": "C", "In_A": In_q, "IdN_mA": norme.BMPM["idn_ma"],
                           "Icn_kA": int(norme.BMPM["Q_icn_min_ka"]), "selectiv": bool(sel_q), "tip_ddr": tip_q},
                     "SF": {"tip": "separator monopolar cu fuzibil", "In_A": 40},
-                    "contor": f"230{NB}V, 5(60){NB}A"})
+                    "contor": f"monofazat direct 230{NB}V (furnizat și montat de OD)"})
         j.pas(f"BMPM: RCBO 1P+N C{In_q} (seria 16/20/25/32/40 A), SF 40 A gG")
         ctx["ddr_ramura"] = "RCBO"
         sf = {"tip": "gG", "In_A": 40}
@@ -989,19 +990,22 @@ def _bransament(inp, j):
             icu_q = prima_din_serie(norme.MCCB_ICU_KA, norme.BMPT_Q_ICN_MIN_KA)
             rez["Q"] = {"tip": "MCCB", "In_A": In_q, "Ir_multiplu": k, "Ir_A": ir,
                         "Icu_kA_min": int(norme.BMPT_Q_ICN_MIN_KA), "Icu_kA": icu_q, "decl": "TM",
-                        "Im_A": norme.IM_TM_MULTIPLU * In_q}
+                        "Im_A": norme.im_tm(In_q)}
         rez["SF"] = {"In_A": b["SF_fuzibil_A"], "soclu_A": b["SF_soclu_A"], "gabarit": b["SF_gabarit"]}
         if In_q > b["SF_fuzibil_A"]:
             emite(j, "V52", BLOCANT, "schema", q=In_q, sf=b["SF_fuzibil_A"])
+        # M11 (v1.2): DDR general 300 mA în amontele DDR-urilor de 30 mA din instalație → selectiv (S); la LOCUINȚĂ
+        # (Î1, proiectant 28.10.2026) implicit instantaneu, ca în ST 4-JT — tipul S / A se declară
+        sel_bmpt = inp.get("DDR_amonte_selectiv", norme.LOCUINTA_DDR_BRANSAMENT_IMPLICIT["selectiv"]
+                           if inp.get("_cosfi_eticheta") else True)
         rez["RCCB"] = {"poli": norme.BMPT_RCCB["poli"], "In_A": prima_din_serie(RCCB_IN_BRANSAMENT, In_q),
                        "IdN_mA": norme.BMPT_RCCB["idn_ma"], "tip": inp.get("DDR_bransament_tip") or norme.BMPT_RCCB["tip"],
-                       # M11 (v1.2): DDR general 300 mA în amontele DDR-urilor de 30 mA din instalație → selectiv (S)
-                       "selectiv": True, "aparat": "RCCB"}
+                       "selectiv": bool(sel_bmpt), "aparat": "RCCB"}
         if gt(In_q, norme.RCCB_IN_A[-1]):
             # M11 (v1.2, §B.4): peste 125 A nu există RCCB modular → bloc diferențial asociat MCCB-ului Q, In = In Q
             rez["RCCB"].update({"aparat": "bloc_diferential", "asociat": "Q", "In_A": In_q})
             j.pas(f"DDR general: In Q {In_q} A > 125 A → bloc diferențial asociat MCCB Q, IΔn 300 mA, tip "
-                  f"{rez['RCCB']['tip']}, S")
+                  f"{rez['RCCB']['tip']}{', S' if rez['RCCB']['selectiv'] else ''}")
         if b["masura"] == "semidirecta":
             tc = norme.BMPT_TC
             # r7 (#38): TC primar ≥ 1,2·Ib (Ib în zona de precizie, cu rezervă) și ≥ In_Q/1,2 (domeniu extins 120 %);
@@ -1020,19 +1024,19 @@ def _bransament(inp, j):
                       f"sarcină secundar = {fmt_ro(s_sec)} VA ≤ 5 VA")
                 if gt(s_sec, tc["Sn_VA"]):
                     emite(j, "V55", AVERTISMENT, "TC", "AV", S=s_sec, Sn=tc["Sn_VA"])
-            rez["contor"] = f"semidirect 3 {X} 230/400{NB}V, 5{NB}A (furnizat de OD)"
+            rez["contor"] = f"semidirect 3 {X} 230/400{NB}V, prin TC (furnizat și montat de OD)"
         else:
-            rez["contor"] = f"direct 3 {X} 230/400{NB}V, 5(100){NB}A (furnizat de OD)"
+            rez["contor"] = f"direct 3 {X} 230/400{NB}V (furnizat și montat de OD)"
             if gt(ib, 100):
                 emite(j, "V56", BLOCANT, "schema", Ib=ib)
             elif inp.get("_cosfi_eticheta") and (gt(ib, norme.LOCUINTA_IB_SEMIDIRECT_A)
                                                   or ge(In_q, norme.LOCUINTA_IB_SEMIDIRECT_A)):
-                # r7 (#38/#65): casă cu Ib > ~80 A — măsura directă 5(100) A e la limită; OD cere de regulă măsură
+                # r7 (#38/#65): casă cu Ib > ~80 A — măsura directă (Imax contor ≈ 100 A) e la limită; OD cere de regulă măsură
                 # semidirectă (BMPTi cu TC, primar ≥ 1,2·Ib) — semnalat, se confirmă din ATR
                 if gt(ib, norme.LOCUINTA_IB_SEMIDIRECT_A):
                     j.emite("V56", AVERTISMENT, "schema",
                             f"locuință trifazată cu Ib = {fmt_ro(ib)} A > {norme.LOCUINTA_IB_SEMIDIRECT_A} A: contorul direct "
-                            f"5(100) A lucrează la limită — OD poate cere măsură semidirectă (BMPTi-250 cu TC primar ≥ 1,2·Ib "
+                            f"(Imax ≈ 100 A) lucrează la limită — OD poate cere măsură semidirectă (BMPTi-250 cu TC primar ≥ 1,2·Ib "
                             f"= {fmt_ro(1.2 * ib, 0)} A)",
                             "confirmați tipul măsurii din ATR (masura_ceruta: „semidirecta”) sau reduceți puterea aprobată")
                 else:
@@ -1194,7 +1198,7 @@ def plecari_multiple_tacute(plecari, j, obiect="P"):
 
 
 UPS_K_INTRARE = 1.15        # DECIZIE r11: Ib intrare redresor ≈ In ieșire / η (0,95) + încărcarea bateriilor (~10 %)
-UPS_PF_IESIRE = 0.9         # DECIZIE r11: puterea activă disponibilă la ieșire = 0,9·Sn (fișa poate da 1,0)
+UPS_PF_IESIRE = 0.9         # DECIZIE r11 [conservator, raport #105]: puterea activă disponibilă la ieșire = 0,9·Sn (fișa poate da 1,0)
 
 
 def e_plecare_ups(pl):
@@ -1864,17 +1868,18 @@ def schema_tablou(inp, j):
         else:
             ctx = _context_od(inp, j, ddr_amonte=False)
             ctx["origine"] = "pt_propriu"
-            j.presupune("sursa: PT propriu cu Sn necunoscut — Ik3max 25 kA și Zbuclă 0,201 Ω implicite")
+            j.presupune(f"sursa: PT propriu cu Sn necunoscut — Ik3max 25 kA și Zbuclă {fmt_ro(norme.OD_ZBUCLA_MODUL_IMPLICIT_OHM, 2)} Ω implicite")
     else:
         ctx, ddr_am, rez["sursa"] = _sursa_tablou(inp, j)
         if ddr_am:
             # v1.3 (§B.18.1): DDR-ul branșamentului e amontele tuturor DDR-urilor din tablou
-            # r6: tablou monofazat din BMPM — RCBO 300 mA presupus S (ca la locuință, LOCUINTA_DDR_BRANSAMENT_IMPLICIT)
+            # r6 / Î1 (28.10.2026): tablou monofazat din BMPM — RCBO 300 mA instantaneu (ST 3-JT), ca la locuință
             bmpm_s = norme.LOCUINTA_DDR_BRANSAMENT_IMPLICIT["selectiv"]
             ctx["ddr_sus"] = _ddr_amonte(inp, inp.get("retea", "tri"), bmpm_sel=bmpm_s)
             if inp.get("retea") == "mono" and inp.get("DDR_amonte_selectiv") is None and inp.get("IdN_amonte_mA") is None:
-                j.presupune("RCBO 300 mA din BMPM selectiv (S) — echiparea uzuală a blocurilor noi; branșamentul vechi "
-                            "cu RCBO instantaneu se declară (DDR_amonte_selectiv: false)")
+                ctx["ddr_sus"]["presupus"] = True
+                j.presupune("RCBO 300 mA din BMPM instantaneu, tip AC (ST 3-JT DEER) — blocul cu RCBO selectiv (S) se "
+                            "declară (DDR_amonte_selectiv: true)")
     if inp.get("origine") == "pt_propriu":
         _ps = rez.get("PT_sursa") or {}
         rez["sursa"] = (f"PT propriu{(' ' + (str(_ps['n_trafo']) + ' × ' if _ps.get('n_trafo', 1) > 1 else '') + fmt_ro(inp['pt_Sn_kVA'], 0) + ' kVA') if inp.get('pt_Sn_kVA') else ''} — bara JT"
@@ -2174,7 +2179,7 @@ def n_trafo_sursa(inp, j, ce="PT-ul sursă"):
 def dg_cerut(inp):
     """r12 (proiecte reale C / S, Top 15 #9): dispozitivul general (DG) al utilizatorului cu ÎNTRERUPTOR + 50/51/51N +
     TC + tor homopolar — cerut explicit (`dg_intreruptor: true`, ATR „dispozitiv general cu întrerupător”) sau implicit
-    când OD-ul e E-Distribuție (norma lor), indiferent de pragul de 1000 kVA."""
+    când OD-ul e E-Distribuție (norma lor), indiferent de pragul de 630 kVA."""
     if inp.get("dg_intreruptor") is not None:
         return bool(inp.get("dg_intreruptor"))
     od = _fd(inp.get("OD") or "") if isinstance(inp.get("OD"), str) else ""
@@ -2188,13 +2193,14 @@ def _celula_trafo_inp(inp):
 
 
 def _celula_trafo(sn, fortat, j, u_kv=20):
-    """SPEC §C.5 pct. 6: Sn ≤ 1000 kVA → separator de sarcină + siguranțe MT; > 1000 kVA → întreruptor + releu.
-    Siguranțe impuse peste 1000 kVA → V61 BLOCANT."""
+    """SPEC §C.5 pct. 6: Sn ≤ 630 kVA → separator de sarcină + siguranțe MT; > 630 kVA → întreruptor + releu 50/51
+    (DECIZIE proiectant 28.10.2026, Î10). Siguranțe impuse peste 630 kVA → V61 BLOCANT."""
     tip = fortat or ("sigurante" if sn <= norme.TRAFO_SN_MAX_SIGURANTE_MT_KVA else "intreruptor")
     if tip.startswith("sig"):
         if sn > norme.TRAFO_SN_MAX_SIGURANTE_MT_KVA:
             emite(j, "V61", BLOCANT, "schema", Sn=sn)
-            return "separator de sarcină + siguranțe MT (calibru nedefinit peste 1000 kVA)"
+            return (f"separator de sarcină + siguranțe MT (nepermis peste {norme.TRAFO_SN_MAX_SIGURANTE_MT_KVA} kVA — "
+                    f"întreruptor + releu 50/51)")
         return f"separator de sarcină + siguranțe MT {fmt_ro(norme.siguranta_mt(sn, u_kv))}{NB}A"
     return "intreruptor"
 
@@ -2706,8 +2712,8 @@ def _repartitie_faze(unitati, j, obiect="schema"):
     """r8 (fotovoltaic P0-5): invertoarele / PCS monofazate (`u["retea"] == "mono"`) pe o rețea trifazată — fiecare pe
     o fază (L1 / L2 / L3). Faza declarată (`invertoare[].faza`: „L2” sau listă pe unități) se respectă; restul se
     repartizează automat pe faza cea mai puțin încărcată (puterile mari întâi). Curentul pe fază = Σ Iac trifazate +
-    Σ Iac monofazate de pe fază. Dezechilibrul (S max − S min pe fază, al generării monofazate) > 4,6 kVA → V71
-    AVERTISMENT (DECIZIE, norme.DEZECHILIBRU_FAZE_MAX_KVA). Întoarce {L1: A, L2: A, L3: A} sau None (fără mono)."""
+    Σ Iac monofazate de pe fază. Dezechilibrul (S max − S min pe fază, al generării monofazate) > 16 A ≈ 3,68 kVA → V71
+    AVERTISMENT (Ord. ANRE 228/2018 art. 12(3), norme.DEZECHILIBRU_FAZE_MAX_KVA). Întoarce {L1: A, L2: A, L3: A} sau None (fără mono)."""
     mono = [u for u in unitati if u.get("retea") == "mono"]
     if not mono:
         return None
@@ -3253,8 +3259,9 @@ def _schema_cef(inp, j):
         if gt(s_iac, norme.BMPM["I_max_A"]):
             emite(j, "V53", BLOCANT, "schema", "inv", Ib=s_iac)
             return rez
-        if gt(pn_tot, norme.MONOFAZAT_P_INVERTOR_AVERTISMENT_KW):
-            emite(j, "V71", AVERTISMENT, "schema", P=pn_tot)
+        s_mono = s_iac * norme.U_0_V / 1000.0          # Ord. ANRE 228/2018 art. 12(3): comparația pe kVA (16 A)
+        if gt(s_mono, norme.MONOFAZAT_S_INVERTOR_AVERTISMENT_KVA):
+            emite(j, "V71", AVERTISMENT, "schema", P=pn_tot, S=round(s_mono, 2))
         racord = {"tip": "JT monofazat prin BMPM", "In_Q_max_A": norme.BMPM["I_max_A"]}
         ctx = _context_od(inp, j, ddr_amonte=False)
     elif sn is not None:
@@ -3408,6 +3415,8 @@ def _schema_cef(inp, j):
     else:
         cat = "A"
     rez["categorie_RfG"] = cat
+    if isinstance(rez.get("PT"), dict):
+        rez["PT"]["categorie_RfG"] = cat
     emite(j, "V70", INFO if cat == "A" else AVERTISMENT, "schema", "INFO" if cat == "A" else "AV", X=cat, P=pn_tot)
 
     # v1.3 (P0-2): punctul de racord — TG existent (QG se leagă pe o plecare a tabloului general existent) și C0
@@ -3826,9 +3835,9 @@ def _schema_cef(inp, j):
             # r6 (fotovoltaic P1-10): Σ Iac față de calibrul Q din BMPT / branșamentul existent (`In_Q_bransament_A`)
             _verifica_iac_q_existent(inp, j, s_iac, lim_inj, pr.ip(qg))
 
-        # TC măsură (pct. 8, B.19) — la monofazat măsura e directă (BMPM, contor 5(60) A)
+        # TC măsură (pct. 8, B.19) — la monofazat măsura e directă (BMPM, contor furnizat de OD)
         if mono:
-            rz["contor"] = "monofazat direct 230 V, 5(60) A, bidirecțional (furnizat de OD)"
+            rz["contor"] = "monofazat direct 230 V, bidirecțional (furnizat și montat de OD)"
         elif masura == "MT":
             # r7: măsura de decontare în celula de măsură MT a PT-ului (existent sau nou) — fără TC de decontare pe JT
             rez["masura"] = {"loc": "MT"}
@@ -3969,7 +3978,7 @@ def _schema_cef(inp, j):
 
 
 # r11 (panoul de confirmare `cablu_cc`): cablu solar H1Z2Z2-K (SR EN 50618), Iz monopolar în aer liber la 60 °C,
-# pozat pe structură (tabel A.3 EN 50618, DECIZIE: fără factori de grupare suplimentari — se declară în presupus)
+# pozat pe structură (tabel A.3 EN 50618 [VERIFICAT: raport #18]; fără factori de grupare — DECIZIE proiectant 28.10.2026, Î12)
 IZ_CABLU_SOLAR_A = {1.5: 30, 2.5: 41, 4: 55, 6: 70, 10: 98, 16: 132, 25: 176, 35: 218}
 RHO_CU_70 = 0.0225      # Ω·mm²/m la ~70 °C
 
@@ -4146,7 +4155,15 @@ def _masura_cef(inp, j, sn):
     cel_m = (isinstance(cel, dict) and bool(cel.get("masura"))) or \
         (isinstance(cel, (list, tuple)) and any(isinstance(x, str) and _fd(x) == "masura" for x in cel))
     if m is None:
-        return "MT" if (cel_m and sn is not None) else "JT"
+        if cel_m and sn is not None:
+            return "MT"
+        if sn is not None and _bool(inp.get("pt_existent")) is not True and inp.get("racord") != "tg_existent" \
+                and not inp.get("atr_jt"):
+            # echipa1 P1-9: PT propriu NOU = racord în MT — măsura de decontare și PI pe MT (celulă de măsură, QI cu 59N)
+            j.presupune("CEF cu PT propriu nou → racord în MT: măsura de decontare în celula de măsură MT și protecția de "
+                        "interfață pe MT (27/59/59N/81); declarați măsura „JT” dacă ATR o cere pe JT")
+            return "MT"
+        return "JT"
     mm = _fd(m) if isinstance(m, str) else ""
     mm = "MT" if mm in ("mt", "medie_tensiune", "celula_masura") else "JT" if mm in ("jt", "joasa_tensiune") else None
     if mm is None:
@@ -4176,7 +4193,7 @@ def _q_jt_cef(in_t, ik3_kA, in_fortat=None):
 
 def _pt_nou_cef(inp, j, sn, t, n_t=1, masura="JT"):
     """r6 (fotovoltaic P0-2): PT propriu NOU al CEF — celula MT de linie, celula trafo (separator de sarcină + siguranțe MT
-    ≤ 1000 kVA, întreruptor + releu 50/51 peste), T1 20/0,4 kV în post și Q JT al trafo (Ip,min = In_T, Icu ≥ Ik3 bara).
+    ≤ 630 kVA, întreruptor + releu 50/51 peste), T1 20/0,4 kV în post și Q JT al trafo (Ip,min = In_T, Icu ≥ Ik3 bara).
     TGD-CF se leagă la bara JT a postului prin C0. r7: `n_t` trafo identice (câte o celulă trafo și un Q JT pe fiecare,
     bare JT cu cuplă), Ir Q JT ≤ In_T, celula de măsură MT (`masura` „MT”). Întoarce (rezultat, protecția Q JT)."""
     izt = inp.get("trafo_izolatie") or "ulei"
@@ -4385,7 +4402,8 @@ def _parte_cc(inp, j, rez, tip, obiect="schema"):
         umax = st.get("Umax_inv_V")
         if umax is None:
             umax = norme.PV_UMAX_INVERTOR_IMPLICIT_V
-            j.presupune("Umax invertor 1100 V")
+            j.presupune(f"Umax c.c. invertor {fmt_ro(umax, 0)} V (fișa lipsește — minorantul uzual: Fronius / SMA 1000 V; "
+                        f"Huawei / Sungrow 1100 V se declară)")
         tmin = norme.PV_T_MIN_C
         uoc = st["n_module"] * st["Uoc_V"] * (1 + beta / 100.0 * (tmin - 25.0))
         rez["Uoc_Tmin_V"] = uoc
@@ -4527,10 +4545,12 @@ def _grupuri_prosumator(inp, j):
 
 
 def _ddr_prosumator(u, tt, ra):
-    """v1.9 (R5 P0-6, SPEC §C.4): DDR pe circuitul unui invertor / PCS de prosumator:
-    declarat (`ddr` {IdN_mA, tip}, din fișă / ATR) > TT (30 mA ≤ 30 kW; 100 mA peste, dacă RA permite) > TN: 30 mA
-    tip A (sau `IdN_min_mA` / `tip_ddr` din fișă) doar până la 30 kW; peste 30 kW fără DDR (deconectare prin
-    întreruptor în TN), dacă fișa / ATR nu îl cer. `ddr: false` = exclus. Întoarce (IΔn, tip) sau None."""
+    """v1.9 (R5 P0-6, SPEC §C.4) + Î6 (proiectant 28.10.2026): DDR pe circuitul unui invertor / PCS de prosumator.
+    * declarat `ddr` {IdN_mA, tip} (din fișă / ATR) → acela;
+    * TT → DDR-ul e protecția la defect: 30 mA ≤ 10 kW, 100 mA peste (sau `IdN_min_mA` din fișă / producător), cât permite RA;
+    * TN → DOAR LA CERERE (`ddr: true` sau `IdN_min_mA` din fișă): IΔn după producător (Huawei ≥ 100 mA la orice putere,
+      [HW1]; altfel 30 mA ≤ 10 kW, 100 mA peste — raport #93); fără cerere → fără DDR (deconectare prin întreruptor).
+    `ddr: false` = exclus (în TN). Întoarce (IΔn, tip) sau None."""
     g = u["grup"]
     d = g.get("ddr")
     if d is False and not tt:
@@ -4539,19 +4559,22 @@ def _ddr_prosumator(u, tt, ra):
     if isinstance(d, dict):
         return int(d["IdN_mA"]), str(d.get("tip") or tip).upper()
     fisa = g.get("IdN_min_mA")
-    mare = gt(u["Pn_kW"], norme.DDR_INVERTOR_PRAG_KW)
+    prod = cat_inv.cauta(g.get("producator"), g.get("model")) if (g.get("producator") or g.get("model")) else None
+    prod_min = norme.DDR_INVERTOR_IDN_MIN_PRODUCATOR_MA.get((prod or {}).get("producator") or str(g.get("producator") or "").strip().title())
     mediu = gt(u["Pn_kW"], norme.DDR_INVERTOR_30MA_MAX_KW)       # r11: > 10 kW → 100 mA (curent de scurgere PV)
+    idn = norme.DDR_INVERTOR_IDN_MARE_MA if mediu else 30
+    if prod_min:
+        idn = max(idn, int(prod_min))
+    if fisa:
+        idn = max(idn, int(fisa)) if tt else int(fisa)
     if tt:
-        idn = norme.DDR_INVERTOR_IDN_MARE_MA if (mare or mediu) else 30
-        idn = max(idn, int(fisa)) if fisa else idn
         while ra is not None and gt(ra * idn / 1000.0, 50.0) and idn > 30:
             idn = {300: 100, 100: 30}.get(idn, 30)
         return idn, tip
-    if mare and not fisa:
+    cerut = d is True or (isinstance(d, str) and d.strip().lower() in ("true", "da", "1")) or bool(fisa)
+    if norme.DDR_INVERTOR_DOAR_LA_CERERE and not cerut:
         return None
-    if fisa:
-        return int(fisa), tip
-    return (norme.DDR_INVERTOR_IDN_MARE_MA if mediu else 30), tip
+    return idn, tip
 
 
 _EPS_MIC = ("ilumin", "lumin", "led", "central", "router", "internet", "alarm", "camer", "supraveghere", "poarta",
@@ -4681,8 +4704,9 @@ def schema_prosumator(inp, j):
     if retea == "mono" and gt(iac, norme.BMPM["I_max_A"]):
         emite(j, "V53", BLOCANT, "schema", "inv", Ib=iac)
         return rez
-    if retea == "mono" and gt(pn, norme.MONOFAZAT_P_INVERTOR_AVERTISMENT_KW):
-        emite(j, "V71", AVERTISMENT, "schema", P=pn)
+    s_mono = iac * norme.U_0_V / 1000.0                 # Ord. ANRE 228/2018 art. 12(3): comparația pe kVA (16 A)
+    if retea == "mono" and gt(s_mono, norme.MONOFAZAT_S_INVERTOR_AVERTISMENT_KVA):
+        emite(j, "V71", AVERTISMENT, "schema", P=pn, S=round(s_mono, 2))
     # prosumator comercial (DECIZIE, SPEC §C.4): TD-PV cu QG pe o plecare a TG-ului existent; PI externă peste prag
     com = _bool(inp.get("comercial"))
     com = gt(pn_tot, norme.PROSUMATOR_COMERCIAL_KW) if com is None else com
@@ -4767,10 +4791,21 @@ def schema_prosumator(inp, j):
             r["Iac_max_A"] = u["Iac_max_A"]
         return r
 
-    # QG al TD-PV (comercial / PI externă): Ip,min = max(Σ Iac; Ip invertoare)
+    # QG al TD-PV: Ip,min = max(Σ Iac; Ip invertoare). Î5 (proiectant 28.10.2026): la TOȚI prosumatorii există tablou
+    # separat pentru fotovoltaic (TD-PV), indiferent de putere — nu doar la comercial / PI externă
     q_g = None
     ctx_inv = ctx
-    if com or pi_ext:
+    td_pv = bool(norme.PROSUMATOR_TD_PV_INTOTDEAUNA or com or pi_ext)
+    rez["td_pv"] = td_pv
+    # Î5: protecțiile pe partea de c.c. (separator c.c. + SPD c.c.) și pe c.a. (SPD c.a.) — se întreabă; nedeclarat → desenate
+    for k_p, ce in (("protectii_cc", "c.c. (separator c.c. sub sarcină + SPD c.c.)"), ("protectii_ca", "c.a. (SPD c.a.)")):
+        v_p = _bool(inp.get(k_p))
+        rez[k_p] = True if v_p is None else v_p
+        if v_p is None:
+            j.presupune(f"protecții pe partea de {ce}: da — nedeclarat (întrebare: există protecții pe c.c. și pe c.a.?)")
+        elif not v_p:
+            j.pas(f"Protecții pe partea de {ce}: NU (declarat) — nu se desenează")
+    if td_pv:
         jt = Jurnal()
         ip_inv = [x["Ip"] for x in (calculeaza_ramura(dict(ramura_unitate(u), _doar_protectie=True), ctx, jt, "tmp")
                                     for u in unitati) if x["Ip"] is not None]
@@ -4840,12 +4875,12 @@ def schema_prosumator(inp, j):
                 if tt:
                     rez["DDR_TT_IdN_mA"] = max(rez.get("DDR_TT_IdN_mA", 0), dd[0])
             else:
-                j.pas(f"{u['obiect']}: fără DDR propriu — Pn {fmt_ro(u['Pn_kW'])} kW > "
-                      f"{fmt_ro(norme.DDR_INVERTOR_PRAG_KW, 0)} kW, deconectare prin întreruptor (TN); DDR numai dacă "
-                      f"fișa invertorului / ATR îl cer")
+                j.pas(f"{u['obiect']}: fără DDR propriu — deconectare prin întreruptor (TN); DDR pe invertor doar la "
+                      f"cerere (fișa invertorului / ATR / `ddr: true`) — DECIZIE proiectant 28.10.2026")
             if q_g is not None:
                 _selectivitate_qg(q_g, rr["prot"], ctx_inv["Ik3_kA"], u["obiect"], j, len(unitati))
-        _spd_ca_invertor(j, u["obiect"], {"blocat": rr["blocat"], "rezultat": res}, u["grup"])
+        if rez.get("protectii_ca", True):               # Î5: protecții c.a. declarate „nu” → fără SPD c.a. la invertor
+            _spd_ca_invertor(j, u["obiect"], {"blocat": rr["blocat"], "rezultat": res}, u["grup"])
         _ddr_invertor_mare(j, u, res)
     rez["INV"] = rez["invertoare"][0] if rez["invertoare"] else None
     if rez["INV"] is None:
@@ -5393,6 +5428,28 @@ def _schema_ats_trafo(inp, j):
 
 
 def schema_ge(inp, j):
+    """echipa1 P1-8: în regim GE, protecția la contact indirect a circuitelor fără DDR (siguranță) trebuie ASIGURATĂ
+    explicit — altfel V85 / V97 sunt BLOCANT, cu remedieri aplicabile (excitație susținută + Q_G electronic, sau
+    legături echipotențiale suplimentare confirmate)."""
+    n0 = len(j.verificari)
+    rez = _schema_ge_baza(inp, j)
+    echip = inp.get("legaturi_echipotentiale") is True
+    rem = ("alege una dintre soluții: (1) GE cu excitație susținută (≥ 3·In timp de 10 s) — bifează „Excitație "
+           "susținută” — și Q_G cu declanșator electronic, Isd reglat sub curentul de defect; (2) confirmă legăturile "
+           "echipotențiale suplimentare la receptoarele de siguranță (SR HD 60364-4-41 art. 415.2) — bifează "
+           "„Legături echipotențiale suplimentare”; (3) pentru circuitele normale, DDR pe plecare")
+    for v in j.verificari[n0:]:
+        if v.get("cod") in ("V85", "V97") and v.get("nivel") == AVERTISMENT and "regim GE" in (v.get("mesaj") or ""):
+            if echip:
+                v["nivel"] = INFO
+                v["mesaj"] += " — legături echipotențiale suplimentare confirmate de proiectant (art. 415.2)"
+            else:
+                v["nivel"] = BLOCANT
+                v["remediere"] = rem
+    return rez
+
+
+def _schema_ge_baza(inp, j):
     """SPEC §C.6: In_G, Q_G, Ik3" GE, Q rețea, ATS (4P, interblocaj, AC-33B), deconectarea în regim GE (V85), V86, V87.
     v1.2: Q_G MCCB/ACB cu Ir ≤ In_G (M3, protecție strictă la suprasarcină), Icu QR ≥ Ik3 rețea și QG ≥ Ik3 GE,
     cablurile C1 (rețea → ATS, QR), C2 (GE → ATS, QG) și C3 (ATS → consumatori) dimensionate ca ramuri B.21."""
@@ -5456,7 +5513,8 @@ def schema_ge(inp, j):
     if k_g is None:
         emite(j, "V60", BLOCANT, "schema", "B", x=In_G, y=in_g)
         return rez
-    qg = pr.construieste(tip_g, In_G, ir_g, are_aval=True)
+    # echipa1 P1-8: GE cu excitație susținută → Q_G cu declanșator electronic (Isd reglat sub curentul de defect susținut)
+    qg = pr.construieste(tip_g, In_G, ir_g, are_aval=True, decl="EL" if inp.get("excitatie_sustinuta") else None)
     qg["Icu_kA"], ok_g = pr.alege_icu(tip_g, ik3 / 1000.0)
     rez["Q_G"] = {"tip": tip_g, "In_A": In_G, "Ir_A": qg["Ir_A"], "Ir_multiplu": qg["Ir_multiplu"],
                   "Icu_kA": qg["Icu_kA"], "decl": qg.get("decl")}
@@ -5588,7 +5646,7 @@ def schema_ge(inp, j):
         else:
             ctx_r = _context_od(inp, j, ddr_amonte=False)
             ctx_r["origine"] = "pt_propriu"
-            j.presupune("rețeaua normală: PT propriu cu Sn necunoscut — Ik3max 25 kA și Zbuclă 0,201 Ω implicite")
+            j.presupune(f"rețeaua normală: PT propriu cu Sn necunoscut — Ik3max 25 kA și Zbuclă {fmt_ro(norme.OD_ZBUCLA_MODUL_IMPLICIT_OHM, 2)} Ω implicite")
     else:
         if gt(ib, norme.BMPT_I_MAX_A):
             emite(j, "V50", BLOCANT, "schema", "ib", Ib=ib)
@@ -5681,6 +5739,7 @@ def schema_ge(inp, j):
         j.pas(f"Regim GE: Ik1 ≈ {fmt_ro(ik1_ge, 0)} A — protecție la contact indirect prin bloc diferențial 300 mA tip A, "
               f"S, asociat Q_G {tip_g} {In_G} A")
     r2 = {"rol": "qg", "receptor": "tablou", "retea": "tri", "Ib_A": qg["Ir_A"], "cosfi": cos, "prot_tip": tip_g,
+          **({"decl_fortat": "EL"} if inp.get("excitatie_sustinuta") else {}),
           "In_fortat": In_G, "Icu_fortat": qg["Icu_kA"], "cablu": cablu(lung("L_C2_m", "L_GE_ATS_m", 20.0, "C2 (GE → ATS)")),
           "are_aval": True, "_validat": True}
     rr2 = calculeaza_ramura(r2, ctx_g, j, "QG/C2")
@@ -5890,7 +5949,7 @@ def _ipoteze(j, tip_schema):
     def sursa_od(impl):
         """v1.7 (N11): o valoare implicită / presupusă nu se atribuie ATR-ului; „(declarat)” doar pentru datele introduse."""
         if isinstance(impl, str):
-            return f"presupus ({impl}, [NEVERIFICAT]) — se confirmă cu OD / ATR"
+            return f"presupus ({impl}, DECIZIE proiectant 28.10.2026) — se confirmă cu OD / ATR"
         return "(valoare implicită, presupusă — se confirmă cu OD / ATR)" if impl else "(declarat)"
 
     if "ik3_od" in f:

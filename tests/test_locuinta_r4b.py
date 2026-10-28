@@ -122,11 +122,11 @@ def test_N5_fara_q_si_fara_pa_avertismente_vizibile():
 def test_mn5_blocant_pe_q_presupus_spune_ca_e_presupus():
     # N18: tri, Pa 11 kW → Q presupus 16 A (r5: Q uzual din ATR, 11 000/692,8 = 15,9 A); VE mono pe L2 32,17 A > 1,13·16 → BLOCANT
     r = calculeaza(_loc("tri", [L("VE", "vehicul_electric", faza="L2"), L("Pr", "prize")], P_aprobata_kW=11))
-    # r6: Q presupus ≥ Ib (16,71 A → 20 A) și, fiind presupus, AVERTISMENT (nu BLOCANT)
-    assert not [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
-    b = [v for v in _v(r, "V46", "AVERTISMENT") if v["obiect"] == "Q" and "1,13" in v["mesaj"]]
+    # echipa1 (ux problema 2): Q presupus 20 A verificat ca un Q declarat — VE (sarcină continuă 32 A) > 20 A → BLOCANT;
+    # mesajul spune că Q e presupus, iar remedierea cere întâi Q-ul real
+    b = [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
     assert b and b[0]["mesaj"].startswith("Q branșament presupus 20 A (nedeclarat)")
-    assert b[0]["remediere"].startswith("introdu Q branșament real")
+    assert b[0]["remediere"].startswith("scrie siguranța reală")
 
 
 def test_N5_q_declarat_fara_avertisment_q():
@@ -210,8 +210,8 @@ def test_zona_rurala_zb_mai_mare():
     ik_r = _circuite(ru["rezultat"])["Pr"]["Ik1min_capat_A"]
     ik_u = _circuite(ur["rezultat"])["Pr"]["Ik1min_capat_A"]
     assert ik_r < ik_u
-    assert any("0,45 Ω (zonă rurală" in p for p in ru["presupus"])
-    assert any("Zbuclă OD implicită urbană |Z| = 0,201 Ω" in p for p in ur["presupus"])
+    assert any("0,8 Ω (zonă rurală" in p for p in ru["presupus"])                 # Î2 (proiectant 28.10.2026)
+    assert any("Zbuclă OD implicită urbană |Z| = 0,3 Ω" in p for p in ur["presupus"])
     assert ru["rezultat"]["alimentare"]["zona"] == "rural"
     r = calculeaza(dict(base, alimentare=dict(base["alimentare"], zona="munte")))
     assert any(v["camp"] == "alimentare.zona" for v in _v(r, "V12", "BLOCANT"))

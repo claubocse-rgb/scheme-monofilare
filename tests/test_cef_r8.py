@@ -92,10 +92,10 @@ def test_primo_3_pe_trei_faze_230v_2p():
     assert "L1 + N" in t and "L3 + N" in t and "3 × 400" not in t
 
 
-def test_dezechilibru_peste_4_6_kva_avertisment():
+def test_dezechilibru_peste_3_68_kva_avertisment():
     r = calculeaza(dict(PRIMO3, invertoare=[{"n": 2, "producator": "Fronius", "model": "Primo 8.2-1"}]))
     v = _cod(r, "V71", "AVERTISMENT")
-    assert v and "dezechilibru" in v[0]["mesaj"] and norme.DEZECHILIBRU_FAZE_MAX_KVA == 4.6
+    assert v and "dezechilibru" in v[0]["mesaj"] and norme.DEZECHILIBRU_FAZE_MAX_KVA == 3.68      # 16 A, Ord. ANRE 228/2018 art. 12(3)
 
 
 def test_faza_declarata_respectata():
@@ -130,7 +130,8 @@ def test_cef_3mw_doua_sectii_fara_qg_unic():
     assert [p["sarcina"]["titlu"] for p in m["plecari"]] == ["PT — T1", "PT — T2"]
     assert m["bara"]["cupla"]["n1_in"] == 2 and len(m["intrari"]) == 3      # T1: INV-1 + INV-2…15 │ T2: INV-16…30
     # celulele MT comune (măsură + linie) o singură dată, în amonte de ambele celule trafo
-    assert [a["ref"] for a in m["jonctiune"]["aparate"]] == ["QM", "QL"]
+    # echipa1 P1-9: întreruptorul de interfață MT (QI, PI cu 59N) între bara MT a centralei și celula de măsură
+    assert [a["ref"] for a in m["jonctiune"]["aparate"]] == ["QI", "QM", "QL"]
     refs = [a.get("ref") for a in _toate(m)]
     assert "QM" not in refs and "QL" not in refs
     t = _txt(c)

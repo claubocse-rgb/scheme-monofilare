@@ -32,7 +32,7 @@ CHEI = {
            "OD", "punct_conexiune", "compartimente", *CHEI_UK},
     "ge_ats": {"Sn_GE_kVA", "consumatori", "plecari", "P_sarcina_kW", "Ib_sarcina_A", "sursa_retea", "sursa_rezerva",
                "fara_retea", "ge_paralel", "bara_vitala", "comutare", "ATS_poli", "ATS_interblocaj", "DDR_GE", "xd",
-               "excitatie_sustinuta", "In_QG_A", "In_Q_retea_A", "L_C1_m", "L_C2_m", "L_C3_m", "L_GE_ATS_m", "L_m",
+               "excitatie_sustinuta", "legaturi_echipotentiale", "In_QG_A", "In_Q_retea_A", "L_C1_m", "L_C2_m", "L_C3_m", "L_GE_ATS_m", "L_m",
                "L_normali_m", "L_alimentare_m", "cablu", "cosfi", "ks", "origine", "Ik3_sursa_kA", "Sn_T_kVA", "Sn_T2_kVA",
                "Sn_kVA", "siguranta", "siguranta_tablou", "titlu_tablou", *_SURSA_PT, *_OD},
     "cef": {"invertoare", "bess", "kWp", "modul", "string", "racord", "pt_Sn_kVA", "pt_existent", "pt_od", "n_trafo",
@@ -45,7 +45,7 @@ CHEI = {
             "monitorizare", "protectie_interfata", "cablu_MT", "dg_intreruptor", "OD", "punct_conexiune", "planse", "compartimente",
             *CHEI_UK, *_OD},
     "prosumator": {"invertoare", "invertor", "Pn_inv_kW", "hibrid", "Iac_max_A", "baterie", "baterie_kWh", "bess",
-                   "backup", "kWp", "modul", "string", "racord", "PI_externa", "P_aprobata_kW", "P_evacuata_kW",
+                   "backup", "kWp", "modul", "string", "racord", "PI_externa", "protectii_cc", "protectii_ca", "P_aprobata_kW", "P_evacuata_kW",
                    "limitare_injectie_kW", "In_QG_A", "In_Q_bransament_A", "L_racord_m", "L_inv_m", "L_coloana_m",
                    "cablu", "cablu_C0", "cablu_inv", "cablu_pcs", "comercial", "pt_Sn_kVA", "n_trafo", "trafo_izolatie", "SkQ_MVA",
                    "gpv", "gpv_In_A", "spd_cc", "Ucpv_V", "invertor_baterie", "contor_productie", "monitorizare",
@@ -70,8 +70,14 @@ INVERTOR = frozenset({"n", "Pn_kW", "producator", "model", "Iac_max_A", "Idc_max
 LISTE = {"plecari": PLECARE, "consumatori": CONSUMATOR, "invertoare": INVERTOR}
 
 
-def _ignorata(k):
-    return not isinstance(k, str) or k.startswith("_") or k in INFORMATIVE
+def _gol(v):
+    """echipa1 P0-1: valoare goală (None, "", {}, []) — interfața adaugă `cablu: {}` peste tot; o cheie goală nu poartă
+    nicio dată, deci nu are ce „să se piardă în tăcere” → se ignoră (nu V96)"""
+    return v is None or (isinstance(v, str) and not v.strip()) or (isinstance(v, (dict, list, tuple)) and not v)
+
+
+def _ignorata(k, v=None):
+    return not isinstance(k, str) or k.startswith("_") or k in INFORMATIVE or _gol(v)
 
 
 def chei_nefolosite(inp, tip):
@@ -80,13 +86,13 @@ def chei_nefolosite(inp, tip):
     acc = CHEI.get(tip)
     if acc is None or not isinstance(inp, dict):
         return []
-    out = [("", k) for k in inp if not _ignorata(k) and k not in COMUNE and k not in acc]
+    out = [("", k) for k, v in inp.items() if not _ignorata(k, v) and k not in COMUNE and k not in acc]
 
     def lista(cale, xs, permise):
         for i, x in enumerate(xs if isinstance(xs, list) else []):
             if not isinstance(x, dict):
                 continue
-            out.extend((f"{cale}[{i}]", k) for k in x if not _ignorata(k) and k not in permise)
+            out.extend((f"{cale}[{i}]", k) for k, v in x.items() if not _ignorata(k, v) and k not in permise)
             if x.get("copii"):
                 lista(f"{cale}[{i}].copii", x["copii"], PLECARE)
 

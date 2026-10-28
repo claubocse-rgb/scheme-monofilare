@@ -219,7 +219,8 @@ def test_bug_a_descriere_din_start(srv, browser, text, tip, retea, oblig, blocat
         assert pg.get_attribute("#cf-ok", "aria-disabled") == "false" and pg.input_value("#cf-P_kW") == pg.input_value("#cf-P_kW-q")
         assert pg.get_attribute("#cf-P_kW-q", "aria-invalid") is None
         pg.click("#cf-ok")
-        pg.wait_for_function("() => !$('#conf') && MODEL.calc && MODEL._wiz === 1", timeout=30000)
+        # echipa 1 (flux unificat): „Confirmă și desenează” duce direct la planșă, fără pașii asistentului
+        pg.wait_for_function("() => !$('#conf') && MODEL.calc && !MODEL._wiz && !wizActiv() && TAB === 'calc'", timeout=30000)
         c = pg.evaluate("() => MODEL.calc")
         assert c["tip_schema"] == "bransament" and c["retea"] == retea and c["P_kW"] in (7, 20)
     if text == "cef 50 kw":

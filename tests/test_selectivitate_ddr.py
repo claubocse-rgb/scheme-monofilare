@@ -172,14 +172,17 @@ def test_cef_tt():
 
 
 def test_prosumator():
-    # trifazat: RCCB BMPT 300 S → DDR invertor 30 mA → INFO
+    # Î6 (proiectant 28.10.2026): fără DDR pe invertor implicit → nicio pereche DDR
     r = calculeaza({"tip_schema": "prosumator", "retea": "tri", "Pn_inv_kW": 10})
+    assert not _v43(r, "INFO") and not _v43(r)
+    # DDR cerut — trifazat: RCCB BMPT 300 S → DDR invertor 30 mA → INFO
+    r = calculeaza({"tip_schema": "prosumator", "retea": "tri", "Pn_inv_kW": 10, "ddr": True})
     assert "INV vs RCCB BMPT" in _v43(r, "INFO") and not _v43(r)
     # monofazat: RCBO BMPM 300 mA instantaneu → AVERTISMENT (amonte nu e S) — golden R02 (istoric v1.3)
-    r = calculeaza({"tip_schema": "prosumator", "retea": "mono", "Pn_inv_kW": 3})
+    r = calculeaza({"tip_schema": "prosumator", "retea": "mono", "Pn_inv_kW": 3, "ddr": True})
     assert "nu e de tip S" in _v43(r)["INV vs RCBO BMPM"]["mesaj"]
     # dacă proiectantul declară RCBO-ul din amonte de tip S → INFO
-    r = calculeaza({"tip_schema": "prosumator", "retea": "mono", "Pn_inv_kW": 3, "DDR_amonte_selectiv": True})
+    r = calculeaza({"tip_schema": "prosumator", "retea": "mono", "Pn_inv_kW": 3, "DDR_amonte_selectiv": True, "ddr": True})
     assert not _v43(r)
 
 

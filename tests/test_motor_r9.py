@@ -37,6 +37,11 @@ def _aparate(m):
 ])
 def test_ge_ats_pompe_incendiu_regim_de_siguranta(cons):
     inp = {"tip_schema": "ge_ats", "Sn_GE_kVA": 100, "sursa_retea": "pt", "pt_Sn_kVA": 250, "consumatori": cons}
+    # echipa1 P1-8: fără soluție declarată pentru contactul indirect în regim GE → BLOCANT cu remediere aplicabilă
+    _, r0 = constructor.genereaza(dict(inp))
+    b0 = [v for v in _bl(r0) if v["cod"] in ("V85", "V97")]
+    assert b0 and "Legături echipotențiale suplimentare" in b0[0]["remediere"]
+    inp["legaturi_echipotentiale"] = True
     m, r = constructor.genereaza(inp)
     z = r["rezultat"]
     assert not _bl(r), _bl(r)
@@ -109,6 +114,7 @@ def test_tablou_declarat_de_siguranta_e_intreg_de_siguranta(decl):
 # ------------------------------------------------------------------------------- 3. consumatorii normali nu sunt pe GE
 def test_ge_consumatori_normali_pe_ramura_retea():
     inp = {"tip_schema": "ge_ats", "schema_pamant": "TN-S", "Sn_GE_kVA": 200, "sursa_retea": "pt", "pt_Sn_kVA": 630,
+           "legaturi_echipotentiale": True,         # echipa1 P1-8: soluția de contact indirect în regim GE, declarată
            "P_sarcina_kW": 238, "consumatori": [
                {"nume": "Server", "P_kW": 30, "vital": True}, {"nume": "Iluminat siguranta", "P_kW": 3},
                {"nume": "Lift pompieri", "P_kW": 15}, {"nume": "HVAC", "P_kW": 150}, {"nume": "Prize", "P_kW": 40}]}
@@ -161,7 +167,8 @@ def test_stampila_si_la_blocant_de_desen():
     inp = {"tip_schema": "tablou", "origine": "pt_propriu", "pt_Sn_kVA": 800, "schema_pamant": "TN-S", "plecari": [
         {"nume": "Motoare 1", "P_kW": 11, "receptor": "motor"}, {"nume": "Motoare 2", "P_kW": 11, "receptor": "motor"},
         {"nume": "Motoare 3", "P_kW": 11, "receptor": "motor"},
-        {"nume": "TE1 linie ambalare", "copii": [{"nume": "Benzi 1", "P_kW": 2.2}, {"nume": "Benzi 2", "P_kW": 2.2}]}]}
+        {"nume": "TE1 linie ambalare", "copii": [{"nume": "Benzi 1", "P_kW": 2.2}, {"nume": "Benzi 2", "P_kW": 2.2}]},
+        {"nume": "Calibru inexistent", "In_A": 72}]}          # 28.10.2026: BLOCANT sigur (V05), ca ștampila să fie testată
     m, _ = constructor.genereaza(inp)
     v = validare.valideaza(m)
     if not v["blocheaza"]:
@@ -198,8 +205,12 @@ def test_cef_pt_existent_plecare_noua_din_tgjt():
     assert not _bl(r), _bl(r)
     q = z["Q_PT"]
     assert q["Ir_A"] >= z["QG"]["Ir_A"] and q["Icu_kA"] >= z["trafo"]["Ik3max_bara_kA"]
-    copii = m["plecari"][0].get("copii") or []
-    assert copii and any(a.get("ref") == "QPT" for a in copii[0]["aparate"])
+    # echipa1 P0-2: QPT la intrarea C0 în PT (aparat de intrare al tabloului de racord), apoi bara JT cu trafo existent
+    # și plecările existente — QPT nu e în serie cu TGJT existent
+    pl0 = m["plecari"][0]
+    assert any(a.get("ref") == "QPT" for a in pl0.get("aparate_tablou") or [])
+    copii = pl0.get("copii") or []
+    assert copii and not any(a.get("ref") == "QPT" for ch in copii for a in ch.get("aparate") or [])
     assert not any(str(o["lista"][0]).startswith("Anvelopă") for o in m["materiale"])   # PT existent: fără post nou
 
 
@@ -249,7 +260,7 @@ def test_ve_peste_q_bransament_blocant_cu_intrebare():
     r = calculeaza(_loc([{"nume": "Încărcare VE", "receptor": "vehicul_electric", "P_kW": 7.4, "faza": "L1"}],
                         P_aprobata_kW=16))
     b = [v for v in _bl(r) if v["cod"] == "V40" and "VE" in v["obiect"]]
-    assert b and all(v.get("intrebare") for v in b) and "DLM" in b[0]["remediere"]
+    assert b and all(v.get("intrebare") for v in b) and "Limitare putere VE" in b[0]["remediere"]
 
 
 def test_v56_mesaj_corect_la_q_mare_si_ib_mic():
@@ -275,8 +286,10 @@ def test_sauna_cu_date_contradictorii_ramane_dubla():
 def test_tt_prosumator_toate_circuitele_generice_au_ddr():
     m, _ = constructor.genereaza({"tip_schema": "prosumator", "schema_pamant": "TT", "RA_ohm": 4, "retea": "mono",
                                   "P_aprobata_kW": 8, "Pn_inv_kW": 6})
-    gen = [p for p in m["plecari"] if "generic" in (p["sarcina"].get("sub") or "")]
-    assert gen and all(p["aparate"][0]["tip"] == "rcbo" for p in gen)
+    # Î5 (proiectant 28.10.2026): TD-PV separat la toți prosumatorii — TE-ul existent e sarcina plecării QG; în TT
+    # invertorul are DDR (protecția la defect, Î6)
+    assert m["carcasa"]["titlu"] == "TD-PV" and m["plecari"][0]["sarcina"]["titlu"] == "TE EXISTENT"
+    assert any(a["tip"] in ("rccb", "rcbo") for b in m["intrari"] for a in b["aparate"])
     assert any("DDR pe fiecare circuit" in n for n in m["note"])
 
 

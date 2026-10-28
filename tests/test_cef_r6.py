@@ -78,13 +78,15 @@ def test_pt_nou_topologie(cid):
     pl = m["plecari"][0]
     assert pl["sarcina"]["titlu"].startswith("PT ") and pl.get("pt")
     pt = pl["copii"][0]
-    tipuri = [a["tip"] for a in pt["aparate"]]
+    # echipa1 P1-9: PT propriu nou = racord MT — celula de măsură QM și întreruptorul de interfață QI (PI 59N) pe MT
+    assert {"QM", "QI"} <= {a.get("ref") for a in pt["aparate"]} and z["masura"]["loc"] == "MT"
+    tipuri = [a["tip"] for a in pt["aparate"] if a.get("ref") not in ("QM", "QI")]
     # Q JT → T1 → celula trafo → celula de linie, apoi cablu MT → PCC MT 20 kV
     assert tipuri[-3:-2] == ["trafo"] and tipuri[-2] in ("sigurante_mt", "intreruptor_mt") and tipuri[-1] == "sep_mt"
     assert tipuri[0] in ("mccb", "acb")
     assert "MT 20 kV" in pt["sarcina"]["titlu"]
     sn = z["PT"]["Sn_kVA"]
-    assert (tipuri[-2] == "intreruptor_mt") == (sn > 1000)
+    assert (tipuri[-2] == "intreruptor_mt") == (sn > 630)        # Î10 (proiectant 28.10.2026): siguranțe MT ≤ 630 kVA
     # anvelopa PT în listă, nu „carcasă tablou PT”
     den = [x["lista"][0] for x in m.get("materiale") or []]
     assert any("Anvelopă post" in d for d in den) and not any(d.startswith("Carcasă tablou PT") for d in den)
@@ -226,7 +228,8 @@ def test_gpv_declarat_desenat():
 
 
 def test_gpv_calculat_din_isc():
-    m, r = _gen(_cef_str({"n_module": 18, "n_stringuri_paralel": 12, "Uoc_V": 49.6, "Isc_A": 13.9}, kWp=120))
+    # Voc(−25 °C) = 18·49,6·1,135 = 1013 V: Umax 1100 V declarat (implicitul e acum 1000 V, raport #78)
+    m, r = _gen(_cef_str({"n_module": 18, "n_stringuri_paralel": 12, "Uoc_V": 49.6, "Isc_A": 13.9, "Umax_inv_V": 1100}, kWp=120))
     assert r["rezultat"]["gPV_In_A"] and not r["blocheaza_export"]
     assert any(a["tip"] == "gpv" for a in _toate(m))
 

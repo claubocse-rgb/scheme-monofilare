@@ -161,6 +161,20 @@ def _valideaza_setari(st):
     return out
 
 
+# echipa: aparatele GENERICE (fără date — „conform proiect DC / plan PV / releveu”), EXISTENTE sau FURNIZATE DE OD
+# (contorul) rămân pe planșă și în listă, dar NU intră în deviz implicit (eticheta „nu intră în deviz” în interfață);
+# proiectantul le poate include explicit (suprascrieri[cheie].exclus = false).
+_EXCLUS_AUTO = ((re.compile(r"furnizat\w*\s+(?:și\s+\w+\s+)?de\s+OD", re.I), "furnizat de OD"),
+                (re.compile(r"\bexistent", re.I), "existent"),
+                (re.compile(r"\bgeneric|conform\s+(?:plan\w*\s+PV|proiect\w*\s+DC|releveu)", re.I), "generic"))
+
+
+def motiv_exclus_auto(den, car=""):
+    """motivul pentru care articolul nu intră implicit în deviz („furnizat de OD” / „existent” / „generic”) sau None"""
+    t = f"{den} · {car}"
+    return next((m for rx, m in _EXCLUS_AUTO if rx.search(t)), None)
+
+
 def articole(poz):
     """pozițiile listei (nr, ref, lista, buc, tip) → articole de deviz"""
     out = []
@@ -172,7 +186,7 @@ def articole(poz):
             q, um = buc.split(" ", 1)
             buc = _num(q)
         out.append({"poz": n, "ref": ref, "denumire": den, "caracteristici": car, "cantitate": _num(buc) or 0, "um": um,
-                    "tip": tip, "cheie": cheie(den)})
+                    "tip": tip, "cheie": cheie(den), "exclus_auto": motiv_exclus_auto(den, car)})
     return out
 
 
@@ -215,7 +229,8 @@ def calculeaza(poz, catalog=None, setari=None, suprascrieri=None, extra=None):
             if q is None or q < 0:
                 raise ValueError(f"cantitatea pentru „{a['denumire']}” nu e un număr pozitiv")
             a["cantitate"] = q
-        a["exclus"] = bool(s_.get("exclus"))
+        a.setdefault("exclus_auto", None)
+        a["exclus"] = bool(s_["exclus"]) if s_.get("exclus") is not None else bool(a["exclus_auto"])
         e.update({k: v for k, v in s_.items() if k in ("pret", "ore") and v not in (None, "")})
         pret = _num(e.get("pret"))
         ore = _num(e.get("ore"))
@@ -246,7 +261,8 @@ def calculeaza(poz, catalog=None, setari=None, suprascrieri=None, extra=None):
     tva = round(fara * float(st.get("tva_pct") or 0) / 100, 2)
     fara_ore = sum(1 for r in rows if r["ore_u"] is None and not r["exclus"])
     rec = {"fara_ore": fara_ore, "materiale": round(mat, 2), "ore": round(ore_tot, 2), "manopera": man, "ch_indirecte": ind, "profit": prof,
-           "total_fara_tva": fara, "tva": tva, "total": round(fara + tva, 2), "fara_pret": lipsa, "nr_articole": len(rows)}
+           "total_fara_tva": fara, "tva": tva, "total": round(fara + tva, 2), "fara_pret": lipsa, "nr_articole": len(rows),
+           "nr_in_deviz": sum(1 for r in rows if not r["exclus"])}
     return {"articole": rows, "setari": st, "recapitulatie": rec}
 
 

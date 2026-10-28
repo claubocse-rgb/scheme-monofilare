@@ -163,7 +163,7 @@ CONS = [{"nume": "Pompă incendiu", "P_kW": 75, "pornire": "stea_triunghi", "sig
 
 def test_tg_bara_normala_bara_vitala():
     inp = {"tip_schema": "ge_ats", "Sn_GE_kVA": 150, "bara_vitala": True, "sursa_retea": "pt", "pt_Sn_kVA": 1000,
-           "schema_pamant": "TN-S", "consumatori": CONS}
+           "schema_pamant": "TN-S", "consumatori": CONS, "legaturi_echipotentiale": True}     # echipa1 P1-8
     m, r = constructor.genereaza(inp)
     z = r["rezultat"]
     assert not _bl(r), _bl(r)
@@ -312,8 +312,12 @@ def test_bransament_nou_q_declarat_respectat(q, pa):
     z = r["rezultat"]["alimentare"]
     assert z["Q"]["In_A"] == q                                             # niciodată înlocuit tăcut
     v46 = _cod(r, "V46", "BLOCANT")
-    if q < 30:
+    if q < 30 and (pa is None or q == 16):
+        # fără P aprobată (sau P aprobată incoerentă cu Q) → BLOCANT cu propunere
         assert v46 and all(v.get("propunere", {}).get("valoare", 99) > q for v in v46 if v.get("propunere"))
+    elif q < 30:
+        # echipa1 P1-1: P aprobată coerentă cu Q — consumul e limitat contractual → AVERTISMENT, Q nu se înlocuiește
+        assert not v46 and any(v["obiect"] == "Q" for v in _cod(r, "V46"))
     assert not any("Q ales pe puterea" in v["mesaj"] for v in _cod(r, "V46"))
 
 
@@ -341,8 +345,17 @@ def test_v46_mono_fara_alta_faza_si_v53_fara_invertor():
 
 @pytest.mark.parametrize("pn,idn", [(8, 30), (10, 30), (15, 100), (25, 100), (30, 100)])
 def test_ddr_invertor_prosumator_dupa_putere(pn, idn):
-    r = calculeaza({"tip_schema": "prosumator", "retea": "tri", "schema_pamant": "TN-C-S", "P_aprobata_kW": 30,
-                    "invertoare": [{"n": 1, "Pn_kW": pn, "producator": "Huawei", "model": f"SUN2000-{pn}KTL-M1"}]})
+    # Î6 (proiectant 28.10.2026): DDR pe invertor doar la cerere — implicit fără DDR în TN
+    baza = {"tip_schema": "prosumator", "retea": "tri", "schema_pamant": "TN-C-S", "P_aprobata_kW": 30}
+    r = calculeaza(dict(baza, invertoare=[{"n": 1, "Pn_kW": pn, "producator": "Huawei", "model": f"SUN2000-{pn}KTL-M1"}]))
+    assert not [x for x in (r["rezultat"].get("invertoare") or []) if x.get("DDR")]
+    # la cerere: Huawei ≥ 100 mA la orice putere (manualul SUN2000-3…10KTL-M1, raport #93); producător nedeclarat →
+    # 30 mA ≤ 10 kW, 100 mA peste
+    r = calculeaza(dict(baza, invertoare=[{"n": 1, "Pn_kW": pn, "producator": "Huawei", "model": f"SUN2000-{pn}KTL-M1",
+                                           "ddr": True}]))
+    d = [x for x in (r["rezultat"].get("invertoare") or []) if x.get("DDR")]
+    assert d and d[0]["DDR"]["IdN_mA"] == 100
+    r = calculeaza(dict(baza, invertoare=[{"n": 1, "Pn_kW": pn, "ddr": True}]))
     d = [x for x in (r["rezultat"].get("invertoare") or []) if x.get("DDR")]
     assert d and d[0]["DDR"]["IdN_mA"] == idn
 

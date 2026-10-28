@@ -73,7 +73,7 @@ def test_mc4_campuri_globale_invalide_ignorate(camp, val, eticheta):
     z = r["rezultat"]
     assert len(_circuite(z)) == 2 and z["coloana"] and r["blocheaza_export"]
     if camp == "Zb_OD_ohm":
-        assert any("impedanța buclei OD = 0,201 Ω (valoare implicită" in x for x in r["ipoteze"])
+        assert any("impedanța buclei OD = 0,3 Ω (valoare implicită" in x for x in r["ipoteze"])     # Î2: 0,30 Ω
     if camp == "Ik3_OD_kA":
         assert any("Ik3max la punctul de delimitare = 25 kA (valoare implicită" in x for x in r["ipoteze"])
     if camp == "RA_ohm":
@@ -84,11 +84,11 @@ def test_mc4_campuri_globale_invalide_ignorate(camp, val, eticheta):
 def test_N11_zb_rurala_presupusa_nu_din_ATR():
     r = calculeaza(dict(_loc("tri", In_Q_bransament_A=25, P_aprobata_kW=10, zona="rural"), schema_pamant="TT", RA_ohm=30))
     ip = [x for x in r["ipoteze"] if x.startswith("impedanța buclei OD")]
-    assert ip == ["impedanța buclei OD = 0,45 Ω presupus (zonă rurală, [NEVERIFICAT]) — se confirmă cu OD / ATR"]
+    assert ip == ["impedanța buclei OD = 0,8 Ω presupus (zonă rurală, DECIZIE proiectant 28.10.2026) — se confirmă cu OD / ATR"]
     assert not any("(din ATR)" in t for t in _texte(r))
-    assert any("0,45 Ω (zonă rurală) — presupus" in p and "OD / ATR" in p for p in r["presupus"])
+    assert any("0,8 Ω (zonă rurală) — presupus" in p and "OD / ATR" in p for p in r["presupus"])
     h = memoriu.genereaza_html({"calc": {}}, r)
-    assert "(din ATR)" not in h and "presupus (zonă rurală, [NEVERIFICAT])" in h
+    assert "(din ATR)" not in h and "presupus (zonă rurală, DECIZIE proiectant 28.10.2026)" in h
 
 
 def test_N11_valorile_declarate_si_implicite():
@@ -96,7 +96,7 @@ def test_N11_valorile_declarate_si_implicite():
     assert "impedanța buclei OD = 0,3 Ω (declarat)" in r["ipoteze"]
     assert "Ik3max la punctul de delimitare = 10 kA (declarat)" in r["ipoteze"]
     r = calculeaza(_loc("mono", In_Q_bransament_A=32, P_aprobata_kW=7))
-    assert any(x.startswith("impedanța buclei OD = 0,201 Ω (valoare implicită, presupusă — se confirmă cu OD / ATR")
+    assert any(x.startswith("impedanța buclei OD = 0,3 Ω (valoare implicită, presupusă — se confirmă cu OD / ATR")
                for x in r["ipoteze"])
 
 
@@ -105,8 +105,10 @@ VE = [L("Il", "iluminat"), L("VE", "vehicul_electric", P_kW=7.4)]
 
 
 def test_Mc3_VE_sub_RCBO_BMPM_tip_AC_avertisment():
-    # r5: implicit (DDR branșament tip A, VE tip A + RDC-DD) → fără V43 c.c.; branșament vechi tip AC declarat → AV
+    # Î1 (proiectant 28.10.2026): implicit DDR branșament tip AC (ST 3-JT) → V43 c.c. vizibil; tip A declarat → fără
     r = calculeaza(_loc("mono", VE, In_Q_bransament_A=40, P_aprobata_kW=9))
+    assert [x for x in _v(r, "V43") if "c.c." in x["mesaj"]]
+    r = calculeaza(_loc("mono", VE, In_Q_bransament_A=40, P_aprobata_kW=9, DDR_bransament_tip="A"))
     assert not [x for x in _v(r, "V43") if "c.c." in x["mesaj"]]
     r = calculeaza(_loc("mono", VE, In_Q_bransament_A=40, P_aprobata_kW=9, DDR_bransament_tip="AC"))
     v = [x for x in _v(r, "V43") if "c.c." in x["mesaj"]]

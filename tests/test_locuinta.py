@@ -92,12 +92,12 @@ def test_casa_mono_7kw_8_circuite():
     assert z["faze"]["dezechilibru_pct"] is None and z["faze"]["L1_A"] > 0
     assert z["nota_schema_pamant"].startswith("Schemă de legare la pământ: TN-C-S") and "5 grupe" in z["nota_schema_pamant"]
     assert z["retea"] == "mono"
-    # r5: RCBO BMPM nedeclarat → presupus tip A selectiv (S) → fără V43; declarat instantaneu → V43 AVERTISMENT,
-    # v1.6 (P2-1): o singură atenționare agregată DDR1–DDR5
-    assert not _v(r, "V43", "AVERTISMENT")
-    r = calculeaza(dict(CASA_MONO, alimentare=dict(CASA_MONO["alimentare"], DDR_bransament_selectiv=False)))
+    # Î1 (proiectant 28.10.2026): RCBO BMPM nedeclarat → presupus AC instantaneu (ST 3-JT) → V43 AVERTISMENT agregat
+    # (v1.6 P2-1: DDR1–DDR5), cu remedierea „declară blocul real”; declarat selectiv (S) → fără V43
     assert [v["obiect"] for v in _v(r, "V43", "AVERTISMENT")] == ["DDR1–DDR5 vs RCBO BMPM"]
-    assert "DDR1–DDR5" in _v(r, "V43", "AVERTISMENT")[0]["mesaj"]
+    assert "DDR1–DDR5" in _v(r, "V43", "AVERTISMENT")[0]["mesaj"] and "blocul real" in _v(r, "V43", "AVERTISMENT")[0]["remediere"]
+    r = calculeaza(dict(CASA_MONO, alimentare=dict(CASA_MONO["alimentare"], DDR_bransament_selectiv=True)))
+    assert not _v(r, "V43", "AVERTISMENT")
 
 
 def test_casa_tri_15kw_plita_pompa_ve():

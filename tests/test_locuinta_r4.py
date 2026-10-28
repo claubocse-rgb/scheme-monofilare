@@ -65,8 +65,14 @@ def test_C1_sarcina_continua_peste_in_blocheaza_sub_113():
     r = calculeaza(_loc("mono", [L("Il", "iluminat"), L("Pr", "prize"), L("Saună", "sauna"), L("Pr2", "prize")],
                         In_Q_bransament_A=40, P_aprobata_kW=9))
     assert r["rezultat"]["faze"]["L1_calc_A"] == pytest.approx(43.48, rel=1e-3)
+    # echipa1 (P1-1): saună 26 A < Q 40 A, iar P aprobată 9 kW (41 A ≤ 1,13·40) limitează consumul simultan → AVERTISMENT
+    assert not [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
+    assert [v for v in _v(r, "V46", "AVERTISMENT") if v["obiect"] == "Q"]
+    # fără P aprobată (nicio limită contractuală) — aceeași depășire rămâne BLOCANT
+    r = calculeaza(_loc("mono", [L("Il", "iluminat"), L("Pr", "prize"), L("Saună", "sauna"), L("Pr2", "prize")],
+                        In_Q_bransament_A=40))
     b = [v for v in _v(r, "V46", "BLOCANT") if v["obiect"] == "Q"]
-    assert b and "sarcini continue" in b[0]["mesaj"]
+    assert b and "siguranța de branșament" in b[0]["mesaj"]
 
 
 # ---------------------------------------------------------------------------------------------------- P0-1 / P0-2
@@ -96,8 +102,9 @@ def test_P0_2_q_nedeclarat_presupus_si_aceeasi_regula():
     # Q presupus = calibrul standard ≥ Ib din Pa (22,79 A) = 25 A, declarat; aceeași verificare V46 ca la Q declarat
     assert fara["rezultat"]["alimentare"]["Q"]["In_A"] == 25 and fara["rezultat"]["alimentare"]["Q_presupus"]
     assert any("Q presupus 25 A" in p for p in fara["presupus"])
-    # r6: pe Q PRESUPUS — AVERTISMENT (nu BLOCANT); cu Q declarat — BLOCANT
-    assert ("V46", "Q") not in _b(fara) and ("V46", "Q") in _b(cu)
+    # echipa1 (ux problema 2): aceeași verificare pe Q presupus și pe Q declarat — verdictul nu depinde de calea aleasă
+    assert ("V46", "Q") not in _b(fara) and ("V46", "Q") not in _b(cu)
+    assert fara["blocheaza_export"] == cu["blocheaza_export"]
     assert any(v["obiect"] == "Q" and v["mesaj"].startswith("Q branșament presupus") for v in _v(fara, "V46", "AVERTISMENT"))
     # Q general nu depășește Q-ul dedus (IS 4P ≥ In Q, cea mai mică treaptă 32 A)
     assert fara["rezultat"]["Q_general"]["In_A"] == 32

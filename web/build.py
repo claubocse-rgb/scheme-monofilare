@@ -1,5 +1,5 @@
 """Construiește versiunea web (o pagină + worker Pyodide) din aceleași surse ca aplicația locală.
-Utilizare: python3 web/build.py DEST   — DEST primește index.html, config.js, worker.js, app_src.json, pyodide/, whl/.
+Utilizare: python3 web/build.py DEST   — DEST primește index.html, config.js, worker.js, app_src.json, termeni.html, confidentialitate.html, fonts/, pyodide/, whl/.
 Fișierele Pyodide și roțile Python se iau din web/vendor/ (vezi web/README.md)."""
 import base64, json, pathlib, re, shutil, sys
 
@@ -51,6 +51,11 @@ html,body{overflow:hidden}
     s = s[:i] + boot + shim + s[i:]
     (DEST / "index.html").write_text(s.strip() + "\n", encoding="utf-8")
     shutil.copy(WEB / "worker.js", DEST / "worker.js")
+    # Termenii și Politica de confidențialitate (legături relative din pagină) + fonturile lor (url(fonts/…))
+    for f in ("termeni.html", "confidentialitate.html"):
+        if (ROOT / "static" / f).exists():
+            shutil.copy(ROOT / "static" / f, DEST / f)
+    shutil.copytree(ROOT / "static" / "fonts", DEST / "fonts", dirs_exist_ok=True)
     # 3. Pyodide + roți (publicate cu sufixul .wasm pentru arhive)
     for sub in ("pyodide", "whl"):
         (DEST / sub).mkdir(exist_ok=True)

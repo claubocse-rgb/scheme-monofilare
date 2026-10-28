@@ -12,6 +12,10 @@ Convenții
   accesibilă sunt marcate „[NEVERIFICAT]” în comentariu ȘI listate în NEVERIFICAT (cheie → motiv), ca programatorul
   să le poată afișa în memoriul de calcul.
 * Unde normativul lasă alegerea liberă, valoarea aleasă este marcată „DECIZIE” și justificată (vezi și SPEC_TEHNIC.md).
+* Verificarea tehnică din 28.10.2026 (`teste/verificare_norme/raport.md`, 141 de rânduri) + răspunsurile proiectantului
+  (`teste/verificare_norme/raspunsuri_proiectant.md`, 15 decizii): valorile confirmate pe o sursă publică poartă
+  „[VERIFICAT: sursă]”, cele hotărâte de proiectant „[DECIZIE proiectant 28.10.2026, Îk]” (k = numărul întrebării),
+  iar cele care nu se pot verifica public (standard cu plată) rămân în NEVERIFICAT, cu valoarea din practică.
 
 Surse verificate (12.10.2026):
   [P]   Prysmian, „Electrical Information for Low Voltage Cables” (2024), tab. 3.5–3.10, 2.6–2.7 — reproduce
@@ -39,9 +43,17 @@ Surse verificate (12.10.2026):
         https://mirceanetoiublog.blogspot.com/2015/03/caderea-de-tensiune-la-bransamentele.html (concordante cu SR HD 60364-5-52 anexa G)
   [TE]  Transelectrica, decizie implementare RfG (Reg. UE 2016/631) — prag tip B ≤ 1 MW pentru România
   [AG]  AGIR, Univers Ingineresc nr. 13/2023 — prosumator ≤ 400 kW/loc de consum (Ord. ANRE 95/2022)
+Surse adăugate la verificarea din 28.10.2026 (detaliile și URL-urile în teste/verificare_norme/raport.md):
+  [ST42] DEER, ST 42 JT/MT „Prize de pământ” Ed. U1 Rev. 0/2025 — §3.5, tab. 1, anexa 3 (electrod ø60 × 3,6 mm)
+  [O228] Ord. ANRE 228/2018 (normă tehnică prosumatori, mod. Ord. ANRE 132/2020) — art. 12(3)–(5), art. 14, tab. 2P
+  [O79]  Ord. ANRE 79/2016 — clasificarea modulelor generatoare RfG (A < 1 MW ≤ B < 5 MW ≤ C < 20 MW ≤ D)
+  [ZA]   SR EN 60898-1 anexa ZA (clasa 3 de limitare a energiei), reprodusă în catalogul IPD p. 217
+  [TR]   CLC/TR 50480:2011 (factorii de temperatură pentru Ik min: fază 1,20 / 1,28; PE în cablu 1,38 / 1,60)
+  [HW1]  Huawei SUN2000-3…10KTL-M1, manualul utilizatorului (DDR ≥ 100 mA); [HW2] SUN2000-100KTL-M1 / -330KTL-H1 (fișe)
+  [SMA]  SMA, TI „Criteria for selecting a RCD” (RCD-TI-en-45)
 """
 
-VERSIUNE = "2026-10-22"   # v1.3: priza de pământ (§14a), selectivitatea DDR (§14b)
+VERSIUNE = "2026-10-28"   # v1.13: verificarea normelor + deciziile proiectantului (28.10.2026); v1.3: priza (§14a), DDR (§14b)
 
 # =====================================================================================================
 # 0. Constante de rețea și de calcul
@@ -82,15 +94,18 @@ def tensiune_jt(un_v):
 C_MAX = 1.10           # pentru Ik max (alegerea Icu, verificarea termică)
 C_MIN = 0.95           # pentru Ik min (verificarea deconectării)
 
-# Rețeaua OD la punctul de delimitare — valori IMPLICITE (DECIZIE, se înlocuiesc cu datele din ATR / aviz OD).
-# Ik3max: echivalentul unui trafo OD 630 kVA, uk 4 %, la borne (≈ 25 kA) — majorant pentru Icu.
-# Zbuclă: rețea rurală/LEA lungă — minorant pentru Ik1 (verificarea deconectării).
+# Rețeaua OD la punctul de delimitare — valori IMPLICITE (se înlocuiesc cu datele din ATR / aviz OD).
+# Ik3max: echivalentul unui trafo OD ≤ 630 kVA, uk 4 %, la borne: 1,1·630/(√3·0,4·0,04) = 25,0 kA — majorant pentru Icu
+# (la trafo OD 1000 / 1600 kVA rezultă 26,5 / 42 kA — ATR-ul are prioritate) [DECIZIE proiectant 28.10.2026, Î7].
+# Zbuclă: urban (LES) 0,30 Ω = trafo OD 400 kVA + LES 3×150 Al 250 m + branșament 20 m ≈ 0,28 Ω (calculul
+# verificatorului, raport #2) [DECIZIE proiectant 28.10.2026, Î2]; R/X = 2 ca până acum. Rural: LOCUINTA_ZB_OD_RURAL_OHM.
 OD_IK3MAX_IMPLICIT_KA = 25.0
 OD_RX_RAPORT = 0.1                         # R_Q = 0,1·X_Q (SR EN 60909-0, când nu se cunoaște)
-OD_ZBUCLA_IMPLICIT_OHM = (0.18, 0.09)      # (R, X) buclă fază–PEN la punctul de delimitare → |Z| = 0,201 Ω
+OD_ZBUCLA_MODUL_IMPLICIT_OHM = 0.30
+OD_ZBUCLA_IMPLICIT_OHM = (round(0.30 * 2 / 5 ** 0.5, 4), round(0.30 / 5 ** 0.5, 4))   # (0,2683 ; 0,1342) Ω → |Z| = 0,30 Ω
 # Rețeaua MT pentru PT propriu
 MT_UN_KV = 20.0
-MT_SKQ_IMPLICIT_MVA = 500.0                # DECIZIE: majorant uzual în rețelele 20 kV (se înlocuiește cu valoarea din ATR)
+MT_SKQ_IMPLICIT_MVA = 500.0                # DEPENDENT DE OD [practică, raport #4]: majorant (Sk tipic 250…500 MVA la 20 kV); ATR prevalează
 MT_RX_RAPORT = 0.1
 
 # =====================================================================================================
@@ -133,10 +148,10 @@ S_MIN_PE_SEPARAT = {"protejat_mecanic": 2.5, "neprotejat": 4.0}
 TIP_CABLU = {
     ("Cu", "PVC", True): "CYABY",
     ("Cu", "PVC", False): "CYY-F",
-    ("Cu", "XLPE", True): "C2XABY",    # [NEVERIFICAT] denumire comercială; alternativ N2XBY
+    ("Cu", "XLPE", True): "C2XABY",    # [practică, raport #9] denumire din ofertele producătorilor RO; alternativ N2XBY
     ("Cu", "XLPE", False): "N2XY",
     ("Al", "PVC", True): "ACYABY",
-    ("Al", "PVC", False): "ACYY",      # [NEVERIFICAT] denumire comercială
+    ("Al", "PVC", False): "ACYY",      # [VERIFICAT: DEER ST 80-6 JT Ed. U1 Rev. 1/2025]
     ("Al", "XLPE", True): "AC2XABY",
     ("Al", "XLPE", False): "NA2XY",
 }
@@ -189,13 +204,15 @@ def r_la_temperatura(r20, material, theta_c):
 RHO_70 = {m: RHO20[m] * (1 + ALPHA[m] * 50.0) for m in RHO20}   # Cu 0,02063 · Al 0,03396
 RHO_90 = {m: RHO20[m] * (1 + ALPHA[m] * 70.0) for m in RHO20}   # Cu 0,02198 · Al 0,03624
 
-# Factor de majorare a rezistenței pentru Ik1min (temperatura medie dintre regim și final de scurtcircuit,
-# metoda CENELEC TR 50480): PVC (70+160)/2 = 115 °C → 1+0,004·95 = 1,38 ; XLPE (90+250)/2 = 170 °C → 1,60.
-# [NEVERIFICAT] metoda nu a putut fi confirmată pe text; valoare conservatoare (mărește impedanța, micșorează Ik1min).
-FACTOR_R_IK1MIN = {"PVC": 1.38, "XLPE": 1.60}
+# Factori de majorare a rezistenței pentru Ik1min [VERIFICAT: CLC/TR 50480:2011, raport #12]:
+# * conductoarele de FAZĂ (active) — R20 adus la temperatura maximă de regim: PVC 70 °C → 1,20 ; XLPE 90 °C → 1,28;
+# * conductorul PE în cablu — temperatura medie dintre regim și finalul scurtcircuitului: PVC (70+160)/2 = 115 °C →
+#   1,38 ; XLPE (90+250)/2 = 170 °C → 1,60 (PE separat: valoarea PVC, ca până acum).
+FACTOR_R_IK1MIN = {"PVC": 1.20, "XLPE": 1.28}
+FACTOR_R_IK1MIN_PE = {"PVC": 1.38, "XLPE": 1.60}
 
 # Reactanța de secvență pozitivă a cablurilor JT multipolare / monopolare în treflă [Ω/km per conductor]
-# [NEVERIFICAT] valoare tipică de catalog 0,07…0,08 Ω/km; se folosește 0,08 (majorant).
+# [VERIFICAT: Schneider EIG cap. G / SR EN 60909, raport #13] 0,08 mΩ/m pentru cablurile JT.
 X_CABLU_OHM_KM = 0.08
 
 # =====================================================================================================
@@ -287,10 +304,10 @@ METODE_POZARE = {
 METODE_IN_PAMANT = {"D1", "D2"}
 # v1.2 R2 (N-M5): cabluri monopolare (metoda F) — secțiuni tabelate, număr maxim de sisteme în paralel pe fază și
 # factorul de grupare pentru sisteme trifazate în treflă pe pat perforat, distanțate ≥ 2·De (B.52.21; 4–6 sisteme pe
-# 2 paturi) [NEVERIFICAT individual, DECIZIE conservatoare]
+# 2 paturi) [NEVERIFICAT individual, DECIZIE conservatoare; 2 sisteme: 0,97 după B.52.21 — raport #17]
 SECTIUNI_MONOPOLAR = [25.0, 35.0, 50.0, 70.0, 95.0, 120.0, 150.0, 185.0, 240.0, 300.0]
 N_PARALEL_MAX_MONOPOLAR = 6
-K_GRUP_F_DISTANTAT = {1: 1.00, 2: 0.98, 3: 0.96, 4: 0.93, 5: 0.92, 6: 0.90, 7: 0.89, 8: 0.88}
+K_GRUP_F_DISTANTAT = {1: 1.00, 2: 0.97, 3: 0.96, 4: 0.93, 5: 0.92, 6: 0.90, 7: 0.89, 8: 0.88}
 
 def iz_tabel(material, izolatie, metoda, n_incarcate, s):
     """Iz [A] din tabel sau None dacă nu e tabelat."""
@@ -394,11 +411,11 @@ def k_grupare(metoda, n_circuite, distanta="atingere", aranjament_aer=None):
 # =====================================================================================================
 # 5. Aparate de protecție — serii standard
 # =====================================================================================================
-# MCB — SR EN 60898-1 (valori preferate + 80…125 A); serii comerciale ABB/Schneider [NEVERIFICAT individual]
+# MCB — SR EN 60898-1 (valori preferate + 80…125 A); serii comerciale ABB/Schneider [VERIFICAT: cataloage, raport #19]
 MCB_IN_A = [6, 10, 13, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125]
-MCB_ICN_KA = [6, 10, 15, 25]           # DECIZIE: minim 6 kA (ST 4-JT cere ≥ 6 kA); 4,5 kA nu se folosește
+MCB_ICN_KA = [6, 10, 15, 25]           # [VERIFICAT: ST 4-JT §4.2.4 g, ST 3-JT §4.2.1 f — ≥ 6 kA]; 4,5 kA nu se folosește
 MCB_CURBE = ("B", "C", "D")
-# MCCB — SR EN 60947-2; serii comerciale (In = calibrul declanșatorului) [NEVERIFICAT individual]
+# MCCB — SR EN 60947-2; serii comerciale (In = calibrul declanșatorului) [VERIFICAT: cataloage ABB/Schneider, raport #21]
 MCCB_IN_A = [16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 320, 400, 500, 630, 800, 1000, 1250, 1600]
 MCCB_ICU_KA = [25, 36, 50, 70, 100, 150]          # DECIZIE: minim 25 kA pentru MCCB
 # ACB — SR EN 60947-2
@@ -408,9 +425,9 @@ ACB_ICU_KA = [42, 50, 65, 85, 100, 130]
 GG_IN_A = [2, 4, 6, 10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250]   # seria R10 (35/355 A NH există, dar nu au porți în SR EN 60269-1)
 GG_ICU_KA = 120.0                       # v1.2: capacitatea de rupere a patroanelor NH gG la 400/500 V c.a. (SR EN 60269-2,
                                         # ≥ 120 kA la NH 000…4a). 50 kA rămâne cerința minimă ST 4-JT pentru SF din BMPT.
-# Gabarit NH după In (limita superioară a gabaritului) — SR EN 60269-2 / cataloage [NEVERIFICAT individual]
+# Gabarit NH după In (limita superioară a gabaritului) — SR EN 60269-2 / cataloage [VERIFICAT: ST 4-JT §4.2.2 e, raport #24]
 GG_GABARIT_NH = [(100, "NH000"), (160, "NH00"), (250, "NH1"), (400, "NH2"), (630, "NH3"), (1250, "NH4a")]
-# gPV — SR EN 60269-6, cartușe 10×38 mm 1000/1100/1500 V c.c. [NEVERIFICAT individual]
+# gPV — SR EN 60269-6, cartușe 10×38 mm 1000/1100/1500 V c.c. [VERIFICAT: cataloage Mersen / ETI, raport #25]
 GPV_IN_A = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 25, 30, 32]
 # RCCB / RCBO
 RCCB_IN_A = [16, 25, 40, 63, 80, 100, 125]          # peste 125 A: bloc diferențial asociat MCCB (In = In MCCB)
@@ -423,7 +440,16 @@ IR_TREPTE = {
     "ACB":     [round(0.40 + 0.05 * i, 2) for i in range(13)],
 }
 MCCB_TM_IN_MAX = 250                  # DECIZIE: termomagnetic până la 250 A, electronic (LSI) de la 320 A
-IM_TM_MULTIPLU = 10.0                 # Im fix = 10·In (TM uzual) [NEVERIFICAT individual — depinde de producător]
+IM_TM_MULTIPLU = 10.0                 # Im fix = 10·In (TM uzual) — dar cel puțin IM_TM_MIN_A la In ≤ 50 A (im_tm)
+# [VERIFICAT: cataloage ABB Tmax T1/XT1 TMD (I3 fix 500 A la 16…50 A), Schneider TM-D — raport #29]
+IM_TM_MIN_A = 500.0
+IM_TM_IN_MIN_FIX_A = 50
+
+
+def im_tm(in_a):
+    """Im al declanșatorului termomagnetic MCCB: max(10·In; 500 A) la In ≤ 50 A, altfel 10·In (raport #29)."""
+    im = IM_TM_MULTIPLU * float(in_a)
+    return max(im, IM_TM_MIN_A) if float(in_a) <= IM_TM_IN_MIN_FIX_A + 1e-9 else im
 ISD_MULTIPLI = [1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0]    # ·Ir, electronic
 TSD_S = 0.1                           # temporizare scurtă implicită când există aparate în aval
 TOLERANTA_MAGNETIC = 1.20             # SR EN 60947-2 art. 8.3.3.1.2: ±20 % → Ia = 1,2·Im (sau 1,2·Isd)
@@ -436,7 +462,8 @@ I2_MULTIPLU = {
     "gPV": 1.45,      # SR EN 60269-6, ×In
 }
 def i2_gg(in_a):
-    """gG: If/In după SR EN 60269-1 tab. 2 [M] (16 ≤ In: 1,6 verificat; sub 16 A din memorie [NEVERIFICAT])."""
+    """gG: If/In după IEC 60269-1 (ed. 2006 tab. 2 / ed. 2024 tab. 3) [VERIFICAT: raport #32]: 2,1 (In ≤ 4 A),
+    1,9 (4 < In < 16 A), 1,6 (In ≥ 16 A)."""
     if in_a <= 4:
         return 2.1
     if in_a < 16:
@@ -462,19 +489,19 @@ MCB_IA_MULTIPLU = {"B": 5.0, "C": 10.0, "D": 20.0}
 
 # gG: Ia [A] la 0,4 s și la 5 s.
 #  2…80 A: DIN VDE 0100-600 Bbl. tab. NB.1 [V] (verificat).
-#  100…1250 A la 5 s: SR EN 60269-1 tab. 3, poarta Imax(5 s) [M] verificat la 250/800/1250 A; 100…630 A din memorie [NEVERIFICAT].
+#  100…1250 A la 5 s: IEC 60269-1 (ed. 2006 tab. 3 / ed. 2024 tab. 4), poarta Imax(5 s) [VERIFICAT: raport #36, #38].
 GG_IA_0_4S_A = {2: 16, 4: 32, 6: 47, 10: 82, 16: 107, 20: 145, 25: 180, 32: 265, 35: 295, 40: 310, 50: 460, 63: 550, 80: 960}
 GG_IA_5S_A = {2: 9.2, 4: 19, 6: 27, 10: 47, 16: 65, 20: 85, 25: 110, 32: 150, 35: 173, 40: 190, 50: 260, 63: 320, 80: 440,
               100: 580, 125: 715, 160: 950, 200: 1250, 250: 1650, 315: 2200, 355: 2500, 400: 2840, 500: 3800, 630: 5100,
               800: 7000, 1000: 9500, 1250: 13000}
-# 355 A: [NEVERIFICAT] interpolat între 315 și 400 A, rotunjit în sus.
+# 355 A: interpolat între 315 și 400 A, rotunjit în sus (conservator; 355 A nu e în GG_IN_A — raport #37).
 # ARBITRAJ 12.10.2026 (DISCREPANTE obs. 1): sursa unică pentru Ia(5 s) este REGULA
 #   Ia(5 s) = max(valoarea VDE 0100-600 Bbl. NB.1 ; poarta Imax(5 s) din SR EN 60269-1).
 # La 50 A și 80 A VDE dă 260/440 A, peste porțile 250/425 A (VDE include toleranța timpului total de funcționare);
 # se păstrează valoarea mai mare (conservatoare: cere Ik1 mai mare). Peste 80 A tabelul = poarta. Verificat în _autoverificare().
 
-# Porți gG SR EN 60269-1 tab. 3 (pentru selectivitate și verificare): In: (Imin10s, Imax5s, Imin0,1s, Imax0,1s)
-# Verificat [M]: 25, 80, 250, 800, 1250 A. Restul din memorie [NEVERIFICAT].
+# Porți gG IEC 60269-1 (ed. 2006 tab. 3 / ed. 2024 tab. 4) (selectivitate și verificare): In: (Imin10s, Imax5s, Imin0,1s, Imax0,1s)
+# [VERIFICAT: toate cele 20 de rânduri pe tabelul de porți reprodus de Mersen TM-104 / ETI — raport #38].
 GG_PORTI_A = {16: (33, 65, 85, 150), 20: (42, 85, 110, 200), 25: (52, 110, 150, 260), 32: (75, 150, 200, 350),
               40: (95, 190, 260, 450), 50: (125, 250, 350, 610), 63: (160, 320, 450, 820), 80: (215, 425, 610, 1100),
               100: (290, 580, 820, 1450), 125: (355, 715, 1100, 1910), 160: (465, 950, 1450, 2590),
@@ -486,7 +513,7 @@ GG_I2T_PREARC_KA2S = {16: (0.3, 1.0), 20: (0.5, 1.8), 25: (1.0, 3.0), 32: (1.8, 
                       80: (16, 46), 100: (27, 86), 125: (46, 140), 160: (86, 250), 200: (140, 400), 250: (250, 760),
                       315: (400, 1300), 400: (760, 2250), 500: (1300, 3800), 630: (2250, 7500), 800: (3800, 13600),
                       1000: (7840, 25000), 1250: (13700, 47000)}
-RAPORT_SELECTIVITATE_GG = 1.6          # SR EN 60269-2: raport de selectivitate 1,6:1 pentru gG ≥ 16 A
+RAPORT_SELECTIVITATE_GG = 1.6          # [VERIFICAT: IEC 60269-1/-2, raport #40] raport de selectivitate 1,6:1 pentru gG ≥ 16 A
 RAPORT_SELECTIVITATE_SUPRASARCINA = 1.6  # DECIZIE pentru MCCB/MCB amonte față de orice aval (zona termică)
 RAPORT_SELECTIVITATE_MAGNETIC = 1.5      # Im/Isd amonte ≥ 1,5 × Ia aval (DECIZIE, regulă uzuală ABB/Schneider)
 
@@ -522,22 +549,27 @@ DU_PORNIRE_MOTOR_PCT = 12.0          # dacă producătorul nu dă altă valoare 
 DU_REZERVA_CIRCUITE_FINALE_PCT = 2.0  # DECIZIE: la bara unui tablou secundar ΔU ≤ limita_forță − 2 %
 DU_CEF_CA_RECOMANDAT_PCT = 1.0        # DECIZIE (practică): creșterea de tensiune invertor → PCC ≤ 1 % (AVERTISMENT)
 DU_CEF_CA_MAX_PCT = 3.0               # v1.2 DECIZIE: peste 3 % pe cablul invertorului → mărire automată, altfel V20 BLOCANT
-                                      # (invertorul declanșează la supratensiune: 1,1·Un la PCC, SR EN 50549-1)
+                                      # (PI declanșează la 1,1·Un medie pe 10 min / 1,15·Un în 0,5 s — Ord. ANRE
+                                      # 228/2018 tab. 2P și SR EN 50549-1) [VERIFICAT: raport #49]
 
 # =====================================================================================================
 # 9. Coeficient de simultaneitate implicit pentru tablouri (IEC 61439-2 tab. 101 „rated diversity factor”) [SE5]
 #    Folosit DOAR când utilizatorul nu dă ks; declarat pe planșă.
 # =====================================================================================================
 KS_TABLOU = [(1, 1.0), (3, 0.9), (5, 0.8), (9, 0.7), (10 ** 6, 0.6)]   # (n_max_plecari, ks)
-def mcb_i2t(in_a, ik_a):
-    """I²t lăsat să treacă de un MCB B/C clasa 3 (In ≤ 32 A) la Ik [A²s]; None peste 32 A (fără limitare tabelată)."""
+def mcb_i2t(in_a, ik_a, curba="C"):
+    """I²t lăsat să treacă de un MCB B/C clasa 3 (In ≤ 32 A) la Ik [A²s], pe curbă (SR EN 60898-1 anexa ZA);
+    None peste 32 A, la curba D sau peste 10 kA (anexa ZA nu tabelează — let-through-ul producătorului)."""
     if in_a > 32:
         return None
-    tab = MCB_I2T_CLASA3_A2S[16 if in_a <= 16 else 32]
+    c = str(curba or "C").upper()
+    if c not in MCB_I2T_CLASA3_A2S:
+        return None
+    tab = MCB_I2T_CLASA3_A2S[c][16 if in_a <= 16 else 32]
     for ik, e in tab:
-        if ik_a <= ik:
+        if ik_a <= ik + 1e-9:
             return float(e)
-    return tab[-1][1] * ik_a / tab[-1][0]
+    return None
 
 
 def ks_implicit(n_plecari):
@@ -546,18 +578,23 @@ def ks_implicit(n_plecari):
             return ks
     return 0.6
 COSFI_IMPLICIT = {"forta": 0.90, "iluminat": 0.90, "prize": 0.90, "tablou": 0.90, "motor": 0.85, "invertor": 1.0, "pcs": 1.0}
-FACTOR_SMAX_INVERTOR = 1.10   # DECIZIE: Smax = 1,1·Pn când fișa invertorului lipsește
-FACTOR_IP_INVERTOR = 1.25     # DECIZIE: Ir/In protecție invertor ≥ 1,25·Pn/(√3·Un) (regim continuu, aparat în carcasă)
+FACTOR_SMAX_INVERTOR = 1.10   # Smax = 1,1·Pn când fișa invertorului lipsește [VERIFICAT: Huawei 330KTL-H1 / 100KTL-M1, raport #51]
+FACTOR_IP_INVERTOR = 1.25     # Ir/In protecție invertor ≥ 1,25·Pn/(√3·Un) [VERIFICAT: manualele producătorilor, raport #52]
 FACTOR_ICONTINUU_MOTOR = 1.0
 # v1.2 R2: MCB curba B/C, clasa 3 de limitare a energiei (SR EN 60898-1 anexa ZA): I²t max lăsat să treacă [A²s]
-# în funcție de curentul de scurtcircuit [A] [NEVERIFICAT individual — valori din memorie, conservatoare]
-MCB_I2T_CLASA3_A2S = {16: [(3000, 15000), (4500, 25000), (6000, 35000), (10000, 70000), (25000, 175000)],
-                      32: [(3000, 18000), (4500, 32000), (6000, 45000), (10000, 90000), (25000, 225000)]}
+# în funcție de curentul de scurtcircuit [A], TABELE SEPARATE pe curbă [VERIFICAT: anexa ZA reprodusă în catalogul
+# IPD p. 217 — raport #43]. Anexa ZA se oprește la 10 kA: peste → let-through-ul producătorului (mcb_i2t → None).
+MCB_I2T_CLASA3_A2S = {
+    "B": {16: [(3000, 15000), (4500, 25000), (6000, 35000), (10000, 70000)],
+          32: [(3000, 18000), (4500, 32000), (6000, 45000), (10000, 90000)]},
+    "C": {16: [(3000, 18000), (4500, 30000), (6000, 42000), (10000, 84000)],
+          32: [(3000, 22000), (4500, 39000), (6000, 55000), (10000, 110000)]},
+}
 GG_I2T_TOTAL_FACTOR = 2.0   # v1.2 R2: I²t total de deconectare gG ≈ 2 × I²t de prearc max (zona limitatoare) [DECIZIE]
 # v1.2: pornirea motoarelor (SPEC §B.3.1). Ip/Ib după modul de pornire; durata de calcul a pornirii.
 MOTOR_IP_MULTIPLU = {"directa": 6.0, "stea_triunghi": 2.0, "soft": 3.0, "vfd": 1.0}
 MOTOR_DOL_P_MIN_INTRERUPATOR_MOTOR_KW = 18.5   # r6: DOL ≥ 18,5 kW → întrerupător-motor / MCCB, nu MCB curba C
-MOTOR_IM_MULTIPLU = 13.0             # întrerupător-motor: magnetic ≈ 13·In (tipic GV/MS, MCCB-MA) [de confirmat]
+MOTOR_IM_MULTIPLU = 13.0             # întrerupător-motor: magnetic ≈ 13·In [VERIFICAT: Schneider GV2-ME, Siemens 3RV2 — raport #53]
 MOTOR_VARF_ASIMETRIC = 2.0           # vârful primei semiperioade la pornire directă ≈ 2·Ip pornire (rms)
 MOTOR_T_PORNIRE_S = 10.0              # DECIZIE conservatoare: poarta Imin(10 s) gG; pornire directă „câteva secunde”
 MOTOR_COSFI_PORNIRE = 0.35
@@ -591,7 +628,7 @@ def motor_eta_cosfi(p_kw):
 # =====================================================================================================
 # 10. Transformatoare MT/JT 20/0,4 kV
 # =====================================================================================================
-# Sn [kVA]: (uk %, Pk W, Po W). uk: SR EN 50588-1 (ulei) — 4 % ≤ 630 kVA, 6 % ≥ 800 kVA [NEVERIFICAT pe text].
+# Sn [kVA]: (uk %, Pk W, Po W). uk: SR EN 50588-1 (ulei) — 4 % ≤ 630 kVA, 6 % ≥ 800 kVA [practică — standard cu plată, raport #55].
 # Pk/Po: Reg. (UE) 548/2014 Tier 2 (de la 01.07.2021), ulei, ≤ 24 kV: Ak / A0−10 % [C] (verificat).
 TRAFO = {
     100: (4.0, 1250, 130), 160: (4.0, 1750, 189), 250: (4.0, 2350, 270), 400: (4.0, 3250, 387), 630: (4.0, 4600, 540),
@@ -611,8 +648,8 @@ TRAFO_USCAT = {
 def trafo_date(sn_kva, izolatie="ulei"):
     """(uk %, Pk W, P0 W) pentru trafo în ulei (TRAFO) sau uscat (TRAFO_USCAT)."""
     return (TRAFO_USCAT if izolatie == "uscat" else TRAFO)[sn_kva]
-TRAFO_GRUPA_CONEXIUNI = "Dyn5"           # implicit; se confirmă cu OD (Dyn11 la unele OD)
-# Siguranțe MT pentru celula trafo cu separator de sarcină + siguranțe (SR EN 62271-105), 20 kV [NEVERIFICAT]
+TRAFO_GRUPA_CONEXIUNI = "Dyn5"           # [DECIZIE proiectant 28.10.2026, Î9] DEER; se confirmă cu OD (Dyn11 la unele OD)
+# Siguranțe MT pentru celula trafo cu separator de sarcină + siguranțe (SR EN 62271-105), 20 kV [practică, raport #58]
 # — orientativ ≈ 2…2,2·In_MT; valoarea finală din tabelul producătorului celulei.
 TRAFO_SIGURANTA_MT_A = {100: 6.3, 160: 10, 250: 16, 400: 25, 630: 40, 800: 50, 1000: 63}
 # r6: tensiunea MT parametrică — U_MT [kV] → tensiunea cea mai ridicată a echipamentului Um [kV] (SR EN 62271-1)
@@ -622,14 +659,15 @@ SIGURANTE_MT_SERIE_A = (6.3, 10, 16, 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160
 
 def siguranta_mt(sn_kva, u_kv=20):
     """Siguranța MT orientativă a celulei trafo: tabelul la 20 kV, altfel ≈ 2·In_MT (aceeași regulă care reproduce
-    tabelul de la 20 kV) — valoarea finală din tabelul producătorului celulei [NEVERIFICAT]."""
+    tabelul de la 20 kV) — valoarea finală din tabelul producătorului celulei [NEVERIFICAT: practică, raport #58]."""
     if u_kv == 20 and sn_kva in TRAFO_SIGURANTA_MT_A:
         return TRAFO_SIGURANTA_MT_A[sn_kva]
     i_mt = sn_kva / (3 ** 0.5 * u_kv)
     return next((x for x in SIGURANTE_MT_SERIE_A if x >= 2.0 * i_mt - 1e-9), None)
 
 
-TRAFO_SN_MAX_SIGURANTE_MT_KVA = 1000    # DECIZIE: peste 1000 kVA celula trafo cu întreruptor + releu 50/51, 50N/51N
+TRAFO_SN_MAX_SIGURANTE_MT_KVA = 630     # [DECIZIE proiectant 28.10.2026, Î10]: siguranțe MT până la 630 kVA; peste
+                                        # 630 kVA celula trafo cu întreruptor + releu 50/51, 50N/51N
 
 def in_trafo_jt(sn_kva):
     return sn_kva * 1000.0 / (SQRT3 * u_n())
@@ -653,78 +691,95 @@ BMPT_ORDINE = ["BMPTd-16", "BMPTd-40", "BMPTd-100", "BMPTi-250"]
 BMPT_I_MAX_A = 250
 BMPT_Q_ICN_MIN_KA = 6.0
 BMPT_SF_ICU_KA = 50.0
-# r8 (#35): DDR-ul general din BMPT tip A (nu AC) — receptoarele moderne (convertizoare, pompe de căldură, plite cu
-# inducție, VE) produc curenți de defect pulsatorii c.c.; tip AC doar declarat (DDR_bransament_tip: „AC”, bloc vechi)
-BMPT_RCCB = {"poli": 4, "idn_ma": 300, "tip": "A", "icn_min_ka": 6.0, "in_min_A": 16, "in_max_A": 250}
+# DDR-ul general din BMPT: RCCB 4P 300 mA tip AC, Inc ≥ 6 kA [VERIFICAT: ST 4-JT §4.2.6 i, §4.5.11 — raport #61;
+# DECIZIE proiectant 28.10.2026, Î1 — înlocuiește decizia r8 „tip A”]; tip A / S doar declarat (DDR_bransament_tip)
+BMPT_RCCB = {"poli": 4, "idn_ma": 300, "tip": "AC", "icn_min_ka": 6.0, "in_min_A": 16, "in_max_A": 250}
 BMPT_DPST = {"Uf_V": 270, "Uf_tol_V": 10, "Ul_V": 467, "t_min_s": 0.13, "t_max_s": 0.20}
 BMPT_TC = {"primar_A": [125, 150, 200, 250], "secundar_A": 5, "clasa": "0,5", "Sn_VA": 5.0, "factor_extindere": 1.2}
-CONTOR_DIRECT_TRIFAZAT = "3 × 230/400 V, 5(100) A"    # [NEVERIFICAT] ST 4-JT nu precizează; contorul e furnizat de OD
+# Contorul: BMPT / BMPM se livrează FĂRĂ contor, OD îl montează — pe planșă fără curent nominal [VERIFICAT: ST 4-JT
+# §4.2.3 / §4.2.8 d, ST 3-JT §4.2.3 — raport #64, #66; DECIZIE proiectant 28.10.2026, Î15]
+CONTOR_DIRECT_TRIFAZAT = "contor electronic trifazat, conexiune directă, furnizat și montat de OD"
 # ST 3-JT Ed. U1 Rev. 3/2026 [D3] — verificat
 BMPM = {"I_max_A": 40, "Q_tip": "RCBO 1P+N", "Q_curba": "C", "Q_in_A": [16, 20, 25, 32, 40], "Q_icn_min_ka": 6.0,
         "idn_ma": 300, "rcd_tip": "AC", "SF": "separator monopolar cu fuzibil 40 A gG, gabarit 00, 50 kA",
         "DPST_Uf_V": 270, "S_int_min_mm2": {32: 6, 40: 10}}
-CONTOR_DIRECT_MONOFAZAT = "230 V, 5(60) A"            # [NEVERIFICAT] furnizat de OD
+CONTOR_DIRECT_MONOFAZAT = "contor electronic monofazat, conexiune directă, furnizat și montat de OD"
 
 # =====================================================================================================
 # 12. Transformatoare de curent (SR EN 61869-2) și circuitul secundar
 # =====================================================================================================
-TC_PRIMAR_A = [50, 75, 100, 125, 150, 200, 250, 300, 400, 500, 600, 750, 800, 1000, 1250, 1500, 2000, 2500, 3000, 4000]  # [NEVERIFICAT individual]
+TC_PRIMAR_A = [50, 75, 100, 125, 150, 200, 250, 300, 400, 500, 600, 750, 800, 1000, 1250, 1500, 2000, 2500, 3000, 4000]  # [VERIFICAT: SR EN 61869-2, raport #68]
 TC_SECUNDAR_A = 5
 PT_SERVICII_PROPRII_A = 16          # plecarea de servicii proprii din TGJT (iluminat, prize, încălzire post) — DECIZIE
 TC_SN_VA = [2.5, 5.0, 10.0, 15.0]
 TC_FACTOR_EXTINDERE = 1.2               # ext. 120 % (DECIZIE; DEER cere cl. 0,5 — ST 4-JT)
-TC_RHO_SECUNDAR = 0.021                 # Ω·mm²/m, Cu la ~75 °C (DECIZIE conservatoare)
-TC_CONSUM_CONTOR_VA = 0.5               # [NEVERIFICAT] consum tipic circuit de curent contor electronic ≤ 0,5 VA
+TC_RHO_SECUNDAR = 0.021                 # Ω·mm²/m, Cu la 75 °C [VERIFICAT: 0,017241·(1 + 0,00393·55), raport #70]
+TC_CONSUM_CONTOR_VA = 1.0               # majorant de normă (IEC 62053-22) când fișa contorului lipsește [practică, raport #71]
 TC_CONSUM_CONTACTE_VA = 0.1             # DECIZIE
 
 # =====================================================================================================
 # 13. CEF / prosumatori
 # =====================================================================================================
 PV_T_MIN_C = -25.0                       # DECIZIE: temperatura minimă de calcul (România, conservator)
-PV_BETA_UOC_IMPLICIT_PCT_K = -0.27       # [NEVERIFICAT] tipic module c-Si (−0,25…−0,29 %/K); se ia din fișa modulului
-PV_UMAX_INVERTOR_IMPLICIT_V = 1100.0
+PV_BETA_UOC_IMPLICIT_PCT_K = -0.27       # majorant module actuale (TOPCon −0,25…−0,26, PERC −0,27…−0,28) [VERIFICAT: fișe, raport #77]
+PV_UMAX_INVERTOR_IMPLICIT_V = 1000.0     # minorant când fișa lipsește (Fronius Symo/Primo, SMA STP TL: 1000 V; 1100 V doar
+                                         # Huawei/Sungrow) [VERIFICAT: fișe producători, raport #78]
 PV_FACTOR_ISC = 1.25                     # dimensionare cabluri string fără siguranțe: Iz ≥ 1,25·Isc_STC (practică IEC 60364-7-712)
 GPV_IN_MIN_FACTOR = 1.5                  # SR HD 60364-7-712: 1,5·Isc_STC ≤ In ≤ 2,4·Isc_STC și In ≤ I_MOD_REVERSE
 GPV_IN_MAX_FACTOR = 2.4
 GPV_NECESAR_DE_LA_STRINGURI = 3          # siguranțe pe string obligatorii de la 3 stringuri în paralel (dacă (Ns−1)·Isc > Irev)
 SPD_CC_UCPV_V = [600, 1000, 1100, 1200, 1500]
 SPD_CA = {"T1+T2": "Iimp 12,5 kA/pol (10/350), Up ≤ 1,5 kV", "T2": "In 20 kA (8/20), Up ≤ 1,5 kV"}
-RFG_PRAG_TIP_B_KW = 1000.0               # [TE] România: prag A/B ≤ 1 MW
-RFG_PRAG_TIP_C_KW = 5000.0               # [NEVERIFICAT] prag B/C
-RFG_PRAG_TIP_D_KW = 20000.0              # [NEVERIFICAT] prag C/D (sub 110 kV)
-PROSUMATOR_P_MAX_KW = 400.0              # [AG] Ord. ANRE 95/2022 — se verifică la data proiectului
-MONOFAZAT_P_INVERTOR_AVERTISMENT_KW = 3.68   # [NEVERIFICAT] prag uzual de dezechilibru (16 A/fază); cerința exactă e în ATR
+# Pragurile RfG (A < 1 MW ≤ B < 5 MW ≤ C < 20 MW ≤ D) [VERIFICAT: Ord. ANRE 79/2016 anexa (clasificarea modulelor
+# generatoare) + decizia Transelectrica de implementare RfG — raport #83–#85; Ord. 208/2018 = norma de cerințe]
+RFG_PRAG_TIP_B_KW = 1000.0
+RFG_PRAG_TIP_C_KW = 5000.0
+RFG_PRAG_TIP_D_KW = 20000.0              # C/D (sau U ≥ 110 kV)
+PROSUMATOR_P_MAX_KW = 400.0              # [VERIFICAT: Ord. ANRE 15/2022, ghidul ANRE — raport #86]; legea nouă (CCR 07/2026,
+                                         # nepromulgată la 28.10.2026): 0–200 kW compensare cantitativă — de urmărit
+# Ord. ANRE 228/2018 art. 12(3): diferența dintre încărcările fazelor ≤ 16 A → 16 A × 230 V = 3,68 kVA; comparația se face
+# pe kVA (Smax = 1,1·Pn fără fișă) [VERIFICAT: raport #87; DECIZIE proiectant 28.10.2026, Î4]
+MONOFAZAT_P_INVERTOR_AVERTISMENT_KW = 3.68   # păstrat ca nume (istoric); valoarea e în kVA
+MONOFAZAT_S_INVERTOR_AVERTISMENT_KVA = 3.68
 # r8 (fotovoltaic P0-5) — invertoare monofazate pe o rețea trifazată (câte unul / mai multe pe fiecare fază)
-DEZECHILIBRU_FAZE_MAX_KVA = 4.6          # DECIZIE [NEVERIFICAT]: dezechilibrul maxim admis între faze al generării
-                                         # monofazate (S max − S min pe fază ≤ 4,6 kVA, practica OD / VDE-AR-N 4105);
-                                         # cerința exactă e în ATR / normele OD — peste prag: V71 AVERTISMENT
+DEZECHILIBRU_FAZE_MAX_KVA = 3.68         # S max − S min pe fază al generării monofazate ≤ 16 A ≈ 3,68 kVA (Ord. ANRE 228/2018
+                                         # art. 12(3); excepții art. 12(4)–(5) în ATR) — peste prag: V71 AVERTISMENT
+                                         # [VERIFICAT: raport #88; DECIZIE proiectant 28.10.2026, Î4 — înlocuiește 4,6 kVA]
 # r8 (selectivitate CEF cu PT nou): Ir Q JT al trafo se poate ridica peste In_T, cel mult până aici, ca să rămână ≥ Ir QG
 # (reglajele cresc spre amonte), numai dacă injecția maximă Σ Iac ≤ In_T (invertoarele își limitează curentul la Iac,max,
 # deci trafo nu e suprasolicitat în exploatare; suprasarcina trafo rămâne acoperită de protecția proprie — termometru /
 # DGPT2). DECIZIE proiectant; peste prag: V41 AVERTISMENT „selectivitate inversată” cu remediere.
 Q_JT_IR_MAX_IN_T = 1.10
 # v1.9 (R5 fotovoltaic) — DECIZII proiectant, documentate în SPEC §C.3 / §C.4
-PROSUMATOR_COMERCIAL_KW = 27.0           # cerință OD (confirmat proiectant): Σ Pn > 27 kW → TD-PV separat cu QG (nu tablou de casă)
-PROSUMATOR_PI_EXTERNA_KW = 27.0          # cerință OD (confirmat proiectant): Σ Pn > 27 kW → tablou cu releu anti-insularizare (PI externă pe QG); ATR are prioritate
-DDR_INVERTOR_PRAG_KW = 30.0              # DECIZIE: DDR implicit pe invertor doar ≤ 30 kW (TN); peste — doar la cerere (fișă / ATR)
-# DECIZIE r11 (locuințe #8 / #26 / #64, aliniată cu fișele Huawei / SMA / Fronius / Sungrow): curentul capacitiv de
-# scurgere al câmpului PV crește cu kWp — 30 mA doar până la 10 kW; între 10 și 30 kW DDR 100 mA tip A (sau valoarea
-# din fișă, `IdN_min_mA`; tip B dacă fișa nu exclude componenta c.c. > 6 mA); peste 30 kW (TN) fără DDR, la cerere
+# [DECIZIE proiectant 28.10.2026, Î5]: la TOATE casele (prosumatorii) există tablou separat pentru fotovoltaic (TD-PV),
+# indiferent de putere. Pragul de 27 kW rămâne doar pentru „prosumatorul comercial” (QG cu releu, PCS separat etc.).
+PROSUMATOR_TD_PV_INTOTDEAUNA = True
+PROSUMATOR_COMERCIAL_KW = 27.0           # Σ Pn > 27 kW → prosumator comercial (QG general în TD-PV)
+PROSUMATOR_PI_EXTERNA_KW = 27.0          # [DECIZIE proiectant 28.10.2026, Î3]: P injectabilă > 27 kW → PI externă (releu
+                                         # anti-insularizare pe QG), cerința OD cu care lucrează proiectantul — NU 30 kVA
+                                         # (Ord. ANRE 228/2018 art. 14 e mai permisiv); ATR are prioritate
+# [DECIZIE proiectant 28.10.2026, Î6]: DDR pe circuitul invertorului DOAR LA CERERE (declarat: `ddr` {IdN_mA, tip} /
+# `ddr: true` / `IdN_min_mA` din fișă) — implicit fără DDR în TN („nu prea se pun diferențiale la invertoare”). În TT
+# DDR-ul rămâne protecția la defect (regula de mai jos). La cerere fără IΔn: după producător (Huawei ≥ 100 mA la orice
+# putere [HW1]; altfel 30 mA ≤ 10 kW, 100 mA peste [SMA] — raport #93).
+DDR_INVERTOR_DOAR_LA_CERERE = True
+DDR_INVERTOR_PRAG_KW = 30.0              # TT: 100 mA peste 10 kW (curent capacitiv de scurgere al câmpului PV)
 DDR_INVERTOR_30MA_MAX_KW = 10.0
-DDR_INVERTOR_IDN_MARE_MA = 100           # TT, invertor > 30 kW: IΔn ≥ 100 mA (curentul capacitiv de scurgere al câmpului PV)
-SPD_CA_INVERTOR_L_M = 10.0               # SR HD 60364-7-712 (712.534): SPD c.a. și la invertor dacă cablul > 10 m
+DDR_INVERTOR_IDN_MARE_MA = 100           # [VERIFICAT: Huawei „≥ 100 mA” — raport #94]
+DDR_INVERTOR_IDN_MIN_PRODUCATOR_MA = {"Huawei": 100}   # [VERIFICAT: HW1 — inclusiv SUN2000-3…10KTL-M1]
+SPD_CA_INVERTOR_L_M = 10.0               # SR HD 60364-7-712 (712.534): SPD c.a. și la invertor dacă cablul > 10 m [VERIFICAT: raport #95]
 SIGURANTE_CC_BATERIE_A = [16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630]   # gBat / NH c.c.
 # Pragurile de racord (DECIZIE de proiectare, nu normă; ATR prevalează):
-PRAG_RACORD_BMPT_KVA = SQRT3 * U_N_V * BMPT_I_MAX_A / 1000.0   # ≈ 173,2 kVA (250 A)
-PRAG_RACORD_JT_MAX_KVA = 400.0           # peste → racord MT cu PT propriu (BLOCANT dacă schema nu are PT și nu există ATR JT)
+PRAG_RACORD_BMPT_KVA = SQRT3 * U_N_V * BMPT_I_MAX_A / 1000.0   # ≈ 173,2 kVA (250 A) [VERIFICAT: ST 4-JT BMPTi-250]
+PRAG_RACORD_JT_MAX_KVA = 400.0           # [DECIZIE proiectant 28.10.2026, Î13] peste → racord MT cu PT propriu (BLOCANT dacă schema nu are PT și nu există ATR JT)
 
 # =====================================================================================================
 # 14. Grup electrogen
 # =====================================================================================================
-GE_XD2_IMPLICIT = 0.12                   # reactanță subtranzitorie [u.r.] [NEVERIFICAT] tipic 0,10…0,15
+GE_XD2_IMPLICIT = 0.12                   # reactanță subtranzitorie [u.r.] [practică, raport #101] tipic 0,10…0,15
 GE_IK_SUSTINUT_MULTIPLU = 3.0            # 3·In_G timp de 10 s cu excitație susținută (PMG/AREP) — numai dacă e declarat
 
-# Seria de puteri standard GE [kVA] (cataloage uzuale, regim PRP) [NEVERIFICAT individual] — ARBITRAJ F42
+# Seria de puteri standard GE [kVA] (cataloage uzuale, regim PRP) [VERIFICAT: cataloage, raport #103] — ARBITRAJ F42
 GE_SN_KVA = [10, 15, 20, 30, 40, 50, 60, 80, 100, 125, 150, 200, 250, 300, 400, 500, 630, 800, 1000, 1250, 1500, 2000]
 GE_COSFI_NOMINAL = 0.8                   # cosφ nominal GE (Sn·0,8 = P activă nominală) — informativ, nu intră în In_G
 
@@ -740,10 +795,10 @@ def ge_sn_minim(P_kW, cosfi=0.9):
 # 14a. Priza de pământ (v1.3, SPEC §C.7) — electrozi verticali în linie legați cu platbandă orizontală
 #      Formule: 1.RE-Ip 30-2004 / STAS 12604/5-90 (forma cu 0,366·ρ/L·lg = ρ/(2πL)·ln), vezi pamant.py.
 # =====================================================================================================
-PRIZA_RHO_IMPLICIT_OHM_M = 100.0         # [NEVERIFICAT] sol argilos-nisipos (valoare medie de tabel: argilă 40…100,
+PRIZA_RHO_IMPLICIT_OHM_M = 100.0         # [VERIFICAT: prudent față de ST 42 (80 Ω·m) — raport #107] (argilă 40…100,
                                          # nisip argilos 100…300 Ω·m — 1.RE-Ip 30-2004 anexa / STAS 12604/5); se MĂSOARĂ
-PRIZA_ELECTROD_L_IMPLICIT_M = 3.0        # electrod OL-Zn (țeavă 2½″) × 3 m — practica uzuală (I7-2011, PE 116)
-PRIZA_ELECTROD_D_IMPLICIT_M = 0.0635     # 2½″ = 63,5 mm (diametrul exterior nominal al țevii)
+PRIZA_ELECTROD_L_IMPLICIT_M = 3.0        # electrod OL-Zn × 3 m — practica uzuală [VERIFICAT: ST 42, raport #108]
+PRIZA_ELECTROD_D_IMPLICIT_M = 0.060      # țeavă OL-Zn ø60 × 3,6 mm [VERIFICAT: DEER ST 42 anexa 3 — raport #109; înainte 63,5 mm]
 PRIZA_N_IMPLICIT = 2
 PRIZA_A_PE_L_IMPLICIT = 2.0              # DECIZIE: distanța între electrozi a = 2·L (6 m la L = 3 m)
 PRIZA_PLATBANDA_LATIME_IMPLICIT_M = 0.04  # OL-Zn 40 × 4 mm
@@ -767,11 +822,25 @@ PRIZA_L_RACORD_IMPLICIT_M = 5.0          # v1.3 R5 (M5-1): platbanda = (n − 1)
 # (baterea manuală a electrodului 3 m, montaj platbandă în șanț, sudură, săpătură manuală 0,4 × 0,8 m) [NEVERIFICAT]
 PRIZA_ORE_U = {"electrod": 0.8, "platbanda_m": 0.1, "piesa_separatie": 0.5, "sudura": 0.3, "vopsea_kg": 0.5,
                "sapatura_m": 0.6}
-# Limite Rp [Ω] (NTE 001/03/00, I7-2011, ST 4-JT): 4 Ω la branșament / tablou / prosumator / CEF JT / GE;
-# 1 Ω la PT și CEF cu PT propriu (priză comună MT/JT). TT: RA ≤ 50 V / IΔn (SR HD 60364-4-41 art. 411.5.3).
+# Limite Rp [Ω]: 4 Ω la branșament / tablou / prosumator / CEF JT / GE [DECIZIE proiectant 28.10.2026, Î8 — utilizare și
+# branșament 4 Ω]. PT și CEF cu PT propriu (priză comună MT/JT): „conform ANRE” [Î8] — vezi PRIZA_PT_ANRE; normele ANRE
+# accesibile (ST 42 DEER §3.5 trimite tot la verificarea tensiunilor de atingere) nu dau o valoare unică: Rp rezultă din
+# tratarea neutrului MT (curentul de defect la pământ din ATR) — până la date se păstrează 1 Ω (conservator), declarat.
+# TT: RA ≤ 50 V / IΔn (SR HD 60364-4-41 art. 411.5.3).
 PRIZA_R_LIMITA_OHM = {"bransament": 4.0, "tablou": 4.0, "cascada": 4.0, "prosumator": 4.0, "cef": 4.0,
                       "ge_ats": 4.0, "pt": 1.0, "cef_pt": 1.0}
-# Coeficienți de utilizare η pentru n electrozi verticali în linie, după a/L ∈ {1, 2, 3} [NEVERIFICAT].
+# Î8 (28.10.2026) — PT cu priză comună MT/JT „conform ANRE”: căutat în raportul verificatorului (#117) și în sursele ANRE
+# accesibile. ST 3-JT / ST 4-JT trimit la 1.RE-Ip 30-2004 fără valoare; ST 42 DEER §3.5 dă 4 Ω (incinte), 10,8 Ω
+# (stâlpi), 0,26 Ω (rețea generală la stâlpi comuni MT/JT); suportul de curs pentru examenul ANRE (TUIASI, „Proiectarea
+# și verificarea prizelor de pământ” §5.3.1) dă 1 Ω pentru prizele utilizate în comun, iar metoda normată este
+# verificarea tensiunilor de atingere și de pas (STAS 12604/5-90) cu curentul de defect la pământ din tratarea
+# neutrului MT (ATR). Textul 1.RE-Ip 30-2004 (tematica ANRE) nu s-a putut citi → valoare neclară: se păstrează 1 Ω,
+# declarat „conform ANRE — de confirmat cu OD / ATR (Uatingere = Rp·Id)”.
+PRIZA_PT_ANRE = {"R_ohm": 1.0, "metoda": "Rp ≤ 1 Ω (priză comună MT/JT, protecție + paratrăsnet); verificarea tensiunilor "
+                 "de atingere și de pas cu Id din tratarea neutrului MT (STAS 12604/5-90, 1.RE-Ip 30-2004)",
+                 "sursa": "tematica ANRE (1.RE-Ip 30-2004 / curs TUIASI §5.3.1); ST 42 DEER §3.5", "clar": False}
+# Coeficienți de utilizare η pentru n electrozi verticali în linie, după a/L ∈ {1, 2, 3} [VERIFICAT: tabelul clasic
+# Karyakin / PUE, identic — raport #118].
 # Sursa propusă: 1.RE-Ip 30-2004 (Îndreptar de proiectare a prizelor de pământ, ICEMENERG) tab. coeficienți de
 # utilizare; aceleași valori în literatura uzuală (Ingeorge R., „Îndrumar pentru proiectarea instalațiilor electrice”;
 # Karyakin, „Справочник по заземлению”). n = 30 extrapolat. Între valorile tabelate: interpolare liniară în n;
@@ -781,7 +850,7 @@ PRIZA_ETA_ELECTROZI = {
     2: {1: 1.00, 2: 0.91, 3: 0.87, 5: 0.81, 10: 0.75, 15: 0.71, 20: 0.66, 30: 0.60},
     3: {1: 1.00, 2: 0.94, 3: 0.91, 5: 0.87, 10: 0.81, 15: 0.78, 20: 0.74, 30: 0.69},
 }
-# Coeficienți de utilizare η ai platbandei care leagă n electrozi în linie [NEVERIFICAT]; aceeași sursă propusă;
+# Coeficienți de utilizare η ai platbandei care leagă n electrozi în linie [VERIFICAT: tabelul clasic — raport #119];
 # n = 2, 3, 15 interpolate/estimate, n = 30 din tabelul pentru 30 de electrozi.
 PRIZA_ETA_PLATBANDA = {
     1: {1: 1.00, 2: 0.85, 3: 0.81, 4: 0.77, 5: 0.74, 8: 0.67, 10: 0.62, 15: 0.50, 20: 0.42, 30: 0.31},
@@ -809,14 +878,14 @@ def priza_eta(tabel, n, a_pe_L):
 # =====================================================================================================
 # 14b. Selectivitatea DDR în serie (v1.3, SPEC §B.18.1)
 # =====================================================================================================
-DDR_RAPORT_SELECTIVITATE = 3.0           # IΔn amonte ≥ 3·IΔn aval (SR HD 60364-5-53 art. 535.3)
+DDR_RAPORT_SELECTIVITATE = 3.0           # IΔn amonte ≥ 3·IΔn aval (SR HD 60364-5-53; art. 535.3 în ed. 2001) [VERIFICAT: raport #120]
 # v1.3 R5 (M5-4): selectivitatea în timp — temporizarea amontelui trebuie să depășească pe a avalului cu ≥ 0,15 s.
 # DDR instantaneu (G) = 0 s; DDR tip S (SR EN 61008/61009: nefuncționare ≥ 0,13 s la IΔn, deconectare ≤ 0,5 s) = 0,15 s
 # echivalent [DECIZIE]; bloc diferențial / releu reglabil = Δt reglat. Două DDR S în serie NU sunt selective.
 DDR_DT_SELECTIVITATE_S = 0.15
 DDR_T_ECHIVALENT_S = {"instantaneu": 0.0, "S": 0.15}
 DDR_DT_REGLABIL_S = [0.06, 0.15, 0.3, 0.5, 1.0]   # trepte uzuale de temporizare ale releelor diferențiale reglabile
-BMPM_RCBO_SELECTIV = False               # [NEVERIFICAT] ST 3-JT nu cere RCBO de tip S în BMPM (instantaneu, 300 mA AC)
+BMPM_RCBO_SELECTIV = False               # [VERIFICAT: ST 3-JT §4.2.4 m „cu declanșare instantanee” — raport #67]
 
 # =====================================================================================================
 # 14c. Locuințe — tabloul casei / apartamentului (v1.4, SPEC §C.8)
@@ -851,13 +920,14 @@ LOCUINTA_RECEPTORI = {
     # r6: alimentarea unui tablou secundar (atelier, garaj, anexă) din TE — DDR-urile 30 mA sunt în tabloul secundar
     "tablou_secundar":       (3.0, 6.0, 0.9, "C", 16, 16, 2.5, 2.5, 30, "tablou", False, None, "in_td", "A", False),
 }
-# DECIZIE [NEVERIFICAT]: simultaneitatea receptoarelor generale ale unei locuințe (iluminat, prize, electrocasnice)
+# [DECIZIE proiectant 28.10.2026, Î11 — seria actuală]: simultaneitatea receptoarelor generale ale unei locuințe
 # după numărul lor; sarcinile continue (VE, pompă de căldură, încălzire electrică, saună) intră cu ks = 1.
 # Pc = ks(n_general)·Σ P_general + Σ P_continuu.  (n_max, ks)
-# v1.5 (runda 4, practică proiectant): ≤ 3: 0,8 · 4–5: 0,6 · 6–9: 0,4 · 10–15: 0,35 · > 15: 0,3 [NEVERIFICAT]
+# v1.5 (runda 4, practică proiectant): ≤ 3: 0,8 · 4–5: 0,6 · 6–9: 0,4 · 10–15: 0,35 · > 15: 0,3
 LOCUINTA_KS_GENERAL = [(3, 0.8), (5, 0.6), (9, 0.4), (15, 0.35), (10 ** 6, 0.3)]
 LOCUINTA_COSFI = 0.95            # cosφ mediu al unei locuințe (sarcini preponderent rezistive) pentru Ib general (DECIZIE)
 LOCUINTA_I_NEDECLANSARE = 1.13   # SR EN 60898-1: curentul convențional de nedeclanșare 1,13·In — Ib ≤ 1,13·In Q → AV
+                                 # (și la branșament NOU) [DECIZIE proiectant 28.10.2026, Î14]
 LOCUINTA_CIRCUITE_PE_DDR = 5     # v1.5 DECIZIE: cel mult 5 circuite pe un DDR 30 mA — curentul de scurgere cumulat ≤ 0,3·IΔn
                                  # (SR HD 60364-5-53 art. 531.3.2; ~5 circuite casnice < 9 mA) și pierderea parțială la o
                                  # declanșare (I7-2011); grupă cu un singur circuit → RCBO
@@ -870,7 +940,7 @@ LOCUINTA_SAUNA_CABLU = ("cablu termorezistent cu izolație de silicon (SiHF / Si
                         "(SR HD 60364-7-703)")
 LOCUINTA_DEZECHILIBRU_MAX_PCT = 30.0   # DECIZIE: dezechilibru (Imax − Imed)/Imed > 30 % → AVERTISMENT
 LOCUINTA_P_CIRCUIT_MAX_KW = 30.0       # peste → valoare neplauzibilă pentru un circuit de locuință (V07)
-IS_IN_A = [32, 40, 63, 80, 100, 125]   # întreruptor-separator modular (SR EN 60947-3) [NEVERIFICAT individual]
+IS_IN_A = [32, 40, 63, 80, 100, 125]   # întreruptor-separator modular (SR EN 60947-3) [VERIFICAT: cataloage, raport #132]
 SPD_T2_LOCUINTA = {"tip": "T2", "In_kA": 20, "Imax_kA": 40, "Up_kV": 1.5, "Uc_V": 275}   # SR EN 61643-11
 # v1.6 (runda 4b): protecția de rezervă a SPD-ului T2 (F2) — DECIZIE după fișele uzuale ale SPD T2 In 20 kA
 # (rezervă admisă MCB C ≤ 25…32 A sau gG ≤ 32…125 A) [NEVERIFICAT pe fișa SPD-ului ales]: MCB C25, limitat la In Q
@@ -882,9 +952,10 @@ LOCUINTA_DU_COLOANA_BUGET_PCT = 1.5
 # v1.6 (P1-4): cel mult 2 circuite de iluminat pe un DDR (un defect stinge cel mult două zone); nivelurile deduse din
 # nume (subsol / parter / etaj N / mansardă / exterior) nu se amestecă pe același DDR — DECIZIE
 LOCUINTA_ILUMINAT_PE_DDR = 2
-# v1.6 (P1-10): Zbuclă OD implicită la punctul de delimitare după zonă — urban 0,201 Ω (valoarea generală),
-# rural (LEA JT lungă, case la capăt de linie) 0,45 Ω — DECIZIE [NEVERIFICAT], se confirmă cu OD (ATR)
-LOCUINTA_ZB_OD_RURAL_OHM = 0.45
+# v1.6 (P1-10): Zbuclă OD implicită la punctul de delimitare după zonă — urban 0,30 Ω (OD_ZBUCLA_IMPLICIT_OHM),
+# rural (LEA JT lungă, case la capăt de linie) 0,8 Ω: TYIR 3×50+50 pe 500 m ≈ 0,62 Ω + trafo + branșament ≈ 0,75…0,8 Ω
+# (raport #3) [DECIZIE proiectant 28.10.2026, Î2 — înlocuiește 0,45 Ω], se confirmă cu OD (ATR)
+LOCUINTA_ZB_OD_RURAL_OHM = 0.8
 # v1.7 (runda 4c, m-c6): plafonul măririi automate pentru ΔU a circuitelor finale ale locuinței — peste 16 mm² Cu
 # problema e coloana / poziția tabloului, nu circuitul (DECIZIE): circuitul rămâne la plafon, V20 BLOCANT cu remedierea
 # „mărește coloana / mută tabloul / împarte circuitul”
@@ -893,11 +964,11 @@ LOCUINTA_S_MAX_CIRCUIT_DU_MM2 = 16.0
 # ST 4-JT) — un DDR tip AC / A / F în amontele unui circuit VE (curent de defect c.c. neted) poate fi „orbit”
 # (SR HD 60364-5-53:2015 art. 531.3.2, IEC 60364-7-722:2018 art. 722.531.3.101)
 LOCUINTA_DDR_TIPURI = ("AC", "A", "F", "B")
-# r5 (locuințe P1-14, DECIZIE [NEVERIFICAT]): DDR-ul 300 mA din blocul de măsură al unei LOCUINȚE, când tipul nu e declarat:
-# tip A, selectiv (S) — echiparea uzuală a blocurilor BMPM / BMPT livrate acum (RCBO / RCCB 300 mA tip A-S), aleasă ca
-# o casă obișnuită să nu iasă cu V43 din cauza propriei presupuneri. Branșamentul vechi cu DDR tip AC / instantaneu se
-# declară (alimentare.DDR_bransament_tip = "AC", DDR_bransament_selectiv = false) și atunci avertismentele rămân.
-LOCUINTA_DDR_BRANSAMENT_IMPLICIT = {"tip": "A", "selectiv": True}
+# DDR-ul 300 mA din blocul de măsură al unei LOCUINȚE (BMPM / BMPT), când nu e declarat: tip AC, INSTANTANEU — ca în
+# ST 3-JT §4.2.4 l–m (RCBO) / ST 4-JT §4.2.6 i (RCCB) DEER [DECIZIE proiectant 28.10.2026, Î1 — înlocuiește decizia r5
+# „tip A, selectiv”; elimină contradicția cu BMPM_RCBO_SELECTIV]. V43 (300/30 mA neselectiv) și regula VE (DDR AC
+# „orbit”) apar unde sunt reale, cu remedierea „declarați blocul real” (alimentare.DDR_bransament_tip / _selectiv).
+LOCUINTA_DDR_BRANSAMENT_IMPLICIT = {"tip": "AC", "selectiv": False}
 # cosφ 1 doar pentru limita blocului (BMPM 40 A ↔ ~9,2 kW). Q presupus (r8, proiectant): calibrul standard ≥ Ib la
 # cosφ 0,95 (LOCUINTA_COSFI): 7 kW mono → 40 A; 11 kW tri → 20 A; 15 kW tri → 25 A; 25 kW tri → 40 A
 LOCUINTA_Q_DIN_PA_COSFI = 1.0
@@ -909,58 +980,58 @@ LOCUINTA_VE_DDR_IMPLICIT = "A"
 # 15. Lista valorilor neverificate (afișabilă în memoriul de calcul)
 # =====================================================================================================
 NEVERIFICAT = {
+    # Rămân aici doar pozițiile „NU SE POATE VERIFICA PUBLIC” din verificarea din 28.10.2026 (standard cu plată / document
+    # inaccesibil) — valoarea e cea din practica de proiectare, confirmată de verificator ca plauzibilă.
     "IZ Al 16 mm² (toate metodele)": "[P] tabelează Al de la 25 mm²; C/E/C-XLPE/E-XLPE din tab. simplificat C.52.1 [SE2], D1/D2 extrapolat "
-                                     "cu raportul Al/Cu de la 25 mm² și rotunjit în jos",
-    "IZ 1,5 mm² D1/D2": "din [P] (valori 18/19/21/23), confirmate parțial",
-    "X_CABLU_OHM_KM": "0,08 Ω/km valoare tipică de catalog",
-    "FACTOR_R_IK1MIN": "metoda temperaturii medii (CENELEC TR 50480) nedocumentată pe text",
-    "GG_IA_5S_A 100…630 A, 355 A": "porțile Imax(5 s) din SR EN 60269-1 din memorie; 250 A verificat",
-    "GG_PORTI_A (exceptând 25/80/250/800/1250 A)": "din memorie",
-    "i2_gg sub 16 A": "1,9 / 2,1 din memorie (SR EN 60269-1 tab. 2)",
-    "TRAFO uk": "4 % ≤ 630 kVA / 6 % ≥ 800 kVA după SR EN 50588-1, din memorie",
-    "TRAFO_SIGURANTA_MT_A": "orientativ, tabel producător",
-    "TC_PRIMAR_A, TC_CONSUM_CONTOR_VA": "serie R10 SR EN 61869-2 / consum tipic contor",
-    "CONTOR_DIRECT_*": "ST 4-JT / ST 3-JT nu precizează; contorul aparține OD",
-    "MCB_IN_A, MCCB_IN_A, ACB_IN_A, ICU, GG_GABARIT_NH, GPV_IN_A": "serii comerciale uzuale",
-    "IM_TM_MULTIPLU": "Im = 10·In tipic TM (ABB TMD, Schneider TM-D)",
-    "TIP_CABLU C2XABY, ACYY": "denumiri comerciale de confirmat la producător",
-    "PV_BETA_UOC_IMPLICIT_PCT_K": "tipic c-Si",
-    "RFG_PRAG_TIP_C/D": "praguri Ord. ANRE 208/2018 de confirmat",
-    "MONOFAZAT_P_INVERTOR_AVERTISMENT_KW": "prag uzual 16 A/fază",
-    "DEZECHILIBRU_FAZE_MAX_KVA": "4,6 kVA între faze (VDE-AR-N 4105, practica OD) — DECIZIE, de confirmat în ATR",
-    "Q_JT_IR_MAX_IN_T": "Ir Q JT ≤ 1,1·In_T când Σ Iac ≤ In_T, pentru selectivitate QG → Q JT — DECIZIE proiectant",
-    "LOCUINTA_ZB_OD_RURAL_OHM": "Zbuclă OD 0,45 Ω în zonă rurală — valoare prudentă, de confirmat cu OD",
-    "LOCUINTA_SPD_REZERVA": "MCB C25 ca protecție de rezervă SPD T2 — de confirmat pe fișa SPD-ului ales",
-    "LOCUINTA_S_MAX_CIRCUIT_DU_MM2": "plafonul de 16 mm² al măririi pentru ΔU a circuitelor finale ale locuinței (DECIZIE)",
-    "LOCUINTA_DDR_TIPURI": "DDR-ul 300 mA din BMPM / BMPT tip AC implicit; regula VE (SR HD 60364-5-53 531.3.2, IEC "
-                           "60364-7-722 722.531.3.101) — articolele de confirmat de proiectant",
-    "GE_XD2_IMPLICIT": "tipic",
-    "GE_SN_KVA": "serie comercială uzuală de grupuri electrogene",
-    "K_GRUP_D2[0.5][16]": "sursa [SE1] tipărea 0,38 (greșeală evidentă); s-a folosit 0,68 din [P]",
-    "PRIZA_RHO_IMPLICIT_OHM_M": "100 Ω·m sol argilos-nisipos — valoare medie de tabel (1.RE-Ip 30-2004 / STAS 12604/5); "
-                                "se înlocuiește cu ρ măsurat",
-    "PRIZA_PSI_ZONE / PRIZA_PSI_IMPLICIT": "ψ_e = 1,4…1,8 după 1.RE-Ip 30-2004; împărțirea pe zone I/II/III și 1,6 implicit "
-                                           "sunt DECIZII de notare",
-    "PRIZA_PSI_PLATBANDA_ZONE": "ψ_pl = 4,5 / 3,5 / 2,5 (zone I/II/III) pentru platbandă la 0,5…0,8 m — de confirmat în "
-                                "1.RE-Ip 30-2004 / STAS 12604/5",
+                                     "cu raportul Al/Cu de la 25 mm² și rotunjit în jos (valoare derivată, raport #14)",
+    "IZ Cu B2": "metoda B2 (tub pe/în perete) din IEC 60364-5-52 tab. B.52.2–B.52.5 — verificată încrucișat cu tab. C.52.1 "
+                "[SE2] (raport #16), de confirmat pe SR HD 60364-5-52:2011",
+    "TRAFO uk": "4 % ≤ 630 kVA / 6 % ≥ 800 kVA după SR EN 50588-1 (standard cu plată; practică, raport #55)",
+    "TRAFO_SIGURANTA_MT_A": "orientativ (SIBA / SM6 / ABB), tabelul producătorului celulei (raport #58)",
+    "TC_CONSUM_CONTOR_VA": "1,0 VA majorant (IEC 62053-22) când fișa contorului lipsește (raport #71)",
+    "K_GRUP_F_DISTANTAT, N_PARALEL_MAX_MONOPOLAR": "SR HD 60364-5-52 tab. B.52.21 (practică, raport #17)",
+    "TIP_CABLU C2XABY": "denumire comercială din ofertele producătorilor RO (ST 80-6 acoperă doar PVC; raport #9)",
+    "GE_XD2_IMPLICIT": "tipic 0,10…0,15 (fișe alternatoare, raport #101)",
+    "IM_TM_MIN_A": "Im = max(10·In; 500 A) la In ≤ 50 A — valoarea exactă din fișa MCCB (raport #29)",
+    "GG_I2T_TOTAL_FACTOR": "I²t total ≈ 2 × I²t prearc (practică, raport #44)",
+    "PRIZA_PSI_ZONE / PRIZA_PSI_IMPLICIT": "ψ_e = 1,4…1,8 după 1.RE-Ip 30-2004 (inaccesibil, raport #113); împărțirea pe zone "
+                                           "I/II/III și 1,6 implicit sunt DECIZII de notare",
+    "PRIZA_PSI_PLATBANDA_ZONE": "ψ_pl = 4,5 / 3,5 / 2,5 (zone I/II/III) pentru platbandă la 0,5…0,8 m (raport #114)",
     "PRIZA_L_RACORD_IMPLICIT_M": "5 m racord platbandă → piesa de separație (DECIZIE, depinde de amplasament)",
-    "PRIZA_ORE_U": "ore de manoperă orientative pe unitate (DECIZIE)",
-    "DDR_T_ECHIVALENT_S": "DDR tip S tratat ca temporizare echivalentă 0,15 s (DECIZIE)",
-    "IZ Cu B2": "metoda B2 (tub pe/în perete) din IEC 60364-5-52 tab. B.52.2–B.52.5, transcrisă din memorie",
-    "LOCUINTA_RECEPTORI": "puteri, curbe, calibre, secțiuni și lungimi implicite pe receptor — practică uzuală",
-    "LOCUINTA_KS_GENERAL": "ks 0,8/0,6/0,4/0,35/0,3 după numărul receptoarelor generale ale unei locuințe (regulă proprie, "
-                           "sursa: practică proiectant, runda 4 de testare — nu IEC 61439-2)",
-    "LOCUINTA_INC_KA": "Inc RCCB / Icc condiționat IS 6/10 kA cu protecția din amonte — se confirmă în tabelele producătorului",
-    "LOCUINTA_COSFI": "cosφ mediu 0,95 al unei locuințe (DECIZIE)",
-    "IS_IN_A": "seria întreruptoarelor-separatoare modulare",
-    "PRIZA_ETA_ELECTROZI": "coeficienți de utilizare electrozi în linie (a/L = 1, 2, 3) din literatura uzuală; de confirmat "
-                           "în 1.RE-Ip 30-2004 / Ingeorge; n = 30 extrapolat",
-    "PRIZA_ETA_PLATBANDA": "coeficienți de utilizare platbandă (a/L = 1, 2, 3); n = 2, 3, 15 interpolate/estimate",
-    "BMPM_RCBO_SELECTIV": "ST 3-JT nu precizează tipul S al RCBO 300 mA din BMPM — presupus instantaneu",
+    "PRIZA_ORE_U": "ore de manoperă orientative pe unitate (DECIZIE; în deviz se folosesc normele de deviz)",
+    "PRIZA_R_LIMITA_OHM['pt']": "PT cu priză comună MT/JT „conform ANRE” (Î8): ANRE nu dă o valoare unică (rezultă din "
+                                "tratarea neutrului MT și tensiunile de atingere) — 1 Ω păstrat, conservator, de confirmat "
+                                "cu OD / ATR (vezi PRIZA_PT_ANRE)",
+    "DDR_T_ECHIVALENT_S": "DDR tip S tratat ca temporizare echivalentă 0,15 s (DECIZIE, coerent cu SR EN 61008-1 tab. 1)",
+    "LOCUINTA_RECEPTORI": "puteri, curbe, calibre, secțiuni și lungimi implicite pe receptor — practică uzuală (raport #123)",
+    "LOCUINTA_INC_KA": "Inc RCCB / Icc condiționat IS 6/10 kA cu protecția din amonte — tabelele producătorului (raport #129)",
+    "LOCUINTA_COSFI": "cosφ mediu 0,95 al unei locuințe (DECIZIE, raport #125)",
+    "LOCUINTA_SPD_REZERVA": "MCB C25 ca protecție de rezervă SPD T2 — „conform fișă SPD” (raport #134)",
+    "LOCUINTA_S_MAX_CIRCUIT_DU_MM2": "plafonul de 16 mm² al măririi pentru ΔU a circuitelor finale ale locuinței (DECIZIE)",
     "LOCUINTA_TD_P_CALIBRU": "r8b DECIZIE: circuit casnic al unui tablou secundar dat doar prin calibru → în bilanțul TD "
                              "intră puterea implicită a receptorului (LOCUINTA_RECEPTORI), plafonată la U·In·cosφ; TD "
                              "numai cu receptoare casnice → ks LOCUINTA_KS_GENERAL (ca la TE), altfel ks IEC 61439-2",
     "DENUMIRE_CABLU": "r8b: material / izolație din denumirea comercială (DIN N…/NA…, RO C…/AC…) — de confirmat pe fișă",
+    "K_GRUP_D2[0.5][16]": "sursa [SE1] tipărea 0,38 (greșeală evidentă); s-a folosit 0,68 din [P]",
+}
+
+# Deciziile proiectantului din 28.10.2026 (teste/verificare_norme/raspunsuri_proiectant.md) — afișabile în memoriu.
+DECIZII_PROIECTANT_28_10_2026 = {
+    "Î1 LOCUINTA_DDR_BRANSAMENT_IMPLICIT / BMPT_RCCB": "DDR 300 mA tip AC instantaneu în BMPM / BMPT (ST 3-JT / ST 4-JT DEER)",
+    "Î2 OD_ZBUCLA_IMPLICIT_OHM / LOCUINTA_ZB_OD_RURAL_OHM": "Zbuclă OD implicită urban 0,30 Ω, rural 0,8 Ω",
+    "Î3 PROSUMATOR_PI_EXTERNA_KW": "PI externă la P > 27 kW (cerința OD), nu 30 kVA",
+    "Î4 DEZECHILIBRU_FAZE_MAX_KVA": "16 A ≈ 3,68 kVA (Ord. ANRE 228/2018 art. 12(3))",
+    "Î5 PROSUMATOR_TD_PV_INTOTDEAUNA": "TD-PV separat la toți prosumatorii; întrebare „protecții pe c.c. / c.a.”",
+    "Î6 DDR_INVERTOR_DOAR_LA_CERERE": "DDR pe invertor doar declarat / cerut (TT: protecția la defect rămâne)",
+    "Î7 OD_IK3MAX_IMPLICIT_KA": "Ik3 OD 25 kA peste tot",
+    "Î8 PRIZA_R_LIMITA_OHM": "PT cu priză comună: conform ANRE (vezi PRIZA_PT_ANRE); utilizare și branșament 4 Ω",
+    "Î9 TRAFO_GRUPA_CONEXIUNI": "Dyn5",
+    "Î10 TRAFO_SN_MAX_SIGURANTE_MT_KVA": "siguranțe MT până la 630 kVA; peste, întrerupător cu 50/51",
+    "Î11 LOCUINTA_KS_GENERAL": "seria actuală 0,8 / 0,6 / 0,4 / 0,35 / 0,3",
+    "Î12 IZ_CABLU_SOLAR_A": "cabluri solare în mănunchi fără factor de grupare",
+    "Î13 PRAG_RACORD_JT_MAX_KVA": "prag PT propriu 400 kVA",
+    "Î14 LOCUINTA_I_NEDECLANSARE": "branșament nou, Ib între In și 1,13·In → AVERTISMENT",
+    "Î15 CONTOR_DIRECT_*": "contorul pe planșă „furnizat de OD”, fără curent nominal",
 }
 
 

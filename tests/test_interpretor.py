@@ -46,13 +46,13 @@ def norm(s) -> str:
 # ------------------------------------------------------------------------------------------- cuvinte-cheie
 # expected (text exact din fraze_chat.json) → cuvinte-cheie (după `norm`) care trebuie să apară TOATE
 # în același element din răspuns. Un tuplu = variante acceptate.
-OD = ["ik3max", "25 ka", "0,18", "j0,09", "implicit"]
+OD = ["ik3max", "25 ka", "0,27", "j0,13", "implicit"]   # Zbuclă 0,30 Ω (DECIZIE proiectant 28.10.2026)
 CUVINTE_CHEIE = {
     "cosφ 0,9": ["cosfi 0,9"],
     "coloană Al PVC metoda D1 (în tub în pământ), cu trecere pe Cu dacă Al < 16 mm²":
         ["coloana al pvc", "d1", "tub", "cu daca al < 16"],
     "schema TN-C-S, separare PEN în BMPT": ["tn-c-s", "pen", "bmpt"],
-    "Ik3max OD 25 kA și Zbuclă OD 0,18 + j0,09 Ω (valori implicite)": OD,
+    "Ik3max OD 25 kA și Zbuclă OD 0,27 + j0,13 Ω (valori implicite)": OD,
     "beneficiar și adresă necompletate (câmpuri goale în cartuș)": ["beneficiar", "adresa", "necompletat", "cartus"],
     "Racordul se face din PT-ul OD cu măsură în PT, sau prin PT propriu? Pot genera schema „Post de transformare” (ex. 400 kVA).":
         ["pt-ul od", "pt propriu", "post de transformare", "400 kva"],
@@ -83,8 +83,8 @@ CUVINTE_CHEIE = {
         ["pt propriu", "630 kva", "jt conform atr", "pcs", "100 kw"],
     "S = 968 kVA → PT propriu 1000 kVA adăugat (racord MT)": ["s = 968 kva", "pt propriu", "1000 kva", "racord mt"],
     "categoria A RfG (880 kW < 1 MW)": ["categoria a rfg", "880 kw"],
-    "Confirmați PT propriu 1000 kVA (celulă trafo cu separator de sarcină + siguranțe MT)?":
-        ["confirmati pt propriu 1000 kva", "separator de sarcina", "sigurante mt"],
+    "Confirmați PT propriu 1000 kVA (celulă trafo cu întreruptor + releu 50/51, 50N/51N)?":     # Î10: siguranțe MT ≤ 630 kVA
+        ["confirmati pt propriu 1000 kva", "intreruptor + releu"],
     "1 MWp = 1000 kWp": ["1 mwp", "1000 kwp"],
     "S = 1518 kVA → PT propriu 1600 kVA, celulă trafo cu întreruptor + releu":
         ["s = 1518 kva", "pt propriu", "1600 kva", "intreruptor + releu"],
@@ -96,7 +96,7 @@ CUVINTE_CHEIE = {
     "plecări L = 50 m, Al PVC D1": ["plecari", "l = 50 m", "al pvc d1"],
     "uk 4 %": ["uk 4 %"],
     "uk 6 %": ["uk 6 %"],
-    "celulă trafo cu întreruptor (Sn > 1000 kVA)": ["celula trafo cu intreruptor", "sn > 1000 kva"],
+    "celulă trafo cu întreruptor (Sn > 630 kVA)": ["celula trafo cu intreruptor", "sn > 630 kva"],
     "„pt” minuscul = „pentru” (nu post de transformare)": ["pt minuscul", "pentru", "post de transformare"],
     "„cam 35 m” = 35 m, aproximativ": ["cam 35", "35 m", "aproximativ"],
     "cablul descris = coloana C2 dintre BMPT și tabloul consumatorului; racordul C1 aparține OD":
@@ -128,7 +128,7 @@ CUVINTE_CHEIE = {
         ["acelasi sant", "tuburi alaturate", "b.52.19", "6 circuite", "0,6"],
     "„3×63 A” = 3 plecări de 63 A (nu 189 A)": ["3x63 a", "3 plecari de 63 a", "189 a"],
     "tablou cu circuite finale (circuite_finale): MCB curba B pentru iluminat/prize, DDR 30 mA tip A pe circuitele de prize":
-        ["circuite_finale", "mcb curba b", "iluminat/prize", "ddr 30 ma tip a", "prize"],
+        ["circuite finale", "mcb curba b", "iluminat/prize", "ddr 30 ma tip a", "prize"],   # echipa1: fără cheia internă
     "circuite Cu PVC metoda C, L = 25 m": ["circuite cu pvc metoda c", "l = 25 m"],
     "Cu PVC metoda C, L = 25 m": ["cu pvc metoda c", "l = 25 m"],
     "alimentare TD L = 50 m": ["aliment", "td l = 50 m"],
@@ -149,7 +149,7 @@ CUVINTE_CHEIE = {
     "ATS 4 poli cu interblocaj mecanic + electric": ["ats 4 poli", "interblocaj mecanic + electric"],
     "fără excitație susținută declarată": ["fara excitatie sustinuta"],
     "Măriți GE la cel puțin 80 kVA (seria standard GE_SN_KVA, Sn ≥ P/cosφ = 66,7 kVA; pornirea motoarelor neinclusă) sau declarați sarcinile prioritare?":
-        ["mariti ge", "cel putin 80 kva", "ge_sn_kva", "66,7 kva", "sarcinile prioritare"],
+        ["mariti ge", "cel putin 80 kva", "grupurilor electrogene", "66,7 kva", "sarcinile prioritare"],   # echipa1
     "limite ΔU pentru PT propriu: 6 % iluminat / 8 % altele": ["pt propriu", "6 % iluminat", "8 % altele"],
     "Sn necunoscut: Ik3max 25 kA și impedanța buclei implicite la bara PT (avertismente V32)":
         ["sn necunoscut", "ik3max 25 ka", "impedanta buclei", "bara pt", "v32"],
@@ -158,7 +158,8 @@ CUVINTE_CHEIE = {
         ["sol umed", "nu se converteste", "2,5 k·m/w", "numeric"],
     "„si” = „și” (fără diacritice)": ["si = si", "fara diacritice"],
     "unitatea A comună": ["unitatea a", "comuna"],
-    "siguranțe MT 63 A (orientativ, tabel producător)": ["sigurante mt 63 a", "orientativ"],
+    "celulă cu siguranțe MT declarată la 1000 kVA > 630 kVA — motorul cere întreruptor + releu 50/51 (V61)":
+        ["sigurante mt declarata", "1000 kva > 630 kva", "v61"],
     "Ce tip de schemă: branșament (BMPT/BMPM), tablou, CEF, prosumator, post de transformare sau grup electrogen? Care este puterea?":
         ["ce tip de schema", "bransament", "tablou", "cef", "prosumator", "post de transformare",
          "grup electrogen", "puterea"],

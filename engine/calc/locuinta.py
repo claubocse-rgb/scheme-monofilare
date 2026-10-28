@@ -47,7 +47,7 @@ CAMPURI_R = ("P_mono", "P_tri", "cosfi", "curba", "In_mono", "In_tri", "S_mono",
              "grupa", "ddr", "ddr_tip", "continuu")
 TIPURI_ALIMENTARE = ("bransament_existent", "bransament_nou")
 FAZE = ("L1", "L2", "L3", "3F")
-CHEI_CIRCUIT = ("nume", "receptor", "P_kW", "L_m", "faza", "cablu", "In_A", "DDR", "cosfi", "curba")
+CHEI_CIRCUIT = ("nume", "receptor", "P_kW", "L_m", "faza", "cablu", "In_A", "DDR", "cosfi", "curba", "limitare_kW")
 NUME_GRUPE = {"VE": "vehicul electric", "baie": "baie", "bucatarie": "bucătărie", "exterior": "exterior",
               None: "general", "fara": "fără DDR", "iluminat": "iluminat", "sauna": "saună", "propriu": "propriu"}
 ORDINE_GRUPE = ("iluminat", None, "bucatarie", "baie", "exterior")
@@ -346,12 +346,26 @@ def _valideaza(inp, j, retea):
             blocat.append("V07")
         if c.get("L_m") is not None and c["L_m"] > 1000:
             emite(j, "V09", AVERTISMENT, ob, "AV", L=c["L_m"])
+        lim_ve = c.get("limitare_kW")
+        if lim_ve is not None:
+            # echipa1 P1 (ux problema 1): limitarea puterii de încărcare a stației VE (setare fixă în wallbox sau
+            # gestionare dinamică a sarcinii, DLM) — intră în bilanț și pe faze în locul puterii nominale; protecția și
+            # cablul circuitului rămân dimensionate pe puterea nominală a stației
+            if rec != "vehicul_electric":
+                j.emite("V12", AVERTISMENT, ob, f"limitarea de putere se aplică doar circuitului stației de încărcare VE — "
+                        f"pe „{nume}” valoarea se ignoră", "șterge limitarea de pe acest circuit")
+                c.pop("limitare_kW")
+            elif not _numar(lim_ve) or lim_ve <= 0:
+                j.emite("V07", BLOCANT, ob, f"limitarea de putere a stației VE trebuie să fie un număr > 0 (kW), nu {lim_ve!r}",
+                        "scrie puterea maximă de încărcare reglată în stație (ex. 7,4 kW) sau șterge câmpul")
+                c.pop("limitare_kW")
+                blocat.append("V07")
         out.append(dict(c, nume=nm, receptor=rec, faza=f, DDR=ddr_c, cablu=cab, obiect=ob, idx=i, _blocat=blocat))
     return al, out
 
 
 VE_CURENTI_NOMINALI_A = (6, 10, 13, 16, 20, 25, 32, 40, 63)   # curenții de încărcare uzuali ai stațiilor (IEC 61851)
-VE_FACTOR_CONTINUU = 1.25          # DECIZIE [NEVERIFICAT]: sarcină continuă — In ≥ 1,25·I încărcare (practica producătorilor)
+VE_FACTOR_CONTINUU = 1.25          # practica producătorului (stație 32 A → MCB 40 A; nu e cerință IEC 60364-7-722) [raport #138]
 MCB_SERIE_VE = (10, 13, 16, 20, 25, 32, 40, 50, 63)
 
 
@@ -381,6 +395,13 @@ def _circuit(c, retea, j):
     if P is None:
         P = 3 * d["P_mono"] if tri_fortat else (d["P_tri"] if tri and d["P_tri"] else d["P_mono"])
         j.presupune(f"{eticheta_receptor(c['receptor'])}: P = {fmt_ro(P)} kW", c["obiect"])
+    if c.get("limitare_kW") is not None and gt(float(P), float(c["limitare_kW"])):
+        # echipa1 (ux problema 1): puterea maximă de încărcare reglată în stația VE (curent limitat din setări / DLM) —
+        # bilanțul, fazele, calibrul și cablul circuitului se fac pe puterea limitată
+        j.presupune(f"{eticheta_receptor(c['receptor'])}: încărcare limitată la {fmt_ro(c['limitare_kW'])} kW din "
+                    f"{fmt_ro(P)} kW (setare în stație / gestionare dinamică a sarcinii) — circuitul se dimensionează "
+                    f"pe puterea limitată; limitarea se configurează și se sigilează la punerea în funcțiune", c["obiect"])
+        P = float(c["limitare_kW"])
     L = c.get("L_m", (c.get("cablu") or {}).get("L"))
     if L is None:
         L = d["L"]
@@ -399,7 +420,7 @@ def _circuit(c, retea, j):
     if d["grupa"] == "VE":
         In_min = calibru_ve(float(P), tri)
         j.presupune(f"{eticheta_receptor(c['receptor'])}: calibrul din puterea stației — I încărcare = "
-                    f"{fmt_ro(curent_ve(float(P), tri), 1)} A × 1,25 (sarcină continuă, DECIZIE) → C{In_min}", c["obiect"])
+                    f"{fmt_ro(curent_ve(float(P), tri), 1)} A × 1,25 (sarcină continuă, practica producătorului) → C{In_min}", c["obiect"])
     cab = {"material": "Cu", "metoda": "B2"}
     cab.update({k: v for k, v in (c.get("cablu") or {}).items() if v is not None})
     cab["L"] = float(L)
@@ -1083,7 +1104,12 @@ def _verifica_ve_amonte(j, g, tip_av, am_nume, am_idn, am_tip, tt, declarat):
     rem = ("DDR-ul din amonte de tip B (sau F-B / B+, pentru c.c. neted) — dacă e deja de tip B, declară tipul DDR-ului "
            "din branșament; sau alimentarea stației VE dintr-un circuit fără DDR tip AC / A în amonte, conform "
            "producătorului; sau stație cu RDC-DD 6 mA c.c. și DDR VE tip A, cu DDR-ul din amonte cel puțin tip A")
-    emite(j, "V43", BLOCANT if tt else AVERTISMENT, f"{g['obiect']} vs {am_nume}", "ve_dc", av=g["obiect"],
+    if not declarat:
+        # Î1 (proiectant 28.10.2026): tipul AC e PRESUPUS (ST DEER) — o valoare presupusă nu blochează (principiul §B.0):
+        # AVERTISMENT și în TT, cu remedierea „declarați blocul real”; tipul AC DECLARAT rămâne BLOCANT în TT
+        rem = "declarați blocul real (alimentare.DDR_bransament_tip) — dacă DDR-ul din branșament e de tip A / B, " \
+              "avertismentul dispare; altfel " + rem
+    emite(j, "V43", BLOCANT if (tt and declarat) else AVERTISMENT, f"{g['obiect']} vs {am_nume}", "ve_dc", av=g["obiect"],
           tip_av=tip_av, am=am_nume, IdN_am=am_idn, tip_am=am_tip, detaliu=det, rem=rem)
     j.verificari[-1]["camp"] = "alimentare.DDR_bransament_tip"
 
@@ -1162,11 +1188,12 @@ def _calculeaza(inp, j, cutie):
                 r.pop("tinta_dU_ramura", None)
                 r["S_max_dU"] = TD_S_MAX_ILUMINAT_MM2
         u = SQRT3 * norme.U_N_V if tri else norme.U_0_V
-        ramuri.append({"c": c, "r": r, "d": d, "tri": tri, "Ib": r["P_kW"] * 1000.0 / (u * r["cosfi"])})
+        pb = r["P_kW"]
+        ramuri.append({"c": c, "r": r, "d": d, "tri": tri, "Pb": pb, "Ib": pb * 1000.0 / (u * r["cosfi"])})
 
     # ---- 1. bilanț ---------------------------------------------------------------------------------------------
-    pi = sum(x["r"]["P_kW"] for x in ramuri)
-    p_cont = sum(x["r"]["P_kW"] for x in ramuri if x["d"]["continuu"])
+    pi = sum(x["Pb"] for x in ramuri)
+    p_cont = sum(x["Pb"] for x in ramuri if x["d"]["continuu"])
     p_gen = pi - p_cont
     ks_decl = inp.get("ks") is not None
     if ks_decl:
@@ -1216,11 +1243,11 @@ def _calculeaza(inp, j, cutie):
         emite(j, "V46", AVERTISMENT, "schema", "pc", Pc=pc, P=pa,
               rem="solicită ATR pentru mărirea puterii aprobate" + (" sau trecerea pe branșament trifazat"
                                                                      if retea == "mono" else "") +
-              ", ori declară ks = Pa/Pi (simultaneitate justificată) / gestionarea dinamică a sarcinii (DLM la VE)")
+              ", ori declară ks = Pa/Pi (simultaneitate justificată)" + ("; limitează încărcarea stației VE (câmpul „Limitare putere VE” al circuitului)" if any(x["c"].get("receptor") == "vehicul_electric" for x in ramuri) else ""))
 
     # ---- 1b. r7 (#19, P0): un receptor singur peste puterea aprobată / peste ce poate da rețeaua → BLOCANT clar ----------
     for x in ramuri:
-        p_r = float(x["r"]["P_kW"])
+        p_r = float(x["Pb"])
         ob = x["c"].get("obiect") or x["c"].get("nume") or "circuit"
         rec = x["c"].get("receptor") or ""
         if retea == "mono" and rec == "vehicul_electric" and gt(p_r, norme.LOCUINTA_VE_MONO_MAX_KW):
@@ -1230,13 +1257,18 @@ def _calculeaza(inp, j, cutie):
                     "Treceți pe branșament trifazat (ATR pentru puterea necesară) sau alegeți un încărcător monofazat "
                     f"de max. {fmt_ro(norme.LOCUINTA_VE_MONO_MAX_KW)} kW?")
             j.verificari[-1]["intrebare"] = True
+            j.verificari[-1]["propunere_ve"] = {"obiect": ob, "nume": x["c"].get("nume") or "VE",
+                                                "limitare_kW": norme.LOCUINTA_VE_MONO_MAX_KW}
         if pa is not None and gt(p_r, pa) and x["c"].get("P_kW") is not None and "priz" not in rec and "ilumin" not in rec:
             j.emite("V46", BLOCANT, ob,
                     f"receptorul „{x['c'].get('nume') or rec}” de {fmt_ro(p_r)} kW depășește singur puterea aprobată "
                     f"{fmt_ro(pa)} kW (ATR) — branșamentul nu îl poate alimenta",
-                    "Solicitați ATR pentru mărirea puterii (eventual trifazat), reduceți puterea receptorului sau "
-                    "declarați gestionarea sarcinii (DLM)?")
+                    "Solicitați ATR pentru mărirea puterii (eventual trifazat) sau " +
+                    ("limitați încărcarea stației VE (câmpul „Limitare putere VE” al circuitului)?" if rec == "vehicul_electric" else "reduceți puterea receptorului?"))
             j.verificari[-1]["intrebare"] = True
+            if rec == "vehicul_electric" and math.floor(pa * 10) / 10.0 > 1.3:
+                j.verificari[-1]["propunere_ve"] = {"obiect": ob, "nume": x["c"].get("nume") or "VE",
+                                                    "limitare_kW": math.floor(pa * 10) / 10.0}
 
     # ---- 2. grupele DDR și repartizarea pe faze (pe curentul de calcul, v1.6 m-n3) ------------------------------
     grupe, sarc = _grupeaza_si_repartizeaza(ramuri, retea, ks, ks_decl)
@@ -1388,11 +1420,12 @@ def _calculeaza(inp, j, cutie):
             bi["Zb_OD_ohm"] = [z * r0 / m0, z * x0 / m0]
             # v1.7 (N11): valoarea după zonă e PRESUPUSĂ — nota de ipoteze / planșa nu o mai atribuie ATR-ului
             bi["_zb_presupus"] = "zonă rurală"
-            j.presupune(f"Zbuclă OD {fmt_ro(z, 2)} Ω (zonă rurală) — presupus, valoare implicită prudentă [NEVERIFICAT]; "
-                        f"se confirmă cu OD / ATR")
+            j.presupune(f"Zbuclă OD {fmt_ro(z, 2)} Ω (zonă rurală) — presupus, valoare implicită (DECIZIE proiectant "
+                        f"28.10.2026); se confirmă cu OD / ATR")
         else:
-            j.presupune("zona alimentării nedeclarată → Zbuclă OD implicită urbană |Z| = 0,201 Ω (presupus); la case "
-                        "rurale / capăt de linie declarați zona „rural” (0,45 Ω) sau Zb confirmată de OD / ATR")
+            j.presupune(f"zona alimentării nedeclarată → Zbuclă OD implicită urbană |Z| = "
+                        f"{fmt_ro(norme.OD_ZBUCLA_MODUL_IMPLICIT_OHM, 2)} Ω (presupus); la case rurale / capăt de linie "
+                        f"declarați zona „rural” ({fmt_ro(norme.LOCUINTA_ZB_OD_RURAL_OHM, 1)} Ω) sau Zb confirmată de OD / ATR")
     bi["_tt_ddr_defect"] = True
     if bi["cablu"].get("material") is None:
         bi["cablu"]["material"] = "Cu"
@@ -1472,13 +1505,52 @@ def _calculeaza(inp, j, cutie):
     in_q_br = (rb.get("Q") or {}).get("In_A")
 
     # ---- 3b. V46 pe faza cea mai încărcată (C1) și P aprobată față de Q ------------------------------------------
+    # echipa1 (ux problema 2): ACEEAȘI verificare pentru Q declarat și Q presupus — verdictul depinde de date, nu de
+    # faptul că Q a fost lăsat gol; Q presupus e doar marcat în mesaj. Q declarat nu se înlocuiește niciodată.
+    # echipa1 P1-1 / ux problema 1: cu P aprobată declarată și coerentă cu Q (Ib din Pa ≤ 1,13·In Q), consumul simultan
+    # e limitat contractual — Ib de calcul din ks (regulă proprie) peste Q e AVERTISMENT cu propunerea ks = Pa/Pi;
+    # BLOCANT rămâne când sarcinile de lungă durată (VE, PC, saună, încălzire) depășesc SINGURE In Q pe o fază, sau
+    # când nu există o putere aprobată care să limiteze consumul.
     if in_q_br:
         lim113 = norme.LOCUINTA_I_NEDECLANSARE * in_q_br
-        rem = ("solicită ATR pentru mărirea puterii (Q branșament mai mare)" +
-               (" sau trecerea pe branșament trifazat" if retea == "mono" else " / mută circuite monofazate pe altă fază")
-               + ", gestionarea dinamică a sarcinii (DLM la VE) sau redu circuitele simultane")
-        if q_pres is not None:
-            rem = "introdu Q branșament real din BMPM / BMPT (ATR / certificatul de racordare); altfel " + rem
+        dez_f = (rez.get("faze") or {}).get("dezechilibru_calc_pct") or 0.0
+        ve = [x for x in ramuri if x["c"].get("receptor") == "vehicul_electric"]
+        pa_coerent = pa is not None and ib_pa is not None and not gt(ib_pa, lim113)
+        q_txt = f"{fmt_ro(in_q_br, 0)} A"
+
+        prop_ve = {}
+
+        def remedii(f, cont_peste):
+            """remedierile APLICABILE în interfață, în cuvinte (fără „mută pe altă fază” la faze echilibrate)"""
+            out = []
+            prop_ve.clear()
+            if cont_peste and ve:
+                x = ve[0]
+                p_ve = float(x["Pb"])
+                fz = ("L1", "L2", "L3") if x["faza"] == "3F" else (x["faza"],)
+                if f in fz:
+                    u_f = norme.U_0_V * (3 if len(fz) == 3 else 1) * float(x["r"]["cosfi"])
+                    p_max = p_ve - (cont[f] - in_q_br) * u_f / 1000.0
+                    p_max = math.floor(p_max * 10) / 10.0
+                    if p_max > 1.3:
+                        out.append(f"limitează încărcarea stației VE „{x['c'].get('nume') or 'VE'}” la cel mult "
+                                   f"{fmt_ro(p_max)} kW (câmpul „Limitare putere VE” al circuitului)")
+                        # remedierea aplicabilă dintr-un clic în interfață („Limitează stația la X kW”)
+                        prop_ve.update({"obiect": x["c"].get("obiect"), "nume": x["c"].get("nume") or "VE",
+                                        "limitare_kW": p_max})
+            elif ve and not any(x["c"].get("limitare_kW") is not None for x in ve):
+                out.append("limitează încărcarea stației VE (câmpul „Limitare putere VE” al circuitului)")
+            if not cont_peste and pa is not None and pi > 0 and not ks_decl:
+                out.append(f"declară ks = Pa/Pi = {fmt_ro(min(1.0, pa / pi), 2)} "
+                           f"(puterea aprobată limitează oricum consumul simultan)")
+            if retea == "tri" and gt(dez_f, norme.LOCUINTA_DEZECHILIBRU_MAX_PCT):
+                out.append("mută circuite monofazate de pe faza încărcată pe cea mai puțin încărcată (câmpul „Faza”)")
+            out.append("cere prin ATR o putere aprobată mai mare (siguranță de branșament mai mare)"
+                       + (" sau trecerea pe branșament trifazat" if retea == "mono" else ""))
+            if q_pres is not None:
+                out.insert(0, "scrie siguranța reală din BMPM / BMPT (ATR sau certificatul de racordare)")
+            return "; ".join(out)
+
         niveluri = []
         for f in faze_act:
             i_f = calc[f]
@@ -1491,28 +1563,51 @@ def _calculeaza(inp, j, cutie):
         if niveluri:
             nv, i_f, f, var = max(niveluri)
             nou_pa = al["tip"] == "bransament_nou" and pa is not None and al.get("In_Q_bransament_A") is None
-            if nou_pa:
-                # r5 (L04): branșament NOU — Q rezultă din puterea CERUTĂ, care încă se poate mări: întrebare (AV), nu blocaj
-                rem = "puterea cerută în ATR mărită la ≥ Pc (Q mai mare) sau gestionarea dinamică a sarcinii (DLM la VE)"
-            # r6: pe un Q PRESUPUS (nedeclarat) nu se blochează — AVERTISMENT + cererea Q-ului real
-            # r11 (locuințe #35, #59): depășire foarte mică a pragului (≤ 2 %, ex. 45,33 A față de 45,2 A) — în
-            # toleranța calculului (ks, cosφ presupuse) → AVERTISMENT, nu blocaj
+            cont_peste = gt(cont[f], in_q_br)
             mic = var == "ib" and not gt(i_f, V46_TOLERANTA * lim113)
-            emite(j, "V46", BLOCANT if nv == 2 and not nou_pa and q_pres is None and not mic else AVERTISMENT, "Q", var,
-                  Ib=i_f, In=in_q_br, lim=lim113,
-                  faza=f, cont=cont[f], rem=rem)
+            if nou_pa:
+                # r5 (L04): branșament NOU — Q rezultă din puterea CERUTĂ, care încă se poate mări: întrebare (AV)
+                niv, rem = AVERTISMENT, ("mărește puterea cerută în ATR la cel puțin Pc (siguranță mai mare) sau "
+                                         + remedii(f, cont_peste))
+            elif mic:
+                niv, rem = AVERTISMENT, remedii(f, cont_peste)
+            elif cont_peste:
+                niv, rem = BLOCANT, remedii(f, True)
+            elif nv == 2 and not pa_coerent:
+                niv, rem = BLOCANT, remedii(f, False)
+            else:
+                niv, rem = AVERTISMENT, remedii(f, False)
+            emite(j, "V46", niv, "Q", var, Ib=i_f, In=in_q_br, lim=lim113, faza=f, cont=cont[f], rem=rem)
+            v = j.verificari[-1]
+            if prop_ve:
+                v["propunere_ve"] = dict(prop_ve)
+            if cont_peste and not nou_pa:
+                v["mesaj"] = (f"pe faza {f}, consumatorii de lungă durată (stație VE, pompă de căldură, saună, încălzire) "
+                              f"cer singuri ≈ {fmt_ro(cont[f], 1)} A, peste siguranța de branșament de {q_txt}: "
+                              f"siguranța ar declanșa în timpul încărcării — detalii: Ib de calcul {fmt_ro(i_f)} A, "
+                              f"sarcini continue {fmt_ro(cont[f])} A > In {fmt_ro(in_q_br, 0)} A")
+            elif niv == AVERTISMENT and pa_coerent and nv == 2 and not nou_pa and not mic:
+                v["mesaj"] = (f"consumul calculat pe faza {f} (≈ {fmt_ro(i_f, 0)} A, cu toate receptoarele pornite după "
+                              f"simultaneitatea implicită) depășește siguranța de branșament de {q_txt}; puterea aprobată "
+                              f"de {fmt_ro(pa)} kW limitează însă consumul simultan — detalii: Ib {fmt_ro(i_f)} A > "
+                              f"1,13·In = {fmt_ro(lim113)} A")
+                if not ks_decl and pi > 0:
+                    v["propunere"] = {"camp": "ks", "valoare": round(min(1.0, pa / pi), 2)}
+            elif niv == BLOCANT:
+                v["mesaj"] = (f"siguranța de branșament de {q_txt} ar declanșa la consumul calculat pe faza {f} "
+                              f"(≈ {fmt_ro(i_f, 0)} A) — detalii: Ib {fmt_ro(i_f)} A > 1,13·In = {fmt_ro(lim113)} A"
+                              + ("" if pa is not None else "; puterea aprobată nu e declarată, deci nu limitează consumul"))
             if mic:
-                j.verificari[-1]["mesaj"] += (f" — depășire {fmt_ro((i_f / lim113 - 1) * 100, 1)} % (≤ "
-                                              f"{fmt_ro((V46_TOLERANTA - 1) * 100, 0)} %, în toleranța calculului)")
-            elif j.verificari[-1]["nivel"] == BLOCANT:
-                j.verificari[-1]["intrebare"] = True
-                _propune_q(j.verificari[-1], retea, i_f / (1.0 if var == "cont" else norme.LOCUINTA_I_NEDECLANSARE))
-            if q_pres is not None:
-                # m-n5: mesajul spune că Q e presupus
-                v = j.verificari[-1]
-                v["mesaj"] = (f"Q branșament presupus {in_q_br} A (nedeclarat) — " + v["mesaj"])
+                v["mesaj"] += (f" — depășire {fmt_ro((i_f / lim113 - 1) * 100, 1)} % (≤ "
+                               f"{fmt_ro((V46_TOLERANTA - 1) * 100, 0)} %, în toleranța calculului)")
+            if niv == BLOCANT:
+                v["intrebare"] = True
+                _propune_q(v, retea, i_f / (1.0 if var == "cont" else norme.LOCUINTA_I_NEDECLANSARE))
+            if q_pres is not None and not v["mesaj"].startswith("Q branșament presupus"):
+                v["mesaj"] = f"Q branșament presupus {in_q_br} A (nedeclarat) — " + v["mesaj"]
         if ib_pa is not None and q_decl is not None and gt(ib_pa, lim113):
-            emite(j, "V46", BLOCANT, "Q", "pa", P=pa, Ib=ib_pa, lim=lim113, rem=rem)
+            emite(j, "V46", BLOCANT, "Q", "pa", P=pa, Ib=ib_pa, lim=lim113,
+                  rem="corectează puterea aprobată sau siguranța de branșament conform ATR (cele două nu se potrivesc)")
             j.verificari[-1]["intrebare"] = True
             _propune_q(j.verificari[-1], retea, max(ib_pa / norme.LOCUINTA_I_NEDECLANSARE,
                                                     max(calc[f] for f in faze_act) / norme.LOCUINTA_I_NEDECLANSARE))
@@ -1589,16 +1684,19 @@ def _calculeaza(inp, j, cutie):
         sus = ddr_mod.descriere(rb["RCCB"]["IdN_mA"], sel_decl if isinstance(sel_decl, bool) else rb["RCCB"].get("selectiv", True),
                                 "RCCB BMPT")
     elif (rb.get("Q") or {}).get("IdN_mA"):
-        # r5 (P1-14): RCBO-ul 300 mA din BMPM presupus selectiv (S) dacă nu e declarat altfel — altfel V43 la orice casă
+        # Î1 (28.10.2026): RCBO-ul 300 mA din BMPM instantaneu (ST 3-JT) dacă nu e declarat altfel — V43 apare
         sel = sel_decl if isinstance(sel_decl, bool) else impl["selectiv"]
         sus = ddr_mod.descriere(rb["Q"]["IdN_mA"], sel, "RCBO BMPM")
         rez["alimentare"]["DDR_bransament_selectiv"] = sel
     if sus is not None:
+        if not isinstance(sel_decl, bool):
+            sus["presupus"] = True
         nd = ([f"tip {impl['tip']}"] if al.get("DDR_bransament_tip") is None else []) + \
-             (["selectiv (S)"] if not isinstance(sel_decl, bool) and not rb.get("RCCB") else [])
+             ([("selectiv (S)" if impl["selectiv"] else "instantaneu")] if not isinstance(sel_decl, bool) else [])
         if nd:
-            j.presupune(f"DDR-ul 300 mA din {'BMPT' if rb.get('RCCB') else 'BMPM'}: {', '.join(nd)} — presupus (echiparea "
-                        f"uzuală a blocurilor noi); branșamentul vechi cu DDR tip AC / instantaneu se declară")
+            j.presupune(f"DDR-ul 300 mA din {'BMPT' if rb.get('RCCB') else 'BMPM'}: {', '.join(nd)} — presupus (ST "
+                        f"{'4' if rb.get('RCCB') else '3'}-JT DEER, DECIZIE proiectant 28.10.2026); declarați blocul real "
+                        f"(alimentare.DDR_bransament_tip / DDR_bransament_selectiv) dacă e altul")
     # v1.7 (M-c3): tipul DDR-ului 300 mA din branșament (declarat sau cel din ST 3-JT / ST 4-JT: AC)
     am_nume = "RCCB BMPT" if rb.get("RCCB") else "RCBO BMPM"
     am_idn = (rb.get("RCCB") or {}).get("IdN_mA") or (rb.get("Q") or {}).get("IdN_mA")
@@ -1722,7 +1820,7 @@ def _calculeaza(inp, j, cutie):
                                                   f"branșamentul (Q {fmt_ro(in_q_br, 0)} A)")
                     j.verificari[-1]["remediere"] = (
                         "întrebare pentru beneficiar: stație VE de putere mai mică / curent de încărcare limitat din "
-                        "setări (ex. 16 A → C20), gestionarea dinamică a sarcinii (DLM) sau mărirea puterii aprobate "
+                        "setări — câmpul „Limitare putere VE” al circuitului (ex. 3,7 kW → C20) — sau mărirea puterii aprobate "
                         "(Q branșament mai mare)")
                     j.verificari[-1]["intrebare"] = True
             # protecția la defect (contact indirect), explicit pe fiecare circuit (P0-3)

@@ -556,7 +556,7 @@ def test_R2_NM4_servicii_proprii_gG_cablu_mic():
 
 @pytest.mark.parametrize("sn, n, S", [(800, 2, 240.0), (2000, 5, 300.0)])
 def test_R2_NM5_ge_mare_cabluri_monopolare(sn, n, S):
-    # 800 kVA: Q_G MCCB 1250, Ir = 0,90·1250 = 1125 A; F treflă Cu XLPE 240: 2·607·0,98 = 1189,7 A ≥ 1125 A
+    # 800 kVA: Q_G MCCB 1250, Ir = 0,90·1250 = 1125 A; F treflă Cu XLPE 240: 2·607·0,97 = 1177,6 A (B.52.21, raport #17) ≥ 1125 A
     # 2000 kVA: ACB 3200, Ir = 2880 A; 300 mm²: 5·703·0,92 = 3233,8 A ≥ 2880 A (4·703·0,93 = 2615 A < 2880 A)
     # R3 (N3-M1): rețeaua normală de > 250 A trebuie să fie un PT (aici PT propriu 1000 / 2000 kVA)
     r = calculeaza({"tip_schema": "ge_ats", "Sn_GE_kVA": sn, "P_sarcina_kW": sn * 0.75, "origine": "pt_propriu",
@@ -564,7 +564,7 @@ def test_R2_NM5_ge_mare_cabluri_monopolare(sn, n, S):
     assert not r["blocheaza_export"], blocante(r)
     c2 = r["rezultat"]["C2"]
     assert c2["metoda"] == "F_trefla" and c2["n_paralel"] == n and c2["S_faza_mm2"] == S
-    k = {2: 0.98, 5: 0.92}[n]
+    k = {2: 0.97, 5: 0.92}[n]
     iz = {240.0: 607, 300.0: 703}[S]
     assert c2["Iz_corectat_A"] == pytest.approx(n * iz * k)
     assert ("V45", "QG/C2") in avert(r)

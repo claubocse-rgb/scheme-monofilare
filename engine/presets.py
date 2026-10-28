@@ -51,7 +51,7 @@ BMPTI = {
     "bara": {"afisare": False},
     "plecari": [{"aparate": [], "cablu": {"ref": "C2", "cond": "3 + N + PE", "text": "coloană"},
                  "sarcina": {"titlu": "TE cons. trif.", "sub": "tablou electric al consumatorului · Pa cf. ATR"}}],
-    "lista_pe": ["Baretă de nul · piesă de separație · priză de pământ locală", "electrozi OL-Zn 2½″ × 3 m + platbandă OL-Zn 40×4 mm · Rp ≤ 4 Ω"],
+    "lista_pe": ["Baretă de nul · piesă de separație · priză de pământ locală", "electrozi OL-Zn Ø 60 mm × 3 m + platbandă OL-Zn 40×4 mm · Rp ≤ 4 Ω"],
     "abrevieri": ["RED rețea electrică de distribuție · BN baretă de nul · SF separator cu fuzibil", "TC transformator de curent · K șir de cleme cu bloc de șuntare · Q întreruptor automat",
                   "BD bobină de declanșare · DPST protecție supratensiune frecvență industrială", "RCCB întreruptor diferențial · PS piesă de separație · PPL priză de pământ locală"],
     "note": [
@@ -69,7 +69,7 @@ BMPTD["carcasa"]["titlu"] = "BMPTd-100"
 BMPTD["intrari"][0]["aparate"] = [
     {"tip": "nod", "ref": "", "laterale": [{"tip": "bareta_nul"}]},
     {"tip": "sep_fuzibil", "ref": "SF", "spec": ["3 × 100 A gG"], "lista": ["Separator tripolar cu siguranțe fuzibile NH00, 100 A, 400 V", "fuzibile gG 100 A · separare vizibilă · sigilabil"]},
-    {"tip": "contor_direct", "ref": "P", "spec": ["3 × 230/400 V", "5(100) A · direct"], "lista": ["Contor electronic trifazat energie activă + reactivă, 3 × 230/400 V, 5(100) A, cl. 1 / 2", "conectare directă · curbă de sarcină · telecitire · furnizat și sigilat de OD"]},
+    {"tip": "contor_direct", "ref": "P", "spec": ["3 × 230/400 V", "direct · furnizat de OD"], "lista": ["Contor electronic trifazat energie activă + reactivă, 3 × 230/400 V", "conectare directă · telecitire · furnizat și montat de OD"]},
     {"tip": "mccb", "ref": "Q", "spec": ["4P · 100 A", "Ir = 0,8…1 In"], "bd": True, "lista": ["Întreruptor automat de branșament MCCB 4P, In 100 A, 400 V, Icu ≥ 25 kA", "declanșator reglabil · bobină de declanșare BD · Ir reglat la Pa din ATR · sigilat"],
      "laterale": [{"tip": "cutie", "eticheta": "DPST", "spec": ["U> 50 Hz · Test"], "legatura": "comanda", "lista": ["Dispozitiv de protecție la supratensiuni de frecvență industrială, trifazat", "separat sau înglobat în Q · comandă BD"]}]},
     {"tip": "rccb", "ref": "RCCB", "spec": ["4P · 100 A", "IΔn 300 mA · S"], "lista": ["Întreruptor automat diferențial 4P, 100 A, IΔn 300 mA, tip S", "fără protecție la supracurenți"]},

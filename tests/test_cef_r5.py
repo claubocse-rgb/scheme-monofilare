@@ -69,7 +69,10 @@ def test_f22_prosumator_invertoare_diferite_alias_pn_inv():
 def test_pn_inv_kw_ramane_alias_pentru_un_invertor():
     r = calculeaza({"tip_schema": "prosumator", "retea": "tri", "Pn_inv_kW": 10, "In_Q_bransament_A": 25})
     z = r["rezultat"]
-    assert z["INV"]["obiect"] == "INV" and z["INV"]["DDR"]["IdN_mA"] == 30 and len(z["invertoare"]) == 1
+    # Î6 (proiectant 28.10.2026): DDR pe invertor doar la cerere — implicit fără DDR în TN
+    assert z["INV"]["obiect"] == "INV" and "DDR" not in z["INV"] and len(z["invertoare"]) == 1
+    r = calculeaza({"tip_schema": "prosumator", "retea": "tri", "Pn_inv_kW": 10, "In_Q_bransament_A": 25, "ddr": True})
+    assert r["rezultat"]["INV"]["DDR"]["IdN_mA"] == 30
 
 
 # ---------------------------------------------------------------- 2. baterie pe portul invertorului hibrid
@@ -202,8 +205,10 @@ def test_prosumator_mare_pi_externa():
 
 
 def test_prosumator_casa_ramane_te():
+    # Î5 (proiectant 28.10.2026): la toate casele există tablou separat pentru fotovoltaic (TD-PV), cu QG, legat în TE
     m, r = _gen({"tip_schema": "prosumator", "retea": "mono", "Pn_inv_kW": 5, "In_Q_bransament_A": 32})
-    assert m["carcasa"]["titlu"] == "TE" and any(p["sarcina"]["titlu"] == "Prize" for p in m["plecari"])
+    assert m["carcasa"]["titlu"] == "TD-PV" and r["rezultat"]["QG"]["poli"] == "2P"
+    assert m["plecari"][0]["sarcina"]["titlu"] == "TE EXISTENT" and not r["rezultat"]["comercial"]
 
 
 # ---------------------------------------------------------------- 8. BESS de sine stătător

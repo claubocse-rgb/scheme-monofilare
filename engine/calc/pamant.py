@@ -3,7 +3,7 @@
 Intrare (cheia opțională `priza` a oricărei scheme; fără ea calculul NU rulează și nota de pe planșă rămâne
 „priza de pământ: calcul separat”):
 
-    {"rho_ohm_m": 100, "electrozi": {"n": 2, "L_m": 3, "d_m": 0.0635, "distanta_m": 6},
+    {"rho_ohm_m": 100, "electrozi": {"n": 2, "L_m": 3, "d_m": 0.060, "distanta_m": 6},
      "platbanda": {"L_m": 12, "latime_m": 0.04, "grosime_m": 0.004, "adancime_m": 0.8},   # sau false = fără platbandă
      "R_limita_ohm": null, "sezon": "I"|"II"|"III"|"implicit", "psi": 1.6, "psi_platbanda": 3.5}
     platbanda.L_m implicit = (n − 1)·a + L_racord_m (implicit 5 m); R_limita_ohm doar poate COBORÎ limita normată.
@@ -91,9 +91,9 @@ def normalizeaza(p):
     L = num(el, "electrozi.L_m", "L_m", norme.PRIZA_ELECTROD_L_IMPLICIT_M, None) if not er else None
     d = num(el, "electrozi.d_m", "d_m", norme.PRIZA_ELECTROD_D_IMPLICIT_M, None) if not er else None
     if el.get("L_m") is None and el.get("d_m") is None and not er:
-        pres.append("electrozi țeavă OL-Zn 2½″ (Ø 63,5 mm) × 3 m")
+        pres.append("electrozi țeavă OL-Zn Ø 60 × 3,6 mm × 3 m (ST 42 DEER)")
     elif not er and (el.get("L_m") is None or el.get("d_m") is None):
-        pres.append(f"electrod {'L = 3 m' if el.get('L_m') is None else 'Ø 63,5 mm (2½″)'}")
+        pres.append(f"electrod {'L = 3 m' if el.get('L_m') is None else 'Ø 60 mm (ST 42 DEER)'}")
     if er:
         return None, er, pres
     a = num(el, "electrozi.distanta_m", "distanta_m", norme.PRIZA_A_PE_L_IMPLICIT * L,
@@ -283,16 +283,19 @@ def _idn_max(x, acc):
 
 
 def limita_normata(tip, inp, rez):
-    """Limita normată Rp [Ω] și motivul: TT → RA·IΔn ≤ 50 V cu cel mai mare IΔn din schemă; PT și CEF cu PT → 1 Ω
-    (NTE 001, priză comună MT/JT); altfel 4 Ω (branșament, tablou, prosumator, CEF JT, GE)."""
+    """Limita normată Rp [Ω] și motivul: TT → RA·IΔn ≤ 50 V cu cel mai mare IΔn din schemă; PT și CEF cu PT → „conform
+    ANRE” (priză comună MT/JT, norme.PRIZA_PT_ANRE: 1 Ω + tensiunile de atingere); altfel 4 Ω (branșament, tablou,
+    prosumator, CEF JT, GE)."""
     if str(inp.get("schema_pamant") or "").strip().upper() == "TT":
         idn = max(_idn_max(rez, []) or [norme.BMPT_RCCB["idn_ma"]])
         return 50000.0 / idn, f"TT: RA·IΔn ≤ 50 V cu IΔn max {fmt_ro(idn, 0)} mA (SR HD 60364-4-41 art. 411.5.3)"
     cheie = "cef_pt" if tip == "cef" and inp.get("pt_Sn_kVA") is not None else tip
     v = norme.PRIZA_R_LIMITA_OHM.get(cheie, 4.0)
     if v <= 1.0:
-        return v, "priză comună MT/JT la PT (NTE 001/03/00)"
-    return v, "NTE 001/03/00, I7-2011, ST 4-JT (priza locală a consumatorului)"
+        # Î8 (proiectant 28.10.2026): „conform ANRE” — valoarea / metoda din norme.PRIZA_PT_ANRE (neclară public → 1 Ω)
+        return v, ("priză comună MT/JT la PT, conform ANRE: " + norme.PRIZA_PT_ANRE["metoda"]
+                   + ("" if norme.PRIZA_PT_ANRE.get("clar") else " — valoare de confirmat cu OD / ATR"))
+    return v, "4 Ω — instalație de utilizare / branșament (DECIZIE proiectant 28.10.2026; I7-2011, ST 4-JT)"
 
 
 def limita(tip, inp, rez, par):
@@ -311,6 +314,8 @@ def limita(tip, inp, rez, par):
 def _txt_electrod(par):
     if abs(par["d"] - 0.0635) < 1e-6:
         return f"țeavă OL-Zn 2½″ (Ø 63,5{NB}mm) {X} {fmt_ro(par['L'])}{NB}m"
+    if abs(par["d"] - 0.060) < 1e-6:
+        return f"țeavă OL-Zn Ø 60 {X} 3,6{NB}mm {X} {fmt_ro(par['L'])}{NB}m"
     return f"OL-Zn Ø {fmt_ro(par['d'] * 1000, 1)}{NB}mm {X} {fmt_ro(par['L'])}{NB}m"
 
 

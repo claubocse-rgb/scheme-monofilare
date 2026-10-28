@@ -72,6 +72,7 @@ def test_motor_dol_mare_in_td_pe_intrerupator_motor():
 
 # ------------------------------------------------------------------------------- 3. GE: pompe de incendiu, GE în paralel
 GE_INC = {"tip_schema": "ge_ats", "Sn_GE_kVA": 200, "sursa_retea": "pt", "pt_Sn_kVA": 400,
+          "legaturi_echipotentiale": True,          # echipa1 P1-8: soluția de contact indirect în regim GE declarată
           "consumatori": [{"nume": "Pompa incendiu", "P_kW": 45, "n": 2, "pornire": "stea_triunghi"},
                           {"nume": "Hidrofor", "P_kW": 7.5}]}
 
@@ -85,7 +86,8 @@ def test_ge_pompe_incendiu_fara_ddr():
     assert [p["nume"] for p in ps] == ["Pompa incendiu 1", "Pompa incendiu 2"]
     assert all(not p.get("DDR") and p["siguranta"] and p["aparataj_motor"]["pornire"] == "stea_triunghi" for p in ps)
     assert z["C3"].get("DDR", {}).get("IdN_mA") == 300 and z["C3"]["DDR"]["selectiv"]   # consumatorii normali: DDR S
-    assert _v(r, "V97", "AVERTISMENT")
+    # echipa1 P1-8: regimul GE fără DDR — soluția declarată (legături echipotențiale) e consemnată în verificare
+    assert any(v["cod"] == "V97" and "regim GE" in v["mesaj"] and "confirmate" in v["mesaj"] for v in r["verificari"])
     m, _ = constructor.genereaza(dict(GE_INC))
     assert not any(a.get("ref") == "DDR-G" for a in _aparate(m))
     texte = [p["cablu"]["text"] for p in m["plecari"]]
@@ -100,7 +102,8 @@ def test_ge_siguranta_dupa_nume_sau_cheie(cons):
 
 
 def test_ge_siguranta_toata_sarcina():
-    r = calculeaza({"tip_schema": "ge_ats", "Sn_GE_kVA": 100, "P_sarcina_kW": 50, "siguranta": True})
+    r = calculeaza({"tip_schema": "ge_ats", "Sn_GE_kVA": 100, "P_sarcina_kW": 50, "siguranta": True,
+                    "excitatie_sustinuta": True})       # echipa1 P1-8: GE cu excitație susținută + QG electronic
     assert r["rezultat"]["plecari_siguranta"] and "C3" not in r["rezultat"] and not _b(r)
 
 
@@ -162,10 +165,11 @@ def test_bransament_bmpm32_7kw_nu_blocheaza():
     assert not _b(r) and r["rezultat"]["bloc"] == "BMPM-32"
     v = _v(r, "V04", "AVERTISMENT")
     assert v and "cosφ 1" in v[0]["mesaj"]
-    assert r["rezultat"]["Q"]["selectiv"] is True                               # RCBO 300 mA S (V43 evitat)
+    # Î1 (proiectant 28.10.2026): RCBO 300 mA din BMPM instantaneu, tip AC (ST 3-JT §4.2.4 m)
+    assert r["rezultat"]["Q"]["selectiv"] is False and r["rezultat"]["Q"]["tip_ddr"] == "AC"
     m, _ = constructor.genereaza(inp)
     q = next(a for a in _aparate(m) if a.get("ref") == "Q")
-    assert "selectiv (S)" in q["lista"][0]
+    assert "selectiv (S)" not in q["lista"][0]
     # Q 25 A cu 7 kW rămâne BLOCANT (Ib ATR 30,4 A > 25 A)
     assert _b(calculeaza(dict(inp, Q_In_A=25)))
 
