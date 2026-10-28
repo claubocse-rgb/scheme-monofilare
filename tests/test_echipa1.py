@@ -20,11 +20,11 @@ from engine.calc import calculeaza  # noqa: E402
 from engine.confirmare import campuri_lipsa  # noqa: E402
 from engine.interpretor import interpreteaza  # noqa: E402
 
-ING = RAD / "teste" / "echipa1" / "inginer"
+ING = RAD / "tests" / "date" / "echipa1"  # modelele lucrărilor inginerului (doar calc)
 
 
 def _calc(caz):
-    return json.loads((ING / caz / "model.json").read_text(encoding="utf-8"))["calc"]
+    return json.loads((ING / f"{caz}.json").read_text(encoding="utf-8"))["calc"]
 
 
 def _gen(inp):
