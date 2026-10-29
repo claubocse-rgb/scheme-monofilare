@@ -30,6 +30,7 @@ se poate forța afară cu `"in_carcasa": false`. O plecare cu `copii` este un ta
 în propria carcasă.
 """
 import math
+import re
 from .canvas import *
 from . import symbols as S
 from . import desen_e2  # noqa: F401  (E2: straturile noi — conductoare colorate, tablou, curbe)
@@ -77,6 +78,29 @@ def _e_tensiune(l):
     """lateralul face parte din circuitul de tensiune al contorului (derivație separată, nu din lanțul TC → K → P)"""
     if l.get("intrare_contor") == "tensiune": return True
     return l.get("tip") == "fuzibil" and l.get("intrare_contor") != "curent"
+
+
+def _titlu_cutie(l):
+    """r13: titlul casetei laterale care conține deja simbolul ei („PE”, „SB”, „BAT”, „FB · c.c.”) — eticheta separată
+    deasupra casetei ar fi dublată (și se încalecă cu derivațiile / SPD-urile din rândul de sus). Întoarce titlul cu
+    simbolul complet („SB1”, „FB1 · c.c.”) sau None când simbolul nu se regăsește în titlu (eticheta rămâne separată)."""
+    ref, et = (l.get("ref") or "").strip(), (l.get("eticheta") or "").strip()
+    if not ref or not et: return None
+    tok = et.split(" ")[0]
+    if tok == ref: return et
+    if re.sub(r"[\d.\-]+$", "", ref) == tok:          # SB1 / SB, BAT2 / BAT, FB1 / FB · c.c.
+        nou = ref + et[len(tok):]
+        if text_width(nou, 2.6, True) <= (l.get("w") or LAT_W["cutie"]) - 2:
+            return nou
+    return None
+
+
+def _fara_sursa(b):
+    """r13 (feedback hibrid): intrarea începe direct cu câmpul PV desenat ca aparat (`string_pv`) — caseta-sursă
+    „CÂMP PV / invertor …” de deasupra ar dubla componentele deja desenate (PV, INV) și nu se mai desenează; coloana
+    începe cu simbolul PV, iar cablul c.c. (H1Z2Z2-K) se marchează între PV și aparatul următor."""
+    ap = b.get("aparate") or []
+    return (not isinstance(b.get("ramificatie"), dict)) and bool(ap) and ap[0].get("tip") == "string_pv"
 
 
 def _split_intrare(b, cu_carcasa):
@@ -195,6 +219,7 @@ class Layout:
                 left = max(left, 5 + max(_tw(cab.get("ref", ""), 2.5), _tw(cab.get("text", ""), 2.0)) + 2)
                 right = max(right, 5 + _tw(cab.get("cond", ""), 2.3) + 2)
         box = br.get("sursa") or br.get("sarcina") or {}
+        if not plecare and _fara_sursa(br): box = {"titlu": "PV"}
         bw = max(28.0 if (plecare or br.get("compact")) else 40.0, max(text_width(box.get("titlu", ""), 3.0, True), text_width(box.get("sub", ""), 2.0)) + 5)
         for a in br.get("aparate_tablou") or []:        # r11: aparatele de la intrarea tabloului secundar (UPS)
             lw = max([text_width(a.get("ref", ""), 2.8, True)] + [text_width(s, 2.1) for s in a.get("spec", [])] + [0])
@@ -361,7 +386,10 @@ class Layout:
             xc = (xin[0] + xout[0]) / 2; xin, xout = [xc], [xc]
 
         # --- verticală
-        parts = [_split_intrare(b, bool(car)) for b in intrari]
+        fara = [_fara_sursa(b) for b in intrari]
+        parts = [_split_intrare(dict(b, aparate=(b.get("aparate") or [])[1:]) if f else b, bool(car)) for b, f in zip(intrari, fara)]
+        # înălțimea antetului coloanelor de intrare: caseta sursei (BOX_H) sau simbolul câmpului PV (un rând de aparat)
+        h_sus = max([BOX_H if not f else (S.M + GAP) * self.v_boost for f in fara] + [BOX_H])
         n_oi = max([len(o) for o, _ in parts] + [0])
         n_ii = max([len(i) for _, i in parts] + [0])
         gap_in = (CABLE_SEG + 8) if n_oi else 0.0
@@ -371,7 +399,7 @@ class Layout:
             b_out = max(b_out, 26.0 - a_out * (S.M + GAP) * self.v_boost)
         y_top = self.h - 20
         y_bot = (self.note_top + 2 if m.get("note") else 36.0) + (14 if has_bn else 0)
-        fixed = BOX_H + CABLE_SEG + gap_in + 4 + b_out + ((self.seg_out + BOX_H) if plecari else 0)
+        fixed = h_sus + CABLE_SEG + gap_in + 4 + b_out + ((self.seg_out + BOX_H) if plecari else 0)
         step = (S.M + GAP) * self.v_boost
         rows = n_oi + n_ii + a_out
         n_r = len(randuri) - 1
@@ -381,7 +409,7 @@ class Layout:
         if fixed + rows * step > (y_top - y_bot):
             step = max(S.M + 0.5, (y_top - y_bot - fixed) / max(rows, 1))
         self.step = step
-        y_bus = y_top - BOX_H - CABLE_SEG - n_oi * step - gap_in - n_ii * step - 4
+        y_bus = y_top - h_sus - CABLE_SEG - n_oi * step - gap_in - n_ii * step - 4
         self.y_bus = y_bus
         y_in_top = y_bus + 4 + n_ii * step          # începutul părții din carcasă a intrărilor
 
@@ -392,11 +420,17 @@ class Layout:
         # --- intrări (de sus în jos)
         y_out_bot = None
         ilk = {}
-        for b, x, w, (dl, dr, _), (outs, ins) in zip(intrari, xin, win, dims_in, parts):
+        for b, x, w, (dl, dr, _), (outs, ins), f_s in zip(intrari, xin, win, dims_in, parts, fara):
             ram = b.get("ramificatie") if isinstance(b.get("ramificatie"), dict) else None
-            y = y_top - BOX_H
+            y = y_top - h_sus
+            if f_s:
+                # r13: fără caseta-sursă — câmpul PV este primul element al coloanei, apoi cablul c.c.
+                a0 = b["aparate"][0]
+                yc = y + S.HALF
+                bb = self._aparat(x, yc, a0); c.line((x, yc - S.HALF), (x, y), "FORTA")
+                self.meta["obiecte"].append({"tip": "sursa", "nume": a0.get("ref") or a0.get("tip"), "bbox": bb})
             if not ram:
-                self._box(x, y_top, b.get("sursa", {}), w, "sursa")
+                if not f_s: self._box(x, y + BOX_H, b.get("sursa", {}), w, "sursa")
                 c.line((x, y), (x, y - CABLE_SEG), "FORTA")
                 first_inside = not outs
                 self._cabluri.append({"x": x, "hi": y, "lo": y - CABLE_SEG, "d": b.get("cablu"), "rot": False,
@@ -732,7 +766,7 @@ class Layout:
                 self._place_lateral(xb, yn, ln); self.bn_xy = (xb - BN_DX, yn)
             y1 = ext[2] - 7 - (10 if has_bn else 0)
             y2 = ext[3] + 7
-            y2 = min(y2, (y_out_bot - 10) if y_out_bot is not None else y_top - BOX_H - 10)
+            y2 = min(y2, (y_out_bot - 10) if y_out_bot is not None else y_top - h_sus - 10)
             self.y_carcasa_jos = y1
             if car and self._sect:
                 # r12: câte o carcasă pe fiecare tablou intermediar (aceeași înălțime), cu titlul lui
@@ -1077,8 +1111,9 @@ class Layout:
                 if lay == "MASURA": c.arrow((xe, pin[1]), "right", 2.2, lay)
                 self.meta["legaturi"].append({"tip": "masura", "de": a.get("ref", ""), "spre": l.get("ref") or l.get("eticheta", ""),
                                               "lateral": t, "aparat_tip": tip, "de_xy": pin, "spre_xy": (xe, pin[1]), "sageata": (xe, pin[1])})
-            self._place_lateral(cx, yc, l)
-            if l.get("ref"):
+            tc = _titlu_cutie(l) if t == "cutie" else None
+            self._place_lateral(cx, yc, dict(l, eticheta=tc) if tc else l)
+            if l.get("ref") and not tc:
                 if t == "contor":       # la dreapta casetei (deasupra ei poate fi o casetă laterală din rândul de sus, ex. PI)
                     c.text(cx + w / 2 + 1.5, yc + 2.5, l["ref"], 2.6, True)
                     if not hasattr(self, "_ref_contor"): self._ref_contor = []

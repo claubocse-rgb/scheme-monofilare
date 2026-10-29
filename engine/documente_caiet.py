@@ -49,7 +49,7 @@ def caiet_sarcini(corp, m, r):
     doc.campuri([("Obiectivul", camp(k.get("titlu") or k.get("denumire2"))), ("Amplasament", camp(k.get("adresa"))),
                  ("Beneficiar", camp(k.get("beneficiar"))), ("Proiectant", camp(k.get("proiectant"))),
                  ("Proiect nr. / faza", camp(" / ".join(x for x in (k.get("nr_pr"), k.get("faza")) if x) or None)),
-                 ("Atestat ANRE necesar executantului", camp((k.get("atestat_necesar") or "").replace("necesar: ", "") or None)),
+                 ("Atestat ANRE necesar executantului", camp(k.get("atestat_necesar_executie") or None)),
                  ("Planșa schemei monofilare", camp(" ".join(x for x in (k.get("plansa"), k.get("denumire2")) if x) or None))])
     for t in S.GENERALITATI:
         doc.p(t)

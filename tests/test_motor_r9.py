@@ -299,10 +299,11 @@ def test_eticheta_casetei_laterale_nu_taie_liniile():
                                   "invertoare": [{"n": 2, "Pn_kW": 17.5}]})
     cv = layout.build(m)
     segs = [s for it in cv.items if isinstance(it, (Line, Polyline)) for s in item_segments(it)]
-    sb = [it for it in cv.items if isinstance(it, Text) and it.s.startswith("SB") and it.bold and it.h >= 2.5]
+    from engine.canvas import iter_texts
+    # r13: simbolul casetei („SB1”) e titlul casetei (fără etichetă dublată deasupra) — oriunde ar fi, nu taie linii
+    sb = [(t, bb) for t, bb in iter_texts(cv.items) if t.s.startswith("SB") and t.bold and t.h >= 2.5 and bb[0] < cv.w - 168]
     assert sb
-    for t in sb:
-        bb = text_bbox(t)
+    for t, bb in sb:
         assert not any(seg_hits_box(a, b, bb, 0.3) for a, b in segs), t
 
 

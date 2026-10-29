@@ -155,7 +155,7 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:var(--panel-w) 5px 1
 .tabs button:hover{color:var(--ink)}
 .tabs button[aria-selected="true"]{color:var(--ink);font-weight:600}
 .tabs button[aria-selected="true"]::after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:3px;border-radius:2px 2px 0 0;background:var(--sig-line)}
-#pane{flex:1;min-height:0;overflow:auto;padding:var(--s3) var(--s3) 80px;scroll-behavior:auto}
+#pane{position:relative;flex:1;min-height:0;overflow:auto;padding:var(--s3) var(--s3) 80px;scroll-behavior:auto}
 
 /* ===================================================================== formular */
 .group{margin-bottom:var(--s4)}
@@ -667,7 +667,7 @@ body.home>header,body.home>main{display:none!important}
 .h-cartus:hover{box-shadow:4px 4px 0 var(--sig)}
 .h-body{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--panel)}
 .h-top{display:none}
-.h-main{flex:1;min-height:0;overflow:auto;padding:44px clamp(16px,4vw,64px) 72px;outline:none}
+.h-main{position:relative;flex:1;min-height:0;overflow:auto;padding:44px clamp(16px,4vw,64px) 72px;outline:none}
 .h-sec{max-width:1100px}
 .h-h{margin:0 0 6px;font:600 30px/1.1 var(--font-c);letter-spacing:-.01em}
 .h-h:focus{outline:none;box-shadow:none}
@@ -758,7 +758,11 @@ p.h-gol{display:block}
 .h-seg>button,.h-seg>label{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 14px;border:0;border-left:1px solid var(--rule);background:none;color:var(--ink-2);font-weight:500;cursor:pointer}
 .h-seg>:first-child{border-left:0}
 .h-seg>button[aria-selected="true"],.h-seg>label:has(input:checked){background:var(--ink);color:var(--surface)}
-.h-seg input{position:absolute;opacity:0;pointer-events:none}
+/* radio-ul ascuns rămâne ÎN eticheta lui (position:relative): fără părinte poziționat, un input absolut iese din #h-main, mărește
+   overflow-ul documentului, iar focusul la click (schimbarea temei în Setări) derula <html> — cu body{overflow:hidden} pagina rămânea
+   decalată și nu se mai putea derula înapoi (bug „după schimbarea temei nu mai pot da scroll”) */
+.h-seg>label{position:relative}
+.h-seg input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;pointer-events:none}
 .h-seg>label:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:-4px;box-shadow:inset 0 0 0 4px var(--sig)}
 .h-dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:0}.h-dl dt{color:var(--ink-3)}.h-dl dd{margin:0;font-weight:500;overflow-wrap:anywhere}
 .msg.ok{color:var(--ok);padding-left:0}
@@ -2617,7 +2621,7 @@ function tabProiect(root) {
   firm.append(g2(field(c, 'sef_proiect', 'Șef proiect', { always: true }), field(c, 'proiectat', 'Proiectat', { always: true })));
   firm.append(g2(field(c, 'desenat', 'Desenat', { always: true }), field(c, 'verificat', 'Verificat', { always: true })));
   firm.append(g2(field(c, 'aprobat', 'Aprobat', { always: true }), el('div')));
-  firm.append(g3e(field(c, 'atestat_anre', 'Nr. atestat ANRE', { always: true }), field(c, 'atestat_tip', 'Tip atestat', { always: true, select: [['', '—'], ['Bp', 'Bp'], ['Ap', 'Ap'], ['Bp + Ap', 'Bp + Ap']] }), el('div')));
+  firm.append(g3e(field(c, 'atestat_anre', 'Nr. atestat ANRE', { always: true }), field(c, 'atestat_tip', 'Tip atestat', { always: true, select: ATESTATE_ANRE }), el('div')));
   const din = () => { const p = {}; PROFILE_KEYS.forEach(k => p[k] = c[k] || ''); return p; };
   const prof = el('div', { class: 'prof-list', role: 'list', 'aria-label': 'Profile de firmă' });
   for (const p of PROFILES.profile) {
@@ -2678,6 +2682,34 @@ function reviziiUI(m) {
     const d = new Date(); L.push({ rev: L.length ? nr : (m.cartus.rev || '0'), data: String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear(), descriere: L.length ? '' : 'Emisă pentru autorizare', intocmit: m.cartus.proiectat || '' });
     sync(); PENDING_FOCUS = `rev${L.length - 1}-descriere`; render(); redraw(); } }));
   return box;
+}
+/* Tipurile de atestat ANRE ale operatorilor economici — exact codurile din Regulamentul aprobat prin Ord. ANRE nr. 134/2021,
+   art. 9 alin. (1) lit. a)–q) (verificat online 29.10.2026, anre.ro). Proiectantul pune în cartuș atestatul de PROIECTARE
+   (Bp, C1A, C1B, D1, E1 sau B). „Ap” / „Ep” nu există în regulament. Motorul (engine/constructor.py, ATESTATE_ANRE) ține
+   aceeași listă și verifică acoperirea lucrării (V58). Gradele electricienilor (I, IIA…IVB): Ord. ANRE 66/2023, art. 9. */
+const ATESTATE_ANRE = [['', '—'],
+  ['Bp', 'Bp — proiectare instalații JT 0,4 kV (incinte, construcții, branșamente)'],
+  ['B', 'B — proiectare + executare instalații JT 0,4 kV (include Bp, Be, Bi, A1)'],
+  ['C1A', 'C1A — proiectare linii 0,4–20 kV, posturi de transformare ≤ 20 kV, stații MT (include Bp)'],
+  ['C1B', 'C1B — proiectare linii 0,4–110 kV, PT, stații MT și 110 kV (include C1A, Bp)'],
+  ['D1', 'D1 — proiectare linii electrice, orice tensiune (include C1B, C1A, Bp)'],
+  ['E1', 'E1 — proiectare PT, stații, partea electrică a centralelor, orice tensiune (include C1B, C1A, Bp)'],
+  ['Be', 'Be — executare instalații JT 0,4 kV și branșamente (include Bi, A1)'],
+  ['Bi', 'Bi — executare instalații interioare/exterioare JT (include A1)'],
+  ['C2A', 'C2A — executare linii 0,4–20 kV, PT ≤ 20 kV, stații MT (include Be, Bi, A2, A1)'],
+  ['C2B', 'C2B — executare linii 0,4–110 kV, PT, stații MT și 110 kV (include C2A, Be, Bi, A2, A1)'],
+  ['D2', 'D2 — executare linii electrice, orice tensiune'],
+  ['E2', 'E2 — executare PT, stații, partea electrică a centralelor, orice tensiune'],
+  ['E2PA', 'E2PA — executare protecții și automatizări în stații'],
+  ['A', 'A — încercări echipamente și instalații electrice (include A2, A1)'],
+  ['A1', 'A1 — încercări JT'], ['A2', 'A2 — încercări JT și MT (include A1)'],
+  ['A3', 'A3 — încercări pentru certificarea conformității tehnice a centralelor'],
+  ['Bp + C1A', 'Bp + C1A — proiectare JT și MT ≤ 20 kV']];
+/** <select> nativ cu tipurile ANRE; o valoare veche care nu e cod ANRE (ex. „Ap”) rămâne vizibilă, marcată */
+function selAtestat(id, val) {
+  const s = el('select', { id, class: 'inp' }, ...ATESTATE_ANRE.map(([v, t]) => el('option', { value: v }, t)));
+  if (val && !ATESTATE_ANRE.some(([v]) => v === val)) s.prepend(el('option', { value: val }, `${val} (nu e cod ANRE — alege din listă)`));
+  s.value = val || ''; return s;
 }
 const PROFILE_KEYS = ['proiectant', 'adresa_proiectant', 'reg', 'sef_proiect', 'proiectat', 'desenat', 'verificat', 'aprobat', 'atestat_anre', 'atestat_tip'];
 function applyProfile(m = MODEL) { const p = profilActiv(); if (!p) return false; PROFILE_KEYS.forEach(k => { if (p[k]) m.cartus[k] = p[k]; }); return true; }
@@ -3646,7 +3678,7 @@ function cereProiectant() {
     const chei = ['proiectant', 'reg', 'proiectat', 'atestat_anre', 'atestat_tip'];
     const grid = el('div', { class: 'h-fgrid' }, ...chei.map(k => {
       const id = 'cp-' + k;
-      const inp = k === 'atestat_tip' ? el('select', { id, class: 'inp' }, ...[['', '—'], ['Bp', 'Bp'], ['Ap', 'Ap'], ['Bp + Ap', 'Bp + Ap']].map(([v, t]) => el('option', { value: v }, t)))
+      const inp = k === 'atestat_tip' ? selAtestat(id, '')
         : el('input', { type: 'text', id, class: 'inp', autocomplete: k === 'proiectant' ? 'organization' : 'off' });
       return el('div', { class: 'fld' + (k === 'proiectant' || k === 'reg' ? ' lat' : '') }, el('label', { for: id }, PROF_ETI[k] || k), inp);
     }));
@@ -5227,7 +5259,7 @@ function secSetari(root) {
   const grid = el('div', { class: 'h-fgrid' });
   PROFILE_KEYS.forEach(k => {
     const id = 'hp-' + k;
-    const inp = k === 'atestat_tip' ? el('select', { id, class: 'inp' }, ...[['', '—'], ['Bp', 'Bp'], ['Ap', 'Ap'], ['Bp + Ap', 'Bp + Ap']].map(([v, t]) => el('option', { value: v }, t)))
+    const inp = k === 'atestat_tip' ? selAtestat(id, vals[k])
       : el('input', { type: 'text', id, class: 'inp', autocomplete: k === 'proiectant' ? 'organization' : 'off' });
     inp.value = vals[k];
     grid.append(el('div', { class: 'fld' + (['proiectant', 'adresa_proiectant', 'reg'].includes(k) ? ' lat' : '') }, el('label', { for: id }, PROF_ETI[k] || k), inp));

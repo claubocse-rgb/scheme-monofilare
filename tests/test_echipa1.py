@@ -271,14 +271,33 @@ def test_P1_4_v35_fara_mesaj_contradictoriu():
 
 
 def test_P1_5_atestat_dupa_tipul_lucrarii():
+    # Ord. ANRE 134/2021 art. 9 alin. (1) (firme) + Ord. ANRE 66/2023 art. 9 (electricieni)
     m, r, _ = _gen(app.SABLOANE["pt"][2])
-    assert "C2A" in m["cartus"]["atestat_necesar"] and "gr. IV A" in m["cartus"]["atestat_necesar"]
+    assert "C1A" in m["cartus"]["atestat_necesar"] and "gr. IIIA" in m["cartus"]["atestat_necesar"]
+    assert m["cartus"]["atestat_necesar_executie"].startswith("C2A") and "gr. IIIB" in m["cartus"]["atestat_necesar_executie"]
     m, r, _ = _gen(dict(_calc("L02_casa_tri_pc_ve")))
-    assert "gr. III A" in m["cartus"]["atestat_necesar"]
-    m, r = constructor.genereaza(app.SABLOANE["pt"][2], cartus={"atestat_tip": "Bp"})
-    assert any(x["cod"] == "V58" for x in r["verificari"])
-    m, r = constructor.genereaza(app.SABLOANE["pt"][2], cartus={"atestat_tip": "C2A"})
-    assert not any(x["cod"] == "V58" for x in r["verificari"])
+    assert "Bp" in m["cartus"]["atestat_necesar"] and "gr. IIA" in m["cartus"]["atestat_necesar"]
+    assert "gr. IIB" in m["cartus"]["atestat_necesar_executie"]
+    for tip, v58 in (("Bp", True), ("C2A", True), ("E2", True), ("C1A", False), ("Bp + C1A", False), ("C1B", False),
+                     ("D1", False), ("E1", False), ("Ap", True)):
+        m, r = constructor.genereaza(app.SABLOANE["pt"][2], cartus={"atestat_tip": tip})
+        assert any(x["cod"] == "V58" for x in r["verificari"]) == v58, tip
+    for tip, v58 in (("Bp", False), ("B", False), ("C1A", False), ("Be", True), ("C2A", True)):
+        m, r = constructor.genereaza(dict(_calc("L02_casa_tri_pc_ve")), cartus={"atestat_tip": tip})
+        assert any(x["cod"] == "V58" for x in r["verificari"]) == v58, tip
+
+
+def test_coduri_anre_oficiale():
+    # lista exactă din Ord. ANRE 134/2021 art. 9 alin. (1) lit. a)–q) și gradele din Ord. ANRE 66/2023 art. 9
+    assert list(constructor.ATESTATE_ANRE) == ["A", "A1", "A2", "A3", "B", "Bp", "Be", "Bi", "C1A", "C1B", "C2A", "C2B",
+                                               "D1", "D2", "E1", "E2", "E2PA"]
+    assert list(constructor.GRADE_ANRE) == ["I", "IIA", "IIB", "IIIA", "IIIB", "IVA", "IVB"]
+    assert constructor.atestat_include("D2") >= {"C2B", "C2A", "Be", "Bi", "A2", "A1"}
+    assert "B" not in constructor.atestate_declarate("C1B")
+    html = (Path(__file__).resolve().parents[1] / "static" / "index.html").read_text(encoding="utf-8")
+    assert "'Ap'" not in html and "Bp + Ap" not in html
+    for t in constructor.ATESTATE_ANRE:
+        assert f"['{t}'," in html, t
 
 
 @pytest.mark.parametrize("text,verif", [

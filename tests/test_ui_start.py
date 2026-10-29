@@ -478,3 +478,28 @@ def test_web_static_start_si_descriere(browser, tmp_path):
         assert not erori
     finally:
         pr.terminate()
+
+
+@pytest.mark.parametrize("vp", [pytest.param((1440, 900), id="desktop"), pytest.param((390, 844), id="mobil")])
+def test_setari_tema_nu_blocheaza_derularea(srv, browser, vp):
+    """bug proprietar: în Setări (datele proiectantului pentru cartuș + tema), după schimbarea temei nu se mai putea derula.
+    Cauza: radio-urile ascunse ale temei (position:absolute fără părinte poziționat) ieșeau din #h-main; focusul la click
+    derula <html> (body are overflow:hidden) → pagina rămânea decalată în sus, fără cale de întoarcere."""
+    pg = _pagina(browser, srv, *vp)
+    pg.evaluate("() => acasaArata('setari')"); pg.wait_for_timeout(300)
+    stare = """() => { const m = $('#h-main'); return {doc: document.scrollingElement.scrollTop, docH: document.scrollingElement.scrollHeight,
+        vh: document.scrollingElement.clientHeight, home: Math.round($('#home').getBoundingClientRect().top), top: m.scrollTop,
+        max: m.scrollHeight - m.clientHeight, tema: document.documentElement.dataset.theme || 'auto'}; }"""
+    assert pg.evaluate(stare)["docH"] <= pg.evaluate(stare)["vh"]          # documentul în sine nu are ce derula
+    for v in ("dark", "light", "dark", "auto", "light", "dark"):
+        pg.click(f"label[for=h-tema-{v}]"); pg.wait_for_timeout(150)
+        s = pg.evaluate(stare)
+        assert s["tema"] == v and s["doc"] == 0 and s["home"] == 0 and s["docH"] <= s["vh"], (v, s)
+        assert s["max"] > 0
+        pg.mouse.move(vp[0] * 0.7, vp[1] * 0.5)
+        pg.mouse.wheel(0, -5000); pg.wait_for_timeout(250)
+        assert pg.evaluate(stare)["top"] == 0, v                               # se derulează în sus până la titlu
+        pg.mouse.wheel(0, 5000); pg.wait_for_timeout(250)
+        s = pg.evaluate(stare)
+        assert abs(s["top"] - s["max"]) <= 1 and s["doc"] == 0, (v, s)        # … și în jos până la capăt
+    assert not pg.erori

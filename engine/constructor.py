@@ -3127,33 +3127,103 @@ def rezumat(r):
             "presupus": r.get("presupus", []), "ipoteze": r.get("ipoteze", [])}
 
 
+# Atestatele ANRE ale operatorilor economici — Regulamentul aprobat prin Ord. ANRE nr. 134/15.12.2021 (MO 1216/22.12.2021),
+# art. 9 alin. (1) lit. a)–q); verificat online 29.10.2026 (anre.ro → Persoane juridice → Energie electrică, fără modificări
+# listate). Fiecare tip → tipurile pe care le INCLUDE (competențele lor, art. 9 alin. (1) + anexa nr. 6).
+# Tipurile „Ap” / „Ep” / „Ep1” NU există în regulament (înainte aplicația oferea „Ap”, greșit).
+ATESTATE_ANRE = {
+    "A": ("încercări de echipamente și instalații electrice", ("A2", "A1")),
+    "A1": ("încercări de echipamente și instalații electrice de joasă tensiune", ()),
+    "A2": ("încercări de echipamente și instalații electrice de joasă și medie tensiune", ("A1",)),
+    "A3": ("încercări în vederea certificării conformității tehnice a centralelor electrice cu normele tehnice", ()),
+    "B": ("proiectare și executare de instalații electrice exterioare/interioare pentru incinte/construcții civile și "
+          "industriale, branșamente aeriene și subterane, la 0,4 kV", ("Bp", "Be", "Bi", "A1")),
+    "Bp": ("proiectare de instalații electrice exterioare/interioare pentru incinte/construcții civile și industriale, "
+           "branșamente aeriene și subterane, la 0,4 kV", ()),
+    "Be": ("executare de instalații electrice exterioare/interioare pentru incinte/construcții civile și industriale, "
+           "branșamente aeriene și subterane, la 0,4 kV", ("Bi", "A1")),
+    "Bi": ("executare de instalații electrice exterioare/interioare pentru incinte/construcții civile și industriale", ("A1",)),
+    "C1A": ("proiectare de linii electrice aeriene/subterane 0,4–20 kV, posturi de transformare cu tensiunea superioară "
+            "≤ 20 kV, stații de medie tensiune", ("Bp",)),
+    "C1B": ("proiectare de linii electrice aeriene/subterane 0,4–110 kV, posturi de transformare ≤ 20 kV, stații de MT și 110 kV",
+            ("C1A", "Bp")),
+    "C2A": ("executare de linii electrice aeriene/subterane 0,4–20 kV, posturi de transformare cu tensiunea superioară "
+            "≤ 20 kV, stații de medie tensiune", ("Be", "Bi", "A2", "A1")),
+    "C2B": ("executare de linii electrice aeriene/subterane 0,4–110 kV, posturi de transformare ≤ 20 kV, stații de MT și 110 kV",
+            ("Be", "Bi", "C2A", "A2", "A1")),
+    "D1": ("proiectare de linii electrice aeriene și subterane cu orice tensiune nominală standardizată", ("C1B", "C1A", "Bp")),
+    "D2": ("executare de linii electrice aeriene și subterane cu orice tensiune nominală standardizată",
+           ("C2B", "C2A", "Be", "Bi", "A2", "A1")),
+    "E1": ("proiectare de posturi de transformare, stații electrice și instalații ale părții electrice a centralelor, "
+           "orice tensiune", ("C1B", "C1A", "Bp")),
+    "E2": ("executare de posturi de transformare, stații electrice și lucrări la partea electrică a centralelor, orice tensiune",
+           ("E2PA", "C2B", "C2A", "Be", "Bi", "A2", "A1")),
+    "E2PA": ("executare de lucrări la instalațiile de protecție și automatizări din stațiile electrice", ()),
+}
+
+# Gradele electricienilor autorizați — Regulamentul aprobat prin Ord. ANRE nr. 66/10.05.2023 (MO 417/16.05.2023),
+# modificat prin Ord. ANRE nr. 65/2024; art. 8 alin. (2): tip A = proiectare, tip B = executare; art. 9 lit. a)–g).
+# NEVERIFICAT: textul consolidat după Ord. 65/2024 nu a putut fi citit — art. 9 e luat din forma inițială a Ord. 66/2023.
+GRADE_ANRE = {
+    "I": "executare de instalații electrice interioare, putere instalată ≤ 10 kW, tensiune < 1 kV (art. 9 lit. a)",
+    "IIA": "proiectare, orice putere instalată, tensiune < 1 kV (art. 9 lit. b)",
+    "IIB": "executare, orice putere instalată, tensiune < 1 kV (art. 9 lit. c)",
+    "IIIA": "proiectare, orice putere instalată, tensiune ≤ 20 kV (art. 9 lit. d)",
+    "IIIB": "executare, orice putere instalată, tensiune ≤ 20 kV (art. 9 lit. e)",
+    "IVA": "proiectare, orice putere instalată, orice tensiune standardizată (art. 9 lit. f)",
+    "IVB": "executare, orice putere instalată, orice tensiune standardizată (art. 9 lit. g)",
+}
+
+
+def atestat_include(tip):
+    """mulțimea tipurilor de atestat acoperite de `tip` (el însuși + incluziunile din art. 9 alin. (1), tranzitiv)."""
+    out, st = set(), [tip]
+    while st:
+        t = st.pop()
+        if t in ATESTATE_ANRE and t not in out:
+            out.add(t)
+            st.extend(ATESTATE_ANRE[t][1])
+    return out
+
+
+def atestate_declarate(text):
+    """„Bp + C1A”, „B, A1” … → tipurile ANRE recunoscute (exact, nu subșir — „C1B” nu înseamnă „B”)."""
+    canon = {t.upper(): t for t in ATESTATE_ANRE}
+    return [canon[x] for x in re.split(r"[\s+,;/·&]+|\bȘI\b", str(text or "").upper()) if x in canon]
+
+
 def atestate_necesare(intrare, rz):
-    """echipa1 P1-5: atestatele ANRE cerute de tipul lucrării — (firmă, persoană, descriere lucrare).
-    PT 20/0,4 kV și CEF cu PT propriu (racord MT): firmă C2A (LES / PT ≤ 20 kV; C1A la PTA aerian), persoană gr. IV A;
-    instalații de joasă tensiune (locuință, branșament, tablouri, GE, CEF / prosumator în JT): firmă B / Bp, persoană
-    gr. III A (proiectare)."""
+    """echipa1 P1-5: atestatele ANRE minime cerute de tipul lucrării.
+    → {"lucrare", "proiectare": (firmă, electrician), "executie": (firmă, electrician)}.
+    - PT 20/0,4 kV și CEF cu PT propriu (racord MT ≤ 20 kV): firmă C1A (proiectare) / C2A (executare) — Ord. ANRE 134/2021
+      art. 9 alin. (1) lit. i) și k) („posturi de transformare cu tensiunea nominală superioară de cel mult 20 kV”);
+      electrician IIIA / IIIB — Ord. ANRE 66/2023 art. 9 lit. d) și e) (≤ 20 kV). Aerian sau subteran nu schimbă tipul.
+      NEVERIFICAT: dacă la o CEF (centrală) OD/ANRE cer E1/E2 („partea electrică a centralelor”, art. 9 alin. (1) lit. o)–p))
+      în loc de C1A/C2A — regulamentul nu tratează explicit fotovoltaicul; se păstrează minimul C1A/C2A.
+    - joasă tensiune (locuință, branșament, tablouri, GE, CEF / prosumator în JT): firmă Bp / Be (sau B) — art. 9 alin. (1)
+      lit. e)–g) și anexa nr. 6 (branșamente ale locurilor de consum și de producere); electrician IIA / IIB — art. 9 lit. b), c)."""
     tip = (intrare or {}).get("tip_schema")
     tr = (rz or {}).get("trafo") or {}
     mt = tip == "pt" or (tip == "cef" and tr and not tr.get("existent"))
     if mt:
-        aer = bool((intrare or {}).get("pt_aerian"))
-        return ("C1A" if aer else "C2A", "gr. IV A", "post de transformare / racord MT ≤ 20 kV")
-    return ("B / Bp", "gr. III A", "instalație electrică de joasă tensiune (≤ 1 kV)")
+        return {"lucrare": "post de transformare / racord MT ≤ 20 kV", "proiectare": ("C1A", "IIIA"), "executie": ("C2A", "IIIB")}
+    return {"lucrare": "instalație electrică de joasă tensiune (0,4 kV)", "proiectare": ("Bp", "IIA"), "executie": ("Be", "IIB")}
 
 
 def _atestat_cartus(m, intrare, r):
-    firma, pers, lucr = atestate_necesare(intrare, r.get("rezultat"))
+    nec = atestate_necesare(intrare, r.get("rezultat"))
+    (fp, gp), (fe, ge) = nec["proiectare"], nec["executie"]
     k = m.setdefault("cartus", {})
-    k["atestat_necesar"] = f"necesar: firmă {firma} · persoană {pers}"
+    # cartușul e al PROIECTANTULUI → atestatul de proiectare; cel de executare merge în caietul de sarcini
+    k["atestat_necesar"] = f"necesar: {fp} + electrician gr. {gp}"
+    k["atestat_necesar_executie"] = f"{fe} (sau superior) + electrician gr. {ge}"
     dec = str(k.get("atestat_tip") or "").strip()
     if not dec:
         return
-    d = dec.upper().replace(" ", "")
-    ok = any(x in d for x in ("C2A", "C1A", "D1", "D2", "E1", "E2")) if firma in ("C2A", "C1A") else \
-        any(x in d for x in ("B", "C1A", "C2A", "D", "E"))
-    if not ok:
+    acoperite = set().union(*(atestat_include(t) for t in atestate_declarate(dec))) if atestate_declarate(dec) else set()
+    if fp not in acoperite:
         from .calc.verificari import mesaj, remediere
-        par = {"declarat": dec, "lucrare": lucr, "necesar": f"atestat de firmă {firma} și atestat de persoană {pers}"}
+        par = {"declarat": dec, "lucrare": nec["lucrare"], "necesar": f"atestat de firmă {fp} (proiectare) și electrician gr. {gp}"}
         r.setdefault("verificari", []).append({"cod": "V58", "nivel": "AVERTISMENT", "obiect": "cartuș",
                                                "mesaj": mesaj("V58", "", **par), "remediere": remediere("V58", **par)})
 

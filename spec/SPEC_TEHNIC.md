@@ -1497,10 +1497,44 @@ Rândurile cu BLOCANT se scriu cu roșu. Pe planșa de export nu pot exista rân
 Câmpuri obligatorii:
 - beneficiar, adresă (localitate, județ, CF), titlu proiect, nr. proiect, fază, planșă, revizie, dată, scară;
 - proiectant (firma, J, CUI), șef proiect, proiectat, desenat, verificat (cu semnături);
-- nr. și tipul atestatului ANRE al proiectantului (Bp/Ap);
+- nr. și tipul atestatului ANRE al proiectantului — atestat de **proiectare** al firmei (vezi mai jos);
 - nr. ATR / aviz.
 
 Un câmp lipsă se lasă gol, **nu** se completează cu text de exemplu.
+
+#### G.5.1 Atestate ANRE (V58) [VERIFICAT online 29.10.2026]
+**Firme** — Regulamentul pentru atestarea operatorilor economici care proiectează, execută și verifică instalații electrice,
+aprobat prin **Ord. ANRE nr. 134/15.12.2021** (MO 1216/22.12.2021), art. 9 alin. (1) lit. a)–q), competențele în anexa nr. 6.
+Codurile exacte (singurele acceptate în selector, `ATESTATE_ANRE` în `engine/constructor.py` și `static/index.html`):
+
+| Tip | Acoperă | Include |
+|---|---|---|
+| A / A1 / A2 / A3 | încercări: toate / JT / JT+MT / certificarea conformității tehnice a centralelor | A ⊃ A2 ⊃ A1 |
+| B | proiectare + executare instalații ext./int. pentru incinte/construcții civile și industriale, branșamente aeriene și subterane 0,4 kV | Bp, Be, Bi, A1 |
+| Bp | proiectare, același domeniu ca B (anexa 6: branșamente ale locurilor de consum și de producere) | — |
+| Be | executare, același domeniu ca B | Bi, A1 |
+| Bi | executare instalații ext./int. pentru incinte/construcții | A1 |
+| C1A / C2A | proiectare / executare linii 0,4–20 kV, PT cu tensiunea superioară ≤ 20 kV, stații MT | C1A ⊃ Bp; C2A ⊃ Be, Bi, A2, A1 |
+| C1B / C2B | proiectare / executare linii 0,4–110 kV, PT ≤ 20 kV, stații MT și 110 kV | C1B ⊃ C1A, Bp; C2B ⊃ C2A, Be, Bi, A2, A1 |
+| D1 / D2 | proiectare / executare linii, orice tensiune | D1 ⊃ C1B, C1A, Bp; D2 ⊃ C2B, C2A, Be, Bi, A2, A1 |
+| E1 / E2 | proiectare / executare PT, stații, partea electrică a centralelor, orice tensiune | E1 ⊃ C1B, C1A, Bp; E2 ⊃ E2PA, C2B, C2A, Be, Bi, A2, A1 |
+| E2PA | executare protecții și automatizări în stații | — |
+
+„Ap”, „Ep”, „Ep1” **nu există** (versiunile anterioare ofereau „Ap” — eliminat; o valoare veche rămâne vizibilă, marcată „nu e cod ANRE”).
+
+**Electricieni** — Regulamentul pentru autorizarea electricienilor…, aprobat prin **Ord. ANRE nr. 66/10.05.2023** (MO 417/16.05.2023),
+modificat prin Ord. ANRE nr. 65/2024; art. 8 alin. (2): tip A = proiectare, tip B = executare; art. 9: **I** — executare instalații
+interioare ≤ 10 kW, < 1 kV; **IIA / IIB** — proiectare / executare, orice putere, < 1 kV; **IIIA / IIIB** — idem, ≤ 20 kV;
+**IVA / IVB** — idem, orice tensiune standardizată. [NEVERIFICAT: forma consolidată după Ord. 65/2024 nu a putut fi citită;
+art. 9 e luat din forma inițială.]
+
+**Regula „atestatul cerut de lucrare”** (`constructor.atestate_necesare`):
+- JT (locuință, branșament, tablouri, GE, prosumator, CEF fără PT propriu): proiectare **Bp + electrician IIA**, executare **Be + IIB**;
+- PT 20/0,4 kV și CEF cu PT propriu (≤ 20 kV): proiectare **C1A + IIIA**, executare **C2A + IIIB** (aerian sau subteran nu schimbă tipul).
+  [NEVERIFICAT: dacă la CEF se cere E1/E2 („partea electrică a centralelor”) — regulamentul nu tratează explicit fotovoltaicul.]
+- Cartușul e al proiectantului → V58 AVERTISMENT dacă tipul declarat (cu incluziunile din tabel, comparate pe cod exact, nu pe subșir)
+  nu acoperă atestatul de **proiectare** cerut; câmpul `cartus.atestat_necesar` = cel de proiectare, `cartus.atestat_necesar_executie`
+  = cel de executare (în caietul de sarcini, „Atestat ANRE necesar executantului”).
 
 ---
 
