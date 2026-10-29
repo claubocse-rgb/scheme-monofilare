@@ -805,7 +805,7 @@ def ge_sn_minim(P_kW, cosfi=0.9):
 # =====================================================================================================
 PRIZA_RHO_IMPLICIT_OHM_M = 100.0         # [VERIFICAT: prudent față de ST 42 (80 Ω·m) — raport #107] (argilă 40…100,
                                          # nisip argilos 100…300 Ω·m — 1.RE-Ip 30-2004 anexa / STAS 12604/5); se MĂSOARĂ
-PRIZA_ELECTROD_L_IMPLICIT_M = 3.0        # electrod OL-Zn × 3 m — practica uzuală (I7 / 1.RE-Ip 30); ATENȚIE: ST 42 Ed. U1 Rev. 0/2025 §3.5 c și tab. 1 dau electrod ø60 × 1,5 m (raport_b3 B3-29) — de decis de proprietar
+PRIZA_ELECTROD_L_IMPLICIT_M = 1.5        # electrod 1,5 m — ST 42 Ed. U1 Rev. 0/2025 §3.5 c și tab. 1 (raport_b3 B3-29) [DECIZIE proiectant 29.10.2026]
 PRIZA_ELECTROD_D_IMPLICIT_M = 0.060      # țeavă OL-Zn ø60 × 3,6 mm [VERIFICAT: DEER ST 42 anexa 3 — raport #109; înainte 63,5 mm]
 PRIZA_N_IMPLICIT = 2
 PRIZA_A_PE_L_IMPLICIT = 2.0              # DECIZIE: distanța între electrozi a = 2·L (6 m la L = 3 m)
