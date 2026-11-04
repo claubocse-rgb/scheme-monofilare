@@ -2,3 +2,13 @@
   X-Robots-Tag: noindex, nofollow, noarchive
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/config.js
+  Cache-Control: no-cache
+/worker.js
+  Cache-Control: no-cache
+/app_src.zip.wasm
+  Cache-Control: no-cache
