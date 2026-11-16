@@ -146,7 +146,7 @@
 <div>Pornesc motorul de calcul direct în browser — prima deschidere durează 10–20 de secunde, apoi merge instant.</div>
 <div class="bar"></div><small id="sm-boot-t">Se încarcă…</small></div></div>
 <script>
-window.SM_WEB=true;(()=>{const LS='sm.web.date';const boot=document.getElementById('sm-boot');const bootTxt=document.getElementById('sm-boot-t');const w=new Worker('worker.js?v=7d26d28921');let seq=0;const pend=new Map();let gata;const ready=new Promise(r=>{gata=r;});w.onmessage=e=>{const d=e.data;if(d.tip==='gata'){gata();bootTxt.textContent='Gata.';setTimeout(()=>{boot.hidden=true;},600);}
+window.SM_WEB=true;(()=>{const LS='sm.web.date';const boot=document.getElementById('sm-boot');const bootTxt=document.getElementById('sm-boot-t');const w=new Worker('worker.js?v=a41f2c4054');let seq=0;const pend=new Map();let gata;const ready=new Promise(r=>{gata=r;});w.onmessage=e=>{const d=e.data;if(d.tip==='gata'){gata();bootTxt.textContent='Gata.';setTimeout(()=>{boot.hidden=true;},600);}
 else if(d.tip==='progres'){if(boot.hidden&&typeof toast==='function')toast(d.text,{ms:4000});else bootTxt.textContent=d.text;}
 else if(d.tip==='eroare'){bootTxt.textContent='Motorul de calcul nu a pornit: '+d.text+' — reîncarcă pagina.';boot.classList.add('err');}
 else if(d.tip==='date'){try{localStorage.setItem(LS,JSON.stringify(d.date));}catch{}}
